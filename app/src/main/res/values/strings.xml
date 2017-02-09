@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Cacophonometer Lite</string>
+    <string name="title_activity_register">RegisterActivity</string>
 </resources>

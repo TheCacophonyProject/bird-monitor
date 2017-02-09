@@ -1,22 +1,67 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
-
-
-import java.util.Calendar;
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
+public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
 
-
-public class MainActivity extends Activity
-{
-
+    public static final String PREFS_NAME = "Cacophony_App";
     private PendingIntent pendingIntent;
+    public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
+
+    /**
+     * Handler for Main Activity
+     */
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message inputMessage) {
+            Log.d(TAG, "Received message.");
+            switch (inputMessage.what) {
+                case RESUME:
+                    onResume();
+                    break;
+                default:
+                    // Unknown case
+                    break;
+            }
+        }
+    };
+
+    /**
+     * Handler states
+     */
+    private static final int RESUME = 1;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(intentAction);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -40,10 +85,108 @@ public class MainActivity extends Activity
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
 
+        refreshVitals();
     } //end onCreate
 
+    /**
+     * Updated UI.
+     */
+    @Override
+    public void onResume() {
+        checkPermissions();
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(RegisterActivity.PREFS_NAME, Context.MODE_PRIVATE);
 
+        // Device registered text
+        TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
+        if (prefs.getString("group", null) != null)
+            registered.setText("Registered: ✔");
+        else
+            registered.setText("Registered: ✘");
 
+        // Server connection text.
+        TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
+        if (Server.serverConnection)
+            connectToServerText.setText("Connected To Server: ✔");
+        else
+            connectToServerText.setText("Connected To Server: ✘");
 
+        // Logged In text.
+        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+        if (Server.loggedIn)
+            loggedInText.setText("Device logged In: ✔");
+        else
+            loggedInText.setText("Device logged In: ✘");
 
+        super.onResume();
+    }
+
+    /**
+     * Checks if the app has the required permissions. Storage, Microphone, Location.
+     */
+    private void checkPermissions() {
+        boolean storagePermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean microphonePermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        boolean locationPermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        TextView permissionText = (TextView) findViewById(R.id.appPermissionText);
+        if (storagePermission && microphonePermission && locationPermission) {
+            permissionText.setText("Required Permissions: ✔");
+            return;
+        } else {
+            permissionText.setText("Required Permissions: ✘");
+        }
+
+        List<String> missingPermissionList = new ArrayList<>();
+        if (!storagePermission) missingPermissionList.add("Write External Storage");
+        if (!microphonePermission) missingPermissionList.add("Recording");
+        if (!locationPermission) missingPermissionList.add("Location");
+
+        String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
+        Toast.makeText(getApplicationContext(), missingPermissionMessage, Toast.LENGTH_SHORT).show();
+        Log.w(TAG, missingPermissionMessage);
+
+    }
+
+    /**
+     * Starts RegisterActivity.
+     * @param v View
+     */
+    public void register(View v) {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+    }
+
+    public void testRecording(View v) {
+        Log.d(TAG, "Test recording button.");
+        Intent intent = new Intent(MainActivity.this, MyReceiver.class);
+        sendBroadcast(intent);
+    }
+
+    /**
+     * UI button to refresh vitals
+     * @param v View
+     */
+    public void refreshButton(View v) {
+        refreshVitals();
+    }
+
+    /**
+     * Check the vitals again and update the UI.
+     */
+    public void refreshVitals() {
+        Thread server = new Thread() {
+            @Override
+            public void run() {
+                Server.updateServerConnectionStatus(getApplicationContext());
+                Message message = handler.obtainMessage();
+                message.what = RESUME;
+                message.sendToTarget();
+                Log.d(TAG, "Sent message");
+            }
+        };
+        server.start();
+    }
 }
