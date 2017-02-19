@@ -1,0 +1,119 @@
+package nz.org.cacophonoy.cacophonometerlite;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+/**
+ * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
+ */
+
+class Prefs {
+
+    private static final String LOG_TAG = "Prefs.java";
+    private Context context = null;
+
+
+    private static final String PREFS_NAME = "CacophonyPrefs";
+    //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
+    private static final String DEFAULT_SERVER_URL = "http://192.168.1.9:8888";       // Server URL
+    private static final String SERVER_URL_KEY = "SERVER_URL";
+    private static final String PASSWORD_KEY = "PASSWORD";
+    private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
+    private static final String GROUP_NAME_KEY = "GROUP_NAME";
+    private static final String LATITUDE_KEY = "LATITUDE";
+    private static final String LONGITUDE_KEY = "LONGITUDE";
+
+    Prefs(Context context) {
+        this.context = context;
+    }
+
+    private String getString(String key) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return null;
+        } else {
+            SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            return preferences.getString(key, null);
+        }
+    }
+
+    private void setString(String key, String val) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putString(key, val).apply();
+    }
+
+    private double getDouble(String key) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return 0;
+        }
+            SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            return Double.longBitsToDouble(preferences.getLong(key, 0));
+    }
+
+    private void setDouble(String key, double val) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putLong(key, Double.doubleToRawLongBits(val)).apply();
+    }
+
+    String getServerUrl() {
+        String url = getString(SERVER_URL_KEY);
+        if (url == null)
+            return DEFAULT_SERVER_URL;
+        else
+            return url;
+    }
+
+    void setServerUrl(String url) {
+        setString(SERVER_URL_KEY, url);
+    }
+
+    String getPassword() {
+        return getString(PASSWORD_KEY);
+    }
+
+    void setPassword(String password) {
+        setString(PASSWORD_KEY, password);
+    }
+
+    String getDeviceName() {
+        return getString(DEVICE_NAME_KEY);
+    }
+
+    void setDeviceName(String name) {
+        setString(DEVICE_NAME_KEY, name);
+    }
+
+    String getGroupName() {
+        return getString(GROUP_NAME_KEY);
+    }
+
+    void setGroupName(String name) {
+        setString(GROUP_NAME_KEY, name);
+    }
+
+    double getLatitude() {
+        return getDouble(LATITUDE_KEY);
+    }
+
+    void setLatitude(double val) {
+        setDouble(LATITUDE_KEY, val);
+    }
+
+    double getLongitude() {
+        return getDouble(LONGITUDE_KEY);
+    }
+
+    void setLongitude(double val) {
+        setDouble(LONGITUDE_KEY, val);
+    }
+}

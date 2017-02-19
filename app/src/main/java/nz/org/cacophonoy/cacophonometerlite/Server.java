@@ -1,7 +1,6 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -23,10 +22,8 @@ import cz.msebera.android.httpclient.Header;
  */
 
 class Server {
-    private static final String LOG_TAG = "Server.java";
+    private static final String LOG_TAG = Server.class.getName();
 
-    public static String SERVER_URL = "http://52.64.67.145:8888";       // Server URL
-    //public static String SERVER_URL = "http://192.168.1.13:8888";     // Local Server URL
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
     private static final String PING_URL =  "/ping";
     private static final String LOGIN_URL = "/authenticate_device";
@@ -43,7 +40,8 @@ class Server {
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
-        if (!ping()) {
+        Log.i(LOG_TAG, "Updating server connection status.");
+        if (!ping(context)) {
             Log.d(LOG_TAG, "Could not connect to server");
         } else {
             login(context);
@@ -55,9 +53,10 @@ class Server {
      * Use runPing instead if on main thread or want it to be asynchronous.
      * @return if got a response from server.
      */
-    private static boolean ping() {
+    private static boolean ping(Context context) {
         SyncHttpClient client = new SyncHttpClient();
-        client.get(SERVER_URL + PING_URL, null, new AsyncHttpResponseHandler() {
+        Prefs prefs = new Prefs(context);
+        client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -78,13 +77,16 @@ class Server {
      * @param context app context
      * @return if login was successful
      */
-    static boolean login(final Context context) {
+    private static boolean login(Context context) {
         // Get credentials from shared preferences.
-        SharedPreferences prefs = context.getSharedPreferences(RegisterActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        String devicename = prefs.getString("devicename", null);
-        String password = prefs.getString("password", null);
-        String group = prefs.getString("group", null);
+        //SharedPreferences prefs = context.getSharedPreferences(SetupActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        Prefs prefs = new Prefs(context);
+
+        String devicename = prefs.getDeviceName();
+        String password = prefs.getPassword();
+        String group = prefs.getGroupName();
         if (devicename == null || password == null || group == null) {
+
             // One or more credentials are null, failed login.
             Log.d(LOG_TAG, "No credentials to login with.");
             loggedIn = false;
@@ -97,7 +99,8 @@ class Server {
         params.put("devicename", devicename);
         params.put("password", password);
 
-        client.post(SERVER_URL+LOGIN_URL, params, new AsyncHttpResponseHandler() {
+
+        client.post(prefs.getServerUrl()+LOGIN_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -153,8 +156,10 @@ class Server {
         params.put("password", password);
         params.put("group", group);
 
+        final Prefs prefs = new Prefs(context);
+
         // Sent Post request.
-        client.post(SERVER_URL + REGISTER_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl() + REGISTER_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -164,10 +169,9 @@ class Server {
                     if (joRes.getBoolean("success")) {
                         loggedIn = true;
                         token = joRes.getString("token");
-                        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-                        prefs.edit().putString("devicename", devicename).apply();
-                        prefs.edit().putString("password", password).apply();
-                        prefs.edit().putString("group", group).apply();
+                        prefs.setDeviceName(devicename);
+                        prefs.setGroupName(group);
+                        prefs.setPassword(password);
                     } else {
                         // Failed register.
                         loggedIn = false;
@@ -194,12 +198,7 @@ class Server {
      * @param data metadata.
      * @return If upload was successful
      */
-    static boolean uploadAudioRecording(File audioFile, JSONObject data) {
-        if (uploading) {
-            Log.d(LOG_TAG, "Already uploading. Wait until last upload is finished.");
-            return false;
-        }
-        uploading = true;
+    static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
 
         if (audioFile == null || data == null) {
             Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
@@ -210,8 +209,10 @@ class Server {
 
         // Check that there is a JWT (JSON Web Token)
         if (token == null) {
-            Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
-            return false; // Can't upload without JWT, login/register device to get JWT.
+            if (!login(context)) {
+                Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
+                return false; // Can't upload without JWT, login/register device to get JWT.
+            }
         }
 
         // Building POST request
@@ -226,8 +227,16 @@ class Server {
             return false;
         }
 
+        if (uploading) {
+            Log.d(LOG_TAG, "Already uploading. Wait until last upload is finished.");
+            return false;
+        }
+        uploading = true;
+
+        Prefs prefs = new Prefs(context);
+
         // Send request
-        client.post(SERVER_URL + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {

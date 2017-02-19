@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Cacophonometer Lite</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_setup">SetupActivity</string>
+    <string name="registered_true">Registered: ✔</string>
+    <string name="registered_false">Registered: ✘</string>
+    <string name="connected_to_server_true">Connected To Server: ✔</string>
+    <string name="connected_to_server_false">Connected To Server: ✘</string>
+    <string name="logged_in_true">Device logged In: ✔</string>
+    <string name="logged_in_false">Device logged In: ✘</string>
+    <string name="required_permissions_true">Required Permissions: ✔</string>
+    <string name="required_permissions_false">Required Permissions: ✘</string>
+    <string name="not_registered">Device not registered.</string>
+
 </resources>

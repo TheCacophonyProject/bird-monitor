@@ -2,6 +2,7 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -9,25 +10,20 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-import static nz.org.cacophonoy.cacophonometerlite.RegisterActivity.token;
+class UploadFiles implements Runnable{ // http://stackoverflow.com/questions/15666260/urlconnection-android-4-2-doesnt-work
+    private static final String LOG_TAG = UploadFiles.class.getName();
+
+    private Context context = null;
+
+    UploadFiles(Context context) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Making UploadFile without a context. context is needed for this.");
+        }
+        this.context = context;
+    }
 
 
-public class UploadFiles implements Runnable{ // http://stackoverflow.com/questions/15666260/urlconnection-android-4-2-doesnt-work
-
-    private static final String LOG_TAG = "UploadFiles";
-
-//    public static void uploadFiles(){
-//
-//        File recordingsFolder = Record.getRecordingsFolder();
-//        File recordingFiles[] = recordingsFolder.listFiles();
-//        for (File aFile : recordingFiles ){
-//            System.out.println("File name is " + aFile.getName());
-//            sendFile(aFile);
-//            aFile.delete();
-//        }
-//    }
-
-    static void sendFile(File aFile){
+    private void sendFile(File aFile){
         System.out.println("Going to upload file " + aFile.getName());
         Log.i(LOG_TAG, "sendFile: Start");
 
@@ -50,8 +46,10 @@ public class UploadFiles implements Runnable{ // http://stackoverflow.com/questi
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
 
+        Prefs prefs = new Prefs(context);
 
         try {
+            audioRecording.put("location", "Lat: "+prefs.getLatitude()+", Lon: "+prefs.getLongitude());
             audioRecording.put("duration", 6);
             audioRecording.put("localFilePath", localFilePath);
             audioRecording.put("recordingDateTime", recordingDateTime);
@@ -60,17 +58,18 @@ public class UploadFiles implements Runnable{ // http://stackoverflow.com/questi
             e.printStackTrace();
         }
 
-        Server.uploadAudioRecording(aFile, audioRecording);
+        Server.uploadAudioRecording(aFile, audioRecording, context);
     }
 
     @Override
     public void run() {
-        File recordingsFolder = nz.org.cacophonoy.cacophonometerlite.Record.getRecordingsFolder();
+        File recordingsFolder = Util.getRecordingsFolder();
         File recordingFiles[] = recordingsFolder.listFiles();
         for (File aFile : recordingFiles ){
             System.out.println("File name is " + aFile.getName());
             sendFile(aFile);
-            aFile.delete();
+            if (!aFile.delete())
+                Log.w(LOG_TAG, "Deleting audio file failed");
         }
     }
 }

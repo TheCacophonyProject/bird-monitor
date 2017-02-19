@@ -17,7 +17,7 @@
         android:id="@+id/textView" />
 
     <Button
-        android:text="Register Device"
+        android:text="Setup Device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"

@@ -4,10 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +27,6 @@ import java.util.List;
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
-    public static final String PREFS_NAME = "Cacophony_App";
-    private PendingIntent pendingIntent;
     public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
     /**
@@ -39,7 +35,7 @@ public class MainActivity extends Activity {
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
-            Log.d(TAG, "Received message.");
+            Log.d(TAG, "Main activity received message.");
             switch (inputMessage.what) {
                 case RESUME:
                     onResume();
@@ -66,14 +62,11 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        Intent myIntent = new Intent(MainActivity.this, MyReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
+        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
@@ -84,7 +77,6 @@ public class MainActivity extends Activity {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
-
         refreshVitals();
     } //end onCreate
 
@@ -94,28 +86,28 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         checkPermissions();
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(RegisterActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        Prefs prefs = new Prefs(getApplicationContext());
 
         // Device registered text
         TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
-        if (prefs.getString("group", null) != null)
-            registered.setText("Registered: ✔");
+        if (prefs.getGroupName() != null)
+            registered.setText(R.string.registered_true);
         else
-            registered.setText("Registered: ✘");
+            registered.setText(R.string.registered_false);
 
         // Server connection text.
         TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
         if (Server.serverConnection)
-            connectToServerText.setText("Connected To Server: ✔");
+            connectToServerText.setText(R.string.connected_to_server_true);
         else
-            connectToServerText.setText("Connected To Server: ✘");
+            connectToServerText.setText(R.string.connected_to_server_false);
 
         // Logged In text.
         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
         if (Server.loggedIn)
-            loggedInText.setText("Device logged In: ✔");
+            loggedInText.setText(R.string.logged_in_true);
         else
-            loggedInText.setText("Device logged In: ✘");
+            loggedInText.setText(R.string.logged_in_false);
 
         super.onResume();
     }
@@ -133,10 +125,10 @@ public class MainActivity extends Activity {
 
         TextView permissionText = (TextView) findViewById(R.id.appPermissionText);
         if (storagePermission && microphonePermission && locationPermission) {
-            permissionText.setText("Required Permissions: ✔");
+            permissionText.setText(R.string.required_permissions_true);
             return;
         } else {
-            permissionText.setText("Required Permissions: ✘");
+            permissionText.setText(R.string.required_permissions_false);
         }
 
         List<String> missingPermissionList = new ArrayList<>();
@@ -151,17 +143,18 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Starts RegisterActivity.
+     * Starts SetupActivity.
      * @param v View
      */
     public void register(View v) {
-        Intent intent = new Intent(this, RegisterActivity.class);
+        Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
     }
 
     public void testRecording(View v) {
         Log.d(TAG, "Test recording button.");
-        Intent intent = new Intent(MainActivity.this, MyReceiver.class);
+
+        Intent intent = new Intent(MainActivity.this, StartRecordingReceiver.class);
         sendBroadcast(intent);
     }
 
@@ -177,6 +170,7 @@ public class MainActivity extends Activity {
      * Check the vitals again and update the UI.
      */
     public void refreshVitals() {
+        Toast.makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
         Thread server = new Thread() {
             @Override
             public void run() {
@@ -184,7 +178,6 @@ public class MainActivity extends Activity {
                 Message message = handler.obtainMessage();
                 message.what = RESUME;
                 message.sendToTarget();
-                Log.d(TAG, "Sent message");
             }
         };
         server.start();
