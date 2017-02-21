@@ -35,6 +35,7 @@ class Server {
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
 
+
     /**
      * Will ping server and try to login.
      * @param context app context
@@ -110,13 +111,17 @@ class Server {
                     if (joRes.getBoolean("success")) {
                         Log.i("Login", "Successful login.");
                         loggedIn = true;
-                        token = joRes.getString("token");  // Save JWT (JSON Web Token)
+                        setToken(joRes.getString("token"));  // Save JWT (JSON Web Token)
+
+
                     } else {
                         loggedIn = false;
-                        token = null;
+                        setToken(null);
                     }
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "Error with parsing register response into a JSON.");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -128,7 +133,7 @@ class Server {
                 } else {
                     loggedIn = false;
                 }
-                token = null;
+                setToken(null);
             }
         });
         return loggedIn;
@@ -168,10 +173,17 @@ class Server {
                     JSONObject joRes = new JSONObject(responseString);
                     if (joRes.getBoolean("success")) {
                         loggedIn = true;
-                        token = joRes.getString("token");
+                        setToken(joRes.getString("token"));
+
+                        // look at web token
+                        String deviceID = Util.getDeviceID(getToken());
+                        prefs.setDeviceId(deviceID);
+
                         prefs.setDeviceName(devicename);
                         prefs.setGroupName(group);
                         prefs.setPassword(password);
+
+                        prefs.setDeviceId(deviceID);
                     } else {
                         // Failed register.
                         loggedIn = false;
@@ -179,6 +191,8 @@ class Server {
                 } catch (JSONException e) {
                     loggedIn = false;
                     Log.e(LOG_TAG, "Error with parsing register response into a JSON");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -208,7 +222,7 @@ class Server {
         System.out.println("Going to upload file " + audioFile.getName());
 
         // Check that there is a JWT (JSON Web Token)
-        if (token == null) {
+        if (getToken() == null) {
             if (!login(context)) {
                 Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
                 return false; // Can't upload without JWT, login/register device to get JWT.
@@ -217,7 +231,7 @@ class Server {
 
         // Building POST request
         SyncHttpClient client = new SyncHttpClient();
-        client.addHeader("Authorization", token);
+        client.addHeader("Authorization", getToken());
         RequestParams params = new RequestParams();
         params.put("data", data.toString());
         try {
@@ -255,5 +269,13 @@ class Server {
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
         return uploadSuccess;
+    }
+
+    public static String getToken() {
+        return token;
+    }
+
+    public static void setToken(String token) {
+        Server.token = token;
     }
 }

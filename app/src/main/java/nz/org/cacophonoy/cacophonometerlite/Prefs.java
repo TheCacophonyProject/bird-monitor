@@ -23,6 +23,7 @@ class Prefs {
     private static final String GROUP_NAME_KEY = "GROUP_NAME";
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
+    private static final String DEVICE_ID = "UNKNOWN";
 
     Prefs(Context context) {
         this.context = context;
@@ -115,5 +116,9 @@ class Prefs {
 
     void setLongitude(double val) {
         setDouble(LONGITUDE_KEY, val);
+    }
+
+    void setDeviceId(String deviceID) {
+        setString(DEVICE_ID, deviceID);
     }
 }

@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
+import static android.R.attr.delay;
 import static android.content.Context.ALARM_SERVICE;
 
 
@@ -38,7 +39,8 @@ public class BootReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        long delay = 60 * 1000 * 5; // 5 minutes
+//        long delay = 60 * 1000 * 5; // 5 minutes
+        long delay = 60 * 1000 ; // 1 minutes
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);

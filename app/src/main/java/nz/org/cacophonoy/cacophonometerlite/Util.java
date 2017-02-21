@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 class Util {
     private static final String LOG_TAG = Util.class.getName();
@@ -62,5 +66,31 @@ class Util {
             }
         }
         return recordingFolder;
+    }
+
+    public static String getDeviceID(String webToken) throws Exception {
+        String webTokenBody =  Util.decoded(webToken);
+        JSONObject jObject = new JSONObject(webTokenBody);
+       return jObject.getString("id");
+    }
+
+    public static String decoded(String JWTEncoded) throws Exception {
+        // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
+        String webTokenBody = null;
+        try {
+            String[] split = JWTEncoded.split("\\.");
+            Log.d("JWT_DECODED", "Header: " + getJson(split[0]));
+
+           // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
+            webTokenBody = getJson(split[1]);
+        } catch (UnsupportedEncodingException e) {
+            //Error
+        }
+        return webTokenBody;
+    }
+
+    private static String getJson(String strEncoded) throws UnsupportedEncodingException{
+        byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
+        return new String(decodedBytes, "UTF-8");
     }
 }

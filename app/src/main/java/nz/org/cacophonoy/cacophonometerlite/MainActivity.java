@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.delay;
+
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
@@ -73,7 +75,8 @@ public class MainActivity extends Activity {
 //        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 //                SystemClock.elapsedRealtime() ,
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
-        long delay = 60 * 1000 * 5; // 5 minutes
+//        long delay = 60 * 1000 * 5; // 5 minutes
+        long delay = 60 * 1000 ; // 1 minutes
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
@@ -108,6 +111,15 @@ public class MainActivity extends Activity {
             loggedInText.setText(R.string.logged_in_true);
         else
             loggedInText.setText(R.string.logged_in_false);
+
+        // Device ID text.
+        TextView deviceIDText = (TextView) findViewById(R.id.deviceIDText);
+        try {
+            deviceIDText.setText("Device ID " + Util.getDeviceID(Server.getToken()));
+        } catch (Exception e) {
+            Log.i(TAG, "Device ID not available");
+        }
+
 
         super.onResume();
     }
