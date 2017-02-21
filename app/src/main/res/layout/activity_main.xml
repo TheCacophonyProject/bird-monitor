@@ -13,14 +13,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CacophonometerLite"
-        android:id="@+id/textView" />
+        android:text="Cacophonometer Lite"
+        android:id="@+id/appNameVersionText" />
 
     <Button
         android:text="Setup Device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/appNameVersionText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/button_goto_register"

@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import nz.org.cacophonoy.cacophonometerlite.BuildConfig;
 
 import static android.R.attr.delay;
 
@@ -120,7 +121,11 @@ public class MainActivity extends Activity {
             Log.i(TAG, "Device ID not available");
         }
 
-
+        // Application name text  appNameVersionText
+        // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
+        String versionName = BuildConfig.VERSION_NAME;
+        TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
+        versionNameText.setText("Cacophonometer Lite " + versionName);
         super.onResume();
     }
 
