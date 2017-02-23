@@ -71,6 +71,7 @@ class Record implements Runnable {
             message.what = StartRecordingReceiver.RECORDING_FAILED;
             message.sendToTarget();
             Log.e(LOG_TAG, "Setup recording failed.");
+            Log.e(LOG_TAG, "Could be due to lack of sdcard");
             return false;
         }
 

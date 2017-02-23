@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -90,6 +92,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         checkPermissions();
+
         Prefs prefs = new Prefs(getApplicationContext());
 
         // Device registered text
@@ -199,4 +202,6 @@ public class MainActivity extends Activity {
         };
         server.start();
     }
+
+
 }
