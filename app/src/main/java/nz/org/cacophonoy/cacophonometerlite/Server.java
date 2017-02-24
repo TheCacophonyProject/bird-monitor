@@ -1,6 +1,7 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -41,7 +42,9 @@ class Server {
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
+        turnOnWifi(context);
         Log.i(LOG_TAG, "Updating server connection status.");
+
         if (!ping(context)) {
             Log.d(LOG_TAG, "Could not connect to server");
         } else {
@@ -55,6 +58,7 @@ class Server {
      * @return if got a response from server.
      */
     private static boolean ping(Context context) {
+        turnOnWifi(context);
         SyncHttpClient client = new SyncHttpClient();
         Prefs prefs = new Prefs(context);
         client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
@@ -79,6 +83,7 @@ class Server {
      * @return if login was successful
      */
     private static boolean login(Context context) {
+        turnOnWifi(context);
         // Get credentials from shared preferences.
         //SharedPreferences prefs = context.getSharedPreferences(SetupActivity.PREFS_NAME, Context.MODE_PRIVATE);
         Prefs prefs = new Prefs(context);
@@ -146,6 +151,8 @@ class Server {
      * @return If the device successfully registered.
      */
     static boolean register(final String group, final Context context) {
+        turnOnWifi(context);
+
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
             Log.i("Register", "Invalid group name: "+group);
@@ -213,7 +220,7 @@ class Server {
      * @return If upload was successful
      */
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-
+        turnOnWifi(context);
         if (audioFile == null || data == null) {
             Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
             return false;
@@ -268,6 +275,7 @@ class Server {
         });
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
+        turnOffWifi(context);
         return uploadSuccess;
     }
 
@@ -277,5 +285,19 @@ class Server {
 
     public static void setToken(String token) {
         Server.token = token;
+    }
+
+    public static void turnOnWifi(Context context){
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (!wifi.isWifiEnabled()) {
+            wifi.setWifiEnabled(true);
+        }
+    }
+
+    public static void turnOffWifi(Context context){
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifi.isWifiEnabled()) {
+            wifi.setWifiEnabled(false);
+        }
     }
 }

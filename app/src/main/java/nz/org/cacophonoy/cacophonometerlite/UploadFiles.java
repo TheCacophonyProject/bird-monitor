@@ -77,13 +77,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
 
     @Override
     public void run() {
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        try {
-            // http://stackoverflow.com/questions/3930990/android-how-to-enable-disable-wifi-or-internet-connection-programmatically
 
-            if (!wifi.isWifiEnabled()) {
-                wifi.setWifiEnabled(true);
-            }
             File recordingsFolder = Util.getRecordingsFolder();
             File recordingFiles[] = recordingsFolder.listFiles();
             if (recordingFiles != null) {
@@ -94,18 +88,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
                         Log.w(LOG_TAG, "Deleting audio file failed");
                 }
             }
-        } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
-        } finally {
-            if (wifi.isWifiEnabled()) {
-                // Only turn off wifi if we already have a token (otherwise hard to register device when first installing)
-                if (Server.getToken() != null){
-                    wifi.setWifiEnabled(false);
-                }
-
-            }
-        }
-    }
+                   }
 
     public boolean isBatteryCharging() {
         // https://developer.android.com/training/monitoring-device-state/battery-monitoring.html

@@ -4,6 +4,7 @@ package nz.org.cacophonoy.cacophonometerlite;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
@@ -93,4 +94,6 @@ class Util {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
         return new String(decodedBytes, "UTF-8");
     }
+
+
 }
