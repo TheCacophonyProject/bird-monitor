@@ -98,7 +98,11 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             Log.e(LOG_TAG, e.getMessage());
         } finally {
             if (wifi.isWifiEnabled()) {
-                wifi.setWifiEnabled(false);
+                // Only turn off wifi if we already have a token (otherwise hard to register device when first installing)
+                if (Server.getToken() != null){
+                    wifi.setWifiEnabled(false);
+                }
+
             }
         }
     }
