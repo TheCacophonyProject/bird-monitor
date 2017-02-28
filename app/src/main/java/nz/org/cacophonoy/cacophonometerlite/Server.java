@@ -275,7 +275,17 @@ class Server {
         });
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
-        turnOffWifi(context);
+        // Only turn wifi off if battery is less than 95% or battery isn't charging
+        try {
+            boolean batteryCharging =  data.getBoolean("batteryCharging");
+            double batteryLevel = data.getDouble("batteryLevel");
+            if (!batteryCharging || batteryLevel < 0.95){
+                turnOffWifi(context);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return uploadSuccess;
     }
 
