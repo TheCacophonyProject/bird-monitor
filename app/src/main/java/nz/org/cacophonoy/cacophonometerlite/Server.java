@@ -276,6 +276,7 @@ class Server {
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
         // Only turn wifi off if battery is less than 95% or battery isn't charging
+        //
         try {
             boolean batteryCharging =  data.getBoolean("batteryCharging");
             double batteryLevel = data.getDouble("batteryLevel");
