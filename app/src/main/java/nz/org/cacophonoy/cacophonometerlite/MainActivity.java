@@ -79,7 +79,8 @@ public class MainActivity extends Activity {
 //                SystemClock.elapsedRealtime() ,
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 //        long delay = 60 * 1000 * 5; // 5 minutes
-        long delay = 60 * 1000 ; // 1 minutes
+       // long delay = 60 * 1000 ; // 1 minutes
+        long delay = 1000 * 60  * 10 ; // 10 minutes
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
