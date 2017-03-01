@@ -15,8 +15,8 @@ import java.util.Locale;
 class Record implements Runnable {
     private static final String LOG_TAG = Record.class.getName();
 
-   // private static final long RECORD_TIME = 6 * 1000; // six seconds
-    private static final long RECORD_TIME = 100; // 0.1 second
+    private static final long RECORD_TIME = 6 * 1000; // six seconds
+ //   private static final long RECORD_TIME = 100; // 0.1 second
 
 
     private Context context = null;
