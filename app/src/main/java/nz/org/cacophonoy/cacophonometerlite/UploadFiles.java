@@ -68,6 +68,10 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("batteryCharging", batteryCharging);
             audioRecording.put("batteryLevel", batteryLevel);
 
+            // hack for now to see battery status
+            audioRecording.put("location", "Battery charging: " + batteryCharging + ", Battery Level: " + batteryLevel);
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

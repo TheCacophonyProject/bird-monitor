@@ -278,9 +278,10 @@ class Server {
         // Only turn wifi off if battery is less than 95% or battery isn't charging
         //
         try {
-            boolean batteryCharging =  data.getBoolean("batteryCharging");
+        //    boolean batteryCharging =  data.getBoolean("batteryCharging");
             double batteryLevel = data.getDouble("batteryLevel");
-            if (!batteryCharging || batteryLevel < 0.95){
+
+            if (batteryLevel < 0.99){// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
                 turnOffWifi(context);
             }
         } catch (JSONException e) {
