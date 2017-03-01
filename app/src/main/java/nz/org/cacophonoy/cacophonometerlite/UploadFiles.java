@@ -56,7 +56,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String recordingTime = hour + ":" + minute + ":" + second;
 
         String  batteryStatus = getBatteryStatus();
-        float batteryLevel = getBatteryLevel();
+        float batteryLevel = Util.getBatteryLevel(context);
 
 
         Prefs prefs = new Prefs(context);
@@ -133,13 +133,5 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
 //        }
     }
 
-    public float getBatteryLevel() {
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-        float batteryPct = level / (float) scale;
-        return batteryPct;
-    }
 }

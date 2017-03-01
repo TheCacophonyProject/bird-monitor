@@ -3,8 +3,11 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
@@ -95,5 +98,14 @@ class Util {
         return new String(decodedBytes, "UTF-8");
     }
 
+    public static float getBatteryLevel(Context context) {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        float batteryPct = level / (float) scale;
+        return batteryPct;
+    }
 
 }
