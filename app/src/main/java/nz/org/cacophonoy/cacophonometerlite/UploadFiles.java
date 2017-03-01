@@ -14,6 +14,9 @@ import org.json.JSONObject;
 import java.io.File;
 
 import static android.os.BatteryManager.BATTERY_STATUS_CHARGING;
+import static android.os.BatteryManager.BATTERY_STATUS_FULL;
+import static android.os.BatteryManager.BATTERY_STATUS_NOT_CHARGING;
+import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
 
 class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15666260/urlconnection-android-4-2-doesnt-work
     private static final String LOG_TAG = UploadFiles.class.getName();
@@ -52,7 +55,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
 
-        boolean batteryCharging = isBatteryCharging();
+        String  batteryStatus = getBatteryStatus();
         float batteryLevel = getBatteryLevel();
 
 
@@ -65,11 +68,11 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("recordingDateTime", recordingDateTime);
             audioRecording.put("recordingTime", recordingTime);
 
-            audioRecording.put("batteryCharging", batteryCharging);
+            audioRecording.put("batteryCharging", batteryStatus);
             audioRecording.put("batteryLevel", batteryLevel);
 
             // hack for now to see battery status
-            audioRecording.put("location", "Battery charging: " + batteryCharging + ", Battery Level: " + batteryLevel);
+            audioRecording.put("location", "Battery status: " + batteryStatus + ", Battery Level: " + batteryLevel);
 
 
         } catch (JSONException e) {
@@ -94,18 +97,40 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             }
                    }
 
-    public boolean isBatteryCharging() {
+    public String getBatteryStatus() {
         // https://developer.android.com/training/monitoring-device-state/battery-monitoring.html
         // http://stackoverflow.com/questions/24934260/intentreceiver-components-are-not-allowed-to-register-to-receive-intents-when
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
         // Are we charging / charged?
         int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-            return true;
-        } else {
-            return false;
+
+        String batteryStatusToReturn;
+        switch (status){
+            case BatteryManager.BATTERY_STATUS_CHARGING: batteryStatusToReturn = "CHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_DISCHARGING: batteryStatusToReturn = "DISCHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_NOT_CHARGING: batteryStatusToReturn = "NOT_CHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_FULL: batteryStatusToReturn = "FULL";
+                break;
+            case BatteryManager.BATTERY_STATUS_UNKNOWN: batteryStatusToReturn = "UNKNOWN";
+                break;
+            default: batteryStatusToReturn = Integer.toString(status);
         }
+        return batteryStatusToReturn;
+
+//        int isCharging = BatteryManager.BATTERY_STATUS_CHARGING
+//        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+//                status == BATTERY_STATUS_FULL;
+//        System.out.println("isCharging " + isCharging);
+//
+//        if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     public float getBatteryLevel() {
