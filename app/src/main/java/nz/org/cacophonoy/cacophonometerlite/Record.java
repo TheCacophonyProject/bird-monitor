@@ -16,7 +16,9 @@ class Record implements Runnable {
     private static final String LOG_TAG = Record.class.getName();
 
   //  private static final long RECORD_TIME = 6 * 1000; // six seconds
-    private static final long RECORD_TIME = 100; // 0.1 second
+  //  private static final long RECORD_TIME = 100; // 0.1 second
+    private static long recordTimeSeconds = 0; //  set it later
+
 
 
     private Context context = null;
@@ -41,6 +43,8 @@ class Record implements Runnable {
             message.sendToTarget();
             return;
         }
+        Prefs prefs = new Prefs(context);
+        recordTimeSeconds =  (long)prefs.getRecordingDuration();
         makeRecording(handler);
         UploadFiles uf = new UploadFiles(context);
         uf.run();
@@ -49,6 +53,7 @@ class Record implements Runnable {
 
     private static boolean makeRecording(Handler handler){
         Log.i(LOG_TAG, "Make a recording");
+
 
         // Get recording file.
         Date date = new Date(System.currentTimeMillis());
@@ -87,7 +92,7 @@ class Record implements Runnable {
 
         // Sleep for duration of recording.
         try {
-            Thread.sleep(RECORD_TIME);
+            Thread.sleep(recordTimeSeconds * 1000);
         } catch (InterruptedException e) {
             Log.e(LOG_TAG, "Failed sleeping in recording thread.");
             e.printStackTrace();

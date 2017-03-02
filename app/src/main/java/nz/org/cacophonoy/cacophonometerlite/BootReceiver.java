@@ -41,7 +41,10 @@ public class BootReceiver extends BroadcastReceiver {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 //        long delay = 60 * 1000 * 5; // 5 minutes
        // long delay = 60 * 1000 ; // 1 minutes
-        long delay = 1000 * 60  * 10 ; // 10 minutes
+        Prefs prefs = new Prefs(context);
+
+        long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
+        long delay = 1000 * timeBetweenRecordingsSeconds ;
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);

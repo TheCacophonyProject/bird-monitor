@@ -4,11 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,9 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import nz.org.cacophonoy.cacophonometerlite.BuildConfig;
-
-import static android.R.attr.delay;
 
 
 public class MainActivity extends Activity {
@@ -80,7 +75,13 @@ public class MainActivity extends Activity {
 //                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 //        long delay = 60 * 1000 * 5; // 5 minutes
        // long delay = 60 * 1000 ; // 1 minutes
-        long delay = 1000 * 60  * 10 ; // 10 minutes
+        Prefs prefs = new Prefs(this.getApplicationContext());
+        prefs.setRecordingDurationSeconds();
+        prefs.setTimeBetweenRecordingsSeconds();
+
+        long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
+        long delay = 1000 * timeBetweenRecordingsSeconds ;
+        //long delay = 1000 * 60  * 10 ; // 10 minutes
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);

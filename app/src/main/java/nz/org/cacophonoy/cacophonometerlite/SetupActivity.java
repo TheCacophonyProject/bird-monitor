@@ -31,6 +31,7 @@ public class SetupActivity extends Activity {
         EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
         Prefs prefs = new Prefs(getApplicationContext());
         serverUrlEditText.setText(prefs.getServerUrl());
+
     }
 
     @Override

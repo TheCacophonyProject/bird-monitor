@@ -2,13 +2,16 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -106,6 +109,51 @@ class Util {
 
         float batteryPct = level / (float) scale;
         return batteryPct;
+    }
+
+    public static String getBatteryStatus(Context context) {
+        // https://developer.android.com/training/monitoring-device-state/battery-monitoring.html
+        // http://stackoverflow.com/questions/24934260/intentreceiver-components-are-not-allowed-to-register-to-receive-intents-when
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
+        // Are we charging / charged?
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+
+        String batteryStatusToReturn;
+        switch (status){
+            case BatteryManager.BATTERY_STATUS_CHARGING: batteryStatusToReturn = "CHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_DISCHARGING: batteryStatusToReturn = "DISCHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_NOT_CHARGING: batteryStatusToReturn = "NOT_CHARGING";
+                break;
+            case BatteryManager.BATTERY_STATUS_FULL: batteryStatusToReturn = "FULL";
+                break;
+            case BatteryManager.BATTERY_STATUS_UNKNOWN: batteryStatusToReturn = "UNKNOWN";
+                break;
+            default: batteryStatusToReturn = Integer.toString(status);
+        }
+        return batteryStatusToReturn;
+
+
+    }
+
+    /**
+     * Gets the state of Airplane Mode.
+     *http://stackoverflow.com/questions/4319212/how-can-one-detect-airplane-mode-on-android
+     * @param context
+     * @return true if enabled.
+     */
+    @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static boolean isAirplaneModeOn(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        } else {
+            return Settings.Global.getInt(context.getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        }
     }
 
 }
