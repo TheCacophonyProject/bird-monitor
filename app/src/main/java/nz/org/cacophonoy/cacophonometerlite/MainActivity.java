@@ -4,15 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -131,6 +135,8 @@ public class MainActivity extends Activity {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
         versionNameText.setText("Cacophonometer Lite " + versionName);
+
+        putIntoAirplaneMode();
         super.onResume();
     }
 
@@ -205,5 +211,40 @@ public class MainActivity extends Activity {
         server.start();
     }
 
+private void putIntoAirplaneMode(){ // to save power
+//    //http://stackoverflow.com/posts/5533943/edit
+//    boolean isEnabled = Settings.System.getInt(
+//            getContentResolver(),
+//            Settings.System.AIRPLANE_MODE_ON, 2) == 1;
+    boolean airplaneModeOn = Util.isAirplaneModeOn(getApplicationContext());
+
+    if (!airplaneModeOn){
+        // Airplane mode is not on so might need to turn on
+        int sdkLevel = Build.VERSION.SDK_INT;
+        if (sdkLevel > 19) {
+            // Can not change airplane mode on devices running android sdk > 19 (that's 5.0 Lollipop)
+            // If there is no sim then ask the user to enable airplane mode
+            boolean simPresent = Util.isSimPresent(getApplicationContext());
+            if (!simPresent){
+                Toast.makeText(getApplicationContext(), "SAVE POWER - Enable Airplane/Flight mode", Toast.LENGTH_LONG).show();
+            }
+
+//            // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
+//            TelephonyManager tm = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
+//            if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT){
+//
+//            } else {
+//                System.out.println("The phone has a sim card");
+//            }
+
+            return;
+        }
+
+        // Only get here if sdk is 19 or below - this means we can enable/disable airplane mode programatically
+        // My testing seemed to show a bug (on android sdk 10) when checking to see if there was a sim
+        Util.enableAirplaneMode(getApplicationContext());
+
+    }
+}
 
 }

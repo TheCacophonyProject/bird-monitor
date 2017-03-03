@@ -13,8 +13,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -155,5 +157,41 @@ class Util {
                     Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         }
     }
+
+    public static void enableAirplaneMode(Context context){
+        //http://stackoverflow.com/posts/5533943/edit
+        Settings.System.putInt(
+                context.getContentResolver(),
+                Settings.System.AIRPLANE_MODE_ON, 1);
+
+// Post an intent to reload
+        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        intent.putExtra("state", true);
+        context.sendBroadcast(intent);
+    }
+
+    public static void disableAirplaneMode(Context context){
+        //http://stackoverflow.com/posts/5533943/edit
+        Settings.System.putInt(
+                context.getContentResolver(),
+                Settings.System.AIRPLANE_MODE_ON, 0);
+
+// Post an intent to reload
+        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        intent.putExtra("state", false);
+        context.sendBroadcast(intent);
+    }
+    public static boolean isSimPresent(Context context){
+        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
+        if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT){
+            //Toast.makeText(context, "SAVE POWER - Enable Airplane/Flight mode", Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+           // System.out.println("The phone has a sim card");
+            return true;
+        }
+    }
+
 
 }
