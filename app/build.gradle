@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    mavenCentral()
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.3"
@@ -29,4 +33,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
 }
