@@ -18,10 +18,14 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+import com.luckycatlabs.sunrisesunset.dto.Location;
+
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 
 class Util {
     private static final String LOG_TAG = Util.class.getName();
@@ -193,5 +197,40 @@ class Util {
         }
     }
 
+    /**
+     * Returns the sunrise time for the current device location
+     * @param context - for getting the location
+     * @return Calendar time of the sunrise
+     */
+    public static Calendar getSunrise(Context context){
+        Prefs prefs = new Prefs(context);
+        String lat = Double.toString(prefs.getLatitude());
+        String lon = Double.toString(prefs.getLongitude());
+
+        Location location = new Location(lat, lon);
+        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
+        Calendar officialSunrise = calculator.getOfficialSunriseCalendarForDate(Calendar.getInstance());
+
+        Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
+        return officialSunrise;
+    }
+
+    /**
+     * Returns the sunset time for the current device location
+     * @param context - for getting the location
+     * @return Calendar time of the sunset
+     */
+    public static Calendar getSunset(Context context){
+        Prefs prefs = new Prefs(context);
+        String lat = Double.toString(prefs.getLatitude());
+        String lon = Double.toString(prefs.getLongitude());
+
+        Location location = new Location(lat, lon);
+        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
+        Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(Calendar.getInstance());
+
+        Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
+        return officialSunset;
+    }
 
 }
