@@ -27,7 +27,7 @@ public class StartRecordingReceiver extends BroadcastReceiver
     @Override
     public void onReceive(final Context context, Intent intent) {
         // First check to see if battery level is greater than 70% - Abort if it isnt
-        if (Util.getBatteryLevel(context) < 0.7){
+        if (Util.getBatteryLevel(context) < 0.5){
             return;
         }
         Log.i(LOG_TAG, "Called receiver method");

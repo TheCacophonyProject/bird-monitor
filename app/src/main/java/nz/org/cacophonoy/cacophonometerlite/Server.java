@@ -1,7 +1,10 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -26,7 +29,7 @@ class Server {
     private static final String LOG_TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
-    private static final String PING_URL =  "/ping";
+    private static final String PING_URL = "/ping";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
 
@@ -39,10 +42,11 @@ class Server {
 
     /**
      * Will ping server and try to login.
+     *
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
-        turnOnWifi(context);
+        enableDataConnection(context);
         Log.i(LOG_TAG, "Updating server connection status.");
 
         if (!ping(context)) {
@@ -55,10 +59,11 @@ class Server {
     /**
      * Pings server. Can't be run on main thread as it does a synchronous http request.
      * Use runPing instead if on main thread or want it to be asynchronous.
+     *
      * @return if got a response from server.
      */
     private static boolean ping(Context context) {
-        turnOnWifi(context);
+        enableDataConnection(context);
         SyncHttpClient client = new SyncHttpClient();
         Prefs prefs = new Prefs(context);
         client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
@@ -79,11 +84,12 @@ class Server {
 
     /**
      * Will login and save JSON Web Token. Can't be run on main/UI thread as it does a synchronous http request.
+     *
      * @param context app context
      * @return if login was successful
      */
     private static boolean login(Context context) {
-        turnOnWifi(context);
+        enableDataConnection(context);
         // Get credentials from shared preferences.
         //SharedPreferences prefs = context.getSharedPreferences(SetupActivity.PREFS_NAME, Context.MODE_PRIVATE);
         Prefs prefs = new Prefs(context);
@@ -106,7 +112,7 @@ class Server {
         params.put("password", password);
 
 
-        client.post(prefs.getServerUrl()+LOGIN_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl() + LOGIN_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -146,16 +152,17 @@ class Server {
 
     /**
      * Does a synchronous http request to register the device. Can't be run on main/UI thread.
-     * @param group Name of group to register under.
+     *
+     * @param group   Name of group to register under.
      * @param context App context.
      * @return If the device successfully registered.
      */
     static boolean register(final String group, final Context context) {
-        turnOnWifi(context);
+        enableDataConnection(context);
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
-            Log.i("Register", "Invalid group name: "+group);
+            Log.i("Register", "Invalid group name: " + group);
             return false;
         }
         SyncHttpClient client = new SyncHttpClient();
@@ -215,12 +222,13 @@ class Server {
     /**
      * Does a synchronous http request to upload the file and JSON Object to the server as an audio
      * recording. Can't be run on main/UI thread.
+     *
      * @param audioFile recording.
-     * @param data metadata.
+     * @param data      metadata.
      * @return If upload was successful
      */
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-        turnOnWifi(context);
+        enableDataConnection(context);
         if (audioFile == null || data == null) {
             Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
             return false;
@@ -278,11 +286,11 @@ class Server {
         // Only turn wifi off if battery is less than 95% or battery isn't charging
         //
         try {
-        //    boolean batteryCharging =  data.getBoolean("batteryCharging");
+            //    boolean batteryCharging =  data.getBoolean("batteryCharging");
             double batteryLevel = data.getDouble("batteryLevel");
 
-            if (batteryLevel < 0.99){// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
-                turnOffWifi(context);
+            if (batteryLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
+                disableDataConnection(context);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -299,17 +307,41 @@ class Server {
         Server.token = token;
     }
 
-    public static void turnOnWifi(Context context){
+    public static void enableDataConnection(Context context) {
+        // Decided it was easiest to just turn on mobile (ie disable airplane mode) and turn on wifi
+        // Will phone use wifi if it available over mobile data?
+
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (!wifi.isWifiEnabled()) {
             wifi.setWifiEnabled(true);
         }
+
+        if (Util.isSimPresent(context)) {
+            // Disable airplane mode if required and can (can't change airplane mode on sdks above 19
+            if (Util.isAirplaneModeOn(context)) {
+                if (Build.VERSION.SDK_INT <= 19) {
+                    Util.disableAirplaneMode(context);
+                }
+            }
+
+        }
+
+
     }
 
-    public static void turnOffWifi(Context context){
+    public static void disableDataConnection(Context context) {
+        // Belts and braces - disable mobile and wif if possible
+
+        if (!Util.isAirplaneModeOn(context)) {
+            if (Build.VERSION.SDK_INT <= 19) {
+                Util.enableAirplaneMode(context);
+            }
+        }
+
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifi.isWifiEnabled()) {
             wifi.setWifiEnabled(false);
         }
     }
+
 }
