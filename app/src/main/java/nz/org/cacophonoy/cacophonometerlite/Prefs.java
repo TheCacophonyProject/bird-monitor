@@ -15,7 +15,8 @@ class Prefs {
 
 
     private static final String PREFS_NAME = "CacophonyPrefs";
-    private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
+    //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
+    private static final String DEFAULT_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
     //private static final String DEFAULT_SERVER_URL = "http://192.168.1.9:8888";       // Server URL
     private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
@@ -29,7 +30,7 @@ class Prefs {
 private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     //private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //3600 is one hour!
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
 
 
 
