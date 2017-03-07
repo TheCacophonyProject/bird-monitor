@@ -70,6 +70,14 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+       // myIntent.putExtra("type","repeating");
+        try {
+            myIntent.putExtra("type","repeating");
+            System.out.println("intent type " + myIntent.getExtras().getString("type"));
+        }catch (Exception e){
+            System.out.println("In MainActivity");
+            System.out.println(e.getLocalizedMessage());
+        }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);

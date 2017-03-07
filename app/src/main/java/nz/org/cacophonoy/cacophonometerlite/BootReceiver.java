@@ -36,6 +36,14 @@ public class BootReceiver extends BroadcastReceiver {
         t.start();
 
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+        try {
+            myIntent.putExtra("type","repeating");
+            System.out.println("intent type " + intent.getExtras().getString("type"));
+        }catch (Exception e){
+            System.out.println("In BootReceiver");
+            System.out.println(e.getLocalizedMessage());
+        }
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);

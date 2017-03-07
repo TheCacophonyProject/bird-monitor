@@ -30,7 +30,8 @@ class Prefs {
     private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     //private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
+    //private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //600 is ten minutes
 
 
 
