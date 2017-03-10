@@ -82,14 +82,14 @@ public class MainActivity extends Activity {
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() ,
-//                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
-//        long delay = 60 * 1000 * 5; // 5 minutes
-       // long delay = 60 * 1000 ; // 1 minutes
+
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
         prefs.setTimeBetweenRecordingsSeconds();
+        prefs.setDawnDuskOffsetLargeSeconds();
+        prefs.setDawnDuskOffsetSmallSeconds();
+        prefs.setDawnDuskOffsetLargeSeconds();
+        prefs.setLengthOfTwilightSeconds();
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;
@@ -108,6 +108,7 @@ public class MainActivity extends Activity {
         checkPermissions();
 
         Prefs prefs = new Prefs(getApplicationContext());
+
 
         // Device registered text
         TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
@@ -143,6 +144,7 @@ public class MainActivity extends Activity {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
         versionNameText.setText("Cacophonometer Lite " + versionName);
+
 
         putIntoAirplaneMode();
         super.onResume();

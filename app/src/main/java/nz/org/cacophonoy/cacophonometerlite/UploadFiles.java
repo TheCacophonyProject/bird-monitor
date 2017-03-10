@@ -64,6 +64,8 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("batteryCharging", batteryStatus);
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
+//            audioRecording.put("relativeToDawn", );
+//            audioRecording.put("relativeToDusk", );
 
             // hack for now to see battery status
         //    audioRecording.put("location", "Battery status: " + batteryStatus + ", Battery Level: " + batteryLevel + ", airplaneModeOn: " + airplaneModeOn);

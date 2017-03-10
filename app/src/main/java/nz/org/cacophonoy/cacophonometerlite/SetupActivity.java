@@ -81,6 +81,7 @@ public class SetupActivity extends Activity {
     };
 
     public void registerButton(View v) {
+        Server.enableDataConnection(getApplicationContext());
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         //Get Group from text field.

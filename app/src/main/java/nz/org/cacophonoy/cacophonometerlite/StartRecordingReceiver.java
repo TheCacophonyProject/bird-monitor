@@ -13,9 +13,6 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import static android.R.attr.configure;
-import static nz.org.cacophonoy.cacophonometerlite.DawnAlarms.configureDawnAlarms;
-
 public class StartRecordingReceiver extends BroadcastReceiver
 {
     private static final String LOG_TAG = StartRecordingReceiver.class.getName();
@@ -29,18 +26,31 @@ public class StartRecordingReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        try {
-            System.out.println("intent type " + intent.getExtras().getString("type"));
-            String alarmIntentType = intent.getExtras().getString("type");
-            if (alarmIntentType.equalsIgnoreCase("repeating")){
-                configureDawnAlarms(context);
-            }
-        }catch (Exception e){
-            System.out.println("b0000000000000000000000");
-            System.out.println(e.getLocalizedMessage());
+        // no point doing a recording if not logged in to server
+        if (!Server.loggedIn){
+            return;
         }
-        // First check to see if battery level is greater than 70% - Abort if it isnt
+        if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording
+            try {
 
+
+                System.out.println("intent type " + intent.getExtras().getString("type"));
+                String alarmIntentType = intent.getExtras().getString("type");
+//                if (alarmIntentType != null){ // will be null if
+                    if (alarmIntentType.equalsIgnoreCase("repeating")) {
+                        DawnDuskAlarms.configureDawnAlarms(context);
+                        DawnDuskAlarms.configureDuskAlarms(context);
+                    }
+                System.out.println("intent timeUri " + intent.getDataString());
+
+//                }
+
+            } catch (Exception e) {
+                System.out.println("b0000000000000000000000");
+                System.out.println(e.getLocalizedMessage());
+            }
+            // First check to see if battery level is greater than 70% - Abort if it isnt
+        }
         if (Util.getBatteryLevel(context) < 0.5){
             return;
         }

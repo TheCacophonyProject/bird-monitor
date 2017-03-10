@@ -88,7 +88,12 @@ class Record implements Runnable {
         message.sendToTarget();
 
         // Start recording.
-        mRecorder.start();
+        try {
+            mRecorder.start();
+        }catch (Exception e){
+            System.out.println("mRecorder.start " + e.getLocalizedMessage());
+            return false;
+        }
 
         // Sleep for duration of recording.
         try {

@@ -30,9 +30,17 @@ class Prefs {
     private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     //private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-    //private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //600 is ten minutes
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
+   // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //600 is ten minutes
 
+    private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
+    private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes
+
+    private static final String DAWN_DUSK_OFFSET_SMALL_KEY = "DAWN_DUSK_OFFSET_SMALL";
+    private static final double DAWN_DUSK_OFFSET_SMALL_SECONDS = 10 * 60; // 10 minutes
+
+    private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
+    private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 27 minutes http://www.gaisma.com/en/location/nelson.html
 
 
     Prefs(Context context) {
@@ -146,5 +154,29 @@ class Prefs {
 
     void setTimeBetweenRecordingsSeconds() {
         setDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_RECORDINGS_SECONDS);
+    }
+
+    double getDawnDuskOffsetLargeSeconds() {
+        return getDouble(DAWN_DUSK_OFFSET_LARGE_KEY);
+    }
+
+    void setDawnDuskOffsetLargeSeconds() {
+        setDouble(DAWN_DUSK_OFFSET_LARGE_KEY, DAWN_DUSK_OFFSET_LARGE_SECONDS);
+    }
+
+    double getDawnDuskOffsetSmallSeconds() {
+        return getDouble(DAWN_DUSK_OFFSET_SMALL_KEY);
+    }
+
+    void setDawnDuskOffsetSmallSeconds() {
+        setDouble(DAWN_DUSK_OFFSET_SMALL_KEY, DAWN_DUSK_OFFSET_SMALL_SECONDS);
+    }
+
+    double getLengthOfTwilightSeconds() {
+        return getDouble(LENGTH_OF_TWILIGHT_KEY);
+    }
+
+    void setLengthOfTwilightSeconds() {
+        setDouble(LENGTH_OF_TWILIGHT_KEY, LENGTH_OF_TWILIGHT_SECONDS);
     }
 }

@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
+import static android.media.CamcorderProfile.get;
+
 class Util {
     private static final String LOG_TAG = Util.class.getName();
 
@@ -202,15 +204,11 @@ class Util {
      * @param context - for getting the location
      * @return Calendar time of the sunrise
      */
-    public static Calendar getSunrise(Context context){
-        Prefs prefs = new Prefs(context);
-        String lat = Double.toString(prefs.getLatitude());
-        String lon = Double.toString(prefs.getLongitude());
+    public static Calendar getSunrise(Context context, Calendar todayOrTomorrow){
 
-        Location location = new Location(lat, lon);
+        Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-        Calendar officialSunrise = calculator.getOfficialSunriseCalendarForDate(Calendar.getInstance());
-
+        Calendar officialSunrise = calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
         Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
         return officialSunrise;
     }
@@ -220,17 +218,33 @@ class Util {
      * @param context - for getting the location
      * @return Calendar time of the sunset
      */
-    public static Calendar getSunset(Context context){
-        Prefs prefs = new Prefs(context);
-        String lat = Double.toString(prefs.getLatitude());
-        String lon = Double.toString(prefs.getLongitude());
+    public static Calendar getSunset(Context context, Calendar todayOrTomorrow){
 
-        Location location = new Location(lat, lon);
+        Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-        Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(Calendar.getInstance());
+        Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
 
         Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
         return officialSunset;
+    }
+
+    private static Location getLocation(Context context){
+        Prefs prefs = new Prefs(context);
+        String lat = null;
+        String lon = null;
+
+        if (prefs.getLatitude() == 0.0 && prefs.getLongitude() == 0.0){
+            // gps not yet set, so to avoid errors/too complex code to check, just use coordinates for Hamilton NZ
+            lat = Double.toString(-37.805294);
+            lon = Double.toString(175.306775);
+
+        }else{
+            lat = Double.toString(prefs.getLatitude());
+            lon = Double.toString(prefs.getLongitude());
+        }
+
+
+        return  new Location(lat, lon);
     }
 
 }
