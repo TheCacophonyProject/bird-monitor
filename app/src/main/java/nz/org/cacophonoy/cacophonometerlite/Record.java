@@ -9,8 +9,13 @@ import android.util.Log;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
+
+import static nz.org.cacophonoy.cacophonometerlite.StartRecordingReceiver.intentTimeUriMessage;
 
 class Record implements Runnable {
     private static final String LOG_TAG = Record.class.getName();
@@ -24,10 +29,12 @@ class Record implements Runnable {
     private Context context = null;
     private Handler handler = null;
 
+
     // Params to add: duration,
     Record(Context context, Handler handler) {
         this.context = context;
         this.handler =handler;
+
     }
 
     @Override
@@ -45,20 +52,43 @@ class Record implements Runnable {
         }
         Prefs prefs = new Prefs(context);
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
-        makeRecording(handler);
+        makeRecording(handler, context);
         UploadFiles uf = new UploadFiles(context);
         uf.run();
     }
 
 
-    private static boolean makeRecording(Handler handler){
+    private static boolean makeRecording(Handler handler, Context context){
         Log.i(LOG_TAG, "Make a recording");
 
 
         // Get recording file.
         Date date = new Date(System.currentTimeMillis());
+        // Calculate dawn and dusk offset
+        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+        System.out.println("nowToday " + nowToday);
+
+        Calendar dawn = Util.getDawn(context, nowToday);
+        System.out.println("dawn " + dawn);
+        long relativeToDawn  = dawn.getTimeInMillis() - nowToday.getTimeInMillis();
+        relativeToDawn  = relativeToDawn /1000; // now in seconds
+
+        Calendar dusk = Util.getDusk(context, nowToday);
+        long relativeToDusk  = dusk.getTimeInMillis() - nowToday.getTimeInMillis();
+        relativeToDusk  = relativeToDusk /1000; // now in seconds
+
         DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
-        String fileName = fileFormat.format(date)+".3gp";
+        String fileName = fileFormat.format(date);
+
+        if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)){
+            fileName += " relativeToDawn " + relativeToDawn;
+        }else{
+            fileName += " relativeToDusk " + relativeToDusk;
+        }
+        fileName += ".3gp";
+
+//        String fileName = fileFormat.format(date)+".3gp";
+
         File file = new File(Util.getRecordingsFolder(), fileName);
         String filePath = file.getAbsolutePath();
 

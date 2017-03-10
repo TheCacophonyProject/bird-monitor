@@ -21,6 +21,7 @@ public class StartRecordingReceiver extends BroadcastReceiver
     public static final int RECORDING_FAILED = 2;
     public static final int RECORDING_FINISHED = 3;
     public static final int NO_PERMISSIONS_TO_RECORD = 4;
+    public static  String intentTimeUriMessage = null;
 
     Context context = null;
 
@@ -30,6 +31,8 @@ public class StartRecordingReceiver extends BroadcastReceiver
         if (!Server.loggedIn){
             return;
         }
+
+
         if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording
             try {
 
@@ -40,8 +43,11 @@ public class StartRecordingReceiver extends BroadcastReceiver
                     if (alarmIntentType.equalsIgnoreCase("repeating")) {
                         DawnDuskAlarms.configureDawnAlarms(context);
                         DawnDuskAlarms.configureDuskAlarms(context);
+                    }else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")){
+                        intentTimeUriMessage = intent.getDataString();
+                        System.out.println("intent timeUri " + intentTimeUriMessage);
                     }
-                System.out.println("intent timeUri " + intent.getDataString());
+
 
 //                }
 

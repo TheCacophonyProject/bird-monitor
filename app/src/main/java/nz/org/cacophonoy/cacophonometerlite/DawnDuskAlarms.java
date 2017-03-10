@@ -129,7 +129,7 @@ public class DawnDuskAlarms {
         Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
-        myIntent.putExtra("type", "dawn");
+        myIntent.putExtra("type", "dusk");
 
         Calendar sunSetTodayCalendar = Util.getSunrise(context, nowToday);
         Calendar duskTodayCalendar = (Calendar) sunSetTodayCalendar.clone();
@@ -141,7 +141,7 @@ public class DawnDuskAlarms {
 
         duskTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds); // 40 minutes before dusk
         duskTomorrowCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
-        timeUri = Uri.parse("dawnMinus40Minutes");
+        timeUri = Uri.parse("duskMinusLargeOffset");
         myIntent.setData(timeUri);
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
@@ -154,7 +154,7 @@ public class DawnDuskAlarms {
 
         duskTodayCalendar.add(Calendar.SECOND, differenceBetweenSmallAndLarge); // now 10 minutes before dusk
         duskTomorrowCalendar.add(Calendar.SECOND, differenceBetweenSmallAndLarge);
-        timeUri = Uri.parse("dawnMinusSmallOffset");
+        timeUri = Uri.parse("duskMinusSmallOffset");
         myIntent.setData(timeUri);
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
@@ -165,7 +165,7 @@ public class DawnDuskAlarms {
 
         duskTodayCalendar.add(Calendar.SECOND, dawnDuskOffsetSmallSeconds); // now at dusk
         duskTomorrowCalendar.add(Calendar.SECOND, dawnDuskOffsetSmallSeconds);
-        timeUri = Uri.parse("atDawn");
+        timeUri = Uri.parse("atDusk");
         myIntent.setData(timeUri);
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
@@ -176,7 +176,7 @@ public class DawnDuskAlarms {
 
         duskTodayCalendar.add(Calendar.SECOND, dawnDuskOffsetSmallSeconds); // now 10 minutes after dusk
         duskTomorrowCalendar.add(Calendar.SECOND, dawnDuskOffsetSmallSeconds);
-        timeUri = Uri.parse("dawnPlusSmallOffset");
+        timeUri = Uri.parse("duskPlusSmallOffset");
         myIntent.setData(timeUri);
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
@@ -187,7 +187,7 @@ public class DawnDuskAlarms {
 
         duskTodayCalendar.add(Calendar.SECOND, differenceBetweenSmallAndLarge); // now 40 minutes after dusk
         duskTomorrowCalendar.add(Calendar.SECOND, differenceBetweenSmallAndLarge);
-        timeUri = Uri.parse("dawnPlusLargeOffset");
+        timeUri = Uri.parse("duskPlusLargeOffset");
         myIntent.setData(timeUri);
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {

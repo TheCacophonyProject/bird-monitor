@@ -41,6 +41,8 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String hour = fileNameParts[3];
         String minute = fileNameParts[4];
         String second = fileNameParts[5];
+        String relativeTo = fileNameParts[6];
+        String relativeToOffset = fileNameParts[7];
 
         String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
@@ -64,6 +66,12 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("batteryCharging", batteryStatus);
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
+            if (relativeTo.equalsIgnoreCase("relativeToDawn")){
+                audioRecording.put("relativeToDawn", relativeToOffset);
+            }
+            if (relativeTo.equalsIgnoreCase("relativeToDusk")){
+                audioRecording.put("relativeToDusk", relativeToOffset);
+            }
 //            audioRecording.put("relativeToDawn", );
 //            audioRecording.put("relativeToDusk", );
 

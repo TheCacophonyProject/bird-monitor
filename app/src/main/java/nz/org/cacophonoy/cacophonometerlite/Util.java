@@ -213,6 +213,15 @@ class Util {
         return officialSunrise;
     }
 
+    public static Calendar getDawn(Context context, Calendar todayOrTomorrow){
+        Prefs prefs = new Prefs(context);
+        Calendar sunRise = getSunrise( context,  todayOrTomorrow);
+        Calendar dawn = (Calendar) sunRise.clone();
+        int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
+        dawn.add(Calendar.SECOND, -lengthOfTwilight);
+        return dawn;
+    }
+
     /**
      * Returns the sunset time for the current device location
      * @param context - for getting the location
@@ -226,6 +235,15 @@ class Util {
 
         Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
         return officialSunset;
+    }
+
+    public static Calendar getDusk(Context context, Calendar todayOrTomorrow){
+        Prefs prefs = new Prefs(context);
+        Calendar sunSet = getSunset( context,  todayOrTomorrow);
+        Calendar dusk = (Calendar) sunSet.clone();
+        int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
+        dusk.add(Calendar.SECOND, lengthOfTwilight);
+        return dusk;
     }
 
     private static Location getLocation(Context context){
