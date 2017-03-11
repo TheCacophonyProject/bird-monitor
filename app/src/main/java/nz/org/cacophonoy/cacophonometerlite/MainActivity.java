@@ -91,6 +91,12 @@ public class MainActivity extends Activity {
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
 
+        // determine if there is a sim card - need to disable airplane mode to determine
+        Util.disableAirplaneMode(this.getApplicationContext());
+        boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
+        prefs.setSimCardDetected(isSimCardDetected);
+
+
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;
         //long delay = 1000 * 60  * 10 ; // 10 minutes
@@ -234,7 +240,9 @@ private void putIntoAirplaneMode(){ // to save power
         if (sdkLevel > 19) {
             // Can not change airplane mode on devices running android sdk > 19 (that's 5.0 Lollipop)
             // If there is no sim then ask the user to enable airplane mode
-            boolean simPresent = Util.isSimPresent(getApplicationContext());
+//            boolean simPresent = Util.isSimPresent(getApplicationContext());
+            Prefs prefs = new Prefs(getApplicationContext());
+            boolean simPresent = prefs.getSimCardDetected();
             if (!simPresent){
                 Toast.makeText(getApplicationContext(), "SAVE POWER - Enable Airplane/Flight mode", Toast.LENGTH_LONG).show();
             }

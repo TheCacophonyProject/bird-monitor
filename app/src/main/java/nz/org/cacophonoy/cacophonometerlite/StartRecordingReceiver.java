@@ -27,10 +27,10 @@ public class StartRecordingReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        // no point doing a recording if not logged in to server
-        if (!Server.loggedIn){
-            return;
-        }
+//        // no point doing a recording if not logged in to server
+//        if (!Server.loggedIn){
+//            return;
+//        }
 
 
         if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording

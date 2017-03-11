@@ -188,16 +188,16 @@ class Util {
         context.sendBroadcast(intent);
     }
     public static boolean isSimPresent(Context context){
-        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
-        if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT){
-            //Toast.makeText(context, "SAVE POWER - Enable Airplane/Flight mode", Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-           // System.out.println("The phone has a sim card");
+        TelephonyManager  tm=(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        int simState=tm.getSimState();
+
+        if (simState == TelephonyManager.SIM_STATE_READY){// int state 5
             return true;
+        } else {
+            return false;
         }
     }
+
 
     /**
      * Returns the sunrise time for the current device location

@@ -315,8 +315,10 @@ class Server {
         if (!wifi.isWifiEnabled()) {
             wifi.setWifiEnabled(true);
         }
-
-        if (Util.isSimPresent(context)) {
+        Prefs prefs = new Prefs(context);
+        boolean simPresent = prefs.getSimCardDetected();
+//        if (Util.isSimPresent(context)) {
+        if (simPresent) {
             // Disable airplane mode if required and can (can't change airplane mode on sdks above 19
             if (Util.isAirplaneModeOn(context)) {
                 if (Build.VERSION.SDK_INT <= 19) {

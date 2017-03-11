@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import static java.lang.Boolean.getBoolean;
+
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  */
@@ -40,8 +42,10 @@ class Prefs {
     private static final double DAWN_DUSK_OFFSET_SMALL_SECONDS = 10 * 60; // 10 minutes
 
     private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
-    private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 27 minutes http://www.gaisma.com/en/location/nelson.html
+    private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
+    private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
+    private static final boolean SIM_CARD_DETECTED = false;
 
     Prefs(Context context) {
         this.context = context;
@@ -82,6 +86,26 @@ class Prefs {
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         preferences.edit().putLong(key, Double.doubleToRawLongBits(val)).apply();
+    }
+
+    private boolean getBoolean(String key) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return false;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, false);
+
+    }
+
+    private void setBoolean(String key, boolean val) {
+        if (context == null) {
+            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            return;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(key, val).apply();
+
     }
 
     String getServerUrl() {
@@ -178,5 +202,13 @@ class Prefs {
 
     void setLengthOfTwilightSeconds() {
         setDouble(LENGTH_OF_TWILIGHT_KEY, LENGTH_OF_TWILIGHT_SECONDS);
+    }
+
+    boolean getSimCardDetected() {
+        return getBoolean(SIM_CARD_DETECTED_KEY);
+    }
+
+    void setSimCardDetected(boolean isSimCardDetected) {
+        setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
     }
 }
