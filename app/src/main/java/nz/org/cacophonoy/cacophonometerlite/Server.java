@@ -288,8 +288,9 @@ class Server {
         try {
             //    boolean batteryCharging =  data.getBoolean("batteryCharging");
             double batteryLevel = data.getDouble("batteryLevel");
+            double batteryPercentLevel = batteryLevel/prefs.getMaximumBatteryLevel();
 
-            if (batteryLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
+            if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
                 disableDataConnection(context);
             }
         } catch (JSONException e) {

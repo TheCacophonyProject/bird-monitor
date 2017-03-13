@@ -19,13 +19,18 @@ import static android.content.Context.ALARM_SERVICE;
  */
 
 public class DawnDuskAlarms {
+
+    // Need to have recordings that automatically run around dawan and dusk
+    // Use code from https://github.com/mikereedell/sunrisesunsetlib-java to get sunrise and sunset for either today or tomorrow, and then offset by the length of twilight - average of 29 mins for NZ
+    // To make app robust (hopefully) these alarms are reset every time a periodic alarm runs.
+
     // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
     // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
     private static final String LOG_TAG = DawnDuskAlarms.class.getName();
 
 
-
     public static void configureDawnAlarms(Context context) {
+        //
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
@@ -44,13 +49,16 @@ public class DawnDuskAlarms {
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dawn");
 
-        Calendar sunRiseTodayCalendar = Util.getSunrise(context, nowToday);
-        Calendar dawnTodayCalendar = (Calendar) sunRiseTodayCalendar.clone();
-        dawnTodayCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
+//        Calendar sunRiseTodayCalendar = Util.getSunrise(context, nowToday);
+//        Calendar dawnTodayCalendar = (Calendar) sunRiseTodayCalendar.clone();
+//        dawnTodayCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
 
-        Calendar sunRiseTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
-       Calendar dawnTomorrowCalendar = (Calendar) sunRiseTomorrowCalendar.clone();
-        dawnTomorrowCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
+        Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
+
+//        Calendar sunRiseTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
+//       Calendar dawnTomorrowCalendar = (Calendar) sunRiseTomorrowCalendar.clone();
+//        dawnTomorrowCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
+        Calendar dawnTomorrowCalendar =  Util.getDawn(context, nowTomorrow);
 
         dawnTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
         dawnTomorrowCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
@@ -131,13 +139,16 @@ public class DawnDuskAlarms {
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dusk");
 
-        Calendar sunSetTodayCalendar = Util.getSunrise(context, nowToday);
-        Calendar duskTodayCalendar = (Calendar) sunSetTodayCalendar.clone();
-        duskTodayCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
+//        Calendar sunSetTodayCalendar = Util.getSunrise(context, nowToday);
+//        Calendar duskTodayCalendar = (Calendar) sunSetTodayCalendar.clone();
+//        duskTodayCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
+        Calendar duskTodayCalendar = Util.getDusk(context, nowToday);
 
-        Calendar sunSetTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
-        Calendar duskTomorrowCalendar = (Calendar) sunSetTomorrowCalendar.clone();
-        duskTomorrowCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
+//        Calendar sunSetTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
+//        Calendar duskTomorrowCalendar = (Calendar) sunSetTomorrowCalendar.clone();
+//        duskTomorrowCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
+
+        Calendar duskTomorrowCalendar = Util.getDusk(context, nowTomorrow);
 
         duskTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds); // 40 minutes before dusk
         duskTomorrowCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
