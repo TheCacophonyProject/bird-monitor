@@ -57,7 +57,16 @@ public class StartRecordingReceiver extends BroadcastReceiver
             }
             // First check to see if battery level is greater than 70% - Abort if it isnt
         }
-        if (Util.getBatteryLevel(context) < 0.5){
+        Prefs prefs = new Prefs(context);
+        double batteryLevel = Util.getBatteryLevel(context);
+        String  batteryStatus = Util.getBatteryStatus(context);
+        prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
+        if (batteryStatus.equalsIgnoreCase("FULL")){
+            // The current battery level must be the maximum it can be!
+            prefs.setMaximumBatteryLevel(batteryLevel);
+        }
+         double batteryPercentLevel = batteryLevel/prefs.getMaximumBatteryLevel();
+        if (batteryPercentLevel < 0.5){
             return;
         }
         Log.i(LOG_TAG, "Called receiver method");

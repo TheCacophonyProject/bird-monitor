@@ -49,12 +49,14 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String recordingTime = hour + ":" + minute + ":" + second;
 
         String  batteryStatus = Util.getBatteryStatus(context);
-        float batteryLevel = Util.getBatteryLevel(context);
+
+      //  float batteryLevel = Util.getBatteryLevel(context);
 
         boolean airplaneModeOn = Util.isAirplaneModeOn(context);
 
 
         Prefs prefs = new Prefs(context);
+
 
         try {
             audioRecording.put("location", "Lat: " + prefs.getLatitude() + ", Lon: " + prefs.getLongitude());
@@ -64,7 +66,8 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("recordingTime", recordingTime);
 
             audioRecording.put("batteryCharging", batteryStatus);
-            audioRecording.put("batteryLevel", batteryLevel);
+          //  audioRecording.put("batteryLevel", batteryLevel);
+            audioRecording.put("batteryLevel", prefs.getBatteryLevel());
             audioRecording.put("airplaneModeOn", airplaneModeOn);
             if (relativeTo.equalsIgnoreCase("relativeToDawn")){
                 audioRecording.put("relativeToDawn", relativeToOffset);

@@ -47,6 +47,12 @@ class Prefs {
     private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
     private static final boolean SIM_CARD_DETECTED = false;
 
+    private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
+    private static final double BATTERY_LEVEL = -1;
+
+    private static final String MAXIMUM_BATTERY_LEVEL_KEY = "MAXIMUM_BATTERY_LEVEL";
+    private static final double MAXIMUM_BATTERY_LEVEL = -1;
+
     Prefs(Context context) {
         this.context = context;
     }
@@ -210,5 +216,24 @@ class Prefs {
 
     void setSimCardDetected(boolean isSimCardDetected) {
         setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
+    }
+
+    double getBatteryLevel() {
+        return getDouble(BATTERY_LEVEL_KEY);
+    }
+
+    void setBatteryLevel(double batteryLevel) {
+        setDouble(BATTERY_LEVEL_KEY, batteryLevel);
+    }
+
+    double getMaximumBatteryLevel() {
+        return getDouble(MAXIMUM_BATTERY_LEVEL_KEY);
+    }
+
+    void setMaximumBatteryLevel(double batteryLevel) {
+        //if (batteryLevel > getDouble(MAXIMUM_BATTERY_LEVEL_KEY)){
+            setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
+       // }
+
     }
 }
