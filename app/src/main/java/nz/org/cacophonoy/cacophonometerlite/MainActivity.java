@@ -73,10 +73,10 @@ public class MainActivity extends Activity {
        // myIntent.putExtra("type","repeating");
         try {
             myIntent.putExtra("type","repeating");
-            System.out.println("intent type " + myIntent.getExtras().getString("type"));
+           // System.out.println("intent type " + myIntent.getExtras().getString("type"));
         }catch (Exception e){
-            System.out.println("In MainActivity");
-            System.out.println(e.getLocalizedMessage());
+//            System.out.println("In MainActivity");
+//            System.out.println(e.getLocalizedMessage());
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
 
@@ -90,11 +90,11 @@ public class MainActivity extends Activity {
         prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
-
-        // determine if there is a sim card - need to disable airplane mode to determine
-        Util.disableAirplaneMode(this.getApplicationContext());
-        boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
-        prefs.setSimCardDetected(isSimCardDetected);
+//
+//        // determine if there is a sim card - need to disable airplane mode to determine
+//        Util.disableAirplaneMode(this.getApplicationContext());
+//        boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
+//        prefs.setSimCardDetected(isSimCardDetected);
 
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
-        refreshVitals();
+//        refreshVitals();
     } //end onCreate
 
     /**
@@ -152,7 +152,7 @@ public class MainActivity extends Activity {
         versionNameText.setText("Cacophonometer Lite " + versionName);
 
 
-        putIntoAirplaneMode();
+     //   putIntoAirplaneMode();
         super.onResume();
     }
 

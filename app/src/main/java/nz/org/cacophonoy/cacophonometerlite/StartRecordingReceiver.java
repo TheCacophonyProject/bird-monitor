@@ -32,32 +32,44 @@ public class StartRecordingReceiver extends BroadcastReceiver
 //            return;
 //        }
 
+                Prefs prefs = new Prefs(context);
+
+        // determine if there is a sim card - need to disable airplane mode to determine
+        Util.disableAirplaneMode(context);
+        boolean isSimCardDetected = Util.isSimPresent(context);
+        prefs.setSimCardDetected(isSimCardDetected);
+
+
+
+
 
         if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording
             try {
-
-
-                System.out.println("intent type " + intent.getExtras().getString("type"));
+//
+//
+//                System.out.println("intent type " + intent.getExtras().getString("type"));
                 String alarmIntentType = intent.getExtras().getString("type");
-//                if (alarmIntentType != null){ // will be null if
+                if (alarmIntentType != null){ // will be null if
                     if (alarmIntentType.equalsIgnoreCase("repeating")) {
                         DawnDuskAlarms.configureDawnAlarms(context);
                         DawnDuskAlarms.configureDuskAlarms(context);
                     }else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")){
                         intentTimeUriMessage = intent.getDataString();
-                        System.out.println("intent timeUri " + intentTimeUriMessage);
+                      //  System.out.println("intent timeUri " + intentTimeUriMessage);
                     }
 
 
-//                }
-
+                }
+//
             } catch (Exception e) {
-                System.out.println("b0000000000000000000000");
-                System.out.println(e.getLocalizedMessage());
+//                System.out.println("b0000000000000000000000");
+//                System.out.println(e.getLocalizedMessage());
             }
-            // First check to see if battery level is greater than 70% - Abort if it isnt
+//            // First check to see if battery level is greater than 70% - Abort if it isnt
         }
-        Prefs prefs = new Prefs(context);
+
+
+//        Prefs prefs = new Prefs(context);
         double batteryLevel = Util.getBatteryLevel(context);
         String  batteryStatus = Util.getBatteryStatus(context);
         prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
@@ -69,6 +81,9 @@ public class StartRecordingReceiver extends BroadcastReceiver
         if (batteryPercentLevel < 0.5){
             return;
         }
+
+        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+        toneG.startTone(ToneGenerator.TONE_CDMA_DIAL_TONE_LITE, 5000);
         Log.i(LOG_TAG, "Called receiver method");
         this.context = context;
         if (!Util.checkPermissionsForRecording(context)) {
@@ -78,14 +93,16 @@ public class StartRecordingReceiver extends BroadcastReceiver
         /*
         if (!Server.loggedIn) {
             Log.i(LOG_TAG, "Won't start recording as device not logged in.");
-            Toast.makeText(context, "Wont record as device not logged in.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Wont record as device not logged in.", Toast.LENGTH_SHORT).show();
+            ToneGenerator toneG2 = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+            toneG2.startTone(ToneGenerator.TONE_DTMF_8, 1000);
             return;
         }
-        */
-
+//        */
+//
         try{
-            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 30);
-            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+//            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 30);
+//            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
 
             // Start recording in new thread.
             Thread thread = new Thread() {

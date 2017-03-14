@@ -2,6 +2,8 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -91,6 +93,11 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
 
     @Override
     public void run() {
+
+        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+        toneG.startTone(ToneGenerator.TONE_CDMA_DIAL_TONE_LITE, 5000);
+
+
 
             File recordingsFolder = Util.getRecordingsFolder();
             File recordingFiles[] = recordingsFolder.listFiles();

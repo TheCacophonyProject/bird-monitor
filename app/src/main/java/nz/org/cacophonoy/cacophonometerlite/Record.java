@@ -1,7 +1,9 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
+import android.media.ToneGenerator;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -53,6 +55,13 @@ class Record implements Runnable {
         Prefs prefs = new Prefs(context);
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
         makeRecording(handler, context);
+
+        // Should now try to connect to server.  If can't then at least we have the recording for a later date
+        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 30);
+            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+
+
+
         UploadFiles uf = new UploadFiles(context);
         uf.run();
     }
