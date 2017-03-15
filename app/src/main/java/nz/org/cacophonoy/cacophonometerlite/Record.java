@@ -95,6 +95,11 @@ class Record implements Runnable {
         }else{
             fileName += " airplaneModeOff";
         }
+
+        String batteryStatus = Util.getBatteryStatus(context);
+        fileName += " " + batteryStatus;
+        double batteryLevel = Util.getBatteryLevel(context);
+        fileName += " " + batteryLevel;
         fileName += ".3gp";
 
         File file = new File(Util.getRecordingsFolder(), fileName);

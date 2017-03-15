@@ -51,6 +51,10 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String relativeTo = fileNameParts[6];
         String relativeToOffset = fileNameParts[7];
         String airplaneMode = fileNameParts[8];
+        String batteryStatus = fileNameParts[9];
+        String batteryLevel = fileNameParts[10];
+        batteryLevel += ".";
+        batteryLevel += fileNameParts[11];
         boolean airplaneModeOn = false;
         if (airplaneMode.equalsIgnoreCase("airplaneModeOn")){
             airplaneModeOn =  true;
@@ -60,7 +64,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
-        String batteryStatus = Util.getBatteryStatus(context);
+       // String batteryStatus = Util.getBatteryStatus(context);
        // boolean airplaneModeOn = Util.isAirplaneModeOn(context);
 
         try {
@@ -74,7 +78,8 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("recordingDateTime", recordingDateTime);
             audioRecording.put("recordingTime", recordingTime);
             audioRecording.put("batteryCharging", batteryStatus);
-            audioRecording.put("batteryLevel", prefs.getBatteryLevel());
+            //audioRecording.put("batteryLevel", prefs.getBatteryLevel());
+            audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
             if (relativeTo.equalsIgnoreCase("relativeToDawn")) {
                 audioRecording.put("relativeToDawn", relativeToOffset);
