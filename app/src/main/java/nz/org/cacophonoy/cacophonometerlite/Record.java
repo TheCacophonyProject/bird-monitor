@@ -72,11 +72,13 @@ class Record implements Runnable {
 
         Calendar dawn = Util.getDawn(context, nowToday);
         System.out.println("dawn " + dawn);
-        long relativeToDawn  = dawn.getTimeInMillis() - nowToday.getTimeInMillis();
+//        long relativeToDawn  = dawn.getTimeInMillis() - nowToday.getTimeInMillis();
+        long relativeToDawn  =  nowToday.getTimeInMillis() - dawn.getTimeInMillis();
         relativeToDawn  = relativeToDawn /1000; // now in seconds
 
         Calendar dusk = Util.getDusk(context, nowToday);
-        long relativeToDusk  = dusk.getTimeInMillis() - nowToday.getTimeInMillis();
+//        long relativeToDusk  = dusk.getTimeInMillis() - nowToday.getTimeInMillis();
+        long relativeToDusk  = nowToday.getTimeInMillis() - dusk.getTimeInMillis();
         relativeToDusk  = relativeToDusk /1000; // now in seconds
 
         DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
