@@ -12,7 +12,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 25
         versionCode 1
-        versionName "0.229"
+        versionName "0.231"
         archivesBaseName = "CacophonometerLite-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

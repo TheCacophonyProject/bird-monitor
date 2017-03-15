@@ -56,13 +56,7 @@ class Record implements Runnable {
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
         makeRecording(handler, context);
 
-        // Should now try to connect to server.  If can't then at least we have the recording for a later date
-        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 30);
-            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
-
-
-
-        UploadFiles uf = new UploadFiles(context);
+         UploadFiles uf = new UploadFiles(context);
         uf.run();
     }
 
@@ -73,9 +67,8 @@ class Record implements Runnable {
 
         // Get recording file.
         Date date = new Date(System.currentTimeMillis());
-        // Calculate dawn and dusk offset
+        // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
-        System.out.println("nowToday " + nowToday);
 
         Calendar dawn = Util.getDawn(context, nowToday);
         System.out.println("dawn " + dawn);
@@ -94,9 +87,13 @@ class Record implements Runnable {
         }else{
             fileName += " relativeToDusk " + relativeToDusk;
         }
-        fileName += ".3gp";
 
-//        String fileName = fileFormat.format(date)+".3gp";
+        if (Util.isAirplaneModeOn(context)){
+            fileName += " airplaneModeOn";
+        }else{
+            fileName += " airplaneModeOff";
+        }
+        fileName += ".3gp";
 
         File file = new File(Util.getRecordingsFolder(), fileName);
         String filePath = file.getAbsolutePath();

@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.R.attr.data;
+
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -228,13 +230,12 @@ class Server {
      * @return If upload was successful
      */
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-        enableDataConnection(context);
+        Prefs prefs = new Prefs(context);
+//        enableDataConnection(context);
         if (audioFile == null || data == null) {
             Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
             return false;
         }
-
-        System.out.println("Going to upload file " + audioFile.getName());
 
         // Check that there is a JWT (JSON Web Token)
         if (getToken() == null) {
@@ -262,8 +263,6 @@ class Server {
         }
         uploading = true;
 
-        Prefs prefs = new Prefs(context);
-
         // Send request
         client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
 
@@ -283,19 +282,8 @@ class Server {
         });
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
-        // Only turn wifi off if battery is less than 95% or battery isn't charging
-        //
-        try {
-            //    boolean batteryCharging =  data.getBoolean("batteryCharging");
-            double batteryLevel = data.getDouble("batteryLevel");
-            double batteryPercentLevel = batteryLevel/prefs.getMaximumBatteryLevel();
+      //  disableDataConnection(context);
 
-            if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
-                disableDataConnection(context);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         return uploadSuccess;
     }
@@ -318,7 +306,7 @@ class Server {
         }
         Prefs prefs = new Prefs(context);
         boolean simPresent = prefs.getSimCardDetected();
-//        if (Util.isSimPresent(context)) {
+
         if (simPresent) {
             // Disable airplane mode if required and can (can't change airplane mode on sdks above 19
             if (Util.isAirplaneModeOn(context)) {
@@ -326,24 +314,26 @@ class Server {
                     Util.disableAirplaneMode(context);
                 }
             }
-
         }
-
-
     }
 
     public static void disableDataConnection(Context context) {
         // Belts and braces - disable mobile and wif if possible
+        Prefs prefs = new Prefs(context);
 
         if (!Util.isAirplaneModeOn(context)) {
             if (Build.VERSION.SDK_INT <= 19) {
                 Util.enableAirplaneMode(context);
             }
         }
+        double batteryLevel = prefs.getBatteryLevel();
+        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
 
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if (wifi.isWifiEnabled()) {
-            wifi.setWifiEnabled(false);
+        if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            if (wifi.isWifiEnabled()) {
+                wifi.setWifiEnabled(false);
+            }
         }
     }
 

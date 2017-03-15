@@ -241,19 +241,25 @@ class Util {
         context.sendBroadcast(intent);
     }
 
-    public static void disableAirplaneMode(Context context) {
+    public static boolean disableAirplaneMode(Context context) {
         //http://stackoverflow.com/posts/5533943/edit
-        Settings.System.putInt(
-                context.getContentResolver(),
-                Settings.System.AIRPLANE_MODE_ON, 0);
+        try {
+            Settings.System.putInt(
+                    context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0);
 
 // Post an intent to reload
-        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-        intent.putExtra("state", false);
-        context.sendBroadcast(intent);
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", false);
+            context.sendBroadcast(intent);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
     }
 
     public static boolean isSimPresent(Context context) {
+        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         int simState = tm.getSimState();
 
