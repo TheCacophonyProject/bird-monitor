@@ -56,6 +56,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             airplaneModeOn =  true;
         }
 
+
         String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
