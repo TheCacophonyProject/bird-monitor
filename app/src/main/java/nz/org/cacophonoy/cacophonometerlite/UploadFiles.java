@@ -7,6 +7,7 @@ import android.media.ToneGenerator;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +63,11 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
        // boolean airplaneModeOn = Util.isAirplaneModeOn(context);
 
         try {
-            audioRecording.put("location", "Lat: " + prefs.getLatitude() + ", Lon: " + prefs.getLongitude());
+          //  audioRecording.put("location", "Lat: " + prefs.getLatitude() + ", Lon: " + prefs.getLongitude());
+            JSONArray location = new JSONArray();
+            location.put(prefs.getLatitude());
+            location.put(prefs.getLongitude());
+            audioRecording.put("location", location);
             audioRecording.put("duration", prefs.getRecordingDuration());
             audioRecording.put("localFilePath", localFilePath);
             audioRecording.put("recordingDateTime", recordingDateTime);
