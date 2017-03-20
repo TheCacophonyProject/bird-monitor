@@ -12,6 +12,8 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import static nz.org.cacophonoy.cacophonometerlite.Util.getBatteryLevelByIntent;
+
 public class StartRecordingReceiver extends BroadcastReceiver {
     public static final int RECORDING_STARTED = 1;
     public static final int RECORDING_FAILED = 2;
@@ -83,17 +85,29 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
         // First check to see if battery level is greater than 50% - Abort if it isnt
-        double batteryLevel = Util.getBatteryLevel(context);
-        String batteryStatus = Util.getBatteryStatus(context);
-        prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
-        if (batteryStatus.equalsIgnoreCase("FULL")) {
-            // The current battery level must be the maximum it can be!
-            prefs.setMaximumBatteryLevel(batteryLevel);
+        double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
+        if (batteryLevel != -1){ // looks like getting battery level using system file worked
+            String batteryStatus = Util.getBatteryStatus(context);
+            prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
+            if (batteryStatus.equalsIgnoreCase("FULL")) {
+                // The current battery level must be the maximum it can be!
+                prefs.setMaximumBatteryLevel(batteryLevel);
+            }
+
+
+            double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
+            if (batteryRatioLevel < 0.5) {
+                return;
+            }
+        }else { // will need to get battery level using intent method
+            double batteryPercentLevel = getBatteryLevelByIntent(context);
+            if (batteryPercentLevel < 50) {
+                return;
+            }
+
         }
-        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
-        if (batteryPercentLevel < 0.5) {
-            return;
-        }
+
+
 
         try {
             // Start recording in new thread.
