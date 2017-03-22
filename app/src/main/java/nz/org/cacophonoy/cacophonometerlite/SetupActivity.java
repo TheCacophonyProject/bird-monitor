@@ -55,6 +55,13 @@ public class SetupActivity extends Activity {
         } else
             registerStatus.setText(R.string.not_registered);
 
+        boolean simPresent = prefs.getSimCardDetected();
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.cbSimPresent);
+        if (simPresent) {
+            checkBox.setChecked(true);
+        } else
+            checkBox.setChecked(false);
+
 
 
         super.onResume();
