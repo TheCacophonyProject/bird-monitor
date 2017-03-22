@@ -10,5 +10,6 @@
     <string name="required_permissions_true">Required Permissions: ✔</string>
     <string name="required_permissions_false">Required Permissions: ✘</string>
     <string name="not_registered">Device not registered.</string>
+    <string name="action_about">About</string>
 
 </resources>

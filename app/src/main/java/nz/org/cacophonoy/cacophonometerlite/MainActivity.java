@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,6 +91,7 @@ public class MainActivity extends Activity {
         prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
+      //  prefs.setSimCardDetected(false);
 
 
 
@@ -100,8 +102,16 @@ public class MainActivity extends Activity {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
-//        refreshVitals();
+
+
+
     } //end onCreate
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     /**
      * Updated UI.
@@ -149,13 +159,13 @@ public class MainActivity extends Activity {
         versionNameText.setText("Cacophonometer Lite " + versionName);
 
 
-        // determine if there is a sim card - need to disable airplane mode to determine
-        // Going to do this in Main Activity, otherwise will need to turn off airplane mode in StartRecordingReceiver too often - just to check
-       if ( Util.disableAirplaneMode(this.getApplicationContext())) {
-           boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
-           prefs.setSimCardDetected(isSimCardDetected);
-           Util.enableAirplaneMode(this.getApplicationContext()); // save power.
-       }
+//        // determine if there is a sim card - need to disable airplane mode to determine
+//        // Going to do this in Main Activity, otherwise will need to turn off airplane mode in StartRecordingReceiver too often - just to check
+//       if ( Util.disableAirplaneMode(this.getApplicationContext())) {
+//           boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
+//           prefs.setSimCardDetected(isSimCardDetected);
+//           Util.enableAirplaneMode(this.getApplicationContext()); // save power.
+//       }
         super.onResume();
     }
 
@@ -230,6 +240,9 @@ public class MainActivity extends Activity {
         server.start();
     }
 
-
+    private void openAbout() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
 
 }

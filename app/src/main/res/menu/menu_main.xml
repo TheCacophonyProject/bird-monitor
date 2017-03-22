@@ -1,0 +1,23 @@
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="nz.org.cacophonoy.cacophonometerlite.MainActivity"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+
+
+
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_help_white_24dp"
+        android:title="@string/action_about"
+        app:showAsAction="always"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</menu>

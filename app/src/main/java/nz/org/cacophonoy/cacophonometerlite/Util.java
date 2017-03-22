@@ -285,9 +285,7 @@ public static double getBatteryLevel(Context context){
 
         if (simState == TelephonyManager.SIM_STATE_READY) {// int state 5
             return true;
-        } else {
-            return false;
-        }
+        } else return false;
     }
 
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -162,4 +163,17 @@ public class SetupActivity extends Activity {
         }
 
     }
+
+    public void onCheckboxSimPresentClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setSimCardDetected(true);
+        }else{
+            prefs.setSimCardDetected(false);
+        }
+
+    }
+
 }
