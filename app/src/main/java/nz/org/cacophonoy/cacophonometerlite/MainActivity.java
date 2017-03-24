@@ -16,9 +16,12 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
@@ -69,6 +72,8 @@ public class MainActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
        // myIntent.putExtra("type","repeating");
@@ -111,6 +116,31 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.action_settings:
+//                // User chose the "Settings" item, show the app settings UI...
+//                return true;
+
+            case R.id.action_help:
+                openHelp();
+                // Toast.makeText(getApplicationContext(), "Settings updated.", Toast.LENGTH_LONG).show();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void openHelp() {
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
     }
 
     /**
