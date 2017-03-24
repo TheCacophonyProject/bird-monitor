@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cacophonometer Lite</string>
+    <string name="app_name">Cacophonometer</string>
     <string name="title_activity_setup">SetupActivity</string>
     <string name="registered_true">Registered: ✔</string>
     <string name="registered_false">Registered: ✘</string>

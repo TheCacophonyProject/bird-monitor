@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
-        versionNameText.setText("Cacophonometer Lite " + versionName);
+        versionNameText.setText("Version " + versionName);
 
 
 //        // determine if there is a sim card - need to disable airplane mode to determine
