@@ -43,7 +43,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
-       
+
         if (fileNameParts.length != 13){
             aFile.delete();
             Log.i(LOG_TAG, "deleted file: " + fileName);
@@ -95,6 +95,8 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             if (relativeTo.equalsIgnoreCase("relativeToDusk")) {
                 audioRecording.put("relativeToDusk", relativeToOffset);
             }
+            String versionName = BuildConfig.VERSION_NAME;
+            audioRecording.put("version", versionName);
 
 
         } catch (JSONException e) {
