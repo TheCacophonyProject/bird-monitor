@@ -38,9 +38,17 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         JSONObject audioRecording = new JSONObject();
 
         String fileName = aFile.getName();
+        Log.i(LOG_TAG, "fileName: " + fileName);
         // http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
         String[] fileNameParts = fileName.split("[. ]");
+        // this code breaks if old files exist, so delete them and move on
+       
+        if (fileNameParts.length != 13){
+            aFile.delete();
+            Log.i(LOG_TAG, "deleted file: " + fileName);
+            return false;
+        }
 
         String year = fileNameParts[0];
         String month = fileNameParts[1];

@@ -53,11 +53,7 @@ public class BootReceiver extends BroadcastReceiver {
 //            prefs.setSimCardDetected(isSimCardDetected);
 //            Util.enableAirplaneMode(context); // save power.
 //        }
-        boolean simCardPresent = prefs.getSimCardDetected();
-        if (!simCardPresent){
-            ToneGenerator toneG3 = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-            toneG3.startTone(ToneGenerator.TONE_DTMF_0, 10000);
-        }
+
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
