@@ -1,13 +1,19 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
@@ -16,8 +22,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetupActivity extends Activity {
-    private static final String LOG_TAG = SetupActivity.class.getName();
+//public class SetupActivity extends Activity {
+public class SetupActivity extends AppCompatActivity {
+private static final String LOG_TAG = SetupActivity.class.getName();
 
     // Handler status indicators
     static final int REGISTER_SUCCESS = 1;
@@ -32,7 +39,46 @@ public class SetupActivity extends Activity {
         EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
         Prefs prefs = new Prefs(getApplicationContext());
         serverUrlEditText.setText(prefs.getServerUrl());
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.action_settings:
+//                // User chose the "Settings" item, show the app settings UI...
+//                return true;
+
+            case R.id.action_help:
+                openHelp();
+                // Toast.makeText(getApplicationContext(), "Settings updated.", Toast.LENGTH_LONG).show();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void openHelp() {
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
     }
 
     @Override

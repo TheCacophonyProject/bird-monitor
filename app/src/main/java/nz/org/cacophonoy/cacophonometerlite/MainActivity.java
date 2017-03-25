@@ -270,9 +270,6 @@ public class MainActivity extends AppCompatActivity {
         server.start();
     }
 
-    private void openAbout() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-    }
+
 
 }

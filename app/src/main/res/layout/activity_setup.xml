@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_register"
     android:layout_width="match_parent"
@@ -10,9 +11,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nz.org.cacophonoy.cacophonometerlite.SetupActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/my_toolbar"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
@@ -189,17 +199,15 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
 
-            <CheckBox android:id="@+id/cbSimPresent"
+            <CheckBox
+                android:id="@+id/cbSimPresent"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/setupSimMessage"
-                android:text="Using mobile data and SIM is Present"
-
-                android:onClick="onCheckboxSimPresentClicked"/>
-
-
-
+                android:checked="false"
+                android:onClick="onCheckboxSimPresentClicked"
+                android:text="Using mobile data and SIM is Present" />
 
 
         </RelativeLayout>

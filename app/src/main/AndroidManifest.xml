@@ -43,10 +43,25 @@
         </receiver>
         <activity
             android:name=".SetupActivity"
-            android:label="@string/title_activity_setup"/>
+            android:label="@string/title_activity_setup"
+            android:parentActivityName=".MainActivity" >
+
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
+        </activity>
+
         <activity
             android:name=".HelpActivity"
-            android:label="Help" />
+            android:label="@string/title_activity_help"
+            android:parentActivityName=".MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
