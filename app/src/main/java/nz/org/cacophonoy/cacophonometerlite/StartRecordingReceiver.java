@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -54,18 +55,14 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.i(LOG_TAG, "Called receiver method");
+
+
         this.context = context;
         if (!Util.checkPermissionsForRecording(context)) {
             Toast.makeText(context, "Don't have proper permissions to record..", Toast.LENGTH_SHORT).show();
             return;
         }
         Prefs prefs = new Prefs(context);
-
-//        // determine if there is a sim card - need to disable airplane mode to determine
-//        Util.disableAirplaneMode(context);
-//            boolean isSimCardDetected = Util.isSimPresent(context);
-//            prefs.setSimCardDetected(isSimCardDetected);
-//       // Util.enableAirplaneMode(context);
 
         if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording
             try {
@@ -85,6 +82,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
         // First check to see if battery level is greater than 50% - Abort if it isnt
+
         double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
         if (batteryLevel != -1){ // looks like getting battery level using system file worked
             String batteryStatus = Util.getBatteryStatus(context);
@@ -114,6 +112,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             Thread thread = new Thread() {
                 @Override
                 public void run() {
+                    Log.i(LOG_TAG, "Thread thread = new Thread() {");
                     Record record = new Record(context, handler);
                     record.run();
                 }
@@ -123,6 +122,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
 }

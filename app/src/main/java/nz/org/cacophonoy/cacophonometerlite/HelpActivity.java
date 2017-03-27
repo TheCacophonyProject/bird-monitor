@@ -23,6 +23,8 @@ public class HelpActivity extends AppCompatActivity {
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayUseLogoEnabled(true);
+        ab.setLogo(R.mipmap.ic_launcher);
     }
 
     @Override

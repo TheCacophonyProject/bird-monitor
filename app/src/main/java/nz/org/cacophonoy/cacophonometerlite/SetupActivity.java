@@ -22,6 +22,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
+
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
 private static final String LOG_TAG = SetupActivity.class.getName();
@@ -47,6 +49,8 @@ private static final String LOG_TAG = SetupActivity.class.getName();
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayUseLogoEnabled(true);
+        ab.setLogo(R.mipmap.ic_launcher);
 
     }
 
@@ -135,7 +139,8 @@ private static final String LOG_TAG = SetupActivity.class.getName();
     };
 
     public void registerButton(View v) {
-        Server.enableDataConnection(getApplicationContext());
+
+        Util.disableAirplaneMode(getApplicationContext());
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         //Get Group from text field.

@@ -27,6 +27,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent)
     {
+     //   Server.disableDataConnection(context);
 
 //        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
 //        toneG.startTone(ToneGenerator.TONE_DTMF_0, 1000);
@@ -39,6 +40,7 @@ public class BootReceiver extends BroadcastReceiver {
             // Sound alarm if problem
             ToneGenerator toneG2 = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
             toneG2.startTone(ToneGenerator.TONE_DTMF_0, 10000);
+            Log.i(LOG_TAG, e.getLocalizedMessage());
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);

@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static nz.org.cacophonoy.cacophonometerlite.StartRecordingReceiver.intentTimeUriMessage;
+import static nz.org.cacophonoy.cacophonometerlite.Util.isNetworkConnected;
 
 class Record implements Runnable {
     private static final String LOG_TAG = Record.class.getName();
@@ -55,7 +56,23 @@ class Record implements Runnable {
         Prefs prefs = new Prefs(context);
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
         makeRecording(handler, context);
+        if (Util.isAirplaneModeOn(context)){
+            Log.d(LOG_TAG, "Airplane Mode is On");
 
+            Util.disableAirplaneMode(context);
+            Log.d(LOG_TAG, "Have just disabled Airplane Mode");
+            Log.d(LOG_TAG, "Is there a network connection? " + isNetworkConnected(context));
+            while (!isNetworkConnected(context)) {
+                Log.d(LOG_TAG, "Pausing for a Network connection ");
+                try {
+                    Thread.sleep(500); // give time for airplane mode to turn on
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+            }
+        }
          UploadFiles uf = new UploadFiles(context);
         uf.run();
     }

@@ -1,10 +1,13 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -48,7 +51,8 @@ class Server {
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
-        enableDataConnection(context);
+
+        Util.disableAirplaneMode(context);
         Log.i(LOG_TAG, "Updating server connection status.");
 
         if (!ping(context)) {
@@ -65,7 +69,7 @@ class Server {
      * @return if got a response from server.
      */
     private static boolean ping(Context context) {
-        enableDataConnection(context);
+        Util.disableAirplaneMode(context);
         SyncHttpClient client = new SyncHttpClient();
         Prefs prefs = new Prefs(context);
         client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
@@ -91,7 +95,7 @@ class Server {
      * @return if login was successful
      */
     private static boolean login(Context context) {
-        enableDataConnection(context);
+        Util.disableAirplaneMode(context);
         // Get credentials from shared preferences.
         //SharedPreferences prefs = context.getSharedPreferences(SetupActivity.PREFS_NAME, Context.MODE_PRIVATE);
         Prefs prefs = new Prefs(context);
@@ -160,7 +164,8 @@ class Server {
      * @return If the device successfully registered.
      */
     static boolean register(final String group, final Context context) {
-        enableDataConnection(context);
+
+         Util.disableAirplaneMode(context);
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
@@ -241,6 +246,7 @@ class Server {
         if (getToken() == null) {
             if (!login(context)) {
                 Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
+
                 return false; // Can't upload without JWT, login/register device to get JWT.
             }
         }
@@ -263,6 +269,7 @@ class Server {
         }
         uploading = true;
 
+
         // Send request
         client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
 
@@ -282,8 +289,6 @@ class Server {
         });
         Log.d(LOG_TAG, "uploadAudioRecording: finished.");
         uploading = false;
-      //  disableDataConnection(context);
-
 
         return uploadSuccess;
     }
@@ -296,45 +301,8 @@ class Server {
         Server.token = token;
     }
 
-    public static void enableDataConnection(Context context) {
-        // Decided it was easiest to just turn on mobile (ie disable airplane mode) and turn on wifi
-        // Will phone use wifi if it available over mobile data?
 
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if (!wifi.isWifiEnabled()) {
-            wifi.setWifiEnabled(true);
-        }
-        Prefs prefs = new Prefs(context);
-        boolean simPresent = prefs.getSimCardDetected();
 
-        if (simPresent) {
-            // Disable airplane mode if required and can (can't change airplane mode on sdks above 19
-            if (Util.isAirplaneModeOn(context)) {
-                if (Build.VERSION.SDK_INT <= 19) {
-                    Util.disableAirplaneMode(context);
-                }
-            }
-        }
-    }
 
-    public static void disableDataConnection(Context context) {
-        // Belts and braces - disable mobile and wif if possible
-        Prefs prefs = new Prefs(context);
-
-        if (!Util.isAirplaneModeOn(context)) {
-            if (Build.VERSION.SDK_INT <= 19) {
-                Util.enableAirplaneMode(context);
-            }
-        }
-        double batteryLevel = prefs.getBatteryLevel();
-        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
-
-        if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
-            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            if (wifi.isWifiEnabled()) {
-                wifi.setWifiEnabled(false);
-            }
-        }
-    }
 
 }

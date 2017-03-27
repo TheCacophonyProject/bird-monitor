@@ -4,6 +4,8 @@ package nz.org.cacophonoy.cacophonometerlite;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,8 +15,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-import static nz.org.cacophonoy.cacophonometerlite.Server.disableDataConnection;
-import static nz.org.cacophonoy.cacophonometerlite.Server.enableDataConnection;
 
 class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15666260/urlconnection-android-4-2-doesnt-work
     private static final String LOG_TAG = UploadFiles.class.getName();
@@ -30,7 +30,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
     }
 
     private boolean sendFile(File aFile) {
-  //  private void sendFile(File aFile) {
+
         Log.i(LOG_TAG, "sendFile: Start");
         Prefs prefs = new Prefs(context);
 
@@ -44,7 +44,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
 
-        if (fileNameParts.length != 13){
+        if (fileNameParts.length != 13) {
             aFile.delete();
             Log.i(LOG_TAG, "deleted file: " + fileName);
             return false;
@@ -64,19 +64,17 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         batteryLevel += ".";
         batteryLevel += fileNameParts[11];
         boolean airplaneModeOn = false;
-        if (airplaneMode.equalsIgnoreCase("airplaneModeOn")){
-            airplaneModeOn =  true;
+        if (airplaneMode.equalsIgnoreCase("airplaneModeOn")) {
+            airplaneModeOn = true;
         }
 
 
         String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
-       // String batteryStatus = Util.getBatteryStatus(context);
-       // boolean airplaneModeOn = Util.isAirplaneModeOn(context);
 
         try {
-          //  audioRecording.put("location", "Lat: " + prefs.getLatitude() + ", Lon: " + prefs.getLongitude());
+
             JSONArray location = new JSONArray();
             location.put(prefs.getLatitude());
             location.put(prefs.getLongitude());
@@ -86,7 +84,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
             audioRecording.put("recordingDateTime", recordingDateTime);
             audioRecording.put("recordingTime", recordingTime);
             audioRecording.put("batteryCharging", batteryStatus);
-            //audioRecording.put("batteryLevel", prefs.getBatteryLevel());
+
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
             if (relativeTo.equalsIgnoreCase("relativeToDawn")) {
@@ -102,8 +100,6 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-//        Server.uploadAudioRecording(aFile, audioRecording, context);
         return Server.uploadAudioRecording(aFile, audioRecording, context);
     }
 
@@ -113,23 +109,33 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         File recordingsFolder = Util.getRecordingsFolder();
         File recordingFiles[] = recordingsFolder.listFiles();
         if (recordingFiles != null) {
-            enableDataConnection(context);
-          //  Toast.makeText(context, "Number of Files to upload is " + recordingFiles.length,  Toast.LENGTH_LONG).show();
-            for (File aFile : recordingFiles) {
-//                sendFile(aFile);
-//                if (!aFile.delete())
-//                    Log.w(LOG_TAG, "Deleting audio file failed");
-               if (sendFile(aFile)){
-                   if (!aFile.delete()){
-                       Log.w(LOG_TAG, "Deleting audio file failed");
-                   }
-               }else{
-                   Log.w(LOG_TAG, "Failed to upload file to server");
-               }
 
+            Util.disableAirplaneMode(context);
+
+            for (File aFile : recordingFiles) {
+
+                if (sendFile(aFile)) {
+                    if (!aFile.delete()) {
+                        Log.w(LOG_TAG, "Deleting audio file failed");
+                    }
+                } else {
+                    Log.w(LOG_TAG, "Failed to upload file to server");
+                }
             }
+
+
+                Util.enableAirplaneMode(context);
+
+
         }
-        disableDataConnection(context);
+
+//        }
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 

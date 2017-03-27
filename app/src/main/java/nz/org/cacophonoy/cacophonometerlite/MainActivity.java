@@ -16,6 +16,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
@@ -76,13 +77,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-       // myIntent.putExtra("type","repeating");
+
         try {
             myIntent.putExtra("type","repeating");
-           // System.out.println("intent type " + myIntent.getExtras().getString("type"));
+
         }catch (Exception e){
-//            System.out.println("In MainActivity");
-//            System.out.println(e.getLocalizedMessage());
+
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
 
@@ -98,36 +98,35 @@ public class MainActivity extends AppCompatActivity {
         prefs.setLengthOfTwilightSeconds();
       //  prefs.setSimCardDetected(false);
 
-
-
-
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;
-        //long delay = 1000 * 60  * 10 ; // 10 minutes
+
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
 
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
 
+        ab.setDisplayUseLogoEnabled(true);
+        ab.setLogo(R.mipmap.ic_launcher);
 
     } //end onCreate
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                // User chose the "Settings" item, show the app settings UI...
-//                return true;
 
             case R.id.action_help:
                 openHelp();
-                // Toast.makeText(getApplicationContext(), "Settings updated.", Toast.LENGTH_LONG).show();
+
                 return true;
 
             default:
@@ -188,14 +187,6 @@ public class MainActivity extends AppCompatActivity {
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
         versionNameText.setText("Version " + versionName);
 
-
-//        // determine if there is a sim card - need to disable airplane mode to determine
-//        // Going to do this in Main Activity, otherwise will need to turn off airplane mode in StartRecordingReceiver too often - just to check
-//       if ( Util.disableAirplaneMode(this.getApplicationContext())) {
-//           boolean isSimCardDetected = Util.isSimPresent(this.getApplicationContext());
-//           prefs.setSimCardDetected(isSimCardDetected);
-//           Util.enableAirplaneMode(this.getApplicationContext()); // save power.
-//       }
         super.onResume();
     }
 

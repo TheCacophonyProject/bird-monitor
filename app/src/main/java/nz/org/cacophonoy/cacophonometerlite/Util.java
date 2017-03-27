@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -249,44 +250,8 @@ public static double getBatteryLevel(Context context){
         }
     }
 
-    public static void enableAirplaneMode(Context context) {
-        //http://stackoverflow.com/posts/5533943/edit
-        Settings.System.putInt(
-                context.getContentResolver(),
-                Settings.System.AIRPLANE_MODE_ON, 1);
 
-// Post an intent to reload
-        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-        intent.putExtra("state", true);
-        context.sendBroadcast(intent);
-    }
 
-    public static boolean disableAirplaneMode(Context context) {
-        //http://stackoverflow.com/posts/5533943/edit
-        try {
-            Settings.System.putInt(
-                    context.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, 0);
-
-// Post an intent to reload
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", false);
-            context.sendBroadcast(intent);
-        }catch (Exception e){
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isSimPresent(Context context) {
-        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        int simState = tm.getSimState();
-
-        if (simState == TelephonyManager.SIM_STATE_READY) {// int state 5
-            return true;
-        } else return false;
-    }
 
 
     /**
@@ -300,7 +265,7 @@ public static double getBatteryLevel(Context context){
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
         Calendar officialSunrise = calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
-        Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
+        //Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
         return officialSunrise;
     }
 
@@ -325,7 +290,7 @@ public static double getBatteryLevel(Context context){
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
         Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
 
-        Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
+       // Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
         return officialSunset;
     }
 
@@ -356,5 +321,97 @@ public static double getBatteryLevel(Context context){
 
         return new Location(lat, lon);
     }
+
+    public static void enableAirplaneMode(Context context) {
+//  Prefs prefs = new Prefs(context);
+//        double batteryLevel = prefs.getBatteryLevel();
+//        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
+//
+//        if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
+//            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//            if (wifi.isWifiEnabled()) {
+//                wifi.setWifiEnabled(false);
+//            }
+//        }
+
+        boolean isEnabled = Settings.System.getInt(
+                context.getContentResolver(),
+                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+
+        if (!isEnabled){
+
+            Settings.System.putInt(
+                    context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
+
+// Post an intent to reload
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", !isEnabled);
+            context.sendBroadcast(intent);
+        }
+
+        while (isNetworkConnected(context)) {
+            Log.d(LOG_TAG, "Pausing for Network connection to turn off ");
+            try {
+                Thread.sleep(500); // give time for airplane mode to turn on
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+
+
+        }
+    }
+
+    public static void disableAirplaneMode(Context context) {
+
+
+        boolean isEnabled = Settings.System.getInt(
+                context.getContentResolver(),
+                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+
+        if (isEnabled){
+
+            Settings.System.putInt(
+                    context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
+
+// Post an intent to reload
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", !isEnabled);
+            context.sendBroadcast(intent);
+        }
+
+        while (!isNetworkConnected(context)) {
+            Log.d(LOG_TAG, "Pausing for a Network connection ");
+            try {
+                Thread.sleep(500); // give time for airplane mode to turn on
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+        }
+    }
+
+    public static boolean isSimPresent(Context context) {
+        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        int simState = tm.getSimState();
+
+        if (simState == TelephonyManager.SIM_STATE_READY) {// int state 5
+            return true;
+        } else return false;
+    }
+
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
+
+
 
 }

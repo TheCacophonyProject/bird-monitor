@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="nz.org.cacophonoy.cacophonometerlite.SetupActivity">
+    tools:context="nz.org.cacophonoy.cacophonometerlite.SetupActivity"
+   >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -27,20 +28,66 @@
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="0dp">
+        android:layout_marginTop="0dp"
+
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            >
+
+
+            <TextView
+                android:id="@+id/setupSimTitle"
+                android:text="Data Connection"
+                android:layout_alignParentTop="true"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupSimMessage"
+                android:text="Select the following box if you are using mobile data?"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/setupSimTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbSimPresent"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/setupSimMessage"
+                android:checked="false"
+                android:onClick="onCheckboxSimPresentClicked"
+                android:text="Using mobile data and SIM is Present" />
+
+            <View
+                android:id="@+id/SplitLine_hor3"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@+id/cbSimPresent"
+                android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/setupRegisterStatus"
+                android:layout_below="@+id/SplitLine_hor3"
                 android:text="Device Not Registered"
                 android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="10dp"
@@ -171,43 +218,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="updateLocationButton" />
-            <View
-                android:id="@+id/SplitLine_hor3"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@+id/setupUpdateLocationButton"
-                android:layout_marginTop="5dp" />
-            <TextView
-                android:id="@+id/setupSimTitle"
-                android:text="Data Connection"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/SplitLine_hor3"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
 
-            <TextView
-                android:id="@+id/setupSimMessage"
-                android:text="Select the following box if you are using mobile data?"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/setupSimTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbSimPresent"
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/setupSimMessage"
-                android:checked="false"
-                android:onClick="onCheckboxSimPresentClicked"
-                android:text="Using mobile data and SIM is Present" />
 
 
         </RelativeLayout>
