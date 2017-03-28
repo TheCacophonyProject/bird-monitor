@@ -106,22 +106,33 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
 
+        if (intent.getExtras() == null) { // will be null if gets here due to pressing 'Start Test Recording
+            // need messages to get back to UI so will run normally
+            try {
+                // Start recording in new thread.
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        Log.d(LOG_TAG, "onHandleIntent");
+                        Record record = new Record(context, handler);
+                        record.run();
+                    }
+                };
+                thread.start();
 
-        try {
-            // Start recording in new thread.
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    Log.i(LOG_TAG, "Thread thread = new Thread() {");
-                    Record record = new Record(context, handler);
-                    record.run();
-                }
-            };
-            thread.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        }else{
+            // Attempt to fix problem with thread appearing to shut down before Airplane mode turns on/off
+            Intent mainServiceIntent = new Intent(context, MainService.class);
+
+            context.startService(mainServiceIntent);
         }
+
+
+
     }
 
 }

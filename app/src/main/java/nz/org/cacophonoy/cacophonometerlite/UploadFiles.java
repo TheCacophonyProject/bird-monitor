@@ -2,6 +2,7 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
@@ -111,6 +112,21 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
         if (recordingFiles != null) {
 
             Util.disableAirplaneMode(context);
+//            try {
+//
+//                Thread thread = new Thread() {
+//                    @Override
+//                    public void run() {
+//                        Log.i(LOG_TAG, "Thread thread = new Thread() {");
+//                        AirplaneMode airplaneMode = new AirplaneMode(context,false);
+//                        airplaneMode.run();
+//                    }
+//                };
+//                thread.start();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
             for (File aFile : recordingFiles) {
 
@@ -123,8 +139,29 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
                 }
             }
 
+            Log.d(LOG_TAG, "about to enable airplane mode");
+            Util.enableAirplaneMode(context);
+//            Intent airplaneServiceIntent = new Intent(context, AirplaneModeService.class);
+//            airplaneServiceIntent.putExtra("enable", true);
+//
+//            context.startService(airplaneServiceIntent);
+            Log.d(LOG_TAG, "finished enabling airplane mode");
 
-                Util.enableAirplaneMode(context);
+//            try {
+//
+//                Thread thread = new Thread() {
+//                    @Override
+//                    public void run() {
+//                        Log.i(LOG_TAG, "Thread thread = new Thread() {");
+//                        AirplaneMode airplaneMode = new AirplaneMode(context,true);
+//                        airplaneMode.run();
+//                    }
+//                };
+//                thread.start();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
 
         }
@@ -132,11 +169,7 @@ class UploadFiles implements Runnable { // http://stackoverflow.com/questions/15
 //        }
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        return cm.getActiveNetworkInfo() != null;
-    }
 
 
 }

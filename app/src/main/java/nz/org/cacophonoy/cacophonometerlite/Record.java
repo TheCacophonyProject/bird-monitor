@@ -17,6 +17,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.R.id.message;
 import static nz.org.cacophonoy.cacophonometerlite.StartRecordingReceiver.intentTimeUriMessage;
 import static nz.org.cacophonoy.cacophonometerlite.Util.isNetworkConnected;
 
@@ -42,15 +43,18 @@ class Record implements Runnable {
 
     @Override
     public void run() {
-        if (context == null || handler == null) {
+//        if (context == null || handler == null) {
+        if (context == null ) {
             Log.e(LOG_TAG, "Context or Handler were null.");
             return;
         }
         if (!Util.checkPermissionsForRecording(context)) {
             Log.e(LOG_TAG, "App does not have permission to record.");
-            Message message = handler.obtainMessage();
-            message.what = StartRecordingReceiver.NO_PERMISSIONS_TO_RECORD;
-            message.sendToTarget();
+            if (handler != null) {
+                Message message = handler.obtainMessage();
+                message.what = StartRecordingReceiver.NO_PERMISSIONS_TO_RECORD;
+                message.sendToTarget();
+            }
             return;
         }
         Prefs prefs = new Prefs(context);
@@ -62,16 +66,18 @@ class Record implements Runnable {
             Util.disableAirplaneMode(context);
             Log.d(LOG_TAG, "Have just disabled Airplane Mode");
             Log.d(LOG_TAG, "Is there a network connection? " + isNetworkConnected(context));
-            while (!isNetworkConnected(context)) {
-                Log.d(LOG_TAG, "Pausing for a Network connection ");
-                try {
-                    Thread.sleep(500); // give time for airplane mode to turn on
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-                Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
-            }
+
+//            while (!isNetworkConnected(context)) {
+//                Log.d(LOG_TAG, "Pausing for a Network connection ");
+//                try {
+//                    Thread.sleep(500); // give time for airplane mode to turn on
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+//            }
         }
          UploadFiles uf = new UploadFiles(context);
         uf.run();
@@ -134,19 +140,22 @@ class Record implements Runnable {
             mRecorder.prepare();
 
         } catch (Exception e) {
-            Message message = handler.obtainMessage();
-            message.what = StartRecordingReceiver.RECORDING_FAILED;
-            message.sendToTarget();
-            Log.e(LOG_TAG, "Setup recording failed.");
-            Log.e(LOG_TAG, "Could be due to lack of sdcard");
+            if (handler != null) {
+                Message message = handler.obtainMessage();
+                message.what = StartRecordingReceiver.RECORDING_FAILED;
+                message.sendToTarget();
+                Log.e(LOG_TAG, "Setup recording failed.");
+                Log.e(LOG_TAG, "Could be due to lack of sdcard");
+            }
             return false;
         }
 
         // Send message that recording started.
-        Message message = handler.obtainMessage();
-        message.what = StartRecordingReceiver.RECORDING_STARTED;
-        message.sendToTarget();
-
+        if (handler != null) {
+            Message message = handler.obtainMessage();
+            message.what = StartRecordingReceiver.RECORDING_STARTED;
+            message.sendToTarget();
+        }
         // Start recording.
         try {
             mRecorder.start();
@@ -169,10 +178,11 @@ class Record implements Runnable {
         mRecorder.release();
 
         // Send message that recording finished.
-        message = handler.obtainMessage();
-        message.what = StartRecordingReceiver.RECORDING_FINISHED;
-        message.sendToTarget();
-
+        if (handler != null) {
+          Message  message = handler.obtainMessage();
+            message.what = StartRecordingReceiver.RECORDING_FINISHED;
+            message.sendToTarget();
+        }
         // Give time for file to be saved.
         try {
             Thread.sleep(5 * 1000);

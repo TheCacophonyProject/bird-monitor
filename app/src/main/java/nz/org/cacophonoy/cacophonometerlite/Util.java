@@ -322,7 +322,7 @@ public static double getBatteryLevel(Context context){
         return new Location(lat, lon);
     }
 
-    public static void enableAirplaneMode(Context context) {
+    public static boolean enableAirplaneMode(Context context) {
 //  Prefs prefs = new Prefs(context);
 //        double batteryLevel = prefs.getBatteryLevel();
 //        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
@@ -362,9 +362,10 @@ public static double getBatteryLevel(Context context){
 
 
         }
+        return true;
     }
 
-    public static void disableAirplaneMode(Context context) {
+    public static boolean disableAirplaneMode(Context context) {
 
 
         boolean isEnabled = Settings.System.getInt(
@@ -393,6 +394,7 @@ public static double getBatteryLevel(Context context){
 
             Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
         }
+        return true;
     }
 
     public static boolean isSimPresent(Context context) {
