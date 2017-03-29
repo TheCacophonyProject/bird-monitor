@@ -35,18 +35,7 @@ public class Record2 {
 
     }
 
-    public static void continousRun(){
-        while (true){
-            try {
-                Log.d(LOG_TAG, "In loop" );
-                Thread.sleep(500); // give time for airplane mode to turn on
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            Log.d(LOG_TAG, "Finished loop" );
-        }
-    }
 
     public static void doRecord(Context context){
 
@@ -192,14 +181,14 @@ public class Record2 {
 
         // Get metadata and put into JSON.
         JSONObject audioRecording = new JSONObject();
-        Log.d(LOG_TAG, "1");
+
         String fileName = aFile.getName();
         Log.i(LOG_TAG, "fileName: " + fileName);
         // http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
-        Log.d(LOG_TAG, "2");
+
         if (fileNameParts.length != 13) {
             aFile.delete();
             Log.i(LOG_TAG, "deleted file: " + fileName);
@@ -228,7 +217,7 @@ public class Record2 {
         String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
-        Log.d(LOG_TAG, "4");
+
         try {
 
             JSONArray location = new JSONArray();
@@ -243,7 +232,7 @@ public class Record2 {
 
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
-            Log.d(LOG_TAG, "5");
+
             if (relativeTo.equalsIgnoreCase("relativeToDawn")) {
                 audioRecording.put("relativeToDawn", relativeToOffset);
             }
@@ -252,7 +241,7 @@ public class Record2 {
             }
             String versionName = BuildConfig.VERSION_NAME;
             audioRecording.put("version", versionName);
-            Log.d(LOG_TAG, "6");
+
 
         } catch (JSONException e) {
             e.printStackTrace();
