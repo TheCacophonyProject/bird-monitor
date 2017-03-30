@@ -42,7 +42,7 @@
         <receiver android:name=".StartRecordingReceiver" >
         </receiver>
 
-        <service android:name=".AirplaneModeService" />
+
         <service android:name=".MainService" />
 
         <activity

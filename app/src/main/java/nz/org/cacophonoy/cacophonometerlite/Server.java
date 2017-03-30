@@ -165,7 +165,7 @@ class Server {
      */
     static boolean register(final String group, final Context context) {
 
-         Util.disableAirplaneMode(context);
+        Util.disableAirplaneMode(context);
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {

@@ -26,7 +26,7 @@ import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
 
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
-private static final String LOG_TAG = SetupActivity.class.getName();
+    private static final String LOG_TAG = SetupActivity.class.getName();
 
     // Handler status indicators
     static final int REGISTER_SUCCESS = 1;

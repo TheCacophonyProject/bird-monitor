@@ -1,10 +1,6 @@
 package nz.org.cacophonoy.cacophonometerlite;
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaRecorder;
-import android.media.ToneGenerator;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,18 +16,15 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static android.R.id.message;
-import static nz.org.cacophonoy.cacophonometerlite.StartRecordingReceiver.intentTimeUriMessage;
-import static nz.org.cacophonoy.cacophonometerlite.Util.isNetworkConnected;
 /**
  * Created by User on 29-Mar-17.
  */
 
-public class Record2 {
-    private static final String LOG_TAG = Record.class.getName();
+public class RecordAndUpload {
+    private static final String LOG_TAG = RecordAndUpload.class.getName();
     private static long recordTimeSeconds = 0; //  set it later
 
-    public Record2(){
+    public RecordAndUpload(){
 
     }
 
@@ -102,8 +95,8 @@ public class Record2 {
 
         } catch (Exception e) {
 
-                Log.e(LOG_TAG, "Setup recording failed.");
-                Log.e(LOG_TAG, "Could be due to lack of sdcard");
+            Log.e(LOG_TAG, "Setup recording failed.");
+            Log.e(LOG_TAG, "Could be due to lack of sdcard");
 
             return false;
         }
