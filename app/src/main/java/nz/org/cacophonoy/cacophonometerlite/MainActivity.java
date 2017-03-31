@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
-      //  prefs.setSimCardDetected(false);
+        //  prefs.setSimCardDetected(false);
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;
@@ -232,8 +232,16 @@ public class MainActivity extends AppCompatActivity {
     public void testRecording(View v) {
         Log.d(TAG, "Test recording button.");
 
-        Intent intent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-        sendBroadcast(intent);
+
+        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+        try {
+            myIntent.putExtra("type","testButton");
+
+        }catch (Exception e){
+
+        }
+
+        sendBroadcast(myIntent);
     }
 
     /**

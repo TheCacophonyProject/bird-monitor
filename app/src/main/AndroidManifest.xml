@@ -41,6 +41,10 @@
 
         <receiver android:name=".StartRecordingReceiver" >
         </receiver>
+
+
+        <service android:name=".MainService" />
+
         <activity
             android:name=".SetupActivity"
             android:label="@string/title_activity_setup"

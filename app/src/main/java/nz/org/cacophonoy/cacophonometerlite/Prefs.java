@@ -28,14 +28,14 @@ class Prefs {
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
-    private static final double RECORDING_DURATION_SECONDS = 120;
-//    private static final double RECORDING_DURATION_SECONDS = 1;
+    //private static final double RECORDING_DURATION_SECONDS = 120;
+     private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-   private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+   // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
-  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
-   // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
-//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+    //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
+    // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
+      private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes
@@ -47,7 +47,7 @@ class Prefs {
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
     private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
-   // private static final boolean SIM_CARD_DETECTED = false;
+    // private static final boolean SIM_CARD_DETECTED = false;
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
     private static final double BATTERY_LEVEL = -1;
@@ -83,8 +83,8 @@ class Prefs {
             Log.e(LOG_TAG, "Context was null when trying to get preferences.");
             return 0;
         }
-            SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            return Double.longBitsToDouble(preferences.getLong(key, 0));
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return Double.longBitsToDouble(preferences.getLong(key, 0));
     }
 
     private void setDouble(String key, double val) {
@@ -234,8 +234,8 @@ class Prefs {
 
     void setMaximumBatteryLevel(double batteryLevel) {
         //if (batteryLevel > getDouble(MAXIMUM_BATTERY_LEVEL_KEY)){
-            setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
-       // }
+        setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
+        // }
 
     }
 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -64,22 +65,29 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
         Prefs prefs = new Prefs(context);
 
-        if (intent.getExtras() != null) { // will be null if gets here due to pressing 'Start Test Recording
-            try {
-                String alarmIntentType = intent.getExtras().getString("type");
-                if (alarmIntentType != null) { // will be null if
-                    if (alarmIntentType.equalsIgnoreCase("repeating")) {
-                        DawnDuskAlarms.configureDawnAlarms(context);
-                        DawnDuskAlarms.configureDuskAlarms(context);
-                    } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-                        intentTimeUriMessage = intent.getDataString();
+        // need to determine the source of the intent ie Main UI or boot recievier
+        Bundle bundle = intent.getExtras();
+        String extraType = bundle.getString("type");
+        {
+            if (!extraType.equalsIgnoreCase("testButton")){ // Don't set up alarms if just the test button is pressed
+                try {
+                    String alarmIntentType = intent.getExtras().getString("type");
+                    if (alarmIntentType != null) {
+                        if (alarmIntentType.equalsIgnoreCase("repeating")) {
+                            DawnDuskAlarms.configureDawnAlarms(context);
+                            DawnDuskAlarms.configureDuskAlarms(context);
+                        } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
+                            intentTimeUriMessage = intent.getDataString();
+                        }
                     }
-                }
 
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error setting up dawn and dusk alarms");
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Error setting up dawn and dusk alarms");
+                }
             }
         }
+
+
 
         // First check to see if battery level is greater than 50% - Abort if it isnt
 
@@ -106,22 +114,37 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
 
+        // need to determine the source of the intent ie Main UI or boot recievier
 
-        try {
-            // Start recording in new thread.
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    Log.i(LOG_TAG, "Thread thread = new Thread() {");
-                    Record record = new Record(context, handler);
-                    record.run();
-                }
-            };
-            thread.start();
+        if (extraType.equalsIgnoreCase("testButton")){
+            try {
+                // Start recording in new thread.
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        Log.d(LOG_TAG, "onHandleIntent");
+//                        Record record = new Record(context, handler);
+//                        record.run();
+                        MainThread mainThread = new MainThread(context, handler);
+                        mainThread.run();
+                    }
+                };
+                thread.start();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }else{ // intent came from boot receivier or app (not test record)
+
+            Intent mainServiceIntent = new Intent(context, MainService.class);
+            context.startService(mainServiceIntent);
+
+            // RecordAndUpload.doRecord(context); This gave error - android.os.NetworkOnMainThreadException, but worked from a Service
         }
+
+
+
     }
 
 }

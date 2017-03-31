@@ -115,15 +115,15 @@ class Util {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
         return new String(decodedBytes, "UTF-8");
     }
-public static double getBatteryLevel(Context context){
-    double batteryLevel = -1;
-    batteryLevel = getBatteryLevelUsingSystemFile(context);
-    if (batteryLevel == -1){
-        batteryLevel = getBatteryLevelByIntent(context);
+    public static double getBatteryLevel(Context context){
+        double batteryLevel = -1;
+        batteryLevel = getBatteryLevelUsingSystemFile(context);
+        if (batteryLevel == -1){
+            batteryLevel = getBatteryLevelByIntent(context);
 
+        }
+        return batteryLevel;
     }
-    return batteryLevel;
-}
     public static double getBatteryLevelUsingSystemFile(Context context) {
 //        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 // //       IntentFilter ifilter = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -160,13 +160,13 @@ public static double getBatteryLevel(Context context){
 
     public static double getBatteryLevelByIntent(Context context){
 
-            //Will use the method of checking battery level that may only give an update if phone charging status changes
+        //Will use the method of checking battery level that may only give an update if phone charging status changes
         // this will return a percentage
         double batteryLevel = -1;
-            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
         batteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-         return batteryLevel;
+        return batteryLevel;
     }
 
     public static String getStringFromFile(Context context, String filePath) throws Exception {
@@ -191,7 +191,7 @@ public static double getBatteryLevel(Context context){
 //        }
 
         line = reader.readLine();
-       // Toast.makeText(context, "Battery voltage is " + line, Toast.LENGTH_LONG).show();
+        // Toast.makeText(context, "Battery voltage is " + line, Toast.LENGTH_LONG).show();
 
 
         reader.close();
@@ -290,7 +290,7 @@ public static double getBatteryLevel(Context context){
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
         Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
 
-       // Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
+        // Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
         return officialSunset;
     }
 
@@ -322,7 +322,7 @@ public static double getBatteryLevel(Context context){
         return new Location(lat, lon);
     }
 
-    public static void enableAirplaneMode(Context context) {
+    public static boolean enableAirplaneMode(Context context) {
 //  Prefs prefs = new Prefs(context);
 //        double batteryLevel = prefs.getBatteryLevel();
 //        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
@@ -362,9 +362,10 @@ public static double getBatteryLevel(Context context){
 
 
         }
+        return true;
     }
 
-    public static void disableAirplaneMode(Context context) {
+    public static boolean disableAirplaneMode(Context context) {
 
 
         boolean isEnabled = Settings.System.getInt(
@@ -393,6 +394,7 @@ public static double getBatteryLevel(Context context){
 
             Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
         }
+        return true;
     }
 
     public static boolean isSimPresent(Context context) {

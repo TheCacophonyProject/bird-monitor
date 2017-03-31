@@ -27,7 +27,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent)
     {
-     //   Server.disableDataConnection(context);
+        //   Server.disableDataConnection(context);
 
 //        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
 //        toneG.startTone(ToneGenerator.TONE_DTMF_0, 1000);
