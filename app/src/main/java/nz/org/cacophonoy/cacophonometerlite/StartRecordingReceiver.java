@@ -68,14 +68,19 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         // need to determine the source of the intent ie Main UI or boot recievier
         Bundle bundle = intent.getExtras();
         String extraType = bundle.getString("type");
+        if (extraType == null){
+            Log.e(LOG_TAG, "Intent does not have a type");
+        }
+        String alarmIntentType = null;
         {
             if (!extraType.equalsIgnoreCase("testButton")){ // Don't set up alarms if just the test button is pressed
                 try {
-                    String alarmIntentType = intent.getExtras().getString("type");
+                     alarmIntentType = intent.getExtras().getString("type");
                     if (alarmIntentType != null) {
                         if (alarmIntentType.equalsIgnoreCase("repeating")) {
                             DawnDuskAlarms.configureDawnAlarms(context);
                             DawnDuskAlarms.configureDuskAlarms(context);
+
                         } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
                             intentTimeUriMessage = intent.getDataString();
                         }
@@ -89,7 +94,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
 
 
-        // First check to see if battery level is greater than 50% - Abort if it isnt
+        // First check to see if battery level is sufficient to continue
 
         double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
         if (batteryLevel != -1){ // looks like getting battery level using system file worked
@@ -102,14 +107,23 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
 
             double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
-            if (batteryRatioLevel < 0.5) {
+            double batteryPercent = batteryRatioLevel * 100;
+            if (!enoughBatteryToContinue( batteryPercent, alarmIntentType)){
                 return;
             }
+
+//            if (batteryRatioLevel < 0.5) {
+//                return;
+//            }
         }else { // will need to get battery level using intent method
             double batteryPercentLevel = getBatteryLevelByIntent(context);
-            if (batteryPercentLevel < 50) {
+
+            if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType)){
                 return;
             }
+//            if (batteryPercentLevel < 50) {
+//                return;
+//            }
 
         }
 
@@ -144,6 +158,30 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
 
+
+    }
+
+    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType){
+        // The battery level required to continue depends on the type of alarm
+
+        if (alarmType == null){
+            // Test button was pressed
+            return true;
+        }
+
+        if (alarmType.equalsIgnoreCase("repeating")){
+            if (batteryPercent > 95){
+                return true;
+            }else {
+                return false;
+            }
+        }else { // must be a dawn or dusk alarm
+            if (batteryPercent > 60){
+                return true;
+            }else {
+                return false;
+            }
+        }
 
     }
 

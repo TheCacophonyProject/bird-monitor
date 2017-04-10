@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
 import static android.R.attr.delay;
 import static android.content.Context.ALARM_SERVICE;
+import static android.os.Build.VERSION_CODES.ECLAIR;
 
 
 public class BootReceiver extends BroadcastReceiver {
@@ -39,7 +41,9 @@ public class BootReceiver extends BroadcastReceiver {
         }catch (Exception e){
             // Sound alarm if problem
             ToneGenerator toneG2 = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-            toneG2.startTone(ToneGenerator.TONE_DTMF_0, 10000);
+            if (Build.VERSION.SDK_INT >= ECLAIR) {
+                toneG2.startTone(ToneGenerator.TONE_DTMF_0, 10000);
+            }
             Log.i(LOG_TAG, e.getLocalizedMessage());
         }
 

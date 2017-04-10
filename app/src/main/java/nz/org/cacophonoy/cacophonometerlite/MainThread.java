@@ -2,6 +2,7 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -25,6 +26,7 @@ public class MainThread implements Runnable {
     }
     @Override
     public void run() {
+
         //        if (context == null || handler == null) {
         if (context == null ) {
             Log.e(LOG_TAG, "Context or Handler were null.");

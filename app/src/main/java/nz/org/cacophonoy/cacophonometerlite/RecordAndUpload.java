@@ -35,11 +35,24 @@ public class RecordAndUpload {
         Prefs prefs = new Prefs(context);
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
         makeRecording(context);
-        uploadFiles(context);
+
+        // only upload recordings if it has been more than a day since last upload
+        long dateTimeLastUpload = prefs.getDateTimeLastUpload();
+        long now = new Date().getTime();
+
+        long aDay = 1000 * 60 * 60 * 24;
+
+        if ((now - dateTimeLastUpload) > aDay){
+            uploadFiles(context);
+            prefs.setDateTimeLastUpload(now);
+        }
+
+
+
     }
 
     private static boolean makeRecording(Context context){
-        Log.d(LOG_TAG, "Make a recording");
+      //  Log.d(LOG_TAG, "Make a recording");
 
 
         // Get recording file.
@@ -102,7 +115,7 @@ public class RecordAndUpload {
         }
 
         // Send message that recording started.
-        Log.d(LOG_TAG, "RECORDING_STARTED");
+      //  Log.d(LOG_TAG, "RECORDING_STARTED");
 
         // Start recording.
         try {
@@ -124,9 +137,10 @@ public class RecordAndUpload {
         // Stop recording.
         mRecorder.stop();
         mRecorder.release();
+        mRecorder = null; // attempting to fix error mediarecorder went away with unhandled events
 
         // Send message that recording finished.
-        Log.d(LOG_TAG, "RECORDING_FINISHED");
+     //   Log.d(LOG_TAG, "RECORDING_FINISHED");
 
 
         // Give time for file to be saved.
@@ -157,12 +171,12 @@ public class RecordAndUpload {
                 } else {
                     Log.w(LOG_TAG, "Failed to upload file to server");
                 }
-                Log.d(LOG_TAG, "for loop");
+             //   Log.d(LOG_TAG, "for loop");
             }
-            Log.d(LOG_TAG, "finished for loop");
-            Log.d(LOG_TAG, "about to enable airplane mode");
+         //   Log.d(LOG_TAG, "finished for loop");
+          //  Log.d(LOG_TAG, "about to enable airplane mode");
             Util.enableAirplaneMode(context);
-            Log.d(LOG_TAG, "finished enabling airplane mode");
+        //    Log.d(LOG_TAG, "finished enabling airplane mode");
 
         }
     }

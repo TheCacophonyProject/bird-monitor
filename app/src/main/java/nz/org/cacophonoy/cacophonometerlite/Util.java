@@ -351,14 +351,14 @@ class Util {
         }
 
         while (isNetworkConnected(context)) {
-            Log.d(LOG_TAG, "Pausing for Network connection to turn off ");
+         //   Log.d(LOG_TAG, "Pausing for Network connection to turn off ");
             try {
                 Thread.sleep(500); // give time for airplane mode to turn on
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+          //  Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
 
 
         }
@@ -385,7 +385,7 @@ class Util {
         }
 
         while (!isNetworkConnected(context)) {
-            Log.d(LOG_TAG, "Pausing for a Network connection ");
+          //  Log.d(LOG_TAG, "Pausing for a Network connection ");
             try {
                 Thread.sleep(500); // give time for airplane mode to turn on
             } catch (InterruptedException e) {
@@ -402,9 +402,8 @@ class Util {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         int simState = tm.getSimState();
 
-        if (simState == TelephonyManager.SIM_STATE_READY) {// int state 5
-            return true;
-        } else return false;
+        // int state 5
+        return simState == TelephonyManager.SIM_STATE_READY;
     }
 
 

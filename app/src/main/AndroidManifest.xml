@@ -7,17 +7,13 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
-
-
     <uses-feature android:name="android.hardware.location.gps" />
-
-
 
     <application
         android:allowBackup="true"
@@ -33,39 +29,37 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="BootReceiver" >
+        <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".StartRecordingReceiver" >
-        </receiver>
-
+        <receiver android:name=".StartRecordingReceiver" />
 
         <service android:name=".MainService" />
 
         <activity
             android:name=".SetupActivity"
             android:label="@string/title_activity_setup"
-            android:parentActivityName=".MainActivity" >
-
-        <!-- Parent activity meta-data to support 4.0 and lower -->
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
-        </activity>
-
-        <activity
-            android:name=".HelpActivity"
-            android:label="@string/title_activity_help"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
         </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help"
+            android:parentActivityName=".MainActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
+        </activity>
+
+
     </application>
 
 </manifest>
