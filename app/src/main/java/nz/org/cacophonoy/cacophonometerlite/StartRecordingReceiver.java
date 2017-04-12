@@ -74,26 +74,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             return;
         }
 
-//        {
-//            if (!extraType.equalsIgnoreCase("testButton")){ // Don't set up alarms if just the test button is pressed
-//                try {
-//                     alarmIntentType = intent.getExtras().getString("type");
-//                    if (alarmIntentType != null) {
-//                        if (alarmIntentType.equalsIgnoreCase("repeating")) {
-////                            DawnDuskAlarms.configureDawnAlarms(context);
-////                            DawnDuskAlarms.configureDuskAlarms(context);
-//
-//                        } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-//                           // intentTimeUriMessage = intent.getDataString();
-//                        }
-//                    }
-//
-//                } catch (Exception e) {
-//                    Log.e(LOG_TAG, "Error setting up dawn and dusk alarms");
-//                }
-//            }
-//        }
-
 
 
         // First check to see if battery level is sufficient to continue
@@ -114,9 +94,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 return;
             }
 
-//            if (batteryRatioLevel < 0.5) {
-//                return;
-//            }
+
         }else { // will need to get battery level using intent method
             double batteryPercentLevel = getBatteryLevelByIntent(context);
 

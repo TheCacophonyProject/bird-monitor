@@ -62,6 +62,7 @@ class Server {
         } else {
             login(context);
         }
+        Util.enableAirplaneMode(context);
     }
 
     /**

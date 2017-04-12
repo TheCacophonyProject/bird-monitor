@@ -33,7 +33,7 @@ public class RecordAndUpload {
 
 
 
-    public static void doRecord(Context context){
+    public static void doRecord(Context context, String typeOfRecording){
 
         Prefs prefs = new Prefs(context);
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
@@ -43,19 +43,26 @@ public class RecordAndUpload {
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
 
-        long aDay = 1000 * 60 * 60 * 24;
-//        long aDay = 1; // for testing
+       long aDay = 1000 * 60 * 60 * 24;
+     //   long aDay = 1; // for testing
 
+        if (typeOfRecording != null){
+            if (typeOfRecording.equalsIgnoreCase("testButton")){
+                uploadFiles(context);
+            }
+        }
         if ((now - dateTimeLastUpload) > aDay){
-            uploadFiles(context);
-            prefs.setDateTimeLastUpload(now);
+            if (uploadFiles(context)){
+                prefs.setDateTimeLastUpload(now);
+            }
+
         }
 
         // Update dawn/dusk times if it has been more than 23.5 hours since last time
         long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-        long twentyThreeHalfHours = 1000 * 60 * 6 * 235;
+        long twentyThreeAndAHalfHours = 1000 * 60 * 6 * 235;
 
-        if ((now - dateTimeLastCalculatedDawnDusk) > twentyThreeHalfHours){
+        if ((now - dateTimeLastCalculatedDawnDusk) > twentyThreeAndAHalfHours){
             DawnDuskAlarms.configureDawnAlarms(context);
             DawnDuskAlarms.configureDuskAlarms(context);
             prefs.setDateTimeLastCalculatedDawnDusk(now);
@@ -170,7 +177,7 @@ public class RecordAndUpload {
         return true;
     }
 
-    private static void uploadFiles(Context context){
+    private static boolean uploadFiles(Context context){
         try {
             File recordingsFolder = Util.getRecordingsFolder();
             File recordingFiles[] = recordingsFolder.listFiles();
@@ -186,7 +193,7 @@ public class RecordAndUpload {
                         Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
                         Util.enableAirplaneMode(context);
 
-                        return; // Can't upload without JWT, login/register device to get JWT.
+                        return false; // Can't upload without JWT, login/register device to get JWT.
                     }
                 }
 
@@ -199,16 +206,21 @@ public class RecordAndUpload {
                         }
                     } else {
                         Log.w(LOG_TAG, "Failed to upload file to server");
+                        Util.enableAirplaneMode(context);
+                        return false;
                     }
 
                 }
 
                 Util.enableAirplaneMode(context);
+
             }
         }catch (Exception e){
             Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
             Log.e(LOG_TAG, "Error with upload");
+            return false;
         }
+        return true;
     }
 
     private static boolean sendFile(Context context, File aFile) {

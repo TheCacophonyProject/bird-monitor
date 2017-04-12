@@ -24,7 +24,7 @@ public class MainService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        RecordAndUpload.doRecord(getApplicationContext());
+        RecordAndUpload.doRecord(getApplicationContext(),null);
     }
 
 
