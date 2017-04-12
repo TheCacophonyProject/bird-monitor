@@ -16,6 +16,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static nz.org.cacophonoy.cacophonometerlite.Server.getToken;
+import static nz.org.cacophonoy.cacophonometerlite.Server.login;
+
 /**
  * Created by User on 29-Mar-17.
  */
@@ -41,11 +44,24 @@ public class RecordAndUpload {
         long now = new Date().getTime();
 
         long aDay = 1000 * 60 * 60 * 24;
+//        long aDay = 1; // for testing
 
         if ((now - dateTimeLastUpload) > aDay){
             uploadFiles(context);
             prefs.setDateTimeLastUpload(now);
         }
+
+        // Update dawn/dusk times if it has been more than 23.5 hours since last time
+        long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
+        long twentyThreeHalfHours = 1000 * 60 * 6 * 235;
+
+        if ((now - dateTimeLastCalculatedDawnDusk) > twentyThreeHalfHours){
+            DawnDuskAlarms.configureDawnAlarms(context);
+            DawnDuskAlarms.configureDuskAlarms(context);
+            prefs.setDateTimeLastCalculatedDawnDusk(now);
+        }
+
+
 
 
 
@@ -155,29 +171,43 @@ public class RecordAndUpload {
     }
 
     private static void uploadFiles(Context context){
-        File recordingsFolder = Util.getRecordingsFolder();
-        File recordingFiles[] = recordingsFolder.listFiles();
-        if (recordingFiles != null) {
+        try {
+            File recordingsFolder = Util.getRecordingsFolder();
+            File recordingFiles[] = recordingsFolder.listFiles();
+            if (recordingFiles != null) {
 
-            Log.d(LOG_TAG, "about to disable airplane mode");
-            Util.disableAirplaneMode(context);
-            Log.d(LOG_TAG, "finished disabling airplane mode");
-            for (File aFile : recordingFiles) {
+                Log.d(LOG_TAG, "about to disable airplane mode");
+                Util.disableAirplaneMode(context);
 
-                if (sendFile(context, aFile)) {
-                    if (!aFile.delete()) {
-                        Log.w(LOG_TAG, "Deleting audio file failed");
+                // Check here to see if can connect to server and abort (for all files) if can't
+                // Check that there is a JWT (JSON Web Token)
+                if (getToken() == null) {
+                    if (!Server.login(context)) {
+                        Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
+                        Util.enableAirplaneMode(context);
+
+                        return; // Can't upload without JWT, login/register device to get JWT.
                     }
-                } else {
-                    Log.w(LOG_TAG, "Failed to upload file to server");
                 }
-             //   Log.d(LOG_TAG, "for loop");
-            }
-         //   Log.d(LOG_TAG, "finished for loop");
-          //  Log.d(LOG_TAG, "about to enable airplane mode");
-            Util.enableAirplaneMode(context);
-        //    Log.d(LOG_TAG, "finished enabling airplane mode");
 
+                Log.d(LOG_TAG, "finished disabling airplane mode");
+                for (File aFile : recordingFiles) {
+
+                    if (sendFile(context, aFile)) {
+                        if (!aFile.delete()) {
+                            Log.w(LOG_TAG, "Deleting audio file failed");
+                        }
+                    } else {
+                        Log.w(LOG_TAG, "Failed to upload file to server");
+                    }
+
+                }
+
+                Util.enableAirplaneMode(context);
+            }
+        }catch (Exception e){
+            Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+            Log.e(LOG_TAG, "Error with upload");
         }
     }
 

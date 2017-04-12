@@ -30,8 +30,8 @@ class Prefs {
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
 //    private static final double RECORDING_DURATION_SECONDS = 120;
-    private static final double RECORDING_DURATION_SECONDS = 60;
-  //   private static final double RECORDING_DURATION_SECONDS = 1;
+   private static final double RECORDING_DURATION_SECONDS = 60;
+     //private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
 //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
     private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 86400;  //86400 is one day!
@@ -59,6 +59,8 @@ class Prefs {
     private static final double MAXIMUM_BATTERY_LEVEL = -1;
 
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD_KEY";
+
+    private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY";
 
 
 
@@ -270,6 +272,16 @@ class Prefs {
     }
 
     long getDateTimeLastUpload() {
-        return getLong("DATE_TIME_LAST_UPLOAD_KEY");
+        return getLong(DATE_TIME_LAST_UPLOAD_KEY);
     }
+
+    long getDateTimeLastCalculatedDawnDusk() {
+        return getLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY);
+    }
+
+    void setDateTimeLastCalculatedDawnDusk(long dateTimeLastCalculatedDawnDusk) {
+        setLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY, dateTimeLastCalculatedDawnDusk);
+    }
+
+
 }

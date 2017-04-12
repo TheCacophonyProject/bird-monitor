@@ -22,7 +22,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     public static final int RECORDING_FINISHED = 3;
     public static final int NO_PERMISSIONS_TO_RECORD = 4;
     private static final String LOG_TAG = StartRecordingReceiver.class.getName();
-    public static String intentTimeUriMessage = null;
+    //public static String intentTimeUriMessage = null;
 
     Context context = null;
     // Handler to pass to recorder.
@@ -67,30 +67,32 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
         // need to determine the source of the intent ie Main UI or boot recievier
         Bundle bundle = intent.getExtras();
-        String extraType = bundle.getString("type");
-        if (extraType == null){
+        String alarmIntentType = bundle.getString("type");
+
+        if (alarmIntentType == null){
             Log.e(LOG_TAG, "Intent does not have a type");
+            return;
         }
-        String alarmIntentType = null;
-        {
-            if (!extraType.equalsIgnoreCase("testButton")){ // Don't set up alarms if just the test button is pressed
-                try {
-                     alarmIntentType = intent.getExtras().getString("type");
-                    if (alarmIntentType != null) {
-                        if (alarmIntentType.equalsIgnoreCase("repeating")) {
-                            DawnDuskAlarms.configureDawnAlarms(context);
-                            DawnDuskAlarms.configureDuskAlarms(context);
 
-                        } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-                            intentTimeUriMessage = intent.getDataString();
-                        }
-                    }
-
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, "Error setting up dawn and dusk alarms");
-                }
-            }
-        }
+//        {
+//            if (!extraType.equalsIgnoreCase("testButton")){ // Don't set up alarms if just the test button is pressed
+//                try {
+//                     alarmIntentType = intent.getExtras().getString("type");
+//                    if (alarmIntentType != null) {
+//                        if (alarmIntentType.equalsIgnoreCase("repeating")) {
+////                            DawnDuskAlarms.configureDawnAlarms(context);
+////                            DawnDuskAlarms.configureDuskAlarms(context);
+//
+//                        } else if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
+//                           // intentTimeUriMessage = intent.getDataString();
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    Log.e(LOG_TAG, "Error setting up dawn and dusk alarms");
+//                }
+//            }
+//        }
 
 
 
@@ -121,30 +123,22 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType)){
                 return;
             }
-//            if (batteryPercentLevel < 50) {
-//                return;
-//            }
-
         }
 
 
         // need to determine the source of the intent ie Main UI or boot recievier
 
-        if (extraType.equalsIgnoreCase("testButton")){
+        if (alarmIntentType.equalsIgnoreCase("testButton")){
             try {
                 // Start recording in new thread.
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
-                        Log.d(LOG_TAG, "onHandleIntent");
-//                        Record record = new Record(context, handler);
-//                        record.run();
                         MainThread mainThread = new MainThread(context, handler);
                         mainThread.run();
                     }
                 };
                 thread.start();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

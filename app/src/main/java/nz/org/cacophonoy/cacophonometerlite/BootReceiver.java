@@ -50,15 +50,7 @@ public class BootReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         Prefs prefs = new Prefs(context);
-        // determine if there is a sim card - need to disable airplane mode to determine
-        // Going to do this in Main Activity, otherwise will need to turn off airplane mode in StartRecordingReceiver too often - just to check
-//        if ( Util.disableAirplaneMode(context)) {
-//            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-//        toneG.startTone(ToneGenerator.TONE_DTMF_0, 1000);
-//            boolean isSimCardDetected = Util.isSimPresent(context);
-//            prefs.setSimCardDetected(isSimCardDetected);
-//            Util.enableAirplaneMode(context); // save power.
-//        }
+
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
         long delay = 1000 * timeBetweenRecordingsSeconds ;

@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -57,6 +58,7 @@ class Server {
 
         if (!ping(context)) {
             Log.d(LOG_TAG, "Could not connect to server");
+
         } else {
             login(context);
         }
@@ -94,10 +96,11 @@ class Server {
      * @param context app context
      * @return if login was successful
      */
-    private static boolean login(Context context) {
+//    private static boolean login(Context context) {
+    public static boolean login(Context context) {
         Util.disableAirplaneMode(context);
         // Get credentials from shared preferences.
-        //SharedPreferences prefs = context.getSharedPreferences(SetupActivity.PREFS_NAME, Context.MODE_PRIVATE);
+
         Prefs prefs = new Prefs(context);
 
         String devicename = prefs.getDeviceName();

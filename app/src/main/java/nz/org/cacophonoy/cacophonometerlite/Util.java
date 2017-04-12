@@ -323,16 +323,6 @@ class Util {
     }
 
     public static boolean enableAirplaneMode(Context context) {
-//  Prefs prefs = new Prefs(context);
-//        double batteryLevel = prefs.getBatteryLevel();
-//        double batteryPercentLevel = batteryLevel / prefs.getMaximumBatteryLevel();
-//
-//        if (batteryPercentLevel < 0.99) {// So wifi likely to only stay on if plugged into mains (or very sunny when on solar panel)
-//            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//            if (wifi.isWifiEnabled()) {
-//                wifi.setWifiEnabled(false);
-//            }
-//        }
 
         boolean isEnabled = Settings.System.getInt(
                 context.getContentResolver(),
@@ -351,16 +341,11 @@ class Util {
         }
 
         while (isNetworkConnected(context)) {
-         //   Log.d(LOG_TAG, "Pausing for Network connection to turn off ");
             try {
                 Thread.sleep(500); // give time for airplane mode to turn on
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-          //  Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
-
-
         }
         return true;
     }
@@ -385,14 +370,14 @@ class Util {
         }
 
         while (!isNetworkConnected(context)) {
-          //  Log.d(LOG_TAG, "Pausing for a Network connection ");
+
             try {
                 Thread.sleep(500); // give time for airplane mode to turn on
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+           // Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
         }
         return true;
     }
