@@ -68,6 +68,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         // need to determine the source of the intent ie Main UI or boot recievier
         Bundle bundle = intent.getExtras();
         String alarmIntentType = bundle.getString("type");
+        Log.e(LOG_TAG, "alarmIntentType is " + alarmIntentType);
 
         if (alarmIntentType == null){
             Log.e(LOG_TAG, "Intent does not have a type");

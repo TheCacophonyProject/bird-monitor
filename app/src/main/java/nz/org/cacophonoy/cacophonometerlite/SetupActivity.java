@@ -3,6 +3,7 @@ package nz.org.cacophonoy.cacophonometerlite;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
+import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
 
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
@@ -128,7 +130,8 @@ public class SetupActivity extends AppCompatActivity {
                     break;
                 case REGISTER_FAIL:
                     onResume();
-                    Toast.makeText(getApplicationContext(), "Failed to register.", Toast.LENGTH_SHORT).show();
+                    Context context = SetupActivity.this;
+                    Toast.makeText(context, "Failed to register.", Toast.LENGTH_SHORT).show();
                 case RESUME:
                     onResume();
                 default:
@@ -140,7 +143,15 @@ public class SetupActivity extends AppCompatActivity {
 
     public void registerButton(View v) {
 
-        Util.disableAirplaneMode(getApplicationContext());
+        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+            if ( !Util.disableAirplaneMode(getApplicationContext())){
+                Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         //Get Group from text field.
@@ -178,7 +189,10 @@ public class SetupActivity extends AppCompatActivity {
         if (group == null || group.length() < 4) {
             Log.i("Register", "Invalid group name: "+group);
             Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+            return;
         }
+
+
 
         Thread registerThread = new Thread() {
             @Override
@@ -194,6 +208,8 @@ public class SetupActivity extends AppCompatActivity {
         };
         registerThread.start();
     }
+
+
 
     public void updateServerUrlButton(View v) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

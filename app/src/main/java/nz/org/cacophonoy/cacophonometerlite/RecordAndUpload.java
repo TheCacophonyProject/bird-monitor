@@ -1,6 +1,7 @@
 package nz.org.cacophonoy.cacophonometerlite;
 import android.content.Context;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -36,7 +37,15 @@ public class RecordAndUpload {
     public static void doRecord(Context context, String typeOfRecording){
 
         Prefs prefs = new Prefs(context);
+
         recordTimeSeconds =  (long)prefs.getRecordingDuration();
+
+
+        if (typeOfRecording != null){
+            if (typeOfRecording.equalsIgnoreCase("testButton")  ){
+                recordTimeSeconds = 5;  // short test
+            }
+        }
         makeRecording(context);
 
         // only upload recordings if it has been more than a day since last upload
@@ -47,7 +56,7 @@ public class RecordAndUpload {
      //   long aDay = 1; // for testing
 
         if (typeOfRecording != null){
-            if (typeOfRecording.equalsIgnoreCase("testButton")){
+            if (typeOfRecording.equalsIgnoreCase("testButton") ){
                 uploadFiles(context);
             }
         }
@@ -184,14 +193,23 @@ public class RecordAndUpload {
             if (recordingFiles != null) {
 
                 Log.d(LOG_TAG, "about to disable airplane mode");
-                Util.disableAirplaneMode(context);
+
+                // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+                    Util.disableAirplaneMode(context);
+                }
+
 
                 // Check here to see if can connect to server and abort (for all files) if can't
                 // Check that there is a JWT (JSON Web Token)
                 if (getToken() == null) {
                     if (!Server.login(context)) {
                         Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
-                        Util.enableAirplaneMode(context);
+
+                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+                            Util.enableAirplaneMode(context);
+                        }
+
 
                         return false; // Can't upload without JWT, login/register device to get JWT.
                     }
@@ -206,17 +224,24 @@ public class RecordAndUpload {
                         }
                     } else {
                         Log.w(LOG_TAG, "Failed to upload file to server");
-                        Util.enableAirplaneMode(context);
+                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+                            Util.enableAirplaneMode(context);
+                            }
                         return false;
                     }
 
                 }
 
-                Util.enableAirplaneMode(context);
+                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+                    Util.enableAirplaneMode(context);
+                }
 
             }
         }catch (Exception e){
-            Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+            if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+                Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+            }
+
             Log.e(LOG_TAG, "Error with upload");
             return false;
         }
@@ -273,7 +298,8 @@ public class RecordAndUpload {
             location.put(prefs.getLatitude());
             location.put(prefs.getLongitude());
             audioRecording.put("location", location);
-            audioRecording.put("duration", prefs.getRecordingDuration());
+//            audioRecording.put("duration", prefs.getRecordingDuration());
+            audioRecording.put("duration", recordTimeSeconds);
             audioRecording.put("localFilePath", localFilePath);
             audioRecording.put("recordingDateTime", recordingDateTime);
             audioRecording.put("recordingTime", recordingTime);

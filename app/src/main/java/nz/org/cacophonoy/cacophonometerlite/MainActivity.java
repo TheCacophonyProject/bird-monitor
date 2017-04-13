@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onResume() {
+
         checkPermissions();
 
         Prefs prefs = new Prefs(getApplicationContext());

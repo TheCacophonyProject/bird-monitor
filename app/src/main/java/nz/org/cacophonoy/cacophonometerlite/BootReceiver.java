@@ -57,6 +57,19 @@ public class BootReceiver extends BroadcastReceiver {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
+
+        // Do a test record when first boots
+//        Intent runOnceOnBootIntent = new Intent(context, StartRecordingReceiver.class);
+//        try {
+//            Log.e(LOG_TAG, "About to broadcast runOnceOnBootIntent");
+//            runOnceOnBootIntent.putExtra("type","runOnceOnBoot");
+//            context.sendBroadcast(runOnceOnBootIntent);
+//
+//        }catch (Exception e){
+//
+//        }
+
+
     }
 
 }

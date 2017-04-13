@@ -5,6 +5,7 @@ import android.app.IntentService;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,7 +25,18 @@ public class MainService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        RecordAndUpload.doRecord(getApplicationContext(),null);
+        String typeOfRecording = null;
+
+        Bundle bundle = intent.getExtras();
+        String alarmIntentType = bundle.getString("type");
+
+        if (alarmIntentType == null){
+            if (alarmIntentType.equalsIgnoreCase("alarmIntentType")){
+                typeOfRecording = "alarmIntentType";
+            }
+        }
+
+        RecordAndUpload.doRecord(getApplicationContext(),typeOfRecording);
     }
 
 

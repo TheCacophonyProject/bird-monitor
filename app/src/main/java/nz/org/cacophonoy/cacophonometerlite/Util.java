@@ -324,6 +324,11 @@ class Util {
 
     public static boolean enableAirplaneMode(Context context) {
 
+        // This will not work (and causes a crash) for Android 4.2 and above
+        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+            return false;
+        }
+
         boolean isEnabled = Settings.System.getInt(
                 context.getContentResolver(),
                 Settings.System.AIRPLANE_MODE_ON, 0) == 1;
@@ -352,6 +357,11 @@ class Util {
 
     public static boolean disableAirplaneMode(Context context) {
 
+        // This will not work (and causes a crash) for Android 4.2 and above
+        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+            return false;
+        }
+
 
         boolean isEnabled = Settings.System.getInt(
                 context.getContentResolver(),
@@ -369,27 +379,34 @@ class Util {
             context.sendBroadcast(intent);
         }
 
+        int numberOfLoops = 0;
         while (!isNetworkConnected(context)) {
 
             try {
-                Thread.sleep(500); // give time for airplane mode to turn on
+                Thread.sleep(500); // give time for airplane mode to turn off
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-           // Log.d(LOG_TAG, "Network connection? " + isNetworkConnected(context));
+            numberOfLoops+=1;
+            if (numberOfLoops > 20){
+                break;
+            }
+        }
+        if (numberOfLoops > 20){
+            return false;
         }
         return true;
     }
 
-    public static boolean isSimPresent(Context context) {
-        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        int simState = tm.getSimState();
-
-        // int state 5
-        return simState == TelephonyManager.SIM_STATE_READY;
-    }
+//    public static boolean isSimPresent(Context context) {
+//        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
+//        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        int simState = tm.getSimState();
+//
+//        // int state 5
+//        return simState == TelephonyManager.SIM_STATE_READY;
+//    }
 
 
     public static boolean isNetworkConnected(Context context) {
@@ -397,6 +414,10 @@ class Util {
 
         return cm.getActiveNetworkInfo() != null;
     }
+
+//    public static boolean canReachServer(){
+//
+//    }
 
 
 
