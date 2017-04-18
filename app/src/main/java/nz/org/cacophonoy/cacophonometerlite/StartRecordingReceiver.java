@@ -68,7 +68,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         // need to determine the source of the intent ie Main UI or boot recievier
         Bundle bundle = intent.getExtras();
         String alarmIntentType = bundle.getString("type");
-        Log.e(LOG_TAG, "alarmIntentType is " + alarmIntentType);
+      //  Log.e(LOG_TAG, "alarmIntentType is " + alarmIntentType);
 
         if (alarmIntentType == null){
             Log.e(LOG_TAG, "Intent does not have a type");
@@ -92,6 +92,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
             double batteryPercent = batteryRatioLevel * 100;
             if (!enoughBatteryToContinue( batteryPercent, alarmIntentType)){
+                Log.w(LOG_TAG, "Battery level too low to do a recording");
                 return;
             }
 
@@ -100,12 +101,13 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             double batteryPercentLevel = getBatteryLevelByIntent(context);
 
             if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType)){
+                Log.w(LOG_TAG, "Battery level too low to do a recording");
                 return;
             }
         }
 
 
-        // need to determine the source of the intent ie Main UI or boot recievier
+        // need to determine the source of the intent ie Main UI or boot receiver
 
         if (alarmIntentType.equalsIgnoreCase("testButton")){
             try {
@@ -125,6 +127,12 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }else{ // intent came from boot receivier or app (not test record)
 
             Intent mainServiceIntent = new Intent(context, MainService.class);
+            try {
+                mainServiceIntent.putExtra("type",alarmIntentType);
+
+            }catch (Exception e){
+
+            }
             context.startService(mainServiceIntent);
 
             // RecordAndUpload.doRecord(context); This gave error - android.os.NetworkOnMainThreadException, but worked from a Service
@@ -137,7 +145,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType){
         // The battery level required to continue depends on the type of alarm
 
-        if (alarmType == null){
+        if (alarmType.equalsIgnoreCase("testButton")){
             // Test button was pressed
             return true;
         }

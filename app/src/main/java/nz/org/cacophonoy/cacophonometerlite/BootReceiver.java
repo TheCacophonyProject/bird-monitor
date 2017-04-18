@@ -48,6 +48,7 @@ public class BootReceiver extends BroadcastReceiver {
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
+
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         Prefs prefs = new Prefs(context);
 

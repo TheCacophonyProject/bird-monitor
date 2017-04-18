@@ -67,7 +67,7 @@ public class RecordAndUpload {
 
         }
 
-        // Update dawn/dusk times if it has been more than 23.5 hours since last time
+        // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
         long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
         long twentyThreeAndAHalfHours = 1000 * 60 * 6 * 235;
 

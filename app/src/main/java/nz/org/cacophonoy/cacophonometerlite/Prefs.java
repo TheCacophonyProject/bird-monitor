@@ -37,7 +37,7 @@ class Prefs {
     private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 86400;  //86400 is one day!
 //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
     //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
-    // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
+  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
   //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";

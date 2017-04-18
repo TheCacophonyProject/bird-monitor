@@ -30,13 +30,13 @@ public class MainService extends IntentService {
         Bundle bundle = intent.getExtras();
         String alarmIntentType = bundle.getString("type");
 
-        if (alarmIntentType == null){
-            if (alarmIntentType.equalsIgnoreCase("alarmIntentType")){
-                typeOfRecording = "alarmIntentType";
-            }
-        }
+//        if (alarmIntentType == null){
+//            if (alarmIntentType.equalsIgnoreCase("alarmIntentType")){
+//                typeOfRecording = "alarmIntentType";
+//            }
+//        }
 
-        RecordAndUpload.doRecord(getApplicationContext(),typeOfRecording);
+        RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
     }
 
 
