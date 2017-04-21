@@ -35,7 +35,7 @@ public class DawnDuskAlarms {
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
         int differenceBetweenSmallAndLarge = dawnDuskOffsetLargeSeconds - dawnDuskOffsetSmallSeconds; // used later to set alarms relative to each other
-        int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
+      //  int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
 
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
@@ -49,15 +49,11 @@ public class DawnDuskAlarms {
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dawn");
 
-//        Calendar sunRiseTodayCalendar = Util.getSunrise(context, nowToday);
-//        Calendar dawnTodayCalendar = (Calendar) sunRiseTodayCalendar.clone();
-//        dawnTodayCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
+
 
         Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
 
-//        Calendar sunRiseTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
-//       Calendar dawnTomorrowCalendar = (Calendar) sunRiseTomorrowCalendar.clone();
-//        dawnTomorrowCalendar.add(Calendar.SECOND, -lengthOfTwilight); // going to use dawn rather than sunrise
+
         Calendar dawnTomorrowCalendar =  Util.getDawn(context, nowTomorrow);
 
         dawnTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
@@ -117,6 +113,22 @@ public class DawnDuskAlarms {
             alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
         }
 
+//        // test dawn/dusk alarms
+        timeUri = Uri.parse("dawnDuskTest1");
+        myIntent.setData(timeUri);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 1, pendingIntent);
+
+        timeUri = Uri.parse("dawnDuskTest2");
+        myIntent.setData(timeUri);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 2, pendingIntent);
+
+        timeUri = Uri.parse("dawnDuskTest3");
+        myIntent.setData(timeUri);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 3, pendingIntent);
+
     }
 
 
@@ -125,7 +137,7 @@ public class DawnDuskAlarms {
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
         int differenceBetweenSmallAndLarge = dawnDuskOffsetLargeSeconds - dawnDuskOffsetSmallSeconds; // used later to set alarms relative to each other
-        int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
+     //   int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
 
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
@@ -207,6 +219,11 @@ public class DawnDuskAlarms {
             alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
         }
 
+
+
+
     }
+
+
 
 }

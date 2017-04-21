@@ -44,6 +44,8 @@ public class RecordAndUpload {
         if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton")  ){
                 recordTimeSeconds = 5;  // short test
+            }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
+                recordTimeSeconds =  (long)prefs.getRecordingDuration() + 2; // help to recognise dawn/dusk recordings
             }
         }
         makeRecording(context);
@@ -52,30 +54,39 @@ public class RecordAndUpload {
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
 
-       long aDay = 1000 * 60 * 60 * 24;
-     //   long aDay = 1; // for testing
+//       long timeIntervalBetweenUploads = 1000 * 60 * 60 * 24;
+        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 2; // 2 hours for testing
+      //  long timeIntervalBetweenUploads = 1000 * 60 ; // 1 minute for testing
+      //  long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
 
         if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
                 uploadFiles(context);
             }
         }
-        if ((now - dateTimeLastUpload) > aDay){
+        if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
             if (uploadFiles(context)){
                 prefs.setDateTimeLastUpload(now);
             }
 
         }
 
-        // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
-        long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-        long twentyThreeAndAHalfHours = 1000 * 60 * 6 * 235;
+        if (typeOfRecording != null){
+            if (typeOfRecording.equalsIgnoreCase("repeating")  ){
+                // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
+                long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
+                // long twentyThreeAndAHalfHours = 1000 * 60 * 6 * 235;
+                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 2; // 2 hours for testing
 
-        if ((now - dateTimeLastCalculatedDawnDusk) > twentyThreeAndAHalfHours){
-            DawnDuskAlarms.configureDawnAlarms(context);
-            DawnDuskAlarms.configureDuskAlarms(context);
-            prefs.setDateTimeLastCalculatedDawnDusk(now);
+                if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
+                    DawnDuskAlarms.configureDawnAlarms(context);
+                    DawnDuskAlarms.configureDuskAlarms(context);
+                    prefs.setDateTimeLastCalculatedDawnDusk(now);
+                }
+
+            }
         }
+
 
 
 
@@ -93,7 +104,7 @@ public class RecordAndUpload {
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
         Calendar dawn = Util.getDawn(context, nowToday);
-        System.out.println("dawn " + dawn);
+    //    System.out.println("dawn " + dawn);
 //        long relativeToDawn  = dawn.getTimeInMillis() - nowToday.getTimeInMillis();
         long relativeToDawn  =  nowToday.getTimeInMillis() - dawn.getTimeInMillis();
         relativeToDawn  = relativeToDawn /1000; // now in seconds
@@ -160,6 +171,7 @@ public class RecordAndUpload {
         // Sleep for duration of recording.
         try {
             Thread.sleep(recordTimeSeconds * 1000);
+
         } catch (InterruptedException e) {
             Log.e(LOG_TAG, "Failed sleeping in recording thread.");
             e.printStackTrace();

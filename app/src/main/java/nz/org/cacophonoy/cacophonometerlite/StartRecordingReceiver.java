@@ -72,7 +72,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
         if (alarmIntentType == null){
             Log.e(LOG_TAG, "Intent does not have a type");
-            return;
+           // return;
+            alarmIntentType = "unknown"; // shouldn't get here
         }
 
 
@@ -151,13 +152,13 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
-            if (batteryPercent > 95){
+            if (batteryPercent > 60){
                 return true;
             }else {
                 return false;
             }
         }else { // must be a dawn or dusk alarm
-            if (batteryPercent > 60){
+            if (batteryPercent > 50){
                 return true;
             }else {
                 return false;
