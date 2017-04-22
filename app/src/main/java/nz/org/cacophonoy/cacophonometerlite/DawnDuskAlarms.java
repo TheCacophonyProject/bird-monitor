@@ -114,20 +114,20 @@ public class DawnDuskAlarms {
         }
 
 //        // test dawn/dusk alarms
-        timeUri = Uri.parse("dawnDuskTest1");
-        myIntent.setData(timeUri);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 1, pendingIntent);
-
-        timeUri = Uri.parse("dawnDuskTest2");
-        myIntent.setData(timeUri);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 2, pendingIntent);
-
-        timeUri = Uri.parse("dawnDuskTest3");
-        myIntent.setData(timeUri);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 3, pendingIntent);
+//        timeUri = Uri.parse("dawnDuskTest1");
+//        myIntent.setData(timeUri);
+//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 1, pendingIntent);
+//
+//        timeUri = Uri.parse("dawnDuskTest2");
+//        myIntent.setData(timeUri);
+//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 2, pendingIntent);
+//
+//        timeUri = Uri.parse("dawnDuskTest3");
+//        myIntent.setData(timeUri);
+//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 3, pendingIntent);
 
     }
 

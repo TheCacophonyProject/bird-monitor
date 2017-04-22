@@ -152,7 +152,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
-            if (batteryPercent > 60){
+            if (batteryPercent > 75){
                 return true;
             }else {
                 return false;
