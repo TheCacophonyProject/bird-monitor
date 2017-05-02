@@ -55,11 +55,11 @@ public class RecordAndUpload {
         long now = new Date().getTime();
 
 //       long timeIntervalBetweenUploads = 1000 * 60 * 60 * 24;
-        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
+     //   long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 2; // 2 hours for testing
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60; // 1 hour for testing
       //  long timeIntervalBetweenUploads = 1000 * 60 ; // 1 minute for testing
-      //  long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
+        long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
 
         if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
@@ -210,8 +210,34 @@ public class RecordAndUpload {
                 Log.d(LOG_TAG, "about to disable airplane mode");
 
                 // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-                    Util.disableAirplaneMode(context);
+//                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//                    Util.disableAirplaneMode(context);
+//                    if (!Util.waitForNetworkConnection(context)){
+//                        Log.e(LOG_TAG, "Failed to disable airplane mode");
+//                    }
+//                }else {
+//                    Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
+//                    Prefs prefs = new Prefs(context);
+//                    if (prefs.getHasRootAccess()){
+//                        //Util.disableAirplaneModeRooted(context);
+//                        Util.setFlightMode(context, false);
+//                        if (!Util.waitForNetworkConnection(context)){
+//                            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//                        }
+//                    }
+//                }
+
+//                if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
+//                    // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
+//                    return false;
+//                }
+
+                Util.disableFlightMode(context);
+
+                // Now wait for network connection as setFlightMode takes a while
+                if (!Util.waitForNetworkConnection(context, true)){
+                            Log.e(LOG_TAG, "Failed to disable airplane mode");
+                    return false;
                 }
 
 
@@ -221,8 +247,24 @@ public class RecordAndUpload {
                     if (!Server.login(context)) {
                         Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
 
-                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-                            Util.enableAirplaneMode(context);
+//                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//                            Util.enableAirplaneMode(context);
+//                        }else {
+//                            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
+//                            Prefs prefs = new Prefs(context);
+//                            if (prefs.getHasRootAccess()){
+//                              //  Util.enableAirplaneModeRooted(context);
+//                                Util.setFlightMode(context, true);
+//                            }
+//                        }
+
+                       // Util.setFlightMode(context, true);
+                        Util.enableFlightMode(context);
+
+                        // Now wait for network connection to close as  setFlightMode takes a while
+                        if (!Util.waitForNetworkConnection(context, false)){
+                            Log.e(LOG_TAG, "Failed to disable airplane mode");
+                            return false;
                         }
 
 
@@ -239,27 +281,81 @@ public class RecordAndUpload {
                         }
                     } else {
                         Log.w(LOG_TAG, "Failed to upload file to server");
-                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-                            Util.enableAirplaneMode(context);
-                            }
+//                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//                            Util.enableAirplaneMode(context);
+//                            }else {
+//                            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
+//                            Prefs prefs = new Prefs(context);
+//                            if (prefs.getHasRootAccess()){
+////                                Util.enableAirplaneModeRooted(context);
+//                                Util.setFlightMode(context, true);
+//                            }
+//                        }
+                     //   Util.setFlightMode(context, true);
+                        Util.enableFlightMode(context);
+
+                        // Now wait for network connection to close as  setFlightMode takes a while
+                        if (!Util.waitForNetworkConnection(context, false)){
+                            Log.e(LOG_TAG, "Failed to disable airplane mode");
+                            return false;
+                        }
                         return false;
                     }
 
                 }
 
-                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-                    Util.enableAirplaneMode(context);
+//                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//                    Util.enableAirplaneMode(context);
+//                }else {
+//                    Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
+//                    Prefs prefs = new Prefs(context);
+//                    if (prefs.getHasRootAccess()) {
+////                        Util.enableAirplaneModeRooted(context);
+//                        Util.setFlightMode(context, true);
+//                    }
+//                }
+            //    Util.setFlightMode(context, true);
+                Util.enableFlightMode(context);
+
+                // Now wait for network connection to close as  setFlightMode takes a while
+                if (!Util.waitForNetworkConnection(context, false)){
+                    Log.e(LOG_TAG, "Failed to disable airplane mode");
+                    return false;
                 }
 
             }
         }catch (Exception e){
-            if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-                Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+//            if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//                Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+//            }else {
+//                Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
+//                Prefs prefs = new Prefs(context);
+//                if (prefs.getHasRootAccess()) {
+////                    Util.enableAirplaneModeRooted(context);
+//                    Util.setFlightMode(context, true);
+//                }
+//            }
+           // Util.setFlightMode(context, true);
+
+            Util.enableFlightMode(context);
+
+
+            // Now wait for network connection to close as  setFlightMode takes a while
+            if (!Util.waitForNetworkConnection(context, false)){
+                Log.e(LOG_TAG, "Failed to disable airplane mode");
+                return false;
             }
 
             Log.e(LOG_TAG, "Error with upload");
             return false;
         }
+        // The airplane was not showing on the phone (even though it seems to be in flight mode, so try the next code to wait for network connection to die
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(context, false)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return false;
+        }
+
         return true;
     }
 
@@ -283,7 +379,7 @@ public class RecordAndUpload {
             Log.i(LOG_TAG, "deleted file: " + fileName);
             return false;
         }
-        Log.d(LOG_TAG, "3");
+      //  Log.d(LOG_TAG, "3");
         String year = fileNameParts[0];
         String month = fileNameParts[1];
         String day = fileNameParts[2];

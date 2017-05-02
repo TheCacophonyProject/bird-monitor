@@ -47,7 +47,6 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -57,37 +56,71 @@
                 android:text="Select the following box if you are using mobile data?"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupSimTitle"
+                android:layout_below="@id/setupSimTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
 
             <CheckBox
                 android:id="@+id/cbSimPresent"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupSimMessage"
+                android:layout_below="@id/setupSimMessage"
                 android:checked="false"
                 android:onClick="onCheckboxSimPresentClicked"
                 android:text="Using mobile data and SIM is Present" />
 
             <View
-                android:id="@+id/SplitLine_hor3"
+                android:id="@+id/SplitLine_hor1"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
-                android:layout_below="@+id/cbSimPresent"
+                android:layout_below="@id/cbSimPresent"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupRootTitle"
+                android:text="Root Access (Experts Only)"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/SplitLine_hor1"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/rootMessage"
+                android:text="Select the following box if the phone is rooted and the app is a system app (refer to help for details)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupRootTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbHasRootAccess"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rootMessage"
+                android:checked="false"
+                android:onClick="onCheckboxRootedClicked"
+                android:text="Phone is rooted and app installed as system app." />
+
+            <View
+                android:id="@+id/SplitLine_hor2"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/cbHasRootAccess"
                 android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/setupRegisterStatus"
-                android:layout_below="@+id/SplitLine_hor3"
+                android:layout_below="@id/SplitLine_hor2"
                 android:text="Device Not Registered"
                 android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="10dp"
@@ -98,7 +131,7 @@
                 android:text="To register a device: 1) Register/login on the Cacophonometer website. 2) Create a Group with that user. 3) Enter the Group name in the field above and press Register. Multiple devices can be in the same group."
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupRegisterStatus"
+                android:layout_below="@id/setupRegisterStatus"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -110,7 +143,7 @@
                 android:inputType="text"
                 android:ems="10"
                 android:hint="Group name"
-                android:layout_below="@+id/setupDeviceRegisterInfo"
+                android:layout_below="@id/setupDeviceRegisterInfo"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -122,27 +155,27 @@
                 android:onClick="registerButton"
                 android:layout_width="match_parent"
                 android:elevation="0dp"
-                android:layout_below="@+id/setupGroupNameInput"
-                android:layout_alignEnd="@+id/setupGroupNameInput"
-                android:layout_alignRight="@+id/setupGroupNameInput"/>
+                android:layout_below="@id/setupGroupNameInput"
+                android:layout_alignEnd="@id/setupGroupNameInput"
+                android:layout_alignRight="@id/setupGroupNameInput"/>
 
             <Button
                 android:id="@+id/setupUnregister"
                 android:text="Unregister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupRegisterButton"
+                android:layout_below="@id/setupRegisterButton"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="unRegisterButton" />
 
 
             <View
-                android:id="@+id/SplitLine_hor1"
+                android:id="@+id/SplitLine_hor3"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
-                android:layout_below="@+id/setupUnregister"
+                android:layout_below="@id/setupUnregister"
                 android:layout_marginTop="5dp" />
 
             <TextView
@@ -151,7 +184,7 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/SplitLine_hor1"
+                android:layout_below="@id/SplitLine_hor3"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -164,7 +197,7 @@
                 android:text="Server URL"
                 android:ems="10"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/setupServerTitle"
+                android:layout_below="@id/setupServerTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"/>
 
@@ -173,17 +206,17 @@
                 android:text="Update Server URL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupServerUrlInput"
+                android:layout_below="@id/setupServerUrlInput"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="updateServerUrlButton" />
 
             <View
-                android:id="@+id/SplitLine_hor2"
+                android:id="@+id/SplitLine_hor4"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
-                android:layout_below="@+id/setupUpdateServerUrlButton"
+                android:layout_below="@id/setupUpdateServerUrlButton"
                 android:layout_marginTop="5dp" />
 
 
@@ -193,7 +226,7 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/SplitLine_hor2"
+                android:layout_below="@id/SplitLine_hor4"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -204,7 +237,7 @@
                 android:text="Location not set."
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupLocationTitle"
+                android:layout_below="@id/setupLocationTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -214,7 +247,7 @@
                 android:text="Update Location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/setupLocationStatus"
+                android:layout_below="@id/setupLocationStatus"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="updateLocationButton" />

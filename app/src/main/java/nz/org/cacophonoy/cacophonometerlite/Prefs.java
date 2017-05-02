@@ -30,16 +30,16 @@ class Prefs {
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
 //    private static final double RECORDING_DURATION_SECONDS = 120;
-   private static final double RECORDING_DURATION_SECONDS = 60;
-  //   private static final double RECORDING_DURATION_SECONDS = 1;
+//   private static final double RECORDING_DURATION_SECONDS = 60;
+     private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 1800;  //half hour
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 86400;  //86400 is one day!
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
     //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
-//      private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+      private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes
@@ -52,6 +52,9 @@ class Prefs {
 
     private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
     // private static final boolean SIM_CARD_DETECTED = false;
+
+    private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
     private static final double BATTERY_LEVEL = -1;
@@ -247,6 +250,15 @@ class Prefs {
 
     void setSimCardDetected(boolean isSimCardDetected) {
         setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
+    }
+
+
+    boolean getHasRootAccess() {
+        return getBoolean(HAS_ROOT_ACCESS_KEY);
+    }
+
+    void setHasRootAccess(boolean hasRootAccess) {
+        setBoolean(HAS_ROOT_ACCESS_KEY, hasRootAccess);
     }
 
     double getBatteryLevel() {

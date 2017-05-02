@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
-import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
+//import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
 
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
@@ -108,11 +108,18 @@ public class SetupActivity extends AppCompatActivity {
             registerStatus.setText(R.string.not_registered);
 
         boolean simPresent = prefs.getSimCardDetected();
-        final CheckBox checkBox = (CheckBox) findViewById(R.id.cbSimPresent);
+        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbSimPresent);
         if (simPresent) {
-            checkBox.setChecked(true);
+            checkBoxSim.setChecked(true);
         } else
-            checkBox.setChecked(false);
+            checkBoxSim.setChecked(false);
+
+        boolean hasRootAccess = prefs.getHasRootAccess();
+        final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
+        if (hasRootAccess) {
+            checkBoxRootAccess.setChecked(true);
+        } else
+            checkBoxRootAccess.setChecked(false);
 
 
 
@@ -143,12 +150,35 @@ public class SetupActivity extends AppCompatActivity {
 
     public void registerButton(View v) {
 
-        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            if ( !Util.disableAirplaneMode(getApplicationContext())){
-                Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
-                return;
-            }
+//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            if ( !Util.disableAirplaneMode(getApplicationContext())){
+//                Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//        }else {
+//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
+//            Prefs prefs = new Prefs(getApplicationContext());
+//            if (prefs.getHasRootAccess()){
+//                Util.setFlightMode(getApplicationContext(), false);
+//                if ( !Util.waitForNetworkConnection(getApplicationContext())){
+//                    Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//            }
+//        }
+
+//        if (!Util.setFlightMode(getApplicationContext(), false)){// sending false will turn off flight mode
+//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
+//            return ;
+//        }
+
+        Util.disableFlightMode(getApplicationContext());
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return ;
         }
 
 
@@ -249,5 +279,19 @@ public class SetupActivity extends AppCompatActivity {
         }
 
     }
+
+    public void onCheckboxRootedClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setHasRootAccess(true);
+        }else{
+            prefs.setHasRootAccess(false);
+        }
+
+    }
+
+
 
 }

@@ -2,12 +2,14 @@ package nz.org.cacophonoy.cacophonometerlite;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -27,12 +29,17 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Calendar;
 
+import static android.R.attr.enabled;
 import static android.R.attr.level;
+import static android.content.ContentValues.TAG;
 import static android.media.CamcorderProfile.get;
 import static java.lang.Float.parseFloat;
 
@@ -42,6 +49,12 @@ class Util {
     private static File homeFile = null;
     private static File recordingFolder = null;
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
+
+    // For airplane mode
+    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
+
+    private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
 
     static boolean checkPermissionsForRecording(Context context) {
         Log.d(LOG_TAG, "Checking permissions needed for recording.");
@@ -71,7 +84,8 @@ class Util {
             // homeFile = context.getDir("cacophony", Context.MODE_PRIVATE); // getDir creates the folder if it doesn't exist, but needs contect
 
             if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
-                System.out.println("error with home file");
+                Log.e(LOG_TAG, "HomeFile location problem");
+
                 //TODO, exit program safely from here and display error.
             }
 
@@ -83,7 +97,7 @@ class Util {
         if (recordingFolder == null) {
             recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
             if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
-                System.out.println("error with recording file");
+                Log.e(LOG_TAG, "Recording location problem");
                 //TODO try to fix problem and if cant output error message then exit, maybe send error to server.
             }
         }
@@ -322,82 +336,91 @@ class Util {
         return new Location(lat, lon);
     }
 
-    public static boolean enableAirplaneMode(Context context) {
+//    public static boolean enableAirplaneMode(Context context) {
+//
+//        // This will not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            // but can still enable if rooted
+////            Prefs prefs = new Prefs(context);
+////            if (prefs.getHasRootAccess()){
+////               return enableAirplaneModeRooted(context);
+////            }
+//            return false;
+//        }
+//
+//        boolean isEnabled = Settings.System.getInt(
+//                context.getContentResolver(),
+//                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+//
+//        if (!isEnabled){
+//
+//            Settings.System.putInt(
+//                    context.getContentResolver(),
+//                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
+//
+//// Post an intent to reload
+//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//            intent.putExtra("state", !isEnabled);
+//            context.sendBroadcast(intent);
+//        }
+//
+//        while (isNetworkConnected(context)) {
+//            try {
+//                Thread.sleep(500); // give time for airplane mode to turn on
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return true;
+//    }
 
-        // This will not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            return false;
-        }
-
-        boolean isEnabled = Settings.System.getInt(
-                context.getContentResolver(),
-                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-
-        if (!isEnabled){
-
-            Settings.System.putInt(
-                    context.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
-
-// Post an intent to reload
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", !isEnabled);
-            context.sendBroadcast(intent);
-        }
-
-        while (isNetworkConnected(context)) {
-            try {
-                Thread.sleep(500); // give time for airplane mode to turn on
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-
-    public static boolean disableAirplaneMode(Context context) {
-
-        // This will not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            return false;
-        }
-
-
-        boolean isEnabled = Settings.System.getInt(
-                context.getContentResolver(),
-                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-
-        if (isEnabled){
-
-            Settings.System.putInt(
-                    context.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
-
-// Post an intent to reload
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", !isEnabled);
-            context.sendBroadcast(intent);
-        }
-
-        int numberOfLoops = 0;
-        while (!isNetworkConnected(context)) {
-
-            try {
-                Thread.sleep(500); // give time for airplane mode to turn off
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            numberOfLoops+=1;
-            if (numberOfLoops > 20){
-                break;
-            }
-        }
-        if (numberOfLoops > 20){
-            return false;
-        }
-        return true;
-    }
+//    public static boolean disableAirplaneMode(Context context) {
+//
+//        // This will not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            Prefs prefs = new Prefs(context);
+////            if (prefs.getHasRootAccess()){
+////                return disableAirplaneModeRooted(context);
+////            }
+//            return false;
+//        }
+//
+//
+//        boolean isEnabled = Settings.System.getInt(
+//                context.getContentResolver(),
+//                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+//
+//        if (isEnabled){
+//
+//            Settings.System.putInt(
+//                    context.getContentResolver(),
+//                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
+//
+//// Post an intent to reload
+//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//            intent.putExtra("state", !isEnabled);
+//            context.sendBroadcast(intent);
+//        }
+//
+//        int numberOfLoops = 0;
+//        while (!isNetworkConnected(context)) {
+//
+//            try {
+//                Thread.sleep(500); // give time for airplane mode to turn off
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            numberOfLoops+=1;
+//            if (numberOfLoops > 20){
+//                break;
+//            }
+//        }
+//        if (numberOfLoops > 20){
+//            return false;
+//        }
+//        return true;
+//    }
 
 //    public static boolean isSimPresent(Context context) {
 //        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
@@ -407,6 +430,29 @@ class Util {
 //        // int state 5
 //        return simState == TelephonyManager.SIM_STATE_READY;
 //    }
+
+    public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired){
+        int numberOfLoops = 0;
+//        while (!isNetworkConnected(context)) {
+        while (isNetworkConnected(context) != networkConnectionRequired ) {
+
+            try {
+                Thread.sleep(500); // give time for airplane mode to turn off
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            numberOfLoops+=1;
+            if (numberOfLoops > 20){
+                Log.e(LOG_TAG, "Number of loops > 20");
+                break;
+            }
+        }
+        if (numberOfLoops > 20){
+            return false;
+        }
+        return true;
+    }
 
 
     public static boolean isNetworkConnected(Context context) {
@@ -419,6 +465,195 @@ class Util {
 //
 //    }
 
+//public static boolean enableAirplaneModeRooted(Context context){
+//    // http://stackoverflow.com/questions/25674655/how-to-turn-on-off-airplane-mode-even-on-new-android-versions-and-even-with-ro
+//    int enabled = isFlightModeEnabled(context) ? 0 : 1;
+//    // Set Airplane / Flight mode using su commands.
+//    String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
+//    executeCommandWithoutWait(context, "-c", command);
+//    command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
+//    executeCommandWithoutWait(context, "-c", command);
+//
+//
+//
+//    return true;
+//}
 
+    public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+
+       boolean isCurrentlyInFlightMode = isFlightModeEnabled(context);
+
+        // will I continue - depends on if enable is true or false and if already in flightmode or not
+        // so write logic so it exits method if need be
+
+        if (isCurrentlyInFlightMode){
+            Log.d(LOG_TAG, "Currently in flight mode");
+            if (enable){ // ie want to turn on flight mode, but it is already on
+                Log.d(LOG_TAG, "And have been asked to enable flight mode so nothing to do");
+                return true;
+            }
+        }else {
+            Log.d(LOG_TAG, "Not currently in flight mode");
+            if (!enable){ // ie want to turn on flight mode, but it is already on
+                Log.d(LOG_TAG, "And have been asked to disable flight mode so nothing to do");
+                return true;
+            }
+        }
+
+
+
+
+
+
+//        if (isFlightModeEnabled(context) == enable){ // if enable is true and it is already in flight mode then method will return without doing anything and vice versa
+//            return true;
+//        }
+
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            // API 17 onwards.
+            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+            // Must be a rooted device
+            Prefs prefs = new Prefs(context);
+            if (!prefs.getHasRootAccess()){
+                return false;
+            }
+
+            int enabled = isFlightModeEnabled(context) ? 0 : 1;
+
+            // Set Airplane / Flight mode using su commands.
+            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
+            executeCommandWithoutWait(context, "-c", command);
+            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
+            executeCommandWithoutWait(context, "-c", command);
+
+        } else {
+            // API 16 and earlier.
+            Log.d(LOG_TAG, "API 16 and earlier.");
+            boolean enabled = isFlightModeEnabled(context);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", !enabled);
+            context.sendBroadcast(intent);
+        }
+        return true;
+    }
+    public static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            // API 17 onwards.
+            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+            // Must be a rooted device
+            Prefs prefs = new Prefs(context);
+            if (!prefs.getHasRootAccess()){
+                Log.e(LOG_TAG, "Do NOT have required ROOT access");
+                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
+                return ;
+            }
+
+
+            // Set Airplane / Flight mode using su commands.
+            String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
+            executeCommandWithoutWait(context, "-c", command);
+            command = COMMAND_FLIGHT_MODE_2 + " " + "false";
+            executeCommandWithoutWait(context, "-c", command);
+
+        } else {
+            // API 16 and earlier.
+            Log.d(LOG_TAG, "API 16 and earlier.");
+          //  boolean enabled = isFlightModeEnabled(context);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", false);
+            context.sendBroadcast(intent);
+        }
+        return ;
+    }
+
+    public static void enableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            // API 17 onwards.
+            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+            // Must be a rooted device
+            Prefs prefs = new Prefs(context);
+            if (!prefs.getHasRootAccess()){
+                Log.e(LOG_TAG, "Do NOT have required ROOT access");
+                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
+                return ;
+            }
+
+
+            // Set Airplane / Flight mode using su commands.
+            String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
+            executeCommandWithoutWait(context, "-c", command);
+            command = COMMAND_FLIGHT_MODE_2 + " " + "true";
+            executeCommandWithoutWait(context, "-c", command);
+
+        } else {
+            // API 16 and earlier.
+            Log.d(LOG_TAG, "API 16 and earlier.");
+        //    boolean enabled = isFlightModeEnabled(context);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", true);
+            context.sendBroadcast(intent);
+        }
+        return ;
+    }
+//    public static boolean disableAirplaneModeRooted(Context context){
+//        // http://stackoverflow.com/questions/25674655/how-to-turn-on-off-airplane-mode-even-on-new-android-versions-and-even-with-ro
+//        int enabled = isFlightModeEnabled(context) ? 0 : 1;
+//        // Set Airplane / Flight mode using su commands.
+//        String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
+//        executeCommandWithoutWait(context, "-c", command);
+//        command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
+//        executeCommandWithoutWait(context, "-c", command);
+//
+//        return true;
+//    }
+
+    @SuppressLint("NewApi")
+    @SuppressWarnings("deprecation")
+    private static boolean isFlightModeEnabled(Context context) {
+        boolean mode = false;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            // API 17 onwards
+            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        } else {
+            // API 16 and earlier.
+            Log.d(LOG_TAG, "API 16 and earlier.");
+//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        }
+        Log.d(LOG_TAG, "Airplane mode is enabled " + mode);
+        return mode;
+    }
+
+    private static void  executeCommandWithoutWait(Context context, String option, String command) {
+        // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
+        boolean success = false;
+        String su = "su";
+        for (int i=0; i < 3; i++) {
+            // "su" command executed successfully.
+            if (success) {
+                // Stop executing alternative su commands below.
+                break;
+            }
+            if (i == 1) {
+                su = "/system/xbin/su";
+            } else if (i == 2) {
+                su = "/system/bin/su";
+            }
+            try {
+                // execute command
+                Runtime.getRuntime().exec(new String[]{su, option, command});
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "su command has failed due to: " + e.fillInStackTrace());
+            }
+        }
+    }
 
 }

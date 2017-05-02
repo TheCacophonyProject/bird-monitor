@@ -1,6 +1,7 @@
 package nz.org.cacophonoy.cacophonometerlite;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -29,14 +30,22 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.enabled;
+import static nz.org.cacophonoy.cacophonometerlite.R.id.disableFlightMode;
+import static nz.org.cacophonoy.cacophonometerlite.Util.setFlightMode;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
+
+    private final String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+    private final String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     /**
      * Handler for Main Activity
@@ -96,9 +105,10 @@ public class MainActivity extends AppCompatActivity {
         prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
-        //  prefs.setSimCardDetected(false);
+
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
+      //  long timeBetweenRecordingsSeconds = (long)3600;
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -270,6 +280,118 @@ public class MainActivity extends AppCompatActivity {
         server.start();
     }
 
+//    public void setFlightMode(Context context, boolean enable) {
+//        if (isFlightModeEnabled(context) == enable){ // if enable is true and it is already in flight mode then method will return without doing anything and vice versa
+//            return;
+//        }
+//
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//            // API 17 onwards.
+//
+//            int enabled = isFlightModeEnabled(context) ? 0 : 1;
+//
+//            // Set Airplane / Flight mode using su commands.
+//            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
+//            executeCommandWithoutWait(context, "-c", command);
+//            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
+//            executeCommandWithoutWait(context, "-c", command);
+//
+//        } else {
+//            // API 16 and earlier.
+//            boolean enabled = isFlightModeEnabled(context);
+//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
+//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//            intent.putExtra("state", !enabled);
+//            context.sendBroadcast(intent);
+//        }
+//    }
 
+//    private void executeCommandWithoutWait(Context context, String option, String command) {
+//        boolean success = false;
+//        String su = "su";
+//        for (int i=0; i < 3; i++) {
+//            // "su" command executed successfully.
+//            if (success) {
+//                // Stop executing alternative su commands below.
+//                break;
+//            }
+//            if (i == 1) {
+//                su = "/system/xbin/su";
+//            } else if (i == 2) {
+//                su = "/system/bin/su";
+//            }
+//            try {
+//                // execute command
+//                Runtime.getRuntime().exec(new String[]{su, option, command});
+//            } catch (IOException e) {
+//                Log.e(TAG, "su command has failed due to: " + e.fillInStackTrace());
+//            }
+//        }
+//    }
+//    @SuppressLint("NewApi")
+//    @SuppressWarnings("deprecation")
+//    private boolean isFlightModeEnabled(Context context) {
+//        boolean mode = false;
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//            // API 17 onwards
+//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+//        } else {
+//            // API 16 and earlier.
+//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+//        }
+//        return mode;
+//    }
+    public  void disableFlightMode(View v){
+        Toast.makeText(getApplicationContext(), "in disableFlightMode", Toast.LENGTH_LONG).show();
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Util.disableFlightMode(getApplicationContext());
+                } catch (Exception e) {
+                    Log.e(TAG, "Opss...", e);
+                }
+            }
+        };
+        thread.start();
+    }
+
+    public  void enableFlightMode(View v) {
+        Toast.makeText(getApplicationContext(), "in enableFlightMode", Toast.LENGTH_LONG).show();
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Util.enableFlightMode(getApplicationContext());
+                } catch (Exception e) {
+                    Log.e(TAG, "Opss...", e);
+                }
+            }
+        };
+        thread.start();
+    }
+
+    public  void isFlightModeOn(View v) {
+        boolean mode = false;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            // API 17 onwards
+            mode = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+        } else {
+            // API 16 and earlier.
+            mode = Settings.System.getInt(getApplicationContext().getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+
+        }
+
+        if (mode){
+            Toast.makeText(getApplicationContext(), "Airplane mode is ON", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "Airplane mode is OFF", Toast.LENGTH_LONG).show();
+        }
+
+
+
+    }
 
 }

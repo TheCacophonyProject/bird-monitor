@@ -53,10 +53,32 @@ class Server {
      */
     static void updateServerConnectionStatus(Context context) {
 
-        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            Util.disableAirplaneMode(context);
+//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            Util.disableAirplaneMode(context);
+//        }else {
+//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
+//            Prefs prefs = new Prefs(context);
+//            if (prefs.getHasRootAccess()) {
+////                Util.disableAirplaneModeRooted(context);
+//                Util.setFlightMode(context, false);
+//            }
+//        }
+
+//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
+//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
+//            return ;
+//        }
+
+        Util.disableFlightMode(context);
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(context, true)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return ;
         }
+
+
         Log.i(LOG_TAG, "Updating server connection status.");
 
         if (!ping(context)) {
@@ -65,9 +87,18 @@ class Server {
         } else {
             login(context);
         }
-        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
-        }
+//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
+//        }else {
+//            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
+//            Prefs prefs = new Prefs(context);
+//            if (prefs.getHasRootAccess()) {
+////                Util.enableAirplaneModeRooted(context);
+//                Util.setFlightMode(context, true);
+//            }
+//        }
+      //  Util.setFlightMode(context, true);
+        Util.enableFlightMode(context);
     }
 
     /**
@@ -77,10 +108,31 @@ class Server {
      * @return if got a response from server.
      */
     private static boolean ping(Context context) {
-        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            Util.disableAirplaneMode(context);
+//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            Util.disableAirplaneMode(context);
+//        }else {
+//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
+//            Prefs prefs = new Prefs(context);
+//            if (prefs.getHasRootAccess()){
+////                Util.disableAirplaneModeRooted(context);
+//                Util.setFlightMode(context, false);
+//            }
+//        }
+
+//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
+//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
+//            return false;
+//        }
+
+        Util.disableFlightMode(context);
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(context, true)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return false;
         }
+
         SyncHttpClient client = new SyncHttpClient();
         Prefs prefs = new Prefs(context);
         client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
@@ -107,10 +159,31 @@ class Server {
      */
 //    private static boolean login(Context context) {
     public static boolean login(Context context) {
-        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-            Util.disableAirplaneMode(context);
+//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
+//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
+//            Util.disableAirplaneMode(context);
+//        }else {
+//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
+//            Prefs prefs = new Prefs(context);
+//            if (prefs.getHasRootAccess()){
+////                Util.disableAirplaneModeRooted(context);
+//                Util.setFlightMode(context, false);
+//            }
+//        }
+
+//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
+//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
+//            return false;
+//        }
+
+        Util.disableFlightMode(context);
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(context, true)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return false;
         }
+
         // Get credentials from shared preferences.
 
         Prefs prefs = new Prefs(context);
