@@ -26,7 +26,7 @@ import static nz.org.cacophonoy.cacophonometerlite.Server.login;
 
 public class RecordAndUpload {
     private static final String LOG_TAG = RecordAndUpload.class.getName();
-    private static long recordTimeSeconds = 0; //  set it later
+   // private static long recordTimeSeconds = 0; //  set it later
 
     public RecordAndUpload(){
 
@@ -38,28 +38,28 @@ public class RecordAndUpload {
 
         Prefs prefs = new Prefs(context);
 
-        recordTimeSeconds =  (long)prefs.getRecordingDuration();
-
+       // recordTimeSeconds =  (long)prefs.getRecordingDuration();
+        long recordTimeSeconds =  (long)prefs.getRecordingDuration();
 
         if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton")  ){
                 recordTimeSeconds = 5;  // short test
             }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
-                recordTimeSeconds =  (long)prefs.getRecordingDuration() + 2; // help to recognise dawn/dusk recordings
+                recordTimeSeconds +=  2; // help to recognise dawn/dusk recordings
             }
         }
-        makeRecording(context);
+        makeRecording(context, recordTimeSeconds);
 
         // only upload recordings if it has been more than a day since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
 
 //       long timeIntervalBetweenUploads = 1000 * 60 * 60 * 24;
-     //   long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
+        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 2; // 2 hours for testing
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60; // 1 hour for testing
       //  long timeIntervalBetweenUploads = 1000 * 60 ; // 1 minute for testing
-        long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
+//        long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
 
         if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
@@ -97,8 +97,7 @@ public class RecordAndUpload {
 
     }
 
-    private static boolean makeRecording(Context context){
-      //  Log.d(LOG_TAG, "Make a recording");
+    private static boolean makeRecording(Context context,  long recordTimeSeconds){
 
 
         // Get recording file.
@@ -107,8 +106,7 @@ public class RecordAndUpload {
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
         Calendar dawn = Util.getDawn(context, nowToday);
-    //    System.out.println("dawn " + dawn);
-//        long relativeToDawn  = dawn.getTimeInMillis() - nowToday.getTimeInMillis();
+
         long relativeToDawn  =  nowToday.getTimeInMillis() - dawn.getTimeInMillis();
         relativeToDawn  = relativeToDawn /1000; // now in seconds
 
@@ -136,6 +134,7 @@ public class RecordAndUpload {
         fileName += " " + batteryStatus;
         double batteryLevel = Util.getBatteryLevel(context);
         fileName += " " + batteryLevel;
+        fileName += " " + recordTimeSeconds;
         fileName += ".3gp";
 
         File file = new File(Util.getRecordingsFolder(), fileName);
@@ -160,8 +159,7 @@ public class RecordAndUpload {
             return false;
         }
 
-        // Send message that recording started.
-      //  Log.d(LOG_TAG, "RECORDING_STARTED");
+
 
         // Start recording.
         try {
@@ -173,6 +171,8 @@ public class RecordAndUpload {
 
         // Sleep for duration of recording.
         try {
+
+
             Thread.sleep(recordTimeSeconds * 1000);
 
         } catch (InterruptedException e) {
@@ -186,8 +186,7 @@ public class RecordAndUpload {
         mRecorder.release();
         mRecorder = null; // attempting to fix error mediarecorder went away with unhandled events
 
-        // Send message that recording finished.
-     //   Log.d(LOG_TAG, "RECORDING_FINISHED");
+       Log.d(LOG_TAG, "RECORDING_FINISHED");
 
 
         // Give time for file to be saved.
@@ -209,28 +208,7 @@ public class RecordAndUpload {
 
                 Log.d(LOG_TAG, "about to disable airplane mode");
 
-                // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-//                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//                    Util.disableAirplaneMode(context);
-//                    if (!Util.waitForNetworkConnection(context)){
-//                        Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                    }
-//                }else {
-//                    Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
-//                    Prefs prefs = new Prefs(context);
-//                    if (prefs.getHasRootAccess()){
-//                        //Util.disableAirplaneModeRooted(context);
-//                        Util.setFlightMode(context, false);
-//                        if (!Util.waitForNetworkConnection(context)){
-//                            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                        }
-//                    }
-//                }
 
-//                if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
-//                    // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
-//                    return false;
-//                }
 
                 Util.disableFlightMode(context);
 
@@ -247,18 +225,7 @@ public class RecordAndUpload {
                     if (!Server.login(context)) {
                         Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
 
-//                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//                            Util.enableAirplaneMode(context);
-//                        }else {
-//                            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
-//                            Prefs prefs = new Prefs(context);
-//                            if (prefs.getHasRootAccess()){
-//                              //  Util.enableAirplaneModeRooted(context);
-//                                Util.setFlightMode(context, true);
-//                            }
-//                        }
 
-                       // Util.setFlightMode(context, true);
                         Util.enableFlightMode(context);
 
                         // Now wait for network connection to close as  setFlightMode takes a while
@@ -281,17 +248,7 @@ public class RecordAndUpload {
                         }
                     } else {
                         Log.w(LOG_TAG, "Failed to upload file to server");
-//                        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//                            Util.enableAirplaneMode(context);
-//                            }else {
-//                            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
-//                            Prefs prefs = new Prefs(context);
-//                            if (prefs.getHasRootAccess()){
-////                                Util.enableAirplaneModeRooted(context);
-//                                Util.setFlightMode(context, true);
-//                            }
-//                        }
-                     //   Util.setFlightMode(context, true);
+
                         Util.enableFlightMode(context);
 
                         // Now wait for network connection to close as  setFlightMode takes a while
@@ -304,17 +261,7 @@ public class RecordAndUpload {
 
                 }
 
-//                if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//                    Util.enableAirplaneMode(context);
-//                }else {
-//                    Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
-//                    Prefs prefs = new Prefs(context);
-//                    if (prefs.getHasRootAccess()) {
-////                        Util.enableAirplaneModeRooted(context);
-//                        Util.setFlightMode(context, true);
-//                    }
-//                }
-            //    Util.setFlightMode(context, true);
+
                 Util.enableFlightMode(context);
 
                 // Now wait for network connection to close as  setFlightMode takes a while
@@ -325,17 +272,7 @@ public class RecordAndUpload {
 
             }
         }catch (Exception e){
-//            if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//                Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
-//            }else {
-//                Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
-//                Prefs prefs = new Prefs(context);
-//                if (prefs.getHasRootAccess()) {
-////                    Util.enableAirplaneModeRooted(context);
-//                    Util.setFlightMode(context, true);
-//                }
-//            }
-           // Util.setFlightMode(context, true);
+
 
             Util.enableFlightMode(context);
 
@@ -374,7 +311,7 @@ public class RecordAndUpload {
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
 
-        if (fileNameParts.length != 13) {
+        if (fileNameParts.length != 14) {
             aFile.delete();
             Log.i(LOG_TAG, "deleted file: " + fileName);
             return false;
@@ -393,6 +330,7 @@ public class RecordAndUpload {
         String batteryLevel = fileNameParts[10];
         batteryLevel += ".";
         batteryLevel += fileNameParts[11];
+        String recordTimeSeconds = fileNameParts[12];
         boolean airplaneModeOn = false;
         if (airplaneMode.equalsIgnoreCase("airplaneModeOn")) {
             airplaneModeOn = true;

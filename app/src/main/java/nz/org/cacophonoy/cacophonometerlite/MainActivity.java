@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
-    private final String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
-    private final String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
+//    private final String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+//    private final String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     /**
      * Handler for Main Activity
@@ -280,69 +280,9 @@ public class MainActivity extends AppCompatActivity {
         server.start();
     }
 
-//    public void setFlightMode(Context context, boolean enable) {
-//        if (isFlightModeEnabled(context) == enable){ // if enable is true and it is already in flight mode then method will return without doing anything and vice versa
-//            return;
-//        }
-//
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//            // API 17 onwards.
-//
-//            int enabled = isFlightModeEnabled(context) ? 0 : 1;
-//
-//            // Set Airplane / Flight mode using su commands.
-//            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
-//            executeCommandWithoutWait(context, "-c", command);
-//            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
-//            executeCommandWithoutWait(context, "-c", command);
-//
-//        } else {
-//            // API 16 and earlier.
-//            boolean enabled = isFlightModeEnabled(context);
-//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", !enabled);
-//            context.sendBroadcast(intent);
-//        }
-//    }
 
-//    private void executeCommandWithoutWait(Context context, String option, String command) {
-//        boolean success = false;
-//        String su = "su";
-//        for (int i=0; i < 3; i++) {
-//            // "su" command executed successfully.
-//            if (success) {
-//                // Stop executing alternative su commands below.
-//                break;
-//            }
-//            if (i == 1) {
-//                su = "/system/xbin/su";
-//            } else if (i == 2) {
-//                su = "/system/bin/su";
-//            }
-//            try {
-//                // execute command
-//                Runtime.getRuntime().exec(new String[]{su, option, command});
-//            } catch (IOException e) {
-//                Log.e(TAG, "su command has failed due to: " + e.fillInStackTrace());
-//            }
-//        }
-//    }
-//    @SuppressLint("NewApi")
-//    @SuppressWarnings("deprecation")
-//    private boolean isFlightModeEnabled(Context context) {
-//        boolean mode = false;
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//            // API 17 onwards
-//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-//        } else {
-//            // API 16 and earlier.
-//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-//        }
-//        return mode;
-//    }
+
     public  void disableFlightMode(View v){
-       // Toast.makeText(getApplicationContext(), "in disableFlightMode", Toast.LENGTH_LONG).show();
 
         Thread thread = new Thread() {
             @Override
@@ -358,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void enableFlightMode(View v) {
-      //  Toast.makeText(getApplicationContext(), "in enableFlightMode", Toast.LENGTH_LONG).show();
 
         Thread thread = new Thread() {
             @Override
@@ -389,7 +328,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Toast.makeText(getApplicationContext(), "Airplane mode is OFF", Toast.LENGTH_LONG).show();
         }
-
 
 
     }

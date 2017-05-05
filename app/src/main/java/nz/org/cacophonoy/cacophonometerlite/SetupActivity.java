@@ -150,29 +150,6 @@ public class SetupActivity extends AppCompatActivity {
 
     public void registerButton(View v) {
 
-//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            if ( !Util.disableAirplaneMode(getApplicationContext())){
-//                Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//        }else {
-//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
-//            Prefs prefs = new Prefs(getApplicationContext());
-//            if (prefs.getHasRootAccess()){
-//                Util.setFlightMode(getApplicationContext(), false);
-//                if ( !Util.waitForNetworkConnection(getApplicationContext())){
-//                    Toast.makeText(getApplicationContext(), "Could not connect to network", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
-//            }
-//        }
-
-//        if (!Util.setFlightMode(getApplicationContext(), false)){// sending false will turn off flight mode
-//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
-//            return ;
-//        }
-
         Util.disableFlightMode(getApplicationContext());
 
         // Now wait for network connection as setFlightMode takes a while
@@ -221,7 +198,6 @@ public class SetupActivity extends AppCompatActivity {
             Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
             return;
         }
-
 
 
         Thread registerThread = new Thread() {
@@ -291,7 +267,5 @@ public class SetupActivity extends AppCompatActivity {
         }
 
     }
-
-
 
 }
