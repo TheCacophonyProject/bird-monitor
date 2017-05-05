@@ -429,6 +429,15 @@ public class RecordAndUpload {
             audioRecording.put("version", versionName);
 
 
+            JSONObject additionalMetadata = new JSONObject();
+            additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);
+            additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
+            additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
+            additionalMetadata.put("Phone model", Build.MODEL);
+
+            audioRecording.put("additionalMetadata", additionalMetadata);
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

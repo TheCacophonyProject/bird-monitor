@@ -53,22 +53,7 @@ class Server {
      */
     static void updateServerConnectionStatus(Context context) {
 
-//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            Util.disableAirplaneMode(context);
-//        }else {
-//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
-//            Prefs prefs = new Prefs(context);
-//            if (prefs.getHasRootAccess()) {
-////                Util.disableAirplaneModeRooted(context);
-//                Util.setFlightMode(context, false);
-//            }
-//        }
 
-//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
-//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
-//            return ;
-//        }
 
         Util.disableFlightMode(context);
 
@@ -87,17 +72,7 @@ class Server {
         } else {
             login(context);
         }
-//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            Util.enableAirplaneMode(context); // just to make sure airplane mode is enabled
-//        }else {
-//            Log.d(LOG_TAG, "About to enableAirplaneModeRooted");
-//            Prefs prefs = new Prefs(context);
-//            if (prefs.getHasRootAccess()) {
-////                Util.enableAirplaneModeRooted(context);
-//                Util.setFlightMode(context, true);
-//            }
-//        }
-      //  Util.setFlightMode(context, true);
+
         Util.enableFlightMode(context);
     }
 
@@ -108,22 +83,7 @@ class Server {
      * @return if got a response from server.
      */
     private static boolean ping(Context context) {
-//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            Util.disableAirplaneMode(context);
-//        }else {
-//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
-//            Prefs prefs = new Prefs(context);
-//            if (prefs.getHasRootAccess()){
-////                Util.disableAirplaneModeRooted(context);
-//                Util.setFlightMode(context, false);
-//            }
-//        }
 
-//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
-//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
-//            return false;
-//        }
 
         Util.disableFlightMode(context);
 
@@ -159,22 +119,7 @@ class Server {
      */
 //    private static boolean login(Context context) {
     public static boolean login(Context context) {
-//        // Switching airplane mode does not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT <= 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            Util.disableAirplaneMode(context);
-//        }else {
-//            Log.d(LOG_TAG, "About to disableAirplaneModeRooted");
-//            Prefs prefs = new Prefs(context);
-//            if (prefs.getHasRootAccess()){
-////                Util.disableAirplaneModeRooted(context);
-//                Util.setFlightMode(context, false);
-//            }
-//        }
 
-//        if (!Util.setFlightMode(context, false)){// sending false will turn off flight mode
-//            // A return of false means it could not turn off flight mode (OS > 16 and phone not rooted
-//            return false;
-//        }
 
         Util.disableFlightMode(context);
 
@@ -253,10 +198,7 @@ class Server {
      */
     static boolean register(final String group, final Context context) {
 
-//        if ( !Util.disableAirplaneMode(context)){
-//        //   Toast.makeText(context, "Could not connect to network", Toast.LENGTH_LONG).show();
-//           return false;
-//        }
+
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
@@ -327,7 +269,7 @@ class Server {
      */
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         Prefs prefs = new Prefs(context);
-//        enableDataConnection(context);
+
         if (audioFile == null || data == null) {
             Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
             return false;

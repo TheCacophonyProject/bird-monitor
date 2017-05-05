@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
 //        return mode;
 //    }
     public  void disableFlightMode(View v){
-        Toast.makeText(getApplicationContext(), "in disableFlightMode", Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(), "in disableFlightMode", Toast.LENGTH_LONG).show();
 
         Thread thread = new Thread() {
             @Override
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void enableFlightMode(View v) {
-        Toast.makeText(getApplicationContext(), "in enableFlightMode", Toast.LENGTH_LONG).show();
+      //  Toast.makeText(getApplicationContext(), "in enableFlightMode", Toast.LENGTH_LONG).show();
 
         Thread thread = new Thread() {
             @Override

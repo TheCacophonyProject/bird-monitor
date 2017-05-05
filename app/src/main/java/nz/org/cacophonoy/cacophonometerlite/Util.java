@@ -336,104 +336,11 @@ class Util {
         return new Location(lat, lon);
     }
 
-//    public static boolean enableAirplaneMode(Context context) {
-//
-//        // This will not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            // but can still enable if rooted
-////            Prefs prefs = new Prefs(context);
-////            if (prefs.getHasRootAccess()){
-////               return enableAirplaneModeRooted(context);
-////            }
-//            return false;
-//        }
-//
-//        boolean isEnabled = Settings.System.getInt(
-//                context.getContentResolver(),
-//                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-//
-//        if (!isEnabled){
-//
-//            Settings.System.putInt(
-//                    context.getContentResolver(),
-//                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
-//
-//// Post an intent to reload
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", !isEnabled);
-//            context.sendBroadcast(intent);
-//        }
-//
-//        while (isNetworkConnected(context)) {
-//            try {
-//                Thread.sleep(500); // give time for airplane mode to turn on
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return true;
-//    }
 
-//    public static boolean disableAirplaneMode(Context context) {
-//
-//        // This will not work (and causes a crash) for Android 4.2 and above
-//        if (Build.VERSION.SDK_INT > 16){  // The last version that allows airplane mode switching is Android 4.1 (API 16)
-//            Prefs prefs = new Prefs(context);
-////            if (prefs.getHasRootAccess()){
-////                return disableAirplaneModeRooted(context);
-////            }
-//            return false;
-//        }
-//
-//
-//        boolean isEnabled = Settings.System.getInt(
-//                context.getContentResolver(),
-//                Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-//
-//        if (isEnabled){
-//
-//            Settings.System.putInt(
-//                    context.getContentResolver(),
-//                    Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
-//
-//// Post an intent to reload
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", !isEnabled);
-//            context.sendBroadcast(intent);
-//        }
-//
-//        int numberOfLoops = 0;
-//        while (!isNetworkConnected(context)) {
-//
-//            try {
-//                Thread.sleep(500); // give time for airplane mode to turn off
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            numberOfLoops+=1;
-//            if (numberOfLoops > 20){
-//                break;
-//            }
-//        }
-//        if (numberOfLoops > 20){
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    public static boolean isSimPresent(Context context) {
-//        // https://sites.google.com/site/androidhowto/how-to-1/check-if-sim-card-exists-in-the-phone
-//        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//        int simState = tm.getSimState();
-//
-//        // int state 5
-//        return simState == TelephonyManager.SIM_STATE_READY;
-//    }
 
     public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired){
         int numberOfLoops = 0;
-//        while (!isNetworkConnected(context)) {
+
         while (isNetworkConnected(context) != networkConnectionRequired ) {
 
             try {
@@ -461,23 +368,7 @@ class Util {
         return cm.getActiveNetworkInfo() != null;
     }
 
-//    public static boolean canReachServer(){
-//
-//    }
 
-//public static boolean enableAirplaneModeRooted(Context context){
-//    // http://stackoverflow.com/questions/25674655/how-to-turn-on-off-airplane-mode-even-on-new-android-versions-and-even-with-ro
-//    int enabled = isFlightModeEnabled(context) ? 0 : 1;
-//    // Set Airplane / Flight mode using su commands.
-//    String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
-//    executeCommandWithoutWait(context, "-c", command);
-//    command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
-//    executeCommandWithoutWait(context, "-c", command);
-//
-//
-//
-//    return true;
-//}
 
     public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
 
@@ -601,17 +492,7 @@ class Util {
         }
         return ;
     }
-//    public static boolean disableAirplaneModeRooted(Context context){
-//        // http://stackoverflow.com/questions/25674655/how-to-turn-on-off-airplane-mode-even-on-new-android-versions-and-even-with-ro
-//        int enabled = isFlightModeEnabled(context) ? 0 : 1;
-//        // Set Airplane / Flight mode using su commands.
-//        String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
-//        executeCommandWithoutWait(context, "-c", command);
-//        command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
-//        executeCommandWithoutWait(context, "-c", command);
-//
-//        return true;
-//    }
+
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -634,6 +515,7 @@ class Util {
 
     private static void  executeCommandWithoutWait(Context context, String option, String command) {
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
+        // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
         String su = "su";
         for (int i=0; i < 3; i++) {
@@ -650,8 +532,11 @@ class Util {
             try {
                 // execute command
                 Runtime.getRuntime().exec(new String[]{su, option, command});
+                success = true;
+
             } catch (IOException e) {
-                Log.e(LOG_TAG, "su command has failed due to: " + e.fillInStackTrace());
+
+                success = false;
             }
         }
     }
