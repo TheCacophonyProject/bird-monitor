@@ -29,6 +29,9 @@ public class MainService extends IntentService {
 
         Bundle bundle = intent.getExtras();
         String alarmIntentType = bundle.getString("type");
+        if (alarmIntentType == null){
+            alarmIntentType = "unknown";
+        }
 
 //        if (alarmIntentType == null){
 //            if (alarmIntentType.equalsIgnoreCase("alarmIntentType")){

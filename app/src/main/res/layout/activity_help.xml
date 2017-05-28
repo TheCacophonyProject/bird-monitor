@@ -8,15 +8,13 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+       />
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/my_toolbar"
-
         android:id="@+id/scrollView"
         >
 
@@ -25,30 +23,7 @@
             android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/my_toolbar"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow us to monitor the birdsong near your phone.
-\n\n
-To use this app you will first need to register on the data server and create a group.  You can then enter this group name into this app.\n\nYou are then ready to press the 'Setup Device' button to configure the app:\n1) Select if you are using a SIM/Mobile data connection or not,\n2) Select if you are using 'root' access.  This is only needed if you are using a solar panel AND your phone uses Android 4.2 or above.  It allows the app to turn airplane (flight) mode on and off to save power,\n3) Register the phone with your group and\n4) Get the GPS location.
-\n\n
-After you have finished the setup, go back to the main screen and press the 'REFRESH' button to check that the app can connect to the server - if all is okay you will see ticks next to the various App Vitals, and a 'Device ID' number.  You can then press the 'START TEST RECORDING' button.  This will make a 5 second recording and send it to the server.
-\n\n
-If you are using a solar panel then it is important to turn off and/or remove everything on your phone that might consume power e.g. email accounts that sync with the server, set screen brightness and timeout to a minimum, turn off bluetooth and GPS.  It might be a good idea to disable as many of the apps that came with the phone.
-\n\n
-Once recordings have been sent to the server (once every 12 hours) you will be able to log back in and listen to them - as will anyone who has your password!\n\nWe intend to perform automatic machine analysis of all recordings rather than have a human listen to each recording.  We also expect to implement a system to automatically remove any speech present in the recordings.\n\nIf you believe you have inadvertently recorded a private conversation, please use the delete function on the server to remove it.
-\n\n
-Thank you again for supporting The Cacophony Project\n
-https://cacophony.org.nz/"
-
-
-
-
-
-
-
-
+            android:text="@string/help_text"
 
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </ScrollView>

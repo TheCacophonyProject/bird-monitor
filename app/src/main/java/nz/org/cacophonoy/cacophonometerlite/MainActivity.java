@@ -36,7 +36,8 @@ import java.util.List;
 
 import static android.R.attr.enabled;
 import static nz.org.cacophonoy.cacophonometerlite.R.id.disableFlightMode;
-import static nz.org.cacophonoy.cacophonometerlite.Util.setFlightMode;
+import static nz.org.cacophonoy.cacophonometerlite.R.string.registered;
+//import static nz.org.cacophonoy.cacophonometerlite.Util.setFlightMode;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -166,28 +169,28 @@ public class MainActivity extends AppCompatActivity {
         // Device registered text
         TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
         if (prefs.getGroupName() != null)
-            registered.setText(R.string.registered_true);
+            registered.setText(getString(R.string.registered_true));
         else
-            registered.setText(R.string.registered_false);
+            registered.setText(getString(R.string.registered_false));
 
         // Server connection text.
         TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
         if (Server.serverConnection)
-            connectToServerText.setText(R.string.connected_to_server_true);
+            connectToServerText.setText(getString(R.string.connected_to_server_true));
         else
-            connectToServerText.setText(R.string.connected_to_server_false);
+            connectToServerText.setText(getString(R.string.connected_to_server_false));
 
         // Logged In text.
         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
         if (Server.loggedIn)
-            loggedInText.setText(R.string.logged_in_true);
+            loggedInText.setText(getString(R.string.logged_in_true));
         else
-            loggedInText.setText(R.string.logged_in_false);
+            loggedInText.setText(getString(R.string.logged_in_false));
 
         // Device ID text.
         TextView deviceIDText = (TextView) findViewById(R.id.deviceIDText);
         try {
-            deviceIDText.setText("Device ID " + Util.getDeviceID(Server.getToken()));
+            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(Server.getToken()));
         } catch (Exception e) {
             Log.i(TAG, "Device ID not available");
         }
@@ -196,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
-        versionNameText.setText("Version " + versionName);
+        versionNameText.setText(getString(R.string.version) + " " + versionName);
+
 
         super.onResume();
     }
@@ -214,10 +218,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView permissionText = (TextView) findViewById(R.id.appPermissionText);
         if (storagePermission && microphonePermission && locationPermission) {
-            permissionText.setText(R.string.required_permissions_true);
+            permissionText.setText(getString(R.string.required_permissions_true));
+
             return;
         } else {
-            permissionText.setText(R.string.required_permissions_false);
+            permissionText.setText(getString(R.string.required_permissions_false));
         }
 
         List<String> missingPermissionList = new ArrayList<>();
@@ -312,24 +317,24 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    public  void isFlightModeOn(View v) {
-        boolean mode = false;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            // API 17 onwards
-            mode = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-        } else {
-            // API 16 and earlier.
-            mode = Settings.System.getInt(getApplicationContext().getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-
-        }
-
-        if (mode){
-            Toast.makeText(getApplicationContext(), "Airplane mode is ON", Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(getApplicationContext(), "Airplane mode is OFF", Toast.LENGTH_LONG).show();
-        }
-
-
-    }
+//    public  void isFlightModeOn(View v) {
+//        boolean mode = false;
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//            // API 17 onwards
+//            mode = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+//        } else {
+//            // API 16 and earlier.
+//            mode = Settings.System.getInt(getApplicationContext().getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+//
+//        }
+//
+//        if (mode){
+//            Toast.makeText(getApplicationContext(), "Airplane mode is ON", Toast.LENGTH_LONG).show();
+//        }else{
+//            Toast.makeText(getApplicationContext(), "Airplane mode is OFF", Toast.LENGTH_LONG).show();
+//        }
+//
+//
+//    }
 
 }

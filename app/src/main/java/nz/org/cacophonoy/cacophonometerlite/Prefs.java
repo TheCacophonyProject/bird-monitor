@@ -18,8 +18,9 @@ class Prefs {
 
 
     private static final String PREFS_NAME = "CacophonyPrefs";
-    //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
+   // private static final String DEFAULT_SERVER_URL = "http://103.16.20.22";       // Server URL
     private static final String DEFAULT_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
+    //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
     //private static final String DEFAULT_SERVER_URL = "http://192.168.1.9:8888";       // Server URL
     private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";

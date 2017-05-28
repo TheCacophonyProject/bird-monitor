@@ -61,6 +61,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         this.context = context;
         if (!Util.checkPermissionsForRecording(context)) {
             Toast.makeText(context, "Don't have proper permissions to record..", Toast.LENGTH_SHORT).show();
+            Log.e(LOG_TAG, "Don't have proper permissions to record");
             return;
         }
         Prefs prefs = new Prefs(context);

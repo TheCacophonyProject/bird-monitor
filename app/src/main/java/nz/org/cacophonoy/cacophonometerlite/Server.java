@@ -84,8 +84,11 @@ class Server {
      */
     private static boolean ping(Context context) {
 
+        if (!Util.isNetworkConnected(context)){
+            Util.disableFlightMode(context);
+        }
 
-        Util.disableFlightMode(context);
+
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(context, true)){

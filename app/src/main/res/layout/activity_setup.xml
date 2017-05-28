@@ -16,7 +16,6 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
 
@@ -42,7 +41,7 @@
 
             <TextView
                 android:id="@+id/setupSimTitle"
-                android:text="Data Connection"
+                android:text="@string/data_connection"
                 android:layout_alignParentTop="true"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
@@ -53,7 +52,7 @@
 
             <TextView
                 android:id="@+id/setupSimMessage"
-                android:text="Select the following box if you are using mobile data?"
+                android:text="@string/select_the_following_box_if_you_are_using_mobile_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupSimTitle"
@@ -68,7 +67,7 @@
                 android:layout_below="@id/setupSimMessage"
                 android:checked="false"
                 android:onClick="onCheckboxSimPresentClicked"
-                android:text="Using mobile data and SIM is Present" />
+                android:text="@string/using_mobile_data_and_sim_is_present" />
 
             <View
                 android:id="@+id/SplitLine_hor1"
@@ -80,7 +79,7 @@
 
             <TextView
                 android:id="@+id/setupRootTitle"
-                android:text="Root Access (Experts Only)"
+                android:text="@string/root_access_experts_only"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,7 +88,7 @@
 
             <TextView
                 android:id="@+id/rootMessage"
-                android:text="Select the following box if the phone is rooted and the app is a system app (refer to help for details)"
+                android:text="@string/select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupRootTitle"
@@ -104,7 +103,7 @@
                 android:layout_below="@id/rootMessage"
                 android:checked="false"
                 android:onClick="onCheckboxRootedClicked"
-                android:text="Phone is rooted and app installed as system app." />
+                android:text="@string/phone_is_rooted_and_app_installed_as_system_app" />
 
             <View
                 android:id="@+id/SplitLine_hor2"
@@ -117,18 +116,18 @@
             <TextView
                 android:id="@+id/setupRegisterStatus"
                 android:layout_below="@id/SplitLine_hor2"
-                android:text="Device Not Registered"
+                android:text="@string/device_not_registered"
                 android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif" />
+                 />
 
             <TextView
                 android:id="@+id/setupDeviceRegisterInfo"
-                android:text="To register a device: 1) Register/login on the Cacophonometer website. 2) Create a Group with that user. 3) Enter the Group name in the field above and press Register. Multiple devices can be in the same group."
+                android:text="@string/to_register_a_device___"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupRegisterStatus"
@@ -154,14 +153,14 @@
                 android:layout_height="wrap_content"
                 android:onClick="registerButton"
                 android:layout_width="match_parent"
-                android:elevation="0dp"
+
                 android:layout_below="@id/setupGroupNameInput"
                 android:layout_alignEnd="@id/setupGroupNameInput"
                 android:layout_alignRight="@id/setupGroupNameInput"/>
 
             <Button
                 android:id="@+id/setupUnregister"
-                android:text="Unregister"
+                android:text="@string/unregister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupRegisterButton"
@@ -180,7 +179,7 @@
 
             <TextView
                 android:id="@+id/setupServerTitle"
-                android:text="Server URL"
+                android:text="@string/server_url"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -194,7 +193,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textUri"
-                android:text="Server URL"
+                android:text="@string/server_url"
                 android:ems="10"
                 android:layout_marginTop="5dp"
                 android:layout_below="@id/setupServerTitle"
@@ -203,7 +202,7 @@
 
             <Button
                 android:id="@+id/setupUpdateServerUrlButton"
-                android:text="Update Server URL"
+                android:text="@string/update_server_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupServerUrlInput"
@@ -222,7 +221,7 @@
 
             <TextView
                 android:id="@+id/setupLocationTitle"
-                android:text="Location"
+                android:text="@string/location"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -234,7 +233,7 @@
 
             <TextView
                 android:id="@+id/setupLocationStatus"
-                android:text="Location not set."
+                android:text="@string/location_not_set"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupLocationTitle"
@@ -244,7 +243,7 @@
 
             <Button
                 android:id="@+id/setupUpdateLocationButton"
-                android:text="Update Location"
+                android:text="@string/update_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupLocationStatus"

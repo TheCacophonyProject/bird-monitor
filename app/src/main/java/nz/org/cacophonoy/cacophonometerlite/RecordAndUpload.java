@@ -3,6 +3,7 @@ import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,19 +36,23 @@ public class RecordAndUpload {
 
 
     public static void doRecord(Context context, String typeOfRecording){
+        if (typeOfRecording == null){
+            Log.e(LOG_TAG, "typeOfRecording is null");
+            return;
+        }
 
         Prefs prefs = new Prefs(context);
 
        // recordTimeSeconds =  (long)prefs.getRecordingDuration();
         long recordTimeSeconds =  (long)prefs.getRecordingDuration();
 
-        if (typeOfRecording != null){
+     //   if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton")  ){
                 recordTimeSeconds = 5;  // short test
             }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
                 recordTimeSeconds +=  2; // help to recognise dawn/dusk recordings
             }
-        }
+     //   }
         makeRecording(context, recordTimeSeconds);
 
         // only upload recordings if it has been more than a day since last upload
@@ -55,17 +60,19 @@ public class RecordAndUpload {
         long now = new Date().getTime();
 
 //       long timeIntervalBetweenUploads = 1000 * 60 * 60 * 24;
-        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
+      //  long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
+        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 6;
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 2; // 2 hours for testing
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60; // 1 hour for testing
       //  long timeIntervalBetweenUploads = 1000 * 60 ; // 1 minute for testing
 //        long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
 
-        if (typeOfRecording != null){
+      //  if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
                 uploadFiles(context);
-            }
-        }
+                prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
+            }else
+      //  }
         if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
             if (uploadFiles(context)){
                 prefs.setDateTimeLastUpload(now);
@@ -73,7 +80,7 @@ public class RecordAndUpload {
 
         }
 
-        if (typeOfRecording != null){
+     //   if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("repeating")  ){
                 // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
                 long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
@@ -88,7 +95,7 @@ public class RecordAndUpload {
                 }
 
             }
-        }
+       // }
 
 
 
@@ -155,6 +162,10 @@ public class RecordAndUpload {
 
             Log.e(LOG_TAG, "Setup recording failed.");
             Log.e(LOG_TAG, "Could be due to lack of sdcard");
+            Log.e(LOG_TAG, "Could be due to phone connected to pc as usb storage");
+            Log.e(LOG_TAG, e.getLocalizedMessage());
+
+
 
             return false;
         }
@@ -183,6 +194,9 @@ public class RecordAndUpload {
 
         // Stop recording.
         mRecorder.stop();
+//        mRecorder.release();
+        //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+        mRecorder.reset();
         mRecorder.release();
         mRecorder = null; // attempting to fix error mediarecorder went away with unhandled events
 
@@ -337,7 +351,12 @@ public class RecordAndUpload {
         }
 
 
-        String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
+//        String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
+        String localFilePath = Util.getRecordingsFolder() + "/" + fileName;
+        if (! new File(localFilePath).exists()){
+            Log.e(LOG_TAG, localFilePath + " does not exist");
+            return false;
+        }
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         String recordingTime = hour + ":" + minute + ":" + second;
 

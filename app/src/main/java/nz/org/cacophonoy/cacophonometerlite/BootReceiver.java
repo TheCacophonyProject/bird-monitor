@@ -29,22 +29,17 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent)
     {
-        //   Server.disableDataConnection(context);
+        String intentAction = intent.getAction();
+        Log.d(LOG_TAG, intentAction);
 
-//        ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-//        toneG.startTone(ToneGenerator.TONE_DTMF_0, 1000);
 
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
 
         }catch (Exception e){
-            // Sound alarm if problem
-            ToneGenerator toneG2 = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-            if (Build.VERSION.SDK_INT >= ECLAIR) {
-                toneG2.startTone(ToneGenerator.TONE_DTMF_0, 10000);
-            }
-            Log.i(LOG_TAG, e.getLocalizedMessage());
+
+            Log.e(LOG_TAG, e.getLocalizedMessage());
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
@@ -58,18 +53,6 @@ public class BootReceiver extends BroadcastReceiver {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
-
-        // Do a test record when first boots
-//        Intent runOnceOnBootIntent = new Intent(context, StartRecordingReceiver.class);
-//        try {
-//            Log.e(LOG_TAG, "About to broadcast runOnceOnBootIntent");
-//            runOnceOnBootIntent.putExtra("type","runOnceOnBoot");
-//            context.sendBroadcast(runOnceOnBootIntent);
-//
-//        }catch (Exception e){
-//
-//        }
-
 
     }
 

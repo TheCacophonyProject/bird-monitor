@@ -33,15 +33,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+//import java.lang.reflect.Field;
+//import java.lang.reflect.Method;
 import java.util.Calendar;
 
-import static android.R.attr.enabled;
-import static android.R.attr.level;
-import static android.content.ContentValues.TAG;
-import static android.media.CamcorderProfile.get;
-import static java.lang.Float.parseFloat;
+//import static android.R.attr.enabled;
+//import static android.R.attr.level;
+//import static android.content.ContentValues.TAG;
+//import static android.media.CamcorderProfile.get;
+//import static java.lang.Float.parseFloat;
 
 class Util {
     private static final String LOG_TAG = Util.class.getName();
@@ -93,7 +93,7 @@ class Util {
         return homeFile;
     }
 
-    static File getRecordingsFolder() {
+    public static File getRecordingsFolder() {
         if (recordingFolder == null) {
             recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
             if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
@@ -370,65 +370,59 @@ class Util {
 
 
 
-    public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
-
-       boolean isCurrentlyInFlightMode = isFlightModeEnabled(context);
-
-        // will I continue - depends on if enable is true or false and if already in flightmode or not
-        // so write logic so it exits method if need be
-
-        if (isCurrentlyInFlightMode){
-            Log.d(LOG_TAG, "Currently in flight mode");
-            if (enable){ // ie want to turn on flight mode, but it is already on
-                Log.d(LOG_TAG, "And have been asked to enable flight mode so nothing to do");
-                return true;
-            }
-        }else {
-            Log.d(LOG_TAG, "Not currently in flight mode");
-            if (!enable){ // ie want to turn on flight mode, but it is already on
-                Log.d(LOG_TAG, "And have been asked to disable flight mode so nothing to do");
-                return true;
-            }
-        }
-
-
-
-
-
-
-//        if (isFlightModeEnabled(context) == enable){ // if enable is true and it is already in flight mode then method will return without doing anything and vice versa
-//            return true;
+//    public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+//
+//       boolean isCurrentlyInFlightMode = isFlightModeEnabled(context);
+//
+//        // will I continue - depends on if enable is true or false and if already in flightmode or not
+//        // so write logic so it exits method if need be
+//
+//        if (isCurrentlyInFlightMode){
+//            Log.d(LOG_TAG, "Currently in flight mode");
+//            if (enable){ // ie want to turn on flight mode, but it is already on
+//                Log.d(LOG_TAG, "And have been asked to enable flight mode so nothing to do");
+//                return true;
+//            }
+//        }else {
+//            Log.d(LOG_TAG, "Not currently in flight mode");
+//            if (!enable){ // ie want to turn on flight mode, but it is already on
+//                Log.d(LOG_TAG, "And have been asked to disable flight mode so nothing to do");
+//                return true;
+//            }
 //        }
+//
+//
+//
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//            // API 17 onwards.
+//            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+//            // Must be a rooted device
+//            Prefs prefs = new Prefs(context);
+//            if (!prefs.getHasRootAccess()){
+//                return false;
+//            }
+//
+//            int enabled = isFlightModeEnabled(context) ? 0 : 1;
+//
+//            // Set Airplane / Flight mode using su commands.
+//            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
+//            executeCommandWithoutWait(context, "-c", command);
+//            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
+//            executeCommandWithoutWait(context, "-c", command);
+//
+//        } else {
+//            // API 16 and earlier.
+//            Log.d(LOG_TAG, "API 16 and earlier.");
+//            boolean enabled = isFlightModeEnabled(context);
+//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
+//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//            intent.putExtra("state", !enabled);
+//            context.sendBroadcast(intent);
+//        }
+//        return true;
+//    }
 
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            // API 17 onwards.
-            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
-            // Must be a rooted device
-            Prefs prefs = new Prefs(context);
-            if (!prefs.getHasRootAccess()){
-                return false;
-            }
-
-            int enabled = isFlightModeEnabled(context) ? 0 : 1;
-
-            // Set Airplane / Flight mode using su commands.
-            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
-            executeCommandWithoutWait(context, "-c", command);
-            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
-            executeCommandWithoutWait(context, "-c", command);
-
-        } else {
-            // API 16 and earlier.
-            Log.d(LOG_TAG, "API 16 and earlier.");
-            boolean enabled = isFlightModeEnabled(context);
-            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", !enabled);
-            context.sendBroadcast(intent);
-        }
-        return true;
-    }
     public static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -437,7 +431,7 @@ class Util {
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()){
-                Log.e(LOG_TAG, "Do NOT have required ROOT access");
+                Log.i(LOG_TAG, "Do NOT have required ROOT access");
                 Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
                 return ;
             }
@@ -540,5 +534,6 @@ class Util {
             }
         }
     }
+
 
 }
