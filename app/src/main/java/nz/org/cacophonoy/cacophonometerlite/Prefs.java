@@ -19,7 +19,11 @@ class Prefs {
 
     private static final String PREFS_NAME = "CacophonyPrefs";
    // private static final String DEFAULT_SERVER_URL = "http://103.16.20.22";       // Server URL
-    private static final String DEFAULT_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
+   // private static final String DEFAULT_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
+    private static final String TEST_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
+    private static final String PRODUCTION_SERVER_URL = "http://103.16.20.22";       // Server URL
+
+
     //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
     //private static final String DEFAULT_SERVER_URL = "http://192.168.1.9:8888";       // Server URL
     private static final String SERVER_URL_KEY = "SERVER_URL";
@@ -55,6 +59,8 @@ class Prefs {
     // private static final boolean SIM_CARD_DETECTED = false;
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+
+    private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
 
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
@@ -149,12 +155,19 @@ class Prefs {
 
     }
 
-    String getServerUrl() {
+    String getServerUrl(boolean useTestServer) {
         String url = getString(SERVER_URL_KEY);
-        if (url == null)
-            return DEFAULT_SERVER_URL;
-        else
+        if (url == null) {
+           // return DEFAULT_SERVER_URL;
+            if (useTestServer){
+                return TEST_SERVER_URL;
+            }else{
+                return PRODUCTION_SERVER_URL;
+            }
+        }
+        else {
             return url;
+        }
     }
 
     void setServerUrl(String url) {
@@ -258,8 +271,16 @@ class Prefs {
         return getBoolean(HAS_ROOT_ACCESS_KEY);
     }
 
+    boolean getUseTestServer() {
+        return getBoolean(USE_TEST_SERVER_KEY);
+    }
+
     void setHasRootAccess(boolean hasRootAccess) {
         setBoolean(HAS_ROOT_ACCESS_KEY, hasRootAccess);
+    }
+
+    void setUseTestServer(boolean useTestServer) {
+        setBoolean(USE_TEST_SERVER_KEY, useTestServer);
     }
 
     double getBatteryLevel() {

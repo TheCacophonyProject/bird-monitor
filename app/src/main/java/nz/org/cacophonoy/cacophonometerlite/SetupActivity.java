@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,10 +21,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
+import static nz.org.cacophonoy.cacophonometerlite.R.string.unregister;
 //import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
 
 //public class SetupActivity extends Activity {
@@ -40,9 +43,9 @@ public class SetupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-        EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
+      //  EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
         Prefs prefs = new Prefs(getApplicationContext());
-        serverUrlEditText.setText(prefs.getServerUrl());
+       // serverUrlEditText.setText(prefs.getServerUrl());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -89,6 +92,9 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
+//        ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
+//        mainScrollView.fullScroll(ScrollView.FOCUS_UP);
+
         TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
 
@@ -96,7 +102,7 @@ public class SetupActivity extends AppCompatActivity {
         double lon = prefs.getLongitude();
 
         if (lat != 0 && lon != 0) {
-            TextView locationStatus = (TextView) findViewById(R.id.setupLocationStatus);
+            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
             locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
         }
 
@@ -108,7 +114,7 @@ public class SetupActivity extends AppCompatActivity {
             registerStatus.setText(R.string.not_registered);
 
         boolean simPresent = prefs.getSimCardDetected();
-        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbSimPresent);
+        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbUseTestServer);
         if (simPresent) {
             checkBoxSim.setChecked(true);
         } else
@@ -120,6 +126,13 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxRootAccess.setChecked(true);
         } else
             checkBoxRootAccess.setChecked(false);
+
+        boolean useTestServer = prefs.getUseTestServer();
+        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
+        if (useTestServer) {
+            checkBoxUseTestServer.setChecked(true);
+        } else
+            checkBoxUseTestServer.setChecked(false);
 
 
 
@@ -133,12 +146,23 @@ public class SetupActivity extends AppCompatActivity {
             switch (inputMessage.what) {
                 case REGISTER_SUCCESS:
                     onResume();
+                    ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
+                    mainScrollView.fullScroll(ScrollView.FOCUS_UP);
+                    try {
+                        ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
+                    }catch (Exception ex){
+                        Log.e(LOG_TAG, ex.getLocalizedMessage());
+                    }
                     Toast.makeText(getApplicationContext(), "Registered device.", Toast.LENGTH_SHORT).show();
                     break;
                 case REGISTER_FAIL:
                     onResume();
                     Context context = SetupActivity.this;
-                    Toast.makeText(context, "Failed to register.", Toast.LENGTH_SHORT).show();
+                    String errorMessage = "Failed to register";
+                    if(Server.getErrorMessage() != null){
+                        errorMessage = Server.getErrorMessage();
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                 case RESUME:
                     onResume();
                 default:
@@ -178,13 +202,31 @@ public class SetupActivity extends AppCompatActivity {
      * @param v View
      */
     public void unRegisterButton(View v) {
-        Log.d(LOG_TAG, "Un-register device.");
-        Prefs prefs = new Prefs(getApplicationContext());
-        prefs.setGroupName(null);
-        prefs.setPassword(null);
-        prefs.setDeviceName(null);
-        Server.loggedIn = false;
+        unregister();
+
+//        Log.d(LOG_TAG, "Un-register device.");
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        prefs.setGroupName(null);
+//        prefs.setPassword(null);
+//        prefs.setDeviceName(null);
+//        Server.loggedIn = false;
+//        onResume();
+    }
+
+    public void unregister(){
+        try {
+            Log.d(LOG_TAG, "Un-register device.");
+            Prefs prefs = new Prefs(getApplicationContext());
+            prefs.setGroupName(null);
+            prefs.setPassword(null);
+            prefs.setDeviceName(null);
+            Server.loggedIn = false;
+        }catch(Exception ex){
+            Log.e(LOG_TAG, "Error Un-registering device.");
+        }
         onResume();
+        ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
+        mainScrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 
     /**
@@ -206,6 +248,8 @@ public class SetupActivity extends AppCompatActivity {
                 Message message = handler.obtainMessage();
                 if (Server.register(group, context)) {
                     message.what = REGISTER_SUCCESS;
+
+
                 } else {
                     message.what = REGISTER_FAIL;
                 }
@@ -217,30 +261,58 @@ public class SetupActivity extends AppCompatActivity {
 
 
 
-    public void updateServerUrlButton(View v) {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        String newUrl =  ((EditText) findViewById(R.id.setupServerUrlInput)).getText().toString();
-        if (URLUtil.isValidUrl(newUrl)) {
-            Prefs prefs = new Prefs(getApplicationContext());
-            prefs.setServerUrl(newUrl);
-            Toast.makeText(getApplicationContext(), "Updated Server URL", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    public void updateServerUrlButton(View v) {
+//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//        String newUrl =  ((EditText) findViewById(R.id.setupServerUrlInput)).getText().toString();
+//        if (URLUtil.isValidUrl(newUrl)) {
+//            Prefs prefs = new Prefs(getApplicationContext());
+//            prefs.setServerUrl(newUrl);
+//            Toast.makeText(getApplicationContext(), "Updated Server URL", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-    public void updateLocationButton(View v) {
+    public void updateGPSLocationButton(View v) {
+
+
         Log.i(LOG_TAG, "Update location button");
         Toast.makeText(getApplicationContext(), "Getting new Location...", Toast.LENGTH_SHORT).show();
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+
+
+
+
         GPSLocationListener gpsLocationListener = new GPSLocationListener(getApplicationContext(), handler);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, getApplicationContext().getMainLooper());
         } catch (SecurityException e) {
             Log.e(LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
         }
+
+    }
+
+    public void disableGPSButton(View v) {
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }else{
+            Toast.makeText(getApplicationContext(), "GPS is already off", Toast.LENGTH_LONG).show();
+        }
+
+
 
     }
 
@@ -265,7 +337,21 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setHasRootAccess(false);
         }
-
     }
+
+    public void onCheckboxUseTestServerClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseTestServer(true);
+
+        }else{
+            prefs.setUseTestServer(false);
+        }
+        unregister();
+    }
+
+
 
 }

@@ -20,6 +20,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
 
     <ScrollView
+        android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/my_toolbar"
@@ -38,92 +39,17 @@
             android:focusableInTouchMode="true"
             >
 
-
-            <TextView
-                android:id="@+id/setupSimTitle"
-                android:text="@string/data_connection"
-                android:layout_alignParentTop="true"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/setupSimMessage"
-                android:text="@string/select_the_following_box_if_you_are_using_mobile_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupSimTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbSimPresent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupSimMessage"
-                android:checked="false"
-                android:onClick="onCheckboxSimPresentClicked"
-                android:text="@string/using_mobile_data_and_sim_is_present" />
-
-            <View
-                android:id="@+id/SplitLine_hor1"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/cbSimPresent"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/setupRootTitle"
-                android:text="@string/root_access_experts_only"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/SplitLine_hor1"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/rootMessage"
-                android:text="@string/select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupRootTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbHasRootAccess"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/rootMessage"
-                android:checked="false"
-                android:onClick="onCheckboxRootedClicked"
-                android:text="@string/phone_is_rooted_and_app_installed_as_system_app" />
-
-            <View
-                android:id="@+id/SplitLine_hor2"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/cbHasRootAccess"
-                android:layout_marginTop="5dp" />
-
             <TextView
                 android:id="@+id/setupRegisterStatus"
-                android:layout_below="@id/SplitLine_hor2"
+                android:layout_alignParentTop="true"
                 android:text="@string/device_not_registered"
                 android:textSize="20sp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginTop="10dp"
-                 />
+                android:layout_marginTop="5dp"
+                />
 
             <TextView
                 android:id="@+id/setupDeviceRegisterInfo"
@@ -168,9 +94,8 @@
                 android:layout_alignParentLeft="true"
                 android:onClick="unRegisterButton" />
 
-
             <View
-                android:id="@+id/SplitLine_hor3"
+                android:id="@+id/SplitLine_hor1"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
@@ -178,78 +103,174 @@
                 android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/setupServerTitle"
-                android:text="@string/server_url"
+                android:id="@+id/setupDataConnectionTitle"
+                android:text="@string/data_connection"
+                android:layout_below="@id/SplitLine_hor1"
                 android:textSize="20sp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/SplitLine_hor3"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupDataConnectionMessage"
+                android:text="@string/select_the_following_box_if_you_are_using_mobile_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupDataConnectionTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
 
-            <EditText
-                android:id="@+id/setupServerUrlInput"
+            <CheckBox
+                android:id="@+id/cbUsingMobileDataSimPresent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textUri"
-                android:text="@string/server_url"
-                android:ems="10"
-                android:layout_marginTop="5dp"
-                android:layout_below="@id/setupServerTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"/>
+                android:layout_below="@id/setupDataConnectionMessage"
+                android:checked="false"
+                android:onClick="onCheckboxSimPresentClicked"
+                android:text="@string/using_mobile_data_and_sim_is_present" />
 
-            <Button
-                android:id="@+id/setupUpdateServerUrlButton"
-                android:text="@string/update_server_url"
+
+            <View
+                android:id="@+id/SplitLine_hor2"
                 android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/cbUsingMobileDataSimPresent"
+                android:layout_marginTop="5dp" />
+
+
+
+
+            <TextView
+                android:id="@+id/setupGPSLocationTitle"
+                android:text="@string/gps_location_title"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setupServerUrlInput"
+                android:layout_below="@id/SplitLine_hor2"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:onClick="updateServerUrlButton" />
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupGpsLocationMessage"
+                android:text="@string/gps_location_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupGPSLocationTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+
+            <TextView
+                android:id="@+id/setupGPSLocationStatus"
+                android:text="@string/location_not_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupGpsLocationMessage"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <Button
+                android:id="@+id/setupUpdateGPSLocationButton"
+                android:text="@string/update_gps_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupGPSLocationStatus"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:onClick="updateGPSLocationButton" />
+
+            <Button
+                android:id="@+id/disableGPSButton"
+                android:text="@string/disable_gps_to_save_power"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupUpdateGPSLocationButton"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:onClick="disableGPSButton" />
+
+            <View
+                android:id="@+id/SplitLine_hor3"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/disableGPSButton"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/useTestServerTitle"
+                android:text="@string/set_test_server_title"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/SplitLine_hor3"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/useTestServerMessage"
+                android:text="@string/set_test_server_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/useTestServerTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbUseTestServer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/useTestServerMessage"
+                android:checked="false"
+                android:onClick="onCheckboxUseTestServerClicked"
+                android:text="@string/set_test_server_cb_message" />
 
             <View
                 android:id="@+id/SplitLine_hor4"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/setupUpdateServerUrlButton"
+                android:layout_below="@id/cbUseTestServer"
                 android:layout_marginTop="5dp" />
 
-
             <TextView
-                android:id="@+id/setupLocationTitle"
-                android:text="@string/location"
+                android:id="@+id/setupRootTitle"
+                android:text="@string/root_access_experts_only"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/SplitLine_hor4"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
+                android:layout_below="@id/SplitLine_hor4"
                 android:layout_marginTop="5dp" />
-
 
             <TextView
-                android:id="@+id/setupLocationStatus"
-                android:text="@string/location_not_set"
+                android:id="@+id/rootMessage"
+                android:text="@string/select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setupLocationTitle"
+                android:layout_below="@id/setupRootTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
 
-            <Button
-                android:id="@+id/setupUpdateLocationButton"
-                android:text="@string/update_location"
+            <CheckBox
+                android:id="@+id/cbHasRootAccess"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setupLocationStatus"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:onClick="updateLocationButton" />
+                android:layout_below="@id/rootMessage"
+                android:checked="false"
+                android:onClick="onCheckboxRootedClicked"
+                android:text="@string/phone_is_rooted_and_app_installed_as_system_app" />
 
 
 

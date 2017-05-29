@@ -79,7 +79,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
 
 
-        // First check to see if battery level is sufficient to continue
+        // First check to see if battery level is sufficient to continue.
+
 
         double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
         if (batteryLevel != -1){ // looks like getting battery level using system file worked

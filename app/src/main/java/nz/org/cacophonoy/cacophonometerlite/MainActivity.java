@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -247,6 +248,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void testRecording(View v) {
         Log.d(TAG, "Test recording button.");
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+            return;
+        }
+
 
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);

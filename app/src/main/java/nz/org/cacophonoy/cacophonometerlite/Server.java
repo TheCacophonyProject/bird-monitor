@@ -16,6 +16,7 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +43,7 @@ class Server {
     static boolean serverConnection = false;
     static boolean loggedIn = false;
     private static String token = null;
+    private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
 
@@ -98,7 +100,8 @@ class Server {
 
         SyncHttpClient client = new SyncHttpClient();
         Prefs prefs = new Prefs(context);
-        client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
+        boolean useTestServer = prefs.getUseTestServer();
+        client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -153,8 +156,9 @@ class Server {
         params.put("devicename", devicename);
         params.put("password", password);
 
+        boolean useTestServer = prefs.getUseTestServer();
 
-        client.post(prefs.getServerUrl() + LOGIN_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl(useTestServer) + LOGIN_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -201,8 +205,6 @@ class Server {
      */
     static boolean register(final String group, final Context context) {
 
-
-
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
             Log.i("Register", "Invalid group name: " + group);
@@ -221,7 +223,8 @@ class Server {
         final Prefs prefs = new Prefs(context);
 
         // Sent Post request.
-        client.post(prefs.getServerUrl() + REGISTER_URL, params, new AsyncHttpResponseHandler() {
+        boolean useTestServer = prefs.getUseTestServer();
+        client.post(prefs.getServerUrl(useTestServer) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -255,6 +258,16 @@ class Server {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                try {
+                    JSONObject joRes = new JSONObject(responseString);
+                   JSONArray messages = joRes.getJSONArray("messages");
+                    String firstMessage = (String) messages.get(0);
+                    setErrorMessage(firstMessage);
+                    Log.i(LOG_TAG, firstMessage);
+                }catch (Exception ex){
+                    Log.e(LOG_TAG, "Error with parsing register errorResponse into a JSON");
+                }
                 loggedIn = false;
                 Log.e(LOG_TAG, "Error with getting response from server");
             }
@@ -307,7 +320,8 @@ class Server {
 
 
         // Send request
-        client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
+        boolean useTestServer = prefs.getUseTestServer();
+        client.post(prefs.getServerUrl(useTestServer) + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -335,6 +349,14 @@ class Server {
 
     public static void setToken(String token) {
         Server.token = token;
+    }
+
+    public static void setErrorMessage(String errorMessage){
+        Server.errorMessage = errorMessage;
+    }
+
+    public static String getErrorMessage() {
+        return errorMessage;
     }
 
 
