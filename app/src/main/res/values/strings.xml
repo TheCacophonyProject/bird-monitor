@@ -63,7 +63,7 @@
 \n\n
 To use this app you will first need to register on the data server and create a group.  You will then enter the group name into this app.
         \n\n
-        You are then ready to press the \'Setup Device\' button to configure the app:\n1) Register the phone with your group,\n2) Select if you are using a SIM/Mobile data connection or not,\n3) Get the GPS location,\n\nAnd for Experts only \n4) Decide on the server and \n5) Select if you are using \'root\' access.  This is only needed if you are using a solar panel AND your phone uses Android 4.2 or above.  It allows the app to turn airplane (flight) mode on and off to save power.
+        You are then ready to press the \'Setup Device\' button to configure the app:\n1) Register the phone with your group,\n2) Get the GPS location,\n\nAnd for Experts only \n3) Decide on the server and \n4) Select if you are using \'root\' access.  This is only needed if you are using a solar panel AND your phone uses Android 4.2 or above.  It allows the app to turn airplane (flight) mode on and off to save power.
 \n\n
 After you have finished the setup, go back to the main screen and press the \'REFRESH\' button to check that the app can connect to the server - if all is ok you will see ticks next to the various App Vitals, and a \'Device ID\' number.  You can then press the \'START TEST RECORDING\' button.  This will make a 5 second recording and send it to the server.
 \n\n

@@ -316,17 +316,17 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    public void onCheckboxSimPresentClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setSimCardDetected(true);
-        }else{
-            prefs.setSimCardDetected(false);
-        }
-
-    }
+//    public void onCheckboxSimPresentClicked(View v) {
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        // Is the view now checked?
+//        boolean checked = ((CheckBox) v).isChecked();
+//        if (checked){
+//            prefs.setSimCardDetected(true);
+//        }else{
+//            prefs.setSimCardDetected(false);
+//        }
+//
+//    }
 
     public void onCheckboxRootedClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());

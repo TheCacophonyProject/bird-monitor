@@ -535,5 +535,41 @@ class Util {
         }
     }
 
+    public static String getSimStateAsString(int simState){
+        String simStateStr = "noMatch";
+        switch (simState){
+            case 0:  simStateStr = "SIM_STATE_UNKNOWN";
+                break;
+            case 1:  simStateStr = "SIM_STATE_ABSENT";
+                break;
+            case 2:  simStateStr = "SIM_STATE_PIN_REQUIRED";
+                break;
+            case 3:  simStateStr = "SIM_STATE_PUK_REQUIRED";
+                break;
+            case 4:  simStateStr = "SIM_STATE_NETWORK_LOCKED";
+                break;
+            case 5:  simStateStr = "SIM_STATE_READY";
+                break;
+            case 6:  simStateStr = "SIM_STATE_NOT_READY";
+                break;
+            case 7:  simStateStr = "SIM_STATE_PERM_DISABLED";
+                break;
+            case 8:  simStateStr = "SIM_STATE_CARD_IO_ERROR";
+                break;
+            case 9:  simStateStr = "SIM_STATE_CARD_RESTRICTED";
+                break;
+            case 10: simStateStr = "October";
+                break;
+            case 11: simStateStr = "November";
+                break;
+            case 12: simStateStr = "December";
+                break;
+            default: simStateStr = "noMatch";
+                break;
+        }
+        return simStateStr;
+    }
+
+
 
 }

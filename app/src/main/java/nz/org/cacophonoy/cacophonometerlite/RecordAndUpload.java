@@ -1,7 +1,9 @@
 package nz.org.cacophonoy.cacophonometerlite;
+import android.app.Service;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -391,6 +393,14 @@ public class RecordAndUpload {
             additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
+            TelephonyManager mTelephonyManager = (TelephonyManager) context
+                    .getSystemService(Service.TELEPHONY_SERVICE);
+
+            additionalMetadata.put("SIM state",Util.getSimStateAsString( mTelephonyManager.getSimState()));
+            if (mTelephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {
+                additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
+                additionalMetadata.put("Line1Number", mTelephonyManager.getLine1Number());
+            }
 
             audioRecording.put("additionalMetadata", additionalMetadata);
 

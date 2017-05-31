@@ -102,44 +102,6 @@
                 android:layout_below="@id/setupUnregister"
                 android:layout_marginTop="5dp" />
 
-            <TextView
-                android:id="@+id/setupDataConnectionTitle"
-                android:text="@string/data_connection"
-                android:layout_below="@id/SplitLine_hor1"
-                android:textSize="20sp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/setupDataConnectionMessage"
-                android:text="@string/select_the_following_box_if_you_are_using_mobile_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupDataConnectionTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbUsingMobileDataSimPresent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupDataConnectionMessage"
-                android:checked="false"
-                android:onClick="onCheckboxSimPresentClicked"
-                android:text="@string/using_mobile_data_and_sim_is_present" />
-
-
-            <View
-                android:id="@+id/SplitLine_hor2"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/cbUsingMobileDataSimPresent"
-                android:layout_marginTop="5dp" />
 
 
 
@@ -150,7 +112,7 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/SplitLine_hor2"
+                android:layout_below="@id/SplitLine_hor1"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
