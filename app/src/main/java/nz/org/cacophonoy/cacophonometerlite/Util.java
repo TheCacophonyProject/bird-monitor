@@ -344,7 +344,7 @@ class Util {
         while (isNetworkConnected(context) != networkConnectionRequired ) {
 
             try {
-                Thread.sleep(500); // give time for airplane mode to turn off
+                Thread.sleep(1000); // give time for airplane mode to turn off
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -570,6 +570,40 @@ class Util {
         return simStateStr;
     }
 
+public static String getLogCat(){
+    //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
+    String logCatToReturn = "";
+    try{
+        Process process = Runtime.getRuntime().exec("logcat -d");
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
 
+        StringBuilder log=new StringBuilder();
+        String line = "";
+        while ((line = bufferedReader.readLine()) != null) {
+            log.append(line);
+        }
+       return log.toString();
+    }catch (Exception ex){
+        Log.e("LOG_TAG", "Error getting log cat");
+        logCatToReturn = "Error getting log cat";
+        return logCatToReturn;
+    }
+
+
+
+}
+
+    public static void clearLog(){
+        try {
+            Process process = new ProcessBuilder()
+                    .command("logcat", "-c")
+                    .redirectErrorStream(true)
+                    .start();
+        } catch (IOException e) {
+            Log.e("LOG_TAG", "Error clearing log cat");
+
+        }
+    }
 
 }

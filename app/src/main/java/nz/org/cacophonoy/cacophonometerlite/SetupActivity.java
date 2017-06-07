@@ -134,6 +134,12 @@ public class SetupActivity extends AppCompatActivity {
         } else
             checkBoxUseTestServer.setChecked(false);
 
+        boolean useShortRecordings = prefs.getUseShortRecordings();
+        final CheckBox checkBoxUseUseShortRecordings = (CheckBox) findViewById(R.id.cbShortRecordings);
+        if (useShortRecordings) {
+            checkBoxUseUseShortRecordings.setChecked(true);
+        } else
+            checkBoxUseUseShortRecordings.setChecked(false);
 
 
         super.onResume();
@@ -336,6 +342,19 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setHasRootAccess(true);
         }else{
             prefs.setHasRootAccess(false);
+        }
+    }
+
+
+
+    public void onCheckboxShortRecordingsClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseShortRecordings(true);
+        }else{
+            prefs.setUseShortRecordings(false);
         }
     }
 

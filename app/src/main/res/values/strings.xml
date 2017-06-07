@@ -47,7 +47,10 @@
     <string name="device_id">Device ID</string>
     <string name="version">Version ID</string>
 
-
+    <string name="short_record_length_title">Short Record Length (Testing Only)</string>
+    <string name="short_recordings_message">Use this if you are testing where recordings need to be kept confidential - they are very short.</string>
+    <string name="short_record_message">Use this if you are testing where recordings need to be kept confidential - they are very short.</string>
+    <string name="use_short_record_cb_message">Use short recordings.</string>
 
     <string name="registered_true">Registered: ✔</string>
     <string name="registered_false">Registered: ✘</string>

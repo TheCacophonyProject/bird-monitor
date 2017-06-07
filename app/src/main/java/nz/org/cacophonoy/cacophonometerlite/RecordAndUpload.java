@@ -48,6 +48,10 @@ public class RecordAndUpload {
        // recordTimeSeconds =  (long)prefs.getRecordingDuration();
         long recordTimeSeconds =  (long)prefs.getRecordingDuration();
 
+        if (prefs.getUseShortRecordings()){
+            recordTimeSeconds = 1;
+        }
+
      //   if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton")  ){
                 recordTimeSeconds = 5;  // short test
@@ -393,6 +397,13 @@ public class RecordAndUpload {
             additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
+
+            // see if can send logcat
+            String logCat = Util.getLogCat();
+            Util.clearLog();
+            additionalMetadata.put("Logcat ", logCat);
+
+
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
 

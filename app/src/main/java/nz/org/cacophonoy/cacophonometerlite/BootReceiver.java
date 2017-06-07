@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
@@ -34,8 +35,12 @@ public class BootReceiver extends BroadcastReceiver {
 
 
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+
         try {
             myIntent.putExtra("type","repeating");
+            Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+            myIntent.setData(timeUri);
 
         }catch (Exception e){
 
