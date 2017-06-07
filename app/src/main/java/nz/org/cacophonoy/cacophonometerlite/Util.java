@@ -344,7 +344,7 @@ class Util {
         while (isNetworkConnected(context) != networkConnectionRequired ) {
 
             try {
-                Thread.sleep(500); // give time for airplane mode to turn off
+                Thread.sleep(1000); // give time for airplane mode to turn off
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -535,5 +535,75 @@ class Util {
         }
     }
 
+    public static String getSimStateAsString(int simState){
+        String simStateStr = "noMatch";
+        switch (simState){
+            case 0:  simStateStr = "SIM_STATE_UNKNOWN";
+                break;
+            case 1:  simStateStr = "SIM_STATE_ABSENT";
+                break;
+            case 2:  simStateStr = "SIM_STATE_PIN_REQUIRED";
+                break;
+            case 3:  simStateStr = "SIM_STATE_PUK_REQUIRED";
+                break;
+            case 4:  simStateStr = "SIM_STATE_NETWORK_LOCKED";
+                break;
+            case 5:  simStateStr = "SIM_STATE_READY";
+                break;
+            case 6:  simStateStr = "SIM_STATE_NOT_READY";
+                break;
+            case 7:  simStateStr = "SIM_STATE_PERM_DISABLED";
+                break;
+            case 8:  simStateStr = "SIM_STATE_CARD_IO_ERROR";
+                break;
+            case 9:  simStateStr = "SIM_STATE_CARD_RESTRICTED";
+                break;
+            case 10: simStateStr = "October";
+                break;
+            case 11: simStateStr = "November";
+                break;
+            case 12: simStateStr = "December";
+                break;
+            default: simStateStr = "noMatch";
+                break;
+        }
+        return simStateStr;
+    }
+
+public static String getLogCat(){
+    //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
+    String logCatToReturn = "";
+    try{
+        Process process = Runtime.getRuntime().exec("logcat -d");
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+        StringBuilder log=new StringBuilder();
+        String line = "";
+        while ((line = bufferedReader.readLine()) != null) {
+            log.append(line);
+        }
+       return log.toString();
+    }catch (Exception ex){
+        Log.e("LOG_TAG", "Error getting log cat");
+        logCatToReturn = "Error getting log cat";
+        return logCatToReturn;
+    }
+
+
+
+}
+
+    public static void clearLog(){
+        try {
+            Process process = new ProcessBuilder()
+                    .command("logcat", "-c")
+                    .redirectErrorStream(true)
+                    .start();
+        } catch (IOException e) {
+            Log.e("LOG_TAG", "Error clearing log cat");
+
+        }
+    }
 
 }

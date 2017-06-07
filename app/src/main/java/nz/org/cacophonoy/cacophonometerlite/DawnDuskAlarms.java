@@ -20,7 +20,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class DawnDuskAlarms {
 
-    // Need to have recordings that automatically run around dawan and dusk
+    // Need to have recordings that automatically run around dawn and dusk
     // Use code from https://github.com/mikereedell/sunrisesunsetlib-java to get sunrise and sunset for either today or tomorrow, and then offset by the length of twilight - average of 29 mins for NZ
     // To make app robust (hopefully) these alarms are reset every time a periodic alarm runs.
 

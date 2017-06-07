@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -93,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             myIntent.putExtra("type","repeating");
+            Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+            myIntent.setData(timeUri);
 
         }catch (Exception e){
 

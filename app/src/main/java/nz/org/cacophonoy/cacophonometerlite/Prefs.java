@@ -60,6 +60,10 @@ class Prefs {
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
 
+    private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
+
+
+
     private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
 
 
@@ -278,6 +282,18 @@ class Prefs {
     void setHasRootAccess(boolean hasRootAccess) {
         setBoolean(HAS_ROOT_ACCESS_KEY, hasRootAccess);
     }
+
+    boolean getUseShortRecordings() {
+        return getBoolean(USE_SHORT_RECORDINGS_KEY);
+    }
+
+
+
+    void setUseShortRecordings(boolean useShortRecordings) {
+        setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
+    }
+
+
 
     void setUseTestServer(boolean useTestServer) {
         setBoolean(USE_TEST_SERVER_KEY, useTestServer);

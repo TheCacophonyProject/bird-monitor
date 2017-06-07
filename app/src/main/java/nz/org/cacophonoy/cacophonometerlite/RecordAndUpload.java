@@ -1,7 +1,9 @@
 package nz.org.cacophonoy.cacophonometerlite;
+import android.app.Service;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -45,6 +47,10 @@ public class RecordAndUpload {
 
        // recordTimeSeconds =  (long)prefs.getRecordingDuration();
         long recordTimeSeconds =  (long)prefs.getRecordingDuration();
+
+        if (prefs.getUseShortRecordings()){
+            recordTimeSeconds = 1;
+        }
 
      //   if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton")  ){
@@ -391,6 +397,21 @@ public class RecordAndUpload {
             additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
+
+            // see if can send logcat
+            String logCat = Util.getLogCat();
+            Util.clearLog();
+            additionalMetadata.put("Logcat ", logCat);
+
+
+            TelephonyManager mTelephonyManager = (TelephonyManager) context
+                    .getSystemService(Service.TELEPHONY_SERVICE);
+
+            additionalMetadata.put("SIM state",Util.getSimStateAsString( mTelephonyManager.getSimState()));
+            if (mTelephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {
+                additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
+                additionalMetadata.put("Line1Number", mTelephonyManager.getLine1Number());
+            }
 
             audioRecording.put("additionalMetadata", additionalMetadata);
 
