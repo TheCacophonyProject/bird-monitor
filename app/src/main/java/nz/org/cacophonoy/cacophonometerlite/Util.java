@@ -488,24 +488,24 @@ class Util {
     }
 
 
-    @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
-    private static boolean isFlightModeEnabled(Context context) {
-        boolean mode = false;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            // API 17 onwards
-            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
-//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-        } else {
-            // API 16 and earlier.
-            Log.d(LOG_TAG, "API 16 and earlier.");
-//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-        }
-        Log.d(LOG_TAG, "Airplane mode is enabled " + mode);
-        return mode;
-    }
+//    @SuppressLint("NewApi")
+//    @SuppressWarnings("deprecation")
+//    private static boolean isFlightModeEnabled(Context context) {
+//        boolean mode = false;
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//            // API 17 onwards
+//            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+////            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+//        } else {
+//            // API 16 and earlier.
+//            Log.d(LOG_TAG, "API 16 and earlier.");
+////            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
+//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+//        }
+//        Log.d(LOG_TAG, "Airplane mode is enabled " + mode);
+//        return mode;
+//    }
 
     private static void  executeCommandWithoutWait(Context context, String option, String command) {
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
@@ -582,6 +582,7 @@ public static String getLogCat(){
         String line = "";
         while ((line = bufferedReader.readLine()) != null) {
             log.append(line);
+            log.append("\n");
         }
        return log.toString();
     }catch (Exception ex){

@@ -252,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void testRecording(View v) {
         Log.d(TAG, "Test recording button.");
+//        Log.i(TAG, "Test recording button.");
+//        Log.e(TAG, "Test recording button.");
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
