@@ -1,11 +1,8 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-
-import static cz.msebera.android.httpclient.extras.PRNGFixes.apply;
-import static java.lang.Boolean.getBoolean;
 
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
@@ -55,7 +52,7 @@ class Prefs {
     private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
-    private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
+    // --Commented out by Inspection (12-Jun-17 2:37 PM):private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
     // private static final boolean SIM_CARD_DETECTED = false;
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
@@ -68,10 +65,10 @@ class Prefs {
 
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
-    private static final double BATTERY_LEVEL = -1;
+    // --Commented out by Inspection (12-Jun-17 2:21 PM):private static final double BATTERY_LEVEL = -1;
 
     private static final String MAXIMUM_BATTERY_LEVEL_KEY = "MAXIMUM_BATTERY_LEVEL";
-    private static final double MAXIMUM_BATTERY_LEVEL = -1;
+    // --Commented out by Inspection (12-Jun-17 2:21 PM):private static final double MAXIMUM_BATTERY_LEVEL = -1;
 
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD_KEY";
 
@@ -174,9 +171,11 @@ class Prefs {
         }
     }
 
-    void setServerUrl(String url) {
-        setString(SERVER_URL_KEY, url);
-    }
+// --Commented out by Inspection START (12-Jun-17 2:21 PM):
+//    void setServerUrl(String url) {
+//        setString(SERVER_URL_KEY, url);
+//    }
+// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
     String getPassword() {
         return getString(PASSWORD_KEY);
@@ -262,13 +261,17 @@ class Prefs {
         setDouble(LENGTH_OF_TWILIGHT_KEY, LENGTH_OF_TWILIGHT_SECONDS);
     }
 
-    boolean getSimCardDetected() {
-        return getBoolean(SIM_CARD_DETECTED_KEY);
-    }
+// --Commented out by Inspection START (12-Jun-17 2:21 PM):
+//    boolean getSimCardDetected() {
+//        return getBoolean(SIM_CARD_DETECTED_KEY);
+//    }
+// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
-    void setSimCardDetected(boolean isSimCardDetected) {
-        setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
-    }
+// --Commented out by Inspection START (12-Jun-17 2:21 PM):
+//    void setSimCardDetected(boolean isSimCardDetected) {
+//        setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
+//    }
+// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
 
     boolean getHasRootAccess() {
@@ -299,9 +302,11 @@ class Prefs {
         setBoolean(USE_TEST_SERVER_KEY, useTestServer);
     }
 
-    double getBatteryLevel() {
-        return getDouble(BATTERY_LEVEL_KEY);
-    }
+// --Commented out by Inspection START (12-Jun-17 2:21 PM):
+//    double getBatteryLevel() {
+//        return getDouble(BATTERY_LEVEL_KEY);
+//    }
+// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
     void setBatteryLevel(double batteryLevel) {
         setDouble(BATTERY_LEVEL_KEY, batteryLevel);

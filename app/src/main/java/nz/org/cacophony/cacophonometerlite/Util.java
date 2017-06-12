@@ -1,22 +1,18 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,8 +50,9 @@ class Util {
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
-    private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
+    // --Commented out by Inspection (12-Jun-17 2:21 PM):private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean checkPermissionsForRecording(Context context) {
         Log.d(LOG_TAG, "Checking permissions needed for recording.");
         if (context == null) {
@@ -71,7 +68,7 @@ class Util {
         return (storagePermission && microphonePermission && locationPermission);
     }
 
-    static File getHomeFile() {
+    private static File getHomeFile() {
         // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
         // This is because if sdcard is 'dodgy' can get inconsistent results.
         // Need context to get internal storage location, so need to pass this around the code.
@@ -81,7 +78,7 @@ class Util {
         if (homeFile == null) {
             homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony");
             //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
-            // homeFile = context.getDir("cacophony", Context.MODE_PRIVATE); // getDir creates the folder if it doesn't exist, but needs contect
+
 
             if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
                 Log.e(LOG_TAG, "HomeFile location problem");
@@ -93,7 +90,7 @@ class Util {
         return homeFile;
     }
 
-    public static File getRecordingsFolder() {
+    static File getRecordingsFolder() {
         if (recordingFolder == null) {
             recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
             if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
@@ -104,13 +101,13 @@ class Util {
         return recordingFolder;
     }
 
-    public static String getDeviceID(String webToken) throws Exception {
+    static String getDeviceID(String webToken) throws Exception {
         String webTokenBody = Util.decoded(webToken);
         JSONObject jObject = new JSONObject(webTokenBody);
         return jObject.getString("id");
     }
 
-    public static String decoded(String JWTEncoded) throws Exception {
+    private static String decoded(String JWTEncoded)  {
         // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
         String webTokenBody = null;
         try {
@@ -120,7 +117,7 @@ class Util {
             // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
             webTokenBody = getJson(split[1]);
         } catch (UnsupportedEncodingException e) {
-            //Error
+            Log.e(LOG_TAG, "Error decoding JWT");
         }
         return webTokenBody;
     }
@@ -129,16 +126,16 @@ class Util {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
         return new String(decodedBytes, "UTF-8");
     }
-    public static double getBatteryLevel(Context context){
-        double batteryLevel = -1;
-        batteryLevel = getBatteryLevelUsingSystemFile(context);
+    static double getBatteryLevel(Context context){
+        double batteryLevel;
+        batteryLevel = getBatteryLevelUsingSystemFile();
         if (batteryLevel == -1){
             batteryLevel = getBatteryLevelByIntent(context);
 
         }
         return batteryLevel;
     }
-    public static double getBatteryLevelUsingSystemFile(Context context) {
+    static double getBatteryLevelUsingSystemFile() {
 //        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 // //       IntentFilter ifilter = new IntentFilter(Intent.ACTION_TIME_TICK);
 //        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
@@ -150,10 +147,11 @@ class Util {
         // found the file volt that stores battery voltage
         String batteryLevelStr = null;
         double batteryLevel = -1;
-        File voltFile = new File("/sys/class/power_supply/battery/volt");
+        String voltFilePathName = "/sys/class/power_supply/battery/volt";
+        File voltFile = new File(voltFilePathName);
         if (voltFile.exists()) {
             try {
-                batteryLevelStr = getStringFromFile(context, "/sys/class/power_supply/battery/volt");
+                batteryLevelStr = getStringFromFile(voltFilePathName);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -164,7 +162,7 @@ class Util {
             try {
                 batteryLevel = Double.parseDouble(batteryLevelStr);
             } catch (Exception ex) {
-
+                Log.e(LOG_TAG, "converting double");
             }
 
         }
@@ -172,76 +170,78 @@ class Util {
         return batteryLevel;
     }
 
-    public static double getBatteryLevelByIntent(Context context){
+    static double getBatteryLevelByIntent(Context context){
 
         //Will use the method of checking battery level that may only give an update if phone charging status changes
         // this will return a percentage
-        double batteryLevel = -1;
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
-        batteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        return batteryLevel;
+        try {
+            double batteryLevel;
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
+            batteryLevel = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
+            return batteryLevel;
+        }catch (Exception ex){
+            Log.e(LOG_TAG, "Error with getBatteryLevelByIntent");
+            return -1;
+        }
+
     }
 
-    public static String getStringFromFile(Context context, String filePath) throws Exception {
+    private static String getStringFromFile(String filePath) throws Exception {
         File fl = new File(filePath);
         FileInputStream fin = new FileInputStream(fl);
-        String ret = convertStreamToString(context, fin);
+        String ret = convertStreamToString(fin);
 
         //Make sure you close all streams.
         fin.close();
         return ret;
     }
 
-    public static String convertStreamToString(Context context, InputStream is) throws Exception {
+    private static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-
-//        while ((line = reader.readLine()) != null) {
-//            sb.append(line).append("\n");
-//            Toast.makeText(context, "Battery voltage is " + line, Toast.LENGTH_LONG).show();
-//
-//        }
+      //  StringBuilder sb = new StringBuilder();
+        String line;
 
         line = reader.readLine();
-        // Toast.makeText(context, "Battery voltage is " + line, Toast.LENGTH_LONG).show();
-
-
         reader.close();
         return line;
     }
 
-    public static String getBatteryStatus(Context context) {
+    static String getBatteryStatus(Context context) {
         // https://developer.android.com/training/monitoring-device-state/battery-monitoring.html
         // http://stackoverflow.com/questions/24934260/intentreceiver-components-are-not-allowed-to-register-to-receive-intents-when
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
-        // Are we charging / charged?
-        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 
-        String batteryStatusToReturn;
-        switch (status) {
-            case BatteryManager.BATTERY_STATUS_CHARGING:
-                batteryStatusToReturn = "CHARGING";
-                break;
-            case BatteryManager.BATTERY_STATUS_DISCHARGING:
-                batteryStatusToReturn = "DISCHARGING";
-                break;
-            case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
-                batteryStatusToReturn = "NOT_CHARGING";
-                break;
-            case BatteryManager.BATTERY_STATUS_FULL:
-                batteryStatusToReturn = "FULL";
-                break;
-            case BatteryManager.BATTERY_STATUS_UNKNOWN:
-                batteryStatusToReturn = "UNKNOWN";
-                break;
-            default:
-                batteryStatusToReturn = Integer.toString(status);
+        try {
+            IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
+            // Are we charging / charged?
+            int status = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1) : -1;
+
+            String batteryStatusToReturn;
+            switch (status) {
+                case BatteryManager.BATTERY_STATUS_CHARGING:
+                    batteryStatusToReturn = "CHARGING";
+                    break;
+                case BatteryManager.BATTERY_STATUS_DISCHARGING:
+                    batteryStatusToReturn = "DISCHARGING";
+                    break;
+                case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
+                    batteryStatusToReturn = "NOT_CHARGING";
+                    break;
+                case BatteryManager.BATTERY_STATUS_FULL:
+                    batteryStatusToReturn = "FULL";
+                    break;
+                case BatteryManager.BATTERY_STATUS_UNKNOWN:
+                    batteryStatusToReturn = "UNKNOWN";
+                    break;
+                default:
+                    batteryStatusToReturn = Integer.toString(status);
+            }
+            return batteryStatusToReturn;
+        }catch (Exception ex){
+            Log.e(LOG_TAG, "getBatteryStatus");
+            return "Error";
         }
-        return batteryStatusToReturn;
-
 
     }
 
@@ -249,12 +249,11 @@ class Util {
      * Gets the state of Airplane Mode.
      * http://stackoverflow.com/questions/4319212/how-can-one-detect-airplane-mode-on-android
      *
-     * @param context
      * @return true if enabled.
      */
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static boolean isAirplaneModeOn(Context context) {
+    static boolean isAirplaneModeOn(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return Settings.System.getInt(context.getContentResolver(),
                     Settings.System.AIRPLANE_MODE_ON, 0) != 0;
@@ -274,16 +273,15 @@ class Util {
      * @param context - for getting the location
      * @return Calendar time of the sunrise
      */
-    public static Calendar getSunrise(Context context, Calendar todayOrTomorrow) {
+    private static Calendar getSunrise(Context context, Calendar todayOrTomorrow) {
 
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-        Calendar officialSunrise = calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
         //Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
-        return officialSunrise;
+        return calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
     }
 
-    public static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
+    static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
         Prefs prefs = new Prefs(context);
         Calendar sunRise = getSunrise(context, todayOrTomorrow);
         Calendar dawn = (Calendar) sunRise.clone();
@@ -298,17 +296,16 @@ class Util {
      * @param context - for getting the location
      * @return Calendar time of the sunset
      */
-    public static Calendar getSunset(Context context, Calendar todayOrTomorrow) {
+    private static Calendar getSunset(Context context, Calendar todayOrTomorrow) {
 
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-        Calendar officialSunset = calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
 
         // Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
-        return officialSunset;
+        return calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
     }
 
-    public static Calendar getDusk(Context context, Calendar todayOrTomorrow) {
+    static Calendar getDusk(Context context, Calendar todayOrTomorrow) {
         Prefs prefs = new Prefs(context);
         Calendar sunSet = getSunset(context, todayOrTomorrow);
         Calendar dusk = (Calendar) sunSet.clone();
@@ -319,8 +316,8 @@ class Util {
 
     private static Location getLocation(Context context) {
         Prefs prefs = new Prefs(context);
-        String lat = null;
-        String lon = null;
+        String lat;
+        String lon;
 
         if (prefs.getLatitude() == 0.0 && prefs.getLongitude() == 0.0) {
             // gps not yet set, so to avoid errors/too complex code to check, just use coordinates for Hamilton NZ
@@ -338,7 +335,8 @@ class Util {
 
 
 
-    public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired){
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired){
         int numberOfLoops = 0;
 
         while (isNetworkConnected(context) != networkConnectionRequired ) {
@@ -355,6 +353,7 @@ class Util {
                 break;
             }
         }
+        //noinspection RedundantIfStatement
         if (numberOfLoops > 20){
             return false;
         }
@@ -362,7 +361,7 @@ class Util {
     }
 
 
-    public static boolean isNetworkConnected(Context context) {
+    static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null;
@@ -374,7 +373,7 @@ class Util {
 //
 //       boolean isCurrentlyInFlightMode = isFlightModeEnabled(context);
 //
-//        // will I continue - depends on if enable is true or false and if already in flightmode or not
+//        // will I continue - depends on if enable is true or false and if already in flight mode or not
 //        // so write logic so it exits method if need be
 //
 //        if (isCurrentlyInFlightMode){
@@ -423,7 +422,7 @@ class Util {
 //    }
 
 
-    public static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+    static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             // API 17 onwards.
@@ -439,23 +438,23 @@ class Util {
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-            executeCommandWithoutWait(context, "-c", command);
+            executeCommandWithoutWait("-c", command);
             command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-            executeCommandWithoutWait(context, "-c", command);
+            executeCommandWithoutWait("-c", command);
 
         } else {
             // API 16 and earlier.
             Log.d(LOG_TAG, "API 16 and earlier.");
           //  boolean enabled = isFlightModeEnabled(context);
+            //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
             Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
             intent.putExtra("state", false);
             context.sendBroadcast(intent);
         }
-        return ;
     }
 
-    public static void enableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+    static void enableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             // API 17 onwards.
@@ -471,20 +470,20 @@ class Util {
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-            executeCommandWithoutWait(context, "-c", command);
+            executeCommandWithoutWait("-c", command);
             command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-            executeCommandWithoutWait(context, "-c", command);
+            executeCommandWithoutWait("-c", command);
 
         } else {
             // API 16 and earlier.
             Log.d(LOG_TAG, "API 16 and earlier.");
         //    boolean enabled = isFlightModeEnabled(context);
+            //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
             Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
             intent.putExtra("state", true);
             context.sendBroadcast(intent);
         }
-        return ;
     }
 
 
@@ -507,7 +506,7 @@ class Util {
 //        return mode;
 //    }
 
-    private static void  executeCommandWithoutWait(Context context, String option, String command) {
+    private static void  executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
         // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
@@ -535,8 +534,8 @@ class Util {
         }
     }
 
-    public static String getSimStateAsString(int simState){
-        String simStateStr = "noMatch";
+    static String getSimStateAsString(int simState){
+        String simStateStr;
         switch (simState){
             case 0:  simStateStr = "SIM_STATE_UNKNOWN";
                 break;
@@ -570,19 +569,31 @@ class Util {
         return simStateStr;
     }
 
-public static String getLogCat(){
+static String getLogCat(){
     //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
-    String logCatToReturn = "";
+    String logCatToReturn;
     try{
         Process process = Runtime.getRuntime().exec("logcat -d");
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
 
         StringBuilder log=new StringBuilder();
-        String line = "";
-        while ((line = bufferedReader.readLine()) != null) {
-            log.append(line);
-            log.append("\n");
+        String line;
+        String applicationId = BuildConfig.APPLICATION_ID;
+        int lineCount = 0;
+        while (((line = bufferedReader.readLine()) != null) && (lineCount <20)) { // limit log to 20 lines
+            if (line.contains(applicationId)){
+                String firstChar = line.substring(0,1);
+                if (firstChar.matches("[WEF]")){
+                    log.append(line);
+                    log.append("-------------------------------------------------------");
+                    log.append(System.getProperty("line.separator"));
+                    lineCount++;
+                }
+            }
+
+
+
         }
        return log.toString();
     }catch (Exception ex){
@@ -595,9 +606,13 @@ public static String getLogCat(){
 
 }
 
-    public static void clearLog(){
+    static void clearLog(){
         try {
-            Process process = new ProcessBuilder()
+//            Process process = new ProcessBuilder()
+//                    .command("logcat", "-c")
+//                    .redirectErrorStream(true)
+//                    .start();
+             new ProcessBuilder()
                     .command("logcat", "-c")
                     .redirectErrorStream(true)
                     .start();

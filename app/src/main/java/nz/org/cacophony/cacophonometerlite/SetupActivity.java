@@ -1,11 +1,9 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -18,24 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
-import static nz.org.cacophonoy.cacophonometerlite.R.string.unregister;
-//import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
 
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
     private static final String LOG_TAG = SetupActivity.class.getName();
 
     // Handler status indicators
-    static final int REGISTER_SUCCESS = 1;
-    static final int REGISTER_FAIL = 2;
+    private static final int REGISTER_SUCCESS = 1;
+    private static final int REGISTER_FAIL = 2;
     static final int RESUME = 3;
 
 
@@ -44,7 +38,7 @@ public class SetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
       //  EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
-        Prefs prefs = new Prefs(getApplicationContext());
+      //  Prefs prefs = new Prefs(getApplicationContext());
        // serverUrlEditText.setText(prefs.getServerUrl());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -53,9 +47,14 @@ public class SetupActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setDisplayUseLogoEnabled(true);
-        ab.setLogo(R.mipmap.ic_launcher);
+        if (ab != null){
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setLogo(R.mipmap.ic_launcher);
+        }else{
+            Log.w(LOG_TAG, "ActionBar ab is null");
+        }
+
 
     }
 
@@ -113,12 +112,12 @@ public class SetupActivity extends AppCompatActivity {
         } else
             registerStatus.setText(R.string.not_registered);
 
-        boolean simPresent = prefs.getSimCardDetected();
-        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbUseTestServer);
-        if (simPresent) {
-            checkBoxSim.setChecked(true);
-        } else
-            checkBoxSim.setChecked(false);
+//        boolean simPresent = prefs.getSimCardDetected();
+//        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbUseTestServer);
+//        if (simPresent) {
+//            checkBoxSim.setChecked(true);
+//        } else
+//            checkBoxSim.setChecked(false);
 
         boolean hasRootAccess = prefs.getHasRootAccess();
         final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
@@ -145,7 +144,7 @@ public class SetupActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    Handler handler = new Handler(Looper.getMainLooper()) {
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
             Log.d(LOG_TAG, "Received message.");
@@ -207,7 +206,7 @@ public class SetupActivity extends AppCompatActivity {
      * Un-registered a device deleting the password, devicename, and JWT.
      * @param v View
      */
-    public void unRegisterButton(View v) {
+    public void unRegisterButton(@SuppressWarnings("UnusedParameters") View v) {
         unregister();
 
 //        Log.d(LOG_TAG, "Un-register device.");
@@ -219,7 +218,7 @@ public class SetupActivity extends AppCompatActivity {
 //        onResume();
     }
 
-    public void unregister(){
+    private void unregister(){
         try {
             Log.d(LOG_TAG, "Un-register device.");
             Prefs prefs = new Prefs(getApplicationContext());
@@ -237,9 +236,9 @@ public class SetupActivity extends AppCompatActivity {
 
     /**
      * Will register the device in the given group saving the JSON Web Token, devicename, and password.
-     * @param group name of goup to join.
+     * @param group name of group to join.
      */
-    public void register(final String group, final Context context) {
+    private void register(final String group, final Context context) {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
             Log.i("Register", "Invalid group name: "+group);
@@ -280,7 +279,7 @@ public class SetupActivity extends AppCompatActivity {
 //        }
 //    }
 
-    public void updateGPSLocationButton(View v) {
+    public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
 
 
         Log.i(LOG_TAG, "Update location button");
@@ -306,7 +305,7 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    public void disableGPSButton(View v) {
+    public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 

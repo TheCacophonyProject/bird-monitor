@@ -1,11 +1,10 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 import android.app.Service;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,24 +19,24 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static nz.org.cacophonoy.cacophonometerlite.Server.getToken;
-import static nz.org.cacophonoy.cacophonometerlite.Server.login;
+import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
  * Created by User on 29-Mar-17.
+ * This is where the action is - however the code starts, it gets here to do a recording and then send recording to server
  */
 
-public class RecordAndUpload {
+class RecordAndUpload {
     private static final String LOG_TAG = RecordAndUpload.class.getName();
    // private static long recordTimeSeconds = 0; //  set it later
 
-    public RecordAndUpload(){
+    private RecordAndUpload(){
 
     }
 
 
 
-    public static void doRecord(Context context, String typeOfRecording){
+    static void doRecord(Context context, String typeOfRecording){
         if (typeOfRecording == null){
             Log.e(LOG_TAG, "typeOfRecording is null");
             return;
@@ -75,11 +74,15 @@ public class RecordAndUpload {
 
       //  if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
+                // Always upload when test button pressed
                 uploadFiles(context);
                 prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
-            }else
-      //  }
-        if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
+
+                // Always set up dawn/dusk alarms when test button pressed
+                DawnDuskAlarms.configureDawnAlarms(context);
+                DawnDuskAlarms.configureDuskAlarms(context);
+                prefs.setDateTimeLastCalculatedDawnDusk(0);
+            }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
             if (uploadFiles(context)){
                 prefs.setDateTimeLastUpload(now);
             }
@@ -110,7 +113,7 @@ public class RecordAndUpload {
 
     }
 
-    private static boolean makeRecording(Context context,  long recordTimeSeconds){
+    private static void makeRecording(Context context,  long recordTimeSeconds){
 
 
         // Get recording file.
@@ -173,7 +176,7 @@ public class RecordAndUpload {
 
 
 
-            return false;
+            return ;
         }
 
 
@@ -183,7 +186,7 @@ public class RecordAndUpload {
             mRecorder.start();
         }catch (Exception e){
             Log.e(LOG_TAG, "mRecorder.start " + e.getLocalizedMessage());
-            return false;
+            return ;
         }
 
         // Sleep for duration of recording.
@@ -195,7 +198,7 @@ public class RecordAndUpload {
         } catch (InterruptedException e) {
             Log.e(LOG_TAG, "Failed sleeping in recording thread.");
             e.printStackTrace();
-            return false;
+            return ;
         }
 
         // Stop recording.
@@ -204,7 +207,8 @@ public class RecordAndUpload {
         //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
         mRecorder.reset();
         mRecorder.release();
-        mRecorder = null; // attempting to fix error mediarecorder went away with unhandled events
+        //noinspection UnusedAssignment
+        mRecorder = null; // attempting to fix error media recorder went away with unhandled events
 
        Log.d(LOG_TAG, "RECORDING_FINISHED");
 
@@ -215,9 +219,7 @@ public class RecordAndUpload {
         } catch (InterruptedException e) {
             Log.e(LOG_TAG, "Failed sleeping in recording thread.");
             e.printStackTrace();
-            return false;
         }
-        return true;
     }
 
     private static boolean uploadFiles(Context context){
@@ -332,9 +334,11 @@ public class RecordAndUpload {
         // this code breaks if old files exist, so delete them and move on
 
         if (fileNameParts.length != 14) {
-            aFile.delete();
-            Log.i(LOG_TAG, "deleted file: " + fileName);
-            return false;
+          if (aFile.delete()){
+              Log.i(LOG_TAG, "deleted file: " + fileName);
+              return false;
+          }
+
         }
       //  Log.d(LOG_TAG, "3");
         String year = fileNameParts[0];
@@ -357,7 +361,7 @@ public class RecordAndUpload {
         }
 
 
-//        String localFilePath = "/data/data/com.thecacophonytrust.cacophonometer/app_cacophony/recordings/" + fileName;
+
         String localFilePath = Util.getRecordingsFolder() + "/" + fileName;
         if (! new File(localFilePath).exists()){
             Log.e(LOG_TAG, localFilePath + " does not exist");
@@ -410,7 +414,7 @@ public class RecordAndUpload {
             additionalMetadata.put("SIM state",Util.getSimStateAsString( mTelephonyManager.getSimState()));
             if (mTelephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {
                 additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
-                additionalMetadata.put("Line1Number", mTelephonyManager.getLine1Number());
+              //  additionalMetadata.put("Line1Number", mTelephonyManager.getLine1Number());
             }
 
             audioRecording.put("additionalMetadata", additionalMetadata);

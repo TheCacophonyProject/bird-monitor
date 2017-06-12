@@ -1,15 +1,7 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -24,8 +16,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import cz.msebera.android.httpclient.Header;
-
-import static android.R.attr.data;
 
 
 /**
@@ -124,7 +114,7 @@ class Server {
      * @return if login was successful
      */
 //    private static boolean login(Context context) {
-    public static boolean login(Context context) {
+    static boolean login(Context context) {
 
 
         Util.disableFlightMode(context);
@@ -333,7 +323,7 @@ class Server {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                Log.i(LOG_TAG, "sendFile: onSuccess: Failed upload.");
+                Log.w(LOG_TAG, "sendFile: onSuccess: Failed upload.");
                 uploadSuccess = false;
             }
         });
@@ -343,19 +333,19 @@ class Server {
         return uploadSuccess;
     }
 
-    public static String getToken() {
+    static String getToken() {
         return token;
     }
 
-    public static void setToken(String token) {
+    private static void setToken(String token) {
         Server.token = token;
     }
 
-    public static void setErrorMessage(String errorMessage){
+    private static void setErrorMessage(String errorMessage){
         Server.errorMessage = errorMessage;
     }
 
-    public static String getErrorMessage() {
+    static String getErrorMessage() {
         return errorMessage;
     }
 

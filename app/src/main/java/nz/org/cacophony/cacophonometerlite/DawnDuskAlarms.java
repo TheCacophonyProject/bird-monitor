@@ -1,4 +1,4 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -16,20 +16,24 @@ import static android.content.Context.ALARM_SERVICE;
 
 /**
  * Created by User on 07-Mar-17.
+ * This class is used to calculate the actual times of dawn and dusk for each day at any specified location
+ * It is used by the code that sets the extra alarms/recordings around dawn and dusk
  */
 
-public class DawnDuskAlarms {
+class DawnDuskAlarms {
 
     // Need to have recordings that automatically run around dawn and dusk
     // Use code from https://github.com/mikereedell/sunrisesunsetlib-java to get sunrise and sunset for either today or tomorrow, and then offset by the length of twilight - average of 29 mins for NZ
     // To make app robust (hopefully) these alarms are reset every time a periodic alarm runs.
 
-    // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
-    // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
-    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
+// --Commented out by Inspection START (12-Jun-17 1:56 PM):
+//    // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
+//    // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
+//    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
+// --Commented out by Inspection STOP (12-Jun-17 1:56 PM)
 
 
-    public static void configureDawnAlarms(Context context) {
+    static void configureDawnAlarms(Context context) {
         //
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
@@ -43,8 +47,8 @@ public class DawnDuskAlarms {
         nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
       //  System.out.println("nowTomorrow " + nowTomorrow.getTime());
 
-        PendingIntent pendingIntent = null;
-        Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dawn");
@@ -132,7 +136,7 @@ public class DawnDuskAlarms {
     }
 
 
-    public static void configureDuskAlarms(Context context) {
+    static void configureDuskAlarms(Context context) {
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
@@ -145,8 +149,8 @@ public class DawnDuskAlarms {
         nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
         //  System.out.println("nowTomorrow " + nowTomorrow.getTime());
 
-        PendingIntent pendingIntent = null;
-        Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dusk");

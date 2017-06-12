@@ -1,4 +1,4 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 
 
@@ -7,17 +7,16 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
+
 import android.net.Uri;
-import android.os.Build;
+
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
-import static android.R.attr.delay;
+
+
 import static android.content.Context.ALARM_SERVICE;
-import static android.os.Build.VERSION_CODES.ECLAIR;
+
 
 
 public class BootReceiver extends BroadcastReceiver {
@@ -25,7 +24,7 @@ public class BootReceiver extends BroadcastReceiver {
     // This means the recordings will be made without having to reopen the application
     // Note: If you need to change any settings, then you will need to open the application which will save those settings
     // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
-    static final String LOG_TAG = "BootReceiver";
+    private static final String LOG_TAG = "BootReceiver";
 
     @Override
     public void onReceive(final Context context, Intent intent)
@@ -38,7 +37,7 @@ public class BootReceiver extends BroadcastReceiver {
 
         try {
             myIntent.putExtra("type","repeating");
-            Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
 

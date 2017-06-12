@@ -1,12 +1,9 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +11,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import static nz.org.cacophonoy.cacophonometerlite.Util.getBatteryLevelByIntent;
+import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 
 public class StartRecordingReceiver extends BroadcastReceiver {
     public static final int RECORDING_STARTED = 1;
@@ -24,9 +21,9 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     private static final String LOG_TAG = StartRecordingReceiver.class.getName();
     //public static String intentTimeUriMessage = null;
 
-    Context context = null;
+    private Context context = null;
     // Handler to pass to recorder.
-    Handler handler = new Handler(Looper.getMainLooper()) {
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
             Log.d(LOG_TAG, "StartRecordingReceiver handler.");
@@ -66,7 +63,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
         Prefs prefs = new Prefs(context);
 
-        // need to determine the source of the intent ie Main UI or boot recievier
+        // need to determine the source of the intent ie Main UI or boot receiver
         Bundle bundle = intent.getExtras();
         String alarmIntentType = bundle.getString("type");
       //  Log.e(LOG_TAG, "alarmIntentType is " + alarmIntentType);
@@ -82,7 +79,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         // First check to see if battery level is sufficient to continue.
 
 
-        double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
+        double batteryLevel = Util.getBatteryLevelUsingSystemFile();
         if (batteryLevel != -1){ // looks like getting battery level using system file worked
             String batteryStatus = Util.getBatteryStatus(context);
             prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
@@ -127,14 +124,14 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 e.printStackTrace();
             }
 
-        }else{ // intent came from boot receivier or app (not test record)
+        }else{ // intent came from boot receiver or app (not test record)
 
             Intent mainServiceIntent = new Intent(context, MainService.class);
             try {
                 mainServiceIntent.putExtra("type",alarmIntentType);
 
             }catch (Exception e){
-
+                Log.e(LOG_TAG, "Error setting up intent");
             }
             context.startService(mainServiceIntent);
 
@@ -145,6 +142,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType){
         // The battery level required to continue depends on the type of alarm
 
@@ -154,17 +152,9 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
-            if (batteryPercent > 75){
-                return true;
-            }else {
-                return false;
-            }
+            return batteryPercent > 75;
         }else { // must be a dawn or dusk alarm
-            if (batteryPercent > 50){
-                return true;
-            }else {
-                return false;
-            }
+            return batteryPercent > 50;
         }
 
     }

@@ -13,14 +13,10 @@
     <string name="registered">Registered: ?</string>
     <string name="connected_to_server">Connected To Server: ?</string>
     <string name="device_logged_in">Device Logged In: ?</string>
-    <string name="device_id__">Device ID: ?</string>
-    <string name="refresh">Refresh</string>
+
     <string name="test_disabling_of_flight_mode">Test Disabling of Flight mode</string>
     <string name="test_enabling_of_flight_mode">Test Enabling of Flight mode</string>
 
-    <string name="data_connection">Data Connection</string>
-    <string name="select_the_following_box_if_you_are_using_mobile_data">Select the following box if you are using mobile data?</string>
-    <string name="using_mobile_data_and_sim_is_present">Using mobile data and SIM is Present</string>
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
     <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details">Select the following box if the phone is rooted and the app is a system app (refer to help for details)</string>
     <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed as system app.</string>
@@ -28,8 +24,6 @@
     <string name="to_register_a_device___">To register a device: 1) Register/login on the Cacophonometer website. 2) Create a Group with that user. 3) Enter the Group name in the field above and press Register. Multiple devices can be in the same group.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
-    <string name="server_url">Server URL</string>
-    <string name="update_server_url">Update Server URL</string>
 
     <string name="set_test_server_title">Use Test Server (Experts Only)</string>
     <string name="set_test_server_message">Select the following box if you want to use the test server (you will need to re-register the phone)</string>
@@ -49,7 +43,6 @@
 
     <string name="short_record_length_title">Short Record Length (Testing Only)</string>
     <string name="short_recordings_message">Use this if you are testing where recordings need to be kept confidential - they are very short.</string>
-    <string name="short_record_message">Use this if you are testing where recordings need to be kept confidential - they are very short.</string>
     <string name="use_short_record_cb_message">Use short recordings.</string>
 
     <string name="registered_true">Registered: ✔</string>
@@ -68,7 +61,7 @@ To use this app you will first need to register on the data server and create a 
         \n\n
         You are then ready to press the \'Setup Device\' button to configure the app:\n1) Register the phone with your group,\n2) Get the GPS location,\n\nAnd for Experts only \n3) Decide on the server and \n4) Select if you are using \'root\' access.  This is only needed if you are using a solar panel AND your phone uses Android 4.2 or above.  It allows the app to turn airplane (flight) mode on and off to save power.
 \n\n
-After you have finished the setup, go back to the main screen and press the \'REFRESH\' button to check that the app can connect to the server - if all is ok you will see ticks next to the various App Vitals, and a \'Device ID\' number.  You can then press the \'START TEST RECORDING\' button.  This will make a 5 second recording and send it to the server.
+After you have finished the setup, go back to the main screen and press the \'REFRESH\' button to check that the app can connect to the server - if all is OK you will see ticks next to the various App Vitals, and a \'Device ID\' number.  You can then press the \'START TEST RECORDING\' button.  This will make a 5 second recording and send it to the server.
 \n\n
 If you are using a solar panel then it is important to turn off and/or remove everything on your phone that might consume power e.g. email accounts that sync with the server, set screen brightness and timeout to a minimum, turn off bluetooth and GPS.  It might be a good idea to disable as many of the apps that came with the phone.
 \n\n
@@ -76,5 +69,9 @@ Once recordings have been sent to the server (once every 12 hours) you will be a
 \n\n
 Thank you again for supporting The Cacophony Project\n
 https://cacophony.org.nz/</string>
+
+    <string name="perform_a_test_recording">Perform a Test Recording</string>
+    <string name="group_name">Group name</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

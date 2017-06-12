@@ -1,4 +1,4 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 
 import android.content.Context;

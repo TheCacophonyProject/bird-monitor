@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="nz.org.cacophonoy.cacophonometerlite.SetupActivity"
+    tools:context="nz.org.cacophony.cacophonometerlite.SetupActivity"
    >
 
     <android.support.v7.widget.Toolbar
@@ -67,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:ems="10"
-                android:hint="Group name"
+                android:hint="@string/group_name"
                 android:layout_below="@id/setupDeviceRegisterInfo"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
@@ -75,7 +74,7 @@
 
             <Button
                 android:id="@+id/setupRegisterButton"
-                android:text="Register"
+                android:text="@string/register"
                 android:layout_height="wrap_content"
                 android:onClick="registerButton"
                 android:layout_width="match_parent"

@@ -1,8 +1,6 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +19,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,20 +28,16 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.enabled;
-import static nz.org.cacophonoy.cacophonometerlite.R.id.disableFlightMode;
-import static nz.org.cacophonoy.cacophonometerlite.R.string.registered;
-//import static nz.org.cacophonoy.cacophonometerlite.Util.setFlightMode;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+   // private static final String TAG = "MainActivity";
+    private static final String LOG_TAG = MainActivity.class.getName();
 
-    public static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
+    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
 //    private final String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
 //    private final String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
@@ -53,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Handler for Main Activity
      */
-    private Handler handler = new Handler(Looper.getMainLooper()) {
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
-            Log.d(TAG, "Main activity received message.");
+            Log.d(LOG_TAG, "Main activity received message.");
             switch (inputMessage.what) {
                 case RESUME:
                     onResume();
@@ -94,11 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             myIntent.putExtra("type","repeating");
-            Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
 
         }catch (Exception e){
+            Log.e(LOG_TAG, "Error with intent setup");
 
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
@@ -125,10 +118,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
+        if (ab != null){
+
 
         ab.setDisplayUseLogoEnabled(true);
         ab.setLogo(R.mipmap.ic_launcher);
-
+        }else{
+            Log.w(LOG_TAG, "ActionBar ab is null");
+        }
     } //end onCreate
 
     @Override
@@ -197,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(Server.getToken()));
         } catch (Exception e) {
-            Log.i(TAG, "Device ID not available");
+            Log.i(LOG_TAG, "Device ID not available");
         }
 
         // Application name text  appNameVersionText
@@ -237,21 +234,19 @@ public class MainActivity extends AppCompatActivity {
 
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
         Toast.makeText(getApplicationContext(), missingPermissionMessage, Toast.LENGTH_SHORT).show();
-        Log.w(TAG, missingPermissionMessage);
+        Log.w(LOG_TAG, missingPermissionMessage);
 
     }
 
-    /**
-     * Starts SetupActivity.
-     * @param v View
-     */
-    public void register(View v) {
+
+public void register(@SuppressWarnings("UnusedParameters") View v) {
+
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
     }
 
-    public void testRecording(View v) {
-        Log.d(TAG, "Test recording button.");
+    public void testRecording(@SuppressWarnings("UnusedParameters") View v) {
+        Log.d(LOG_TAG, "Test recording button.");
 //        Log.i(TAG, "Test recording button.");
 //        Log.e(TAG, "Test recording button.");
 
@@ -272,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
             myIntent.putExtra("type","testButton");
 
         }catch (Exception e){
-
+Log.e(LOG_TAG, "Error setting up intent");
         }
 
         sendBroadcast(myIntent);
@@ -282,14 +277,14 @@ public class MainActivity extends AppCompatActivity {
      * UI button to refresh vitals
      * @param v View
      */
-    public void refreshButton(View v) {
+    public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
         refreshVitals();
     }
 
     /**
      * Check the vitals again and update the UI.
      */
-    public void refreshVitals() {
+    private void refreshVitals() {
         Toast.makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
         Thread server = new Thread() {
             @Override
@@ -305,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public  void disableFlightMode(View v){
+    public  void disableFlightMode(@SuppressWarnings("UnusedParameters") View v){
 
         Thread thread = new Thread() {
             @Override
@@ -313,14 +308,14 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Util.disableFlightMode(getApplicationContext());
                 } catch (Exception e) {
-                    Log.e(TAG, "Opss...", e);
+                    Log.e(LOG_TAG, "Error disabling flight mode");
                 }
             }
         };
         thread.start();
     }
 
-    public  void enableFlightMode(View v) {
+    public  void enableFlightMode(@SuppressWarnings("UnusedParameters") View v) {
 
         Thread thread = new Thread() {
             @Override
@@ -328,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Util.enableFlightMode(getApplicationContext());
                 } catch (Exception e) {
-                    Log.e(TAG, "Opss...", e);
+                    Log.e(LOG_TAG, "Error enabling flight mode");
                 }
             }
         };

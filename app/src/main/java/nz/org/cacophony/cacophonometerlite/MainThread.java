@@ -1,19 +1,19 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
 /**
  * Created by User on 29-Mar-17.
+ * Recordings made from the test button needed to run in a thread
  */
 
-public class MainThread implements Runnable {
+class MainThread implements Runnable {
 
     private static final String LOG_TAG = MainThread.class.getName();
-    private static long recordTimeSeconds = 0; //  set it later
+    // --Commented out by Inspection (12-Jun-17 1:56 PM):private static long recordTimeSeconds = 0; //  set it later
 
     private Context context = null;
     private Handler handler = null;
