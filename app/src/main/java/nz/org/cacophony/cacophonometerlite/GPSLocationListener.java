@@ -22,7 +22,8 @@ class GPSLocationListener implements LocationListener {
     }
 
     public void onLocationChanged(Location location) {
-        Toast.makeText(context, "New Location saved.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "New Location saved.", Toast.LENGTH_SHORT).show();
+        Util.getToast(context,"New Location saved", false ).show();
         double lat = location.getLatitude();
         double lon = location.getLongitude();
         Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);

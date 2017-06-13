@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.widget.Toast.makeText;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -233,7 +234,8 @@ public class MainActivity extends AppCompatActivity {
         if (!locationPermission) missingPermissionList.add("Location");
 
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
-        Toast.makeText(getApplicationContext(), missingPermissionMessage, Toast.LENGTH_SHORT).show();
+      //  makeText(getApplicationContext(), missingPermissionMessage, Toast.LENGTH_SHORT).show();
+        Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
         Log.w(LOG_TAG, missingPermissionMessage);
 
     }
@@ -246,6 +248,16 @@ public void register(@SuppressWarnings("UnusedParameters") View v) {
     }
 
     public void testRecording(@SuppressWarnings("UnusedParameters") View v) {
+        // test that it has registered
+        if (Server.loggedIn != true){
+//            Toast toast = Toast.makeText(getApplicationContext(), "NOT logged in - Press REFRESH and if App Vitals show all OK, try again", Toast.LENGTH_LONG);
+//            toast.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
+//            toast.show();
+            Util.getToast(getApplicationContext(),"NOT logged in - Press REFRESH and if App Vitals show all OK, try again", true ).show();
+
+            return;
+        }
+
         Log.d(LOG_TAG, "Test recording button.");
 //        Log.i(TAG, "Test recording button.");
 //        Log.e(TAG, "Test recording button.");
@@ -254,7 +266,8 @@ public void register(@SuppressWarnings("UnusedParameters") View v) {
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Toast.makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
+           // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
+            Util.getToast(getApplicationContext(),"Turn OFF GPS before testing", true ).show();
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
             return;
@@ -285,7 +298,8 @@ Log.e(LOG_TAG, "Error setting up intent");
      * Check the vitals again and update the UI.
      */
     private void refreshVitals() {
-        Toast.makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
+//        makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
+        Util.getToast(getApplicationContext(),"Updating App vitals", false ).show();
         Thread server = new Thread() {
             @Override
             public void run() {

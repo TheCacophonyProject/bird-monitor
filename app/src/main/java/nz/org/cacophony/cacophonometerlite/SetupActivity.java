@@ -158,7 +158,8 @@ public class SetupActivity extends AppCompatActivity {
                     }catch (Exception ex){
                         Log.e(LOG_TAG, ex.getLocalizedMessage());
                     }
-                    Toast.makeText(getApplicationContext(), "Registered device.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(), "Registered device.", Toast.LENGTH_SHORT).show();
+                    Util.getToast(getApplicationContext(),"Registered device", false ).show();
                     break;
                 case REGISTER_FAIL:
                     onResume();
@@ -167,7 +168,8 @@ public class SetupActivity extends AppCompatActivity {
                     if(Server.getErrorMessage() != null){
                         errorMessage = Server.getErrorMessage();
                     }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                    Util.getToast(getApplicationContext(),errorMessage, true ).show();
                 case RESUME:
                     onResume();
                 default:
@@ -196,7 +198,8 @@ public class SetupActivity extends AppCompatActivity {
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-            Toast.makeText(getApplicationContext(), "Already registered with that group.", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(), "Already registered with that group.", Toast.LENGTH_SHORT).show();
+            Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
             return;
         }
         register(group, getApplicationContext());
@@ -242,7 +245,8 @@ public class SetupActivity extends AppCompatActivity {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
             Log.i("Register", "Invalid group name: "+group);
-            Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+            Util.getToast(getApplicationContext(),"Invalid Group name: " + group, true ).show();
             return;
         }
 
@@ -283,7 +287,8 @@ public class SetupActivity extends AppCompatActivity {
 
 
         Log.i(LOG_TAG, "Update location button");
-        Toast.makeText(getApplicationContext(), "Getting new Location...", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getApplicationContext(), "Getting new Location...", Toast.LENGTH_SHORT).show();
+        Util.getToast(getApplicationContext(),"Getting new Location...", false ).show();
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -314,7 +319,8 @@ public class SetupActivity extends AppCompatActivity {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
         }else{
-            Toast.makeText(getApplicationContext(), "GPS is already off", Toast.LENGTH_LONG).show();
+          //  Toast.makeText(getApplicationContext(), "GPS is already off", Toast.LENGTH_LONG).show();
+            Util.getToast(getApplicationContext(),"GPS is already off", true ).show();
         }
 
 

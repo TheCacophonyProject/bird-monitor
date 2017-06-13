@@ -153,7 +153,7 @@ class RecordAndUpload {
         fileName += " " + recordTimeSeconds;
         fileName += ".3gp";
 
-        File file = new File(Util.getRecordingsFolder(), fileName);
+        File file = new File(Util.getRecordingsFolder(context), fileName);
         String filePath = file.getAbsolutePath();
 
         // Setup audio recording settings.
@@ -224,7 +224,11 @@ class RecordAndUpload {
 
     private static boolean uploadFiles(Context context){
         try {
-            File recordingsFolder = Util.getRecordingsFolder();
+            File recordingsFolder = Util.getRecordingsFolder(context);
+            if (recordingsFolder == null){
+                Log.d(LOG_TAG, "Error getting recordings folder");
+                return false;
+            }
             File recordingFiles[] = recordingsFolder.listFiles();
             if (recordingFiles != null) {
 
@@ -362,7 +366,7 @@ class RecordAndUpload {
 
 
 
-        String localFilePath = Util.getRecordingsFolder() + "/" + fileName;
+        String localFilePath = Util.getRecordingsFolder(context) + "/" + fileName;
         if (! new File(localFilePath).exists()){
             Log.e(LOG_TAG, localFilePath + " does not exist");
             return false;

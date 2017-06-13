@@ -32,16 +32,20 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
             switch (inputMessage.what) {
                 case RECORDING_STARTED:
-                    Toast.makeText(context, "Recording started.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "Recording started.", Toast.LENGTH_SHORT).show();
+                    Util.getToast(context,"Recording started", false ).show();
                     break;
                 case RECORDING_FAILED:
-                    Toast.makeText(context, "Recording failed.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "Recording failed.", Toast.LENGTH_SHORT).show();
+                    Util.getToast(context,"Recording failed", true ).show();
                     break;
                 case RECORDING_FINISHED:
-                    Toast.makeText(context, "Recording finished", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "Recording finished", Toast.LENGTH_SHORT).show();
+                    Util.getToast(context,"Recording finished", false ).show();
                     break;
                 case NO_PERMISSIONS_TO_RECORD:
-                    Toast.makeText(context, "Did not have proper permissions to record.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "Did not have proper permissions to record.", Toast.LENGTH_SHORT).show();
+                    Util.getToast(context,"Did not have proper permissions to record", true ).show();
                     break;
                 default:
                     Log.w(LOG_TAG, "Unknown handler what.");
@@ -57,7 +61,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
         this.context = context;
         if (!Util.checkPermissionsForRecording(context)) {
-            Toast.makeText(context, "Don't have proper permissions to record..", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "Don't have proper permissions to record..", Toast.LENGTH_SHORT).show();
+            Util.getToast(context,"Do not have proper permissions to record", true ).show();
             Log.e(LOG_TAG, "Don't have proper permissions to record");
             return;
         }

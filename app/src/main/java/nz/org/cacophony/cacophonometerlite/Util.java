@@ -33,17 +33,17 @@ import java.io.UnsupportedEncodingException;
 //import java.lang.reflect.Method;
 import java.util.Calendar;
 
-//import static android.R.attr.enabled;
-//import static android.R.attr.level;
-//import static android.content.ContentValues.TAG;
-//import static android.media.CamcorderProfile.get;
-//import static java.lang.Float.parseFloat;
+import static android.R.attr.mode;
+import static android.R.attr.priority;
+import static android.R.id.message;
+
 
 class Util {
     private static final String LOG_TAG = Util.class.getName();
 
-    private static File homeFile = null;
-    private static File recordingFolder = null;
+
+    //  private static File homeFile = null;
+    //  private static File recordingFolder = null;
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
 
     // For airplane mode
@@ -54,51 +54,97 @@ class Util {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean checkPermissionsForRecording(Context context) {
-        Log.d(LOG_TAG, "Checking permissions needed for recording.");
-        if (context == null) {
-            Log.e(LOG_TAG, "Context was null when checking permissions");
-            return false;
+        boolean permissionForRecording = false;
+        try{
+            if (context == null) {
+                Log.e(LOG_TAG, "Context was null when checking permissions");
+            }else{
+                boolean storagePermission =
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean microphonePermission =
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                boolean locationPermission =
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                permissionForRecording = (storagePermission && microphonePermission && locationPermission);
+            }
+
+        }catch (Exception ex){
+            Log.e(LOG_TAG, "Error with checkPermissionsForRecording");
         }
-        boolean storagePermission =
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        boolean microphonePermission =
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        boolean locationPermission =
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        return (storagePermission && microphonePermission && locationPermission);
+      return permissionForRecording;
+
     }
 
-    private static File getHomeFile() {
+    private static File getHomeFile(Context context) {
         // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
         // This is because if sdcard is 'dodgy' can get inconsistent results.
         // Need context to get internal storage location, so need to pass this around the code.
         // If I could be sure the homeFile was set before any of the other directories are needed then I
         // wouldn't need to pass context around to the other methods :-(
 
-        if (homeFile == null) {
-            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony");
-            //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
+//        if (homeFile == null) {
+//            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony");
+//            //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
+//
+//
+//            if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
+//                Log.e(LOG_TAG, "HomeFile location problem");
+//
+//                //TODO, exit program safely from here and display error.
+//            }
+//
+//        }
+//        return homeFile;
 
-
-            if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
+        //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
+        File homeFile = null;
+        try {
+            String appName = context.getResources().getString(R.string.main_activity_name);
+//            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony2");
+            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
+            if (homeFile == null) {
                 Log.e(LOG_TAG, "HomeFile location problem");
-
-                //TODO, exit program safely from here and display error.
+            } else {
+                if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
+                    Log.e(LOG_TAG, "HomeFile location problem");
+                }
             }
-
+        } catch (Exception ex) {
+            Log.e(LOG_TAG, "HomeFile location problem");
         }
         return homeFile;
     }
 
-    static File getRecordingsFolder() {
-        if (recordingFolder == null) {
-            recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
-            if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
+    static File getRecordingsFolder(Context context) {
+
+//        try{
+//            if (recordingFolder == null) {
+//                recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
+//                if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
+//                    Log.e(LOG_TAG, "Recording location problem");
+//                    return null;
+//                }
+//            }
+//            return recordingFolder;
+//        }catch (Exception ex){
+//            Log.e(LOG_TAG, ex.getLocalizedMessage());
+//            return null;
+//        }
+
+        File recordingFolder = null;
+        try {
+            recordingFolder = new File(getHomeFile(context), DEFAULT_RECORDINGS_FOLDER);
+            if (recordingFolder == null) {
+                Log.e(LOG_TAG, "Recording location is null");
+            } else if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
                 Log.e(LOG_TAG, "Recording location problem");
-                //TODO try to fix problem and if cant output error message then exit, maybe send error to server.
+                recordingFolder = null;
             }
+            return recordingFolder;
+        } catch (Exception ex) {
+            Log.e(LOG_TAG, ex.getLocalizedMessage());
+            return null;
         }
-        return recordingFolder;
     }
 
     static String getDeviceID(String webToken) throws Exception {
@@ -107,12 +153,12 @@ class Util {
         return jObject.getString("id");
     }
 
-    private static String decoded(String JWTEncoded)  {
+    private static String decoded(String JWTEncoded) {
         // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
         String webTokenBody = null;
         try {
             String[] split = JWTEncoded.split("\\.");
-            Log.d("JWT_DECODED", "Header: " + getJson(split[0]));
+          //  Log.d("JWT_DECODED", "Header: " + getJson(split[0]));
 
             // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
             webTokenBody = getJson(split[1]);
@@ -126,15 +172,17 @@ class Util {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
         return new String(decodedBytes, "UTF-8");
     }
-    static double getBatteryLevel(Context context){
+
+    static double getBatteryLevel(Context context) {
         double batteryLevel;
         batteryLevel = getBatteryLevelUsingSystemFile();
-        if (batteryLevel == -1){
+        if (batteryLevel == -1) {
             batteryLevel = getBatteryLevelByIntent(context);
 
         }
         return batteryLevel;
     }
+
     static double getBatteryLevelUsingSystemFile() {
 //        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 // //       IntentFilter ifilter = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -170,7 +218,7 @@ class Util {
         return batteryLevel;
     }
 
-    static double getBatteryLevelByIntent(Context context){
+    static double getBatteryLevelByIntent(Context context) {
 
         //Will use the method of checking battery level that may only give an update if phone charging status changes
         // this will return a percentage
@@ -180,7 +228,7 @@ class Util {
             Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
             batteryLevel = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
             return batteryLevel;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(LOG_TAG, "Error with getBatteryLevelByIntent");
             return -1;
         }
@@ -199,7 +247,7 @@ class Util {
 
     private static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-      //  StringBuilder sb = new StringBuilder();
+        //  StringBuilder sb = new StringBuilder();
         String line;
 
         line = reader.readLine();
@@ -238,7 +286,7 @@ class Util {
                     batteryStatusToReturn = Integer.toString(status);
             }
             return batteryStatusToReturn;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(LOG_TAG, "getBatteryStatus");
             return "Error";
         }
@@ -262,9 +310,6 @@ class Util {
                     Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         }
     }
-
-
-
 
 
     /**
@@ -334,12 +379,11 @@ class Util {
     }
 
 
-
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired){
+    static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired) {
         int numberOfLoops = 0;
 
-        while (isNetworkConnected(context) != networkConnectionRequired ) {
+        while (isNetworkConnected(context) != networkConnectionRequired) {
 
             try {
                 Thread.sleep(1000); // give time for airplane mode to turn off
@@ -347,14 +391,14 @@ class Util {
                 e.printStackTrace();
             }
 
-            numberOfLoops+=1;
-            if (numberOfLoops > 20){
+            numberOfLoops += 1;
+            if (numberOfLoops > 20) {
                 Log.e(LOG_TAG, "Number of loops > 20");
                 break;
             }
         }
         //noinspection RedundantIfStatement
-        if (numberOfLoops > 20){
+        if (numberOfLoops > 20) {
             return false;
         }
         return true;
@@ -366,7 +410,6 @@ class Util {
 
         return cm.getActiveNetworkInfo() != null;
     }
-
 
 
 //    public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
@@ -429,10 +472,11 @@ class Util {
             Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
-            if (!prefs.getHasRootAccess()){
+            if (!prefs.getHasRootAccess()) {
                 Log.i(LOG_TAG, "Do NOT have required ROOT access");
-                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
-                return ;
+               // Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
+                Util.getToast(context,"Root access required to change airplane mode", true ).show();
+                return;
             }
 
 
@@ -445,7 +489,7 @@ class Util {
         } else {
             // API 16 and earlier.
             Log.d(LOG_TAG, "API 16 and earlier.");
-          //  boolean enabled = isFlightModeEnabled(context);
+            //  boolean enabled = isFlightModeEnabled(context);
             //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
             Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
@@ -461,10 +505,11 @@ class Util {
             Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
-            if (!prefs.getHasRootAccess()){
+            if (!prefs.getHasRootAccess()) {
                 Log.e(LOG_TAG, "Do NOT have required ROOT access");
-                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
-                return ;
+//                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
+                Util.getToast(context,"Root access required to change airplane mode", true ).show();
+                return;
             }
 
 
@@ -477,7 +522,7 @@ class Util {
         } else {
             // API 16 and earlier.
             Log.d(LOG_TAG, "API 16 and earlier.");
-        //    boolean enabled = isFlightModeEnabled(context);
+            //    boolean enabled = isFlightModeEnabled(context);
             //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
             Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
@@ -506,12 +551,12 @@ class Util {
 //        return mode;
 //    }
 
-    private static void  executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
+    private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
         // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
         String su = "su";
-        for (int i=0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             // "su" command executed successfully.
             if (success) {
                 // Stop executing alternative su commands below.
@@ -534,85 +579,97 @@ class Util {
         }
     }
 
-    static String getSimStateAsString(int simState){
+    static String getSimStateAsString(int simState) {
         String simStateStr;
-        switch (simState){
-            case 0:  simStateStr = "SIM_STATE_UNKNOWN";
+        switch (simState) {
+            case 0:
+                simStateStr = "SIM_STATE_UNKNOWN";
                 break;
-            case 1:  simStateStr = "SIM_STATE_ABSENT";
+            case 1:
+                simStateStr = "SIM_STATE_ABSENT";
                 break;
-            case 2:  simStateStr = "SIM_STATE_PIN_REQUIRED";
+            case 2:
+                simStateStr = "SIM_STATE_PIN_REQUIRED";
                 break;
-            case 3:  simStateStr = "SIM_STATE_PUK_REQUIRED";
+            case 3:
+                simStateStr = "SIM_STATE_PUK_REQUIRED";
                 break;
-            case 4:  simStateStr = "SIM_STATE_NETWORK_LOCKED";
+            case 4:
+                simStateStr = "SIM_STATE_NETWORK_LOCKED";
                 break;
-            case 5:  simStateStr = "SIM_STATE_READY";
+            case 5:
+                simStateStr = "SIM_STATE_READY";
                 break;
-            case 6:  simStateStr = "SIM_STATE_NOT_READY";
+            case 6:
+                simStateStr = "SIM_STATE_NOT_READY";
                 break;
-            case 7:  simStateStr = "SIM_STATE_PERM_DISABLED";
+            case 7:
+                simStateStr = "SIM_STATE_PERM_DISABLED";
                 break;
-            case 8:  simStateStr = "SIM_STATE_CARD_IO_ERROR";
+            case 8:
+                simStateStr = "SIM_STATE_CARD_IO_ERROR";
                 break;
-            case 9:  simStateStr = "SIM_STATE_CARD_RESTRICTED";
+            case 9:
+                simStateStr = "SIM_STATE_CARD_RESTRICTED";
                 break;
-            case 10: simStateStr = "October";
+            case 10:
+                simStateStr = "October";
                 break;
-            case 11: simStateStr = "November";
+            case 11:
+                simStateStr = "November";
                 break;
-            case 12: simStateStr = "December";
+            case 12:
+                simStateStr = "December";
                 break;
-            default: simStateStr = "noMatch";
+            default:
+                simStateStr = "noMatch";
                 break;
         }
         return simStateStr;
     }
 
-static String getLogCat(){
-    //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
-    String logCatToReturn;
-    try{
-        Process process = Runtime.getRuntime().exec("logcat -d");
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
+    static String getLogCat() {
+        //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
+        String logCatToReturn;
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
 
-        StringBuilder log=new StringBuilder();
-        String line;
-        String applicationId = BuildConfig.APPLICATION_ID;
-        int lineCount = 0;
-        while (((line = bufferedReader.readLine()) != null) && (lineCount <20)) { // limit log to 20 lines
-            if (line.contains(applicationId)){
-                String firstChar = line.substring(0,1);
-                if (firstChar.matches("[WEF]")){
-                    log.append(line);
-                    log.append("-------------------------------------------------------");
-                    log.append(System.getProperty("line.separator"));
-                    lineCount++;
+            StringBuilder log = new StringBuilder();
+            String line;
+            String applicationId = BuildConfig.APPLICATION_ID;
+            int lineCount = 0;
+            while (((line = bufferedReader.readLine()) != null) && (lineCount < 20)) { // limit log to 20 lines
+                if (line.contains(applicationId)) {
+                    String firstChar = line.substring(0, 1);
+                    if (firstChar.matches("[WEF]")) {
+                        log.append(line);
+                        log.append("-------------------------------------------------------");
+                        log.append(System.getProperty("line.separator"));
+                        lineCount++;
+                    }
                 }
+
+
             }
-
-
-
+            return log.toString();
+        } catch (Exception ex) {
+            Log.e("LOG_TAG", "Error getting log cat");
+            logCatToReturn = "Error getting log cat";
+            return logCatToReturn;
         }
-       return log.toString();
-    }catch (Exception ex){
-        Log.e("LOG_TAG", "Error getting log cat");
-        logCatToReturn = "Error getting log cat";
-        return logCatToReturn;
+
+
     }
 
-
-
-}
-
-    static void clearLog(){
+    static void clearLog() {
         try {
 //            Process process = new ProcessBuilder()
 //                    .command("logcat", "-c")
 //                    .redirectErrorStream(true)
 //                    .start();
-             new ProcessBuilder()
+            new ProcessBuilder()
                     .command("logcat", "-c")
                     .redirectErrorStream(true)
                     .start();
@@ -620,6 +677,17 @@ static String getLogCat(){
             Log.e("LOG_TAG", "Error clearing log cat");
 
         }
+    }
+
+    static Toast getToast(Context context, String message, boolean standOut){
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        if (standOut){
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+        }else{
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
+        }
+
+        return toast;
     }
 
 }
