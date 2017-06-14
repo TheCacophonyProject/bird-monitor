@@ -159,7 +159,7 @@ public class SetupActivity extends AppCompatActivity {
                         Log.e(LOG_TAG, ex.getLocalizedMessage());
                     }
                    // Toast.makeText(getApplicationContext(), "Registered device.", Toast.LENGTH_SHORT).show();
-                    Util.getToast(getApplicationContext(),"Registered device", false ).show();
+                    Util.getToast(getApplicationContext(),"Success - Device has been registered with the server :-)", false ).show();
                     break;
                 case REGISTER_FAIL:
                     onResume();
@@ -181,20 +181,42 @@ public class SetupActivity extends AppCompatActivity {
 
     public void registerButton(View v) {
 
-        Util.disableFlightMode(getApplicationContext());
+        Prefs prefs = new Prefs(getApplicationContext());
 
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
-            Log.e(LOG_TAG, "Failed to disable airplane mode");
-            return ;
+        if (prefs.getGroupName() != null){
+            Util.getToast(getApplicationContext(),"Already registered - press UNREGISTER first (if you really want to change group)", true ).show();
+            return;
         }
+        // Check that the group name is valid, at least 4 characters.
+        String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
+        if (group == null || group.length() < 1){
+            Util.getToast(getApplicationContext(),"Please enter a group name of at least 4 characters (no spaces)", true ).show();
+            return;
+        }else if (group.length() < 4) {
+            Log.i("Register", "Invalid group name: "+group);
+            //   Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+            Util.getToast(getApplicationContext(),group + " is not a valid group name. Please use at least 4 characters (no spaces)", true ).show();
+            return;
+        }
+
+
+
+        Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
+
+//        Util.disableFlightMode(getApplicationContext());
+//
+//        // Now wait for network connection as setFlightMode takes a while
+//        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
+//            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            return ;
+//        }
 
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         //Get Group from text field.
-        String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
-        Prefs prefs = new Prefs(getApplicationContext());
+      //  String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
+
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
@@ -210,6 +232,11 @@ public class SetupActivity extends AppCompatActivity {
      * @param v View
      */
     public void unRegisterButton(@SuppressWarnings("UnusedParameters") View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        if (prefs.getGroupName() == null){
+            Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
+            return;
+        }
         unregister();
 
 //        Log.d(LOG_TAG, "Un-register device.");
@@ -229,6 +256,7 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setPassword(null);
             prefs.setDeviceName(null);
             Server.loggedIn = false;
+            Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
         }catch(Exception ex){
             Log.e(LOG_TAG, "Error Un-registering device.");
         }
@@ -244,10 +272,19 @@ public class SetupActivity extends AppCompatActivity {
     private void register(final String group, final Context context) {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
-            Log.i("Register", "Invalid group name: "+group);
-         //   Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
-            Util.getToast(getApplicationContext(),"Invalid Group name: " + group, true ).show();
+//            Log.i("Register", "Invalid group name: "+group);
+//         //   Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+//            Util.getToast(getApplicationContext(),"Invalid Group name: " + group, true ).show();
+            Log.e(LOG_TAG, "Invalid group name - this should have already been picked up");
             return;
+        }
+
+        Util.disableFlightMode(getApplicationContext());
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
+            Log.e(LOG_TAG, "Failed to disable airplane mode");
+            return ;
         }
 
 

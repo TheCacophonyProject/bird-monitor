@@ -31,9 +31,10 @@ public class MainService extends IntentService {
               String alarmIntentType = bundle.getString("type");
               if (alarmIntentType == null){
                   alarmIntentType = "unknown";
+                  Log.w(LOG_TAG, "alarmIntentType = unknown");
               }
+                  RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
 
-              RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
           }else{
               Log.e(LOG_TAG, "MainService error");
           }

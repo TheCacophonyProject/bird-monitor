@@ -56,27 +56,42 @@ class RecordAndUpload {
                 recordTimeSeconds = 5;  // short test
             }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
                 recordTimeSeconds +=  2; // help to recognise dawn/dusk recordings
+            }else if (typeOfRecording.equalsIgnoreCase("repeating") ){
+
+                // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
+                long dateTimeLastRepeatingAlarmFired = prefs.getDateTimeLastRepeatingAlarmFired();
+                long now = new Date().getTime();
+                long minFractionOfRepeatTimeToWait = (long)(prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9) ; // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
+                if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait){
+                    Log.w(LOG_TAG, "A repeating alarm happened to soon and so was aborted");
+                    return;
+                }else{
+                    prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
+                }
+
             }
      //   }
         makeRecording(context, recordTimeSeconds);
 
-        // only upload recordings if it has been more than a day since last upload
+        // only upload recordings if sufficient time has passed since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
 
 //       long timeIntervalBetweenUploads = 1000 * 60 * 60 * 24;
       //  long timeIntervalBetweenUploads = 1000 * 60 * 60 * 12;
-        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 6;
+//        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 6; // need to make this a prefs variable
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60 * 2; // 2 hours for testing
 //        long timeIntervalBetweenUploads = 1000 * 60 * 60; // 1 hour for testing
       //  long timeIntervalBetweenUploads = 1000 * 60 ; // 1 minute for testing
 //        long timeIntervalBetweenUploads = 1000  ; // 1 second for testing
+        long timeIntervalBetweenUploads = 1000 * (long)prefs.getTimeBetweenUploadsSeconds();
 
       //  if (typeOfRecording != null){
             if (typeOfRecording.equalsIgnoreCase("testButton") ){
                 // Always upload when test button pressed
                 uploadFiles(context);
                 prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
+                prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
 
                 // Always set up dawn/dusk alarms when test button pressed
                 DawnDuskAlarms.configureDawnAlarms(context);

@@ -43,6 +43,9 @@ class Prefs {
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
 //      private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
+    private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
+    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
+
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes
 
@@ -56,6 +59,8 @@ class Prefs {
     // private static final boolean SIM_CARD_DETECTED = false;
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+    private static final String  IS_CURRENTLY_RECORDING_KEY = "IS_CURRENTLY_RECORDING";
+
 
     private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
 
@@ -70,10 +75,11 @@ class Prefs {
     private static final String MAXIMUM_BATTERY_LEVEL_KEY = "MAXIMUM_BATTERY_LEVEL";
     // --Commented out by Inspection (12-Jun-17 2:21 PM):private static final double MAXIMUM_BATTERY_LEVEL = -1;
 
-    private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD_KEY";
+    private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD";
 
-    private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY";
+    private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
 
+    private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
 
 
 
@@ -237,6 +243,14 @@ class Prefs {
         setDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_RECORDINGS_SECONDS);
     }
 
+    double getTimeBetweenUploadsSeconds() {
+        return getDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY);
+    }
+
+    void setTimeBetweenUploadsSeconds() {
+        setDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY, TIME_BETWEEN_UPLOADS_SECONDS);
+    }
+
     double getDawnDuskOffsetLargeSeconds() {
         return getDouble(DAWN_DUSK_OFFSET_LARGE_KEY);
     }
@@ -277,6 +291,10 @@ class Prefs {
     boolean getHasRootAccess() {
         return getBoolean(HAS_ROOT_ACCESS_KEY);
     }
+
+//    boolean getIsCurrentlyRecording() {
+//        return getBoolean(IS_CURRENTLY_RECORDING_KEY);
+//    }
 
     boolean getUseTestServer() {
         return getBoolean(USE_TEST_SERVER_KEY);
@@ -337,6 +355,14 @@ class Prefs {
 
     void setDateTimeLastCalculatedDawnDusk(long dateTimeLastCalculatedDawnDusk) {
         setLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY, dateTimeLastCalculatedDawnDusk);
+    }
+
+    long getDateTimeLastRepeatingAlarmFired() {
+        return getLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY);
+    }
+
+    void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
+        setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
     }
 
 

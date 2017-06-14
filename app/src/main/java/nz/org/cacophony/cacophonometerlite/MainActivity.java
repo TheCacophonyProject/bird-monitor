@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
+        prefs.setTimeBetweenUploadsSeconds();
 
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
@@ -282,7 +283,7 @@ public void register(@SuppressWarnings("UnusedParameters") View v) {
         }catch (Exception e){
 Log.e(LOG_TAG, "Error setting up intent");
         }
-
+        Util.getToast(getApplicationContext(),"Getting ready to record - please wait", false ).show();
         sendBroadcast(myIntent);
     }
 
