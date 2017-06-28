@@ -57,7 +57,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
 
-        android:onClick="register" />
+        android:onClick="setup" />
 
     <TextView
         android:id="@+id/appVitalsText"
@@ -137,7 +137,7 @@
 
     <Button
         android:id="@+id/disableFlightMode"
-        android:text="@string/test_disabling_of_flight_mode"
+        android:text="@string/disable_flight_mode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/testRecording"
@@ -147,7 +147,7 @@
         android:onClick="disableFlightMode" />
 
     <Button
-        android:text="@string/test_enabling_of_flight_mode"
+        android:text="@string/enable_flight_mode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/disableFlightMode"

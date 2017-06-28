@@ -47,7 +47,7 @@ class MainThread implements Runnable {
         message.sendToTarget();
 
         try {
-            RecordAndUpload.doRecord(context, "testButton");
+            RecordAndUpload.doRecord(context, "testButton",handler);
         }catch (Exception e){
             message = handler.obtainMessage();
             message.what = StartRecordingReceiver.RECORDING_FAILED;
@@ -55,7 +55,7 @@ class MainThread implements Runnable {
             return;
         }
         message = handler.obtainMessage();
-        message.what = StartRecordingReceiver.RECORDING_FINISHED;
+        message.what = StartRecordingReceiver.UPLOADING_FINISHED;
         message.sendToTarget();
 
     }

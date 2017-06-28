@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
                 case RESUME:
                     onResume();
                     break;
+                case RESUME_AND_DISPLAY_REFRESH_MESSAGE:
+                    Util.getToast(getApplicationContext(),"Vitals have been updated", false ).show();
+                    onResume();
+                    break;
+
+
                 default:
                     // Unknown case
                     break;
@@ -65,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * Handler states
      */
     private static final int RESUME = 1;
+    private static final int RESUME_AND_DISPLAY_REFRESH_MESSAGE = 2;
 
     @Override
     protected void onStart() {
@@ -242,7 +249,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-public void register(@SuppressWarnings("UnusedParameters") View v) {
+public void setup(@SuppressWarnings("UnusedParameters") View v) {
+    if (!Util.isNetworkConnected(getApplicationContext())){
+        Util.getToast(getApplicationContext(),"There is no network connection - please connect and try again", true ).show();
+        return;
+    }
 
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
@@ -300,13 +311,13 @@ Log.e(LOG_TAG, "Error setting up intent");
      */
     private void refreshVitals() {
 //        makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
-        Util.getToast(getApplicationContext(),"Updating App vitals", false ).show();
+        Util.getToast(getApplicationContext(),"About to update App vitals - please wait a moment", false ).show();
         Thread server = new Thread() {
             @Override
             public void run() {
                 Server.updateServerConnectionStatus(getApplicationContext());
                 Message message = handler.obtainMessage();
-                message.what = RESUME;
+                message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
                 message.sendToTarget();
             }
         };

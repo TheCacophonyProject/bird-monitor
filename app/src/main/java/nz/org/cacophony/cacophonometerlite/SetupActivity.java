@@ -237,7 +237,7 @@ public class SetupActivity extends AppCompatActivity {
             Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
             return;
         }
-        unregister();
+        unregister(true);
 
 //        Log.d(LOG_TAG, "Un-register device.");
 //        Prefs prefs = new Prefs(getApplicationContext());
@@ -248,7 +248,7 @@ public class SetupActivity extends AppCompatActivity {
 //        onResume();
     }
 
-    private void unregister(){
+    private void unregister(boolean displayUnregisterdMessage){
         try {
             Log.d(LOG_TAG, "Un-register device.");
             Prefs prefs = new Prefs(getApplicationContext());
@@ -256,7 +256,10 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setPassword(null);
             prefs.setDeviceName(null);
             Server.loggedIn = false;
-            Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
+            if (displayUnregisterdMessage){
+                Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
+            }
+
         }catch(Exception ex){
             Log.e(LOG_TAG, "Error Un-registering device.");
         }
@@ -410,7 +413,7 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setUseTestServer(false);
         }
-        unregister();
+        unregister(false);// false means don't display unregistered message
     }
 
 

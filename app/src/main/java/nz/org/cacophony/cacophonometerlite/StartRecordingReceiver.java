@@ -18,6 +18,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     public static final int RECORDING_FAILED = 2;
     public static final int RECORDING_FINISHED = 3;
     public static final int NO_PERMISSIONS_TO_RECORD = 4;
+    public static final int UPLOADING_FINISHED = 5;
     private static final String LOG_TAG = StartRecordingReceiver.class.getName();
     //public static String intentTimeUriMessage = null;
 
@@ -41,7 +42,11 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                     break;
                 case RECORDING_FINISHED:
                    // Toast.makeText(context, "Recording finished", Toast.LENGTH_SHORT).show();
-                    Util.getToast(context,"Recording finished", false ).show();
+                    Util.getToast(context,"Recording has finished. Now uploading it to server ", false ).show();
+                    break;
+                case UPLOADING_FINISHED:
+                    // Toast.makeText(context, "Recording finished", Toast.LENGTH_SHORT).show();
+                    Util.getToast(context,"Recording has been uploaded to the server", false ).show();
                     break;
                 case NO_PERMISSIONS_TO_RECORD:
                    // Toast.makeText(context, "Did not have proper permissions to record.", Toast.LENGTH_SHORT).show();

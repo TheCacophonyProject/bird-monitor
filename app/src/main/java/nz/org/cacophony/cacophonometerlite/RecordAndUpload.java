@@ -3,6 +3,8 @@ import android.app.Service;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -19,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.R.id.message;
 import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
@@ -36,7 +39,7 @@ class RecordAndUpload {
 
 
 
-    static void doRecord(Context context, String typeOfRecording){
+    static void doRecord(Context context, String typeOfRecording, Handler handler){
         if (typeOfRecording == null){
             Log.e(LOG_TAG, "typeOfRecording is null");
             return;
@@ -72,6 +75,16 @@ class RecordAndUpload {
             }
      //   }
         makeRecording(context, recordTimeSeconds);
+
+        if (typeOfRecording.equalsIgnoreCase("testButton")  ){
+            if (handler !=null){
+                Message message = handler.obtainMessage();
+                message.what = StartRecordingReceiver.RECORDING_FINISHED;
+                message.sendToTarget();
+            }
+
+
+        }
 
         // only upload recordings if sufficient time has passed since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
@@ -226,6 +239,8 @@ class RecordAndUpload {
         mRecorder = null; // attempting to fix error media recorder went away with unhandled events
 
        Log.d(LOG_TAG, "RECORDING_FINISHED");
+
+
 
 
         // Give time for file to be saved.

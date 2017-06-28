@@ -33,7 +33,7 @@ public class MainService extends IntentService {
                   alarmIntentType = "unknown";
                   Log.w(LOG_TAG, "alarmIntentType = unknown");
               }
-                  RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
+                  RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType, null);
 
           }else{
               Log.e(LOG_TAG, "MainService error");
