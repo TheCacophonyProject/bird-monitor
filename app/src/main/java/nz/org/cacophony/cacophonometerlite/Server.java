@@ -1,8 +1,11 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
@@ -45,8 +48,6 @@ class Server {
      */
     static void updateServerConnectionStatus(Context context) {
 
-
-
         Util.disableFlightMode(context);
 
         // Now wait for network connection as setFlightMode takes a while
@@ -54,7 +55,6 @@ class Server {
             Log.e(LOG_TAG, "Failed to disable airplane mode");
             return ;
         }
-
 
         Log.i(LOG_TAG, "Updating server connection status.");
 
@@ -89,8 +89,12 @@ class Server {
         }
 
         SyncHttpClient client = new SyncHttpClient();
+   //     AsyncHttpClient client = new AsyncHttpClient();
         Prefs prefs = new Prefs(context);
         boolean useTestServer = prefs.getUseTestServer();
+        //client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
+      //  Looper.getMainLooper().prepare();
+  //client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler(Looper.getMainLooper()) {
         client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
 
             @Override

@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -310,15 +312,17 @@ Log.e(LOG_TAG, "Error setting up intent");
      * Check the vitals again and update the UI.
      */
     private void refreshVitals() {
-//        makeText(getApplicationContext(), "Update app vitals", Toast.LENGTH_SHORT).show();
+
         Util.getToast(getApplicationContext(),"About to update App vitals - please wait a moment", false ).show();
         Thread server = new Thread() {
             @Override
             public void run() {
+                Looper.prepare();
                 Server.updateServerConnectionStatus(getApplicationContext());
                 Message message = handler.obtainMessage();
                 message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
                 message.sendToTarget();
+                Looper.loop();
             }
         };
         server.start();
