@@ -16,7 +16,7 @@ android {
         targetSdkVersion 25
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.940"
+        versionName "0.943"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -27,6 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -37,9 +38,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     //https://developer.android.com/topic/libraries/support-library/index.html
     //https://developer.android.com/topic/libraries/support-library/rev-archive.html#rev23-4-0
-  //  compile 'com.android.support:appcompat-v7:24.1.0'
+    //  compile 'com.android.support:appcompat-v7:24.1.0'
     testCompile 'junit:junit:4.12'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
+    compile files('libs/logback-android-1.1.1-6.jar')
+    compile files('libs/slf4j-api-1.7.21.jar')
 }

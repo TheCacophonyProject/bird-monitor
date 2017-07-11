@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,30 +19,32 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+
+import ch.qos.logback.classic.Logger;
 
 import static android.widget.Toast.makeText;
 
 
 public class MainActivity extends AppCompatActivity {
-   // private static final String TAG = "MainActivity";
     private static final String LOG_TAG = MainActivity.class.getName();
-
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
-
-//    private final String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
-//    private final String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
+    private static Logger logger = null;
+//    static {
+//        BasicLogcatConfigurator.configureDefaultContext();
+//    }
 
     /**
      * Handler for Main Activity
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
-            Log.d(LOG_TAG, "Main activity received message.");
+          //  Log.d(LOG_TAG, "Main activity received message.");
+            logger.info("Main activity received message." );
             switch (inputMessage.what) {
                 case RESUME:
                     onResume();
@@ -60,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
                     Util.getToast(getApplicationContext(),"Vitals have been updated", false ).show();
                     onResume();
                     break;
-
-
                 default:
                     // Unknown case
                     break;
@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
 
+
+        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
+        logger.info("MainActivity onCreate" );
+
         this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -101,7 +105,10 @@ public class MainActivity extends AppCompatActivity {
             myIntent.setData(timeUri);
 
         }catch (Exception e){
-            Log.e(LOG_TAG, "Error with intent setup");
+//            Log.e(LOG_TAG, "Error with intent setup");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error with intent setup");
+
+            logger.error("Error with intent setup");
 
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
@@ -120,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
-      //  long timeBetweenRecordingsSeconds = (long)3600;
+
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -135,7 +142,10 @@ public class MainActivity extends AppCompatActivity {
         ab.setDisplayUseLogoEnabled(true);
         ab.setLogo(R.mipmap.ic_launcher);
         }else{
-            Log.w(LOG_TAG, "ActionBar ab is null");
+//            Log.w(LOG_TAG, "ActionBar ab is null");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "ActionBar ab is null");
+
+            logger.warn("ActionBar ab is null");
         }
     } //end onCreate
 
@@ -152,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_help:
                 openHelp();
-
                 return true;
 
             default:
@@ -173,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onResume() {
-
+        logger.info("MainActivity onResume" );
         checkPermissions();
 
         Prefs prefs = new Prefs(getApplicationContext());
@@ -203,9 +212,10 @@ public class MainActivity extends AppCompatActivity {
         // Device ID text.
         TextView deviceIDText = (TextView) findViewById(R.id.deviceIDText);
         try {
-            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(Server.getToken()));
+            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),Server.getToken()));
         } catch (Exception e) {
-            Log.i(LOG_TAG, "Device ID not available");
+         //   Log.i(LOG_TAG, "Device ID not available using logger method");
+            logger.error("Device ID not available using my method");
         }
 
         // Application name text  appNameVersionText
@@ -246,7 +256,9 @@ public class MainActivity extends AppCompatActivity {
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
       //  makeText(getApplicationContext(), missingPermissionMessage, Toast.LENGTH_SHORT).show();
         Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
-        Log.w(LOG_TAG, missingPermissionMessage);
+       // Log.w(LOG_TAG, missingPermissionMessage);
+        logger.warn(missingPermissionMessage );
+
 
     }
 
@@ -262,19 +274,14 @@ public void setup(@SuppressWarnings("UnusedParameters") View v) {
     }
 
     public void testRecording(@SuppressWarnings("UnusedParameters") View v) {
-        // test that it has registered
+        logger.info("Perform a test recording button pressed");
         if (Server.loggedIn != true){
-//            Toast toast = Toast.makeText(getApplicationContext(), "NOT logged in - Press REFRESH and if App Vitals show all OK, try again", Toast.LENGTH_LONG);
-//            toast.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
-//            toast.show();
+
             Util.getToast(getApplicationContext(),"NOT logged in - Press REFRESH and if App Vitals show all OK, try again", true ).show();
 
             return;
         }
 
-        Log.d(LOG_TAG, "Test recording button.");
-//        Log.i(TAG, "Test recording button.");
-//        Log.e(TAG, "Test recording button.");
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -293,10 +300,12 @@ public void setup(@SuppressWarnings("UnusedParameters") View v) {
         try {
             myIntent.putExtra("type","testButton");
 
-        }catch (Exception e){
-Log.e(LOG_TAG, "Error setting up intent");
+        }catch (Exception ex){
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
+            logger.error( ex.getLocalizedMessage());
         }
         Util.getToast(getApplicationContext(),"Getting ready to record - please wait", false ).show();
+
         sendBroadcast(myIntent);
     }
 
@@ -312,6 +321,7 @@ Log.e(LOG_TAG, "Error setting up intent");
      * Check the vitals again and update the UI.
      */
     private void refreshVitals() {
+        logger.info("Refresh button pressed");
 
         Util.getToast(getApplicationContext(),"About to update App vitals - please wait a moment", false ).show();
         Thread server = new Thread() {
@@ -337,8 +347,12 @@ Log.e(LOG_TAG, "Error setting up intent");
             public void run() {
                 try {
                     Util.disableFlightMode(getApplicationContext());
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, "Error disabling flight mode");
+                } catch (Exception ex) {
+//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
+//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error disabling flight mode");
+                   // Log.e(LOG_TAG, "Error disabling flight mode");
+                    logger.error("Error disabling flight mode" );
+                    logger.error(ex.getLocalizedMessage());
                 }
             }
         };
@@ -352,32 +366,18 @@ Log.e(LOG_TAG, "Error setting up intent");
             public void run() {
                 try {
                     Util.enableFlightMode(getApplicationContext());
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, "Error enabling flight mode");
+                } catch (Exception ex) {
+                  //  Log.e(LOG_TAG, "Error enabling flight mode");
+                    logger.error("Error disabling flight mode");
+                    logger.error(ex.getLocalizedMessage() );
+//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
+//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error enabling flight mode");
                 }
             }
         };
         thread.start();
     }
 
-//    public  void isFlightModeOn(View v) {
-//        boolean mode = false;
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//            // API 17 onwards
-//            mode = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-//        } else {
-//            // API 16 and earlier.
-//            mode = Settings.System.getInt(getApplicationContext().getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-//
-//        }
-//
-//        if (mode){
-//            Toast.makeText(getApplicationContext(), "Airplane mode is ON", Toast.LENGTH_LONG).show();
-//        }else{
-//            Toast.makeText(getApplicationContext(), "Airplane mode is OFF", Toast.LENGTH_LONG).show();
-//        }
-//
-//
-//    }
+
 
 }

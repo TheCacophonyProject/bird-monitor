@@ -74,4 +74,8 @@ https://cacophony.org.nz/</string>
     <string name="group_name">Group name</string>
     <string name="refresh">Refresh</string>
 
+    <string name="use_full_logging_title">Full Logging (Testing Only)</string>
+    <string name="use_full_logging_message">Use this if you are testing and want to log everything to server.</string>
+    <string name="use_full_logging_cb_message">Use full logging.</string>
+
 </resources>

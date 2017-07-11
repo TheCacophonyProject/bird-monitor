@@ -7,26 +7,34 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.widget.Toast;
+//import android.util.Log;
+//import android.widget.Toast;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class GPSLocationListener implements LocationListener {
     private static final String LOG_TAG = Server.class.getName();
 
     private Context context = null;
+    private static Logger logger = null;
     private Handler handler = null;
+
+
 
     GPSLocationListener(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
+        logger = Util.getAndConfigureLogger(context, LOG_TAG);
     }
 
     public void onLocationChanged(Location location) {
-//        Toast.makeText(context, "New Location saved.", Toast.LENGTH_SHORT).show();
+
         Util.getToast(context,"New Location saved", false ).show();
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-        Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
+       // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
+        logger.info("Latitude: "+lat+", Longitude: "+lon);
         Prefs prefs = new Prefs(context);
         prefs.setLatitude(lat);
         prefs.setLongitude(lon);

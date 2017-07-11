@@ -14,13 +14,17 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
 import com.luckycatlabs.sunrisesunset.dto.Location;
 
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,23 +36,34 @@ import java.io.UnsupportedEncodingException;
 //import java.lang.reflect.Field;
 //import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.Scanner;
 
-import static android.R.attr.mode;
-import static android.R.attr.priority;
-import static android.R.id.message;
+//import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import ch.qos.logback.classic.android.LogcatAppender;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 
 
 class Util {
     private static final String LOG_TAG = Util.class.getName();
 
-
-    //  private static File homeFile = null;
-    //  private static File recordingFolder = null;
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
+    private static final String DEFAULT_LOGS_FOLDER = "logs";
+
+    private static boolean logbackConfigured = false;
+    private static Logger logger = null;
+
+    static {
+        BasicLogcatConfigurator.configureDefaultContext();
+    }
 
     // For airplane mode
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
+
 
     // --Commented out by Inspection (12-Jun-17 2:21 PM):private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
 
@@ -57,7 +72,8 @@ class Util {
         boolean permissionForRecording = false;
         try{
             if (context == null) {
-                Log.e(LOG_TAG, "Context was null when checking permissions");
+//                Log.e(LOG_TAG, "Context was null when checking permissions");
+                logger.error("Context was null when checking permissions");
             }else{
                 boolean storagePermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -69,7 +85,9 @@ class Util {
             }
 
         }catch (Exception ex){
-            Log.e(LOG_TAG, "Error with checkPermissionsForRecording");
+//            Log.e(LOG_TAG, "Error with checkPermissionsForRecording");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with checkPermissionsForRecording");
+            logger.error("Error with checkPermissionsForRecording");
         }
       return permissionForRecording;
 
@@ -82,19 +100,6 @@ class Util {
         // If I could be sure the homeFile was set before any of the other directories are needed then I
         // wouldn't need to pass context around to the other methods :-(
 
-//        if (homeFile == null) {
-//            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony");
-//            //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
-//
-//
-//            if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
-//                Log.e(LOG_TAG, "HomeFile location problem");
-//
-//                //TODO, exit program safely from here and display error.
-//            }
-//
-//        }
-//        return homeFile;
 
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
         File homeFile = null;
@@ -103,57 +108,161 @@ class Util {
 //            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony2");
             homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
             if (homeFile == null) {
-                Log.e(LOG_TAG, "HomeFile location problem");
+//                Log.e(LOG_TAG, "HomeFile location problem");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
+                logger.error("HomeFile location problem");
             } else {
                 if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
-                    Log.e(LOG_TAG, "HomeFile location problem");
+//                    Log.e(LOG_TAG, "HomeFile location problem");
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
+                    logger.error("HomeFile location problem");
                 }
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "HomeFile location problem");
+//            Log.e(LOG_TAG, "HomeFile location problem");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
+            logger.error("HomeFile location problem");
         }
         return homeFile;
     }
 
-    static File getRecordingsFolder(Context context) {
 
-//        try{
-//            if (recordingFolder == null) {
-//                recordingFolder = new File(getHomeFile(), DEFAULT_RECORDINGS_FOLDER);
-//                if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
-//                    Log.e(LOG_TAG, "Recording location problem");
-//                    return null;
-//                }
-//            }
-//            return recordingFolder;
-//        }catch (Exception ex){
-//            Log.e(LOG_TAG, ex.getLocalizedMessage());
-//            return null;
-//        }
+    static File getRecordingsFolder(Context context){
+        return getLocalFolder(context, DEFAULT_RECORDINGS_FOLDER);
+    }
 
-        File recordingFolder = null;
+    static File getLogFolder(Context context){
+        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
+    }
+
+    static File getLocalFolder(Context context, String localFolderStr) {
+
+        File localFolderFile = null;
         try {
-            recordingFolder = new File(getHomeFile(context), DEFAULT_RECORDINGS_FOLDER);
-            if (recordingFolder == null) {
-                Log.e(LOG_TAG, "Recording location is null");
-            } else if (!recordingFolder.exists() && !recordingFolder.isDirectory() && !recordingFolder.mkdirs()) {
-                Log.e(LOG_TAG, "Recording location problem");
-                recordingFolder = null;
+            localFolderFile = new File(getHomeFile(context), localFolderStr);
+            if (localFolderFile == null) {
+//                Log.e(LOG_TAG, "Folder location is null");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location is null");
+                logger.error("Folder location is null");
+            } else if (!localFolderFile.exists() && !localFolderFile.isDirectory() && !localFolderFile.mkdirs()) {
+//                Log.e(LOG_TAG, "Folder location problem");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location problem");
+                logger.error("Folder location problem");
+                localFolderFile = null;
             }
-            return recordingFolder;
+            return localFolderFile;
         } catch (Exception ex) {
-            Log.e(LOG_TAG, ex.getLocalizedMessage());
+//            Log.e(LOG_TAG, ex.getLocalizedMessage());
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+            logger.error(ex.getLocalizedMessage());
             return null;
         }
     }
 
-    static String getDeviceID(String webToken) throws Exception {
-        String webTokenBody = Util.decoded(webToken);
+
+
+    static String getLocalLogStr(Context context){
+//        Date date = new Date(); // your date
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(date);
+//        int year = cal.get(Calendar.YEAR);
+//        int month = cal.get(Calendar.MONTH);
+//        int day = cal.get(Calendar.DAY_OF_MONTH);
+//        String todaysLogFileNameStr = Integer.toString(year) + "_" + Integer.toString(month + 1)+ "_" + Integer.toString(day);
+        return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
+
+    }
+
+static Logger getAndConfigureLogger(Context context, String callingLogTag){
+    if (!logbackConfigured){
+        Util.configureLogbackDirectly(context);
+        logbackConfigured = true;
+        // And log that this happened!
+        //getAndConfigureLogger(context, LOG_TAG);
+        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+    }
+
+    Logger logger = (Logger)LoggerFactory.getLogger(callingLogTag);
+
+    Prefs prefs = new Prefs(context, logger); // needed this constructor to fix loop of Prefs calling Util calling Prefs
+    // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
+    if (prefs.getUseFullLogging()){
+
+        logger.setLevel(Level.DEBUG);
+    }else {
+        logger.setLevel(Level.ERROR);
+    }
+    return logger;
+
+}
+
+//    static void writeLocalLogEntryUsingLogback(Context context, Logger callingLogger, String message){
+//        if (logger == null){
+//            if (!logbackConfigured){
+//                if (context != null){ // can only configure if context not null
+//                    Util.configureLogbackDirectly(context);
+//                    logbackConfigured = true;
+//                    logger = LoggerFactory.getLogger(LOG_TAG);
+//                    logger.info("Configured Logback");
+//                }
+//            }
+//
+//        }else{
+//            logger.info(message);
+//        }
+//
+//
+//
+//
+//        if (context != null){
+//            if (!logbackConfigured){
+//                Util.configureLogbackDirectly(context);
+//                logbackConfigured = true;
+//
+//
+//            }
+//        }else{
+//            logger = LoggerFactory.getLogger(callingLogTag);
+//        }
+//
+//
+//
+//
+//    }
+
+//    static void writeLocalLogEntryUsingLogback(Context context, String LOG_TAG, String message){
+//        Prefs prefs = new Prefs(context);
+//        if (!prefs.isLocalLog()){
+//            return;
+//        }
+//        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
+//        String todaysLocalLogStr = getLocalLogStr(context);
+//        PrintWriter out = null;
+//        try {
+//            out = new PrintWriter(new BufferedWriter(new FileWriter(todaysLocalLogStr, true)));
+//            out.println(LOG_TAG);
+//            out.println(" ");
+//            out.println(message);
+//            out.println(" ");
+//        }catch (IOException e) {
+////            Log.e(LOG_TAG, e.getLocalizedMessage());
+//            logger.error(e.getLocalizedMessage());
+//        }finally{
+//            if(out != null){
+//                out.close();
+//            }
+//        }
+//    }
+
+
+
+    static String getDeviceID(Context context, String webToken) throws Exception {
+        String webTokenBody = Util.decoded(context, webToken);
         JSONObject jObject = new JSONObject(webTokenBody);
         return jObject.getString("id");
     }
 
-    private static String decoded(String JWTEncoded) {
+    private static String decoded(Context context, String JWTEncoded) {
         // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
         String webTokenBody = null;
         try {
@@ -163,7 +272,9 @@ class Util {
             // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
             webTokenBody = getJson(split[1]);
         } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG, "Error decoding JWT");
+//            Log.e(LOG_TAG, "Error decoding JWT");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error decoding JWT");
+            logger.error("Error decoding JWT");
         }
         return webTokenBody;
     }
@@ -175,7 +286,7 @@ class Util {
 
     static double getBatteryLevel(Context context) {
         double batteryLevel;
-        batteryLevel = getBatteryLevelUsingSystemFile();
+        batteryLevel = getBatteryLevelUsingSystemFile(context);
         if (batteryLevel == -1) {
             batteryLevel = getBatteryLevelByIntent(context);
 
@@ -183,14 +294,8 @@ class Util {
         return batteryLevel;
     }
 
-    static double getBatteryLevelUsingSystemFile() {
-//        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-// //       IntentFilter ifilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-//        Intent batteryStatus = context.getApplicationContext().registerReceiver(null, ifilter);
-//        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-//        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-//
-//        float batteryPct = level / (float) scale;
+    static double getBatteryLevelUsingSystemFile(Context context) {
+
         // https://longtrieuquang.wordpress.com/2013/04/08/android-battery-information-from-file-system/
         // found the file volt that stores battery voltage
         String batteryLevelStr = null;
@@ -200,8 +305,10 @@ class Util {
         if (voltFile.exists()) {
             try {
                 batteryLevelStr = getStringFromFile(voltFilePathName);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+                logger.error( ex.getLocalizedMessage());
             }
 
         }
@@ -210,11 +317,11 @@ class Util {
             try {
                 batteryLevel = Double.parseDouble(batteryLevelStr);
             } catch (Exception ex) {
-                Log.e(LOG_TAG, "converting double");
+//                Log.e(LOG_TAG, "converting double");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "converting double");
+                logger.error("converting double");
             }
-
         }
-
         return batteryLevel;
     }
 
@@ -229,7 +336,9 @@ class Util {
             batteryLevel = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
             return batteryLevel;
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "Error with getBatteryLevelByIntent");
+//            Log.e(LOG_TAG, "Error with getBatteryLevelByIntent");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getBatteryLevelByIntent");
+            logger.error("Error with getBatteryLevelByIntent");
             return -1;
         }
 
@@ -287,7 +396,9 @@ class Util {
             }
             return batteryStatusToReturn;
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "getBatteryStatus");
+//            Log.e(LOG_TAG, "getBatteryStatus");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "getBatteryStatus");
+            logger.error("getBatteryStatus");
             return "Error";
         }
 
@@ -387,13 +498,16 @@ class Util {
 
             try {
                 Thread.sleep(1000); // give time for airplane mode to turn off
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+                logger.error( ex.getLocalizedMessage());
             }
 
             numberOfLoops += 1;
             if (numberOfLoops > 20) {
-                Log.e(LOG_TAG, "Number of loops > 20");
+//                Log.e(LOG_TAG, "Number of loops > 20");
+                logger.error("Number of loops > 20");
                 break;
             }
         }
@@ -412,73 +526,22 @@ class Util {
     }
 
 
-//    public static boolean setFlightMode(Context context, boolean enable) { // if enable is true, then this means turn on flight mode ie turn off network and save power
-//
-//       boolean isCurrentlyInFlightMode = isFlightModeEnabled(context);
-//
-//        // will I continue - depends on if enable is true or false and if already in flight mode or not
-//        // so write logic so it exits method if need be
-//
-//        if (isCurrentlyInFlightMode){
-//            Log.d(LOG_TAG, "Currently in flight mode");
-//            if (enable){ // ie want to turn on flight mode, but it is already on
-//                Log.d(LOG_TAG, "And have been asked to enable flight mode so nothing to do");
-//                return true;
-//            }
-//        }else {
-//            Log.d(LOG_TAG, "Not currently in flight mode");
-//            if (!enable){ // ie want to turn on flight mode, but it is already on
-//                Log.d(LOG_TAG, "And have been asked to disable flight mode so nothing to do");
-//                return true;
-//            }
-//        }
-//
-//
-//
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//            // API 17 onwards.
-//            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
-//            // Must be a rooted device
-//            Prefs prefs = new Prefs(context);
-//            if (!prefs.getHasRootAccess()){
-//                return false;
-//            }
-//
-//            int enabled = isFlightModeEnabled(context) ? 0 : 1;
-//
-//            // Set Airplane / Flight mode using su commands.
-//            String command = COMMAND_FLIGHT_MODE_1 + " " + enabled;
-//            executeCommandWithoutWait(context, "-c", command);
-//            command = COMMAND_FLIGHT_MODE_2 + " " + enabled;
-//            executeCommandWithoutWait(context, "-c", command);
-//
-//        } else {
-//            // API 16 and earlier.
-//            Log.d(LOG_TAG, "API 16 and earlier.");
-//            boolean enabled = isFlightModeEnabled(context);
-//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, enabled ? 0 : 1);
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", !enabled);
-//            context.sendBroadcast(intent);
-//        }
-//        return true;
-//    }
-
 
     static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             // API 17 onwards.
-            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+           // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
-                Log.i(LOG_TAG, "Do NOT have required ROOT access");
+//                Log.i(LOG_TAG, "Do NOT have required ROOT access");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
+                logger.info("Do NOT have required ROOT access");
                // Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
                 Util.getToast(context,"Root access required to change airplane mode", true ).show();
                 return;
             }
-
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
@@ -488,7 +551,7 @@ class Util {
 
         } else {
             // API 16 and earlier.
-            Log.d(LOG_TAG, "API 16 and earlier.");
+           // Log.d(LOG_TAG, "API 16 and earlier.");
             //  boolean enabled = isFlightModeEnabled(context);
             //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
@@ -502,12 +565,15 @@ class Util {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             // API 17 onwards.
-            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
-                Log.e(LOG_TAG, "Do NOT have required ROOT access");
-//                Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
+//                Log.e(LOG_TAG, "Do NOT have required ROOT access");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
+
+                logger.error("Do NOT have required ROOT access");
+
                 Util.getToast(context,"Root access required to change airplane mode", true ).show();
                 return;
             }
@@ -521,7 +587,7 @@ class Util {
 
         } else {
             // API 16 and earlier.
-            Log.d(LOG_TAG, "API 16 and earlier.");
+          //  Log.d(LOG_TAG, "API 16 and earlier.");
             //    boolean enabled = isFlightModeEnabled(context);
             //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
@@ -532,24 +598,7 @@ class Util {
     }
 
 
-//    @SuppressLint("NewApi")
-//    @SuppressWarnings("deprecation")
-//    private static boolean isFlightModeEnabled(Context context) {
-//        boolean mode = false;
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//            // API 17 onwards
-//            Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
-////            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-//            mode = Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-//        } else {
-//            // API 16 and earlier.
-//            Log.d(LOG_TAG, "API 16 and earlier.");
-////            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1;
-//            mode = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-//        }
-//        Log.d(LOG_TAG, "Airplane mode is enabled " + mode);
-//        return mode;
-//    }
+
 
     private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
@@ -628,56 +677,60 @@ class Util {
         return simStateStr;
     }
 
-    static String getLogCat() {
-        //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
-        String logCatToReturn;
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+//    static String getLogCat(Context context) {
+//        //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
+//        String logCatToReturn;
+//        BufferedReader bufferedReader = null;
+//        InputStreamReader inputStreamReader = null;
+//        try {
+////            Process process = Runtime.getRuntime().exec("logcat -t 500 -v long *:W");
+//            Process process = Runtime.getRuntime().exec("logcat -d");
+//
+//            inputStreamReader = new InputStreamReader(process.getInputStream());
+//             bufferedReader = new BufferedReader(inputStreamReader);
+//
+//            StringBuilder log = new StringBuilder();
+//            String line;
+//            String separator = System.getProperty("line.separator");
+//            while ((line = bufferedReader.readLine()) != null)  {
+//                        log.append(line);
+//                log.append(separator);
+//            }
+//            return log.toString();
+//        } catch (Exception ex) {
+////            Log.e("LOG_TAG", "Error getting log cat");
+////            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
+//            logger.error("Error getting log cat");
+//            logCatToReturn = "Error getting log cat";
+//            return logCatToReturn;
+//        }finally{
+//            try {
+//                bufferedReader.close();
+//                inputStreamReader.close();
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+////                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+//                logger.error(ex.getLocalizedMessage());
+//            }
+//        }
+//
+//         }
 
-            StringBuilder log = new StringBuilder();
-            String line;
-            String applicationId = BuildConfig.APPLICATION_ID;
-            int lineCount = 0;
-            while (((line = bufferedReader.readLine()) != null) && (lineCount < 20)) { // limit log to 20 lines
-                if (line.contains(applicationId)) {
-                    String firstChar = line.substring(0, 1);
-                    if (firstChar.matches("[WEF]")) {
-                        log.append(line);
-                        log.append("-------------------------------------------------------");
-                        log.append(System.getProperty("line.separator"));
-                        lineCount++;
-                    }
-                }
 
-
-            }
-            return log.toString();
-        } catch (Exception ex) {
-            Log.e("LOG_TAG", "Error getting log cat");
-            logCatToReturn = "Error getting log cat";
-            return logCatToReturn;
-        }
-
-
-    }
-
-    static void clearLog() {
-        try {
-//            Process process = new ProcessBuilder()
+//    static void clearLog(Context context) {
+//        try {
+//
+//            new ProcessBuilder()
 //                    .command("logcat", "-c")
 //                    .redirectErrorStream(true)
 //                    .start();
-            new ProcessBuilder()
-                    .command("logcat", "-c")
-                    .redirectErrorStream(true)
-                    .start();
-        } catch (IOException e) {
-            Log.e("LOG_TAG", "Error clearing log cat");
-
-        }
-    }
+//        } catch (IOException ex) {
+////            Log.e(LOG_TAG, "Error clearing log cat");
+////            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG,"Error clearing log cat");
+//            logger.error("Error clearing log cat");
+//
+//        }
+//    }
 
     static Toast getToast(Context context, String message, boolean standOut){
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
@@ -690,4 +743,91 @@ class Util {
         return toast;
     }
 
+    static void configureLogbackDirectly(Context context) {
+        // reset the default context (which may already have been initialized)
+        // since we want to reconfigure it
+        LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
+        lc.reset();
+
+        // setup FileAppender
+        PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
+        encoder1.setContext(lc);
+        encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+        encoder1.start();
+
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
+        fileAppender.setContext(lc);
+        String logFileStr = Util.getLocalLogStr(context);
+        //   fileAppender.setFile(this.getFileStreamPath("app.log").getAbsolutePath());
+        fileAppender.setFile(logFileStr);
+        fileAppender.setEncoder(encoder1);
+        fileAppender.start();
+
+        // setup LogcatAppender
+        PatternLayoutEncoder encoder2 = new PatternLayoutEncoder();
+        encoder2.setContext(lc);
+        encoder2.setPattern("[%thread] %msg%n");
+        encoder2.start();
+
+        LogcatAppender logcatAppender = new LogcatAppender();
+        logcatAppender.setContext(lc);
+        logcatAppender.setEncoder(encoder2);
+        logcatAppender.start();
+
+        // add the newly created appenders to the root logger;
+        // qualify Logger to disambiguate from org.slf4j.Logger
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.addAppender(fileAppender);
+        root.addAppender(logcatAppender);
+    }
+
+    static String readLocalLog(Context context, File logFileToRead)  {
+        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
+
+        StringBuilder sb = new StringBuilder();
+     //   sb.append(logFileToRead.getName());
+        Scanner input = null;
+        try {
+            input = new Scanner(logFileToRead);
+            while (input.hasNext()){
+                String aLine = input.next();
+                sb.append(aLine);
+                sb.append(" ");
+            }
+
+        }catch (Exception ex){
+//            Log.e(LOG_TAG, ex.getLocalizedMessage());
+            logger.error(ex.getLocalizedMessage());
+        }finally{
+            input.close();
+            logFileToRead.delete();  // delete and recreate this file to remove the logs that have now been sent to server
+            try {
+                logFileToRead.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return sb.toString();
+    }
+
+    static String getAllLocalLogEntries(Context context){
+        StringBuilder sb = new StringBuilder();
+        File localLogsFolder = Util.getLogFolder(context);
+        if (localLogsFolder == null){
+//            Log.d(LOG_TAG, "Error getting recordings folder");
+            logger.error("Error getting recordings folder");
+            return null;
+        }
+        File logFiles[] = localLogsFolder.listFiles();
+
+        if (logFiles != null){
+            for (int i=0;i<logFiles.length;i++){
+                sb.append(readLocalLog( context,  logFiles[i]));
+                // logFiles[i].delete();
+            }
+        }
+        return sb.toString();
+    }
 }

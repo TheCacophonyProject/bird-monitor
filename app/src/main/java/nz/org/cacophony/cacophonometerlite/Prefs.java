@@ -2,27 +2,28 @@ package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
+//import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  */
 
 class Prefs {
+    private static final boolean isLocalLog = true;
 
     private static final String LOG_TAG = "Prefs.java";
-    private Context context = null;
+    private static Context context = null;
 
 
     private static final String PREFS_NAME = "CacophonyPrefs";
-   // private static final String DEFAULT_SERVER_URL = "http://103.16.20.22";       // Server URL
-   // private static final String DEFAULT_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
     private static final String TEST_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
     private static final String PRODUCTION_SERVER_URL = "http://103.16.20.22";       // Server URL
 
-
-    //private static final String DEFAULT_SERVER_URL = "http://52.64.67.145:8888";       // Server URL
-    //private static final String DEFAULT_SERVER_URL = "http://192.168.1.9:8888";       // Server URL
     private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
@@ -55,41 +56,41 @@ class Prefs {
     private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
-    // --Commented out by Inspection (12-Jun-17 2:37 PM):private static final String SIM_CARD_DETECTED_KEY = "SIM_CARD_DETECTED";
-    // private static final boolean SIM_CARD_DETECTED = false;
-
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
-    private static final String  IS_CURRENTLY_RECORDING_KEY = "IS_CURRENTLY_RECORDING";
-
-
+   // private static final String  IS_CURRENTLY_RECORDING_KEY = "IS_CURRENTLY_RECORDING";
     private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
-
-
-
+    private static final String  USE_FULL_LOGGING_KEY = "USE_FULL_LOGGING";
     private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
-
-
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
-    // --Commented out by Inspection (12-Jun-17 2:21 PM):private static final double BATTERY_LEVEL = -1;
-
     private static final String MAXIMUM_BATTERY_LEVEL_KEY = "MAXIMUM_BATTERY_LEVEL";
-    // --Commented out by Inspection (12-Jun-17 2:21 PM):private static final double MAXIMUM_BATTERY_LEVEL = -1;
-
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD";
-
     private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
-
     private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
-
-
+    private static Logger logger = null;
 
     Prefs(Context context) {
         this.context = context;
+        if (logger == null){
+            logger = Util.getAndConfigureLogger(context,LOG_TAG );
+        }
+    }
+
+    Prefs(Context context, Logger logger) { // needed this constructor to fix loop of Prefs calling Util calling Prefs
+        this.context = context;
+        this.logger = logger;
+
+    }
+
+
+
+    public static boolean isLocalLog() {
+        return isLocalLog;
     }
 
     private String getString(String key) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            //Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return null;
         } else {
             SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -99,7 +100,8 @@ class Prefs {
 
     private void setString(String key, String val) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+          //  Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -108,7 +110,8 @@ class Prefs {
 
     private double getDouble(String key) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+          //  Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return 0;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -117,7 +120,8 @@ class Prefs {
 
     private long getLong(String key) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+           // Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return 0;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -126,7 +130,8 @@ class Prefs {
 
     private void setDouble(String key, double val) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+           // Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -135,7 +140,8 @@ class Prefs {
 
     private void setLong(String key, long val) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+//            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -144,7 +150,8 @@ class Prefs {
 
     private boolean getBoolean(String key) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+          //  Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return false;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -154,7 +161,8 @@ class Prefs {
 
     private void setBoolean(String key, boolean val) {
         if (context == null) {
-            Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+         //   Log.e(LOG_TAG, "Context was null when trying to get preferences.");
+            logger.error("Context was null when trying to get preferences.");
             return;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -177,11 +185,6 @@ class Prefs {
         }
     }
 
-// --Commented out by Inspection START (12-Jun-17 2:21 PM):
-//    void setServerUrl(String url) {
-//        setString(SERVER_URL_KEY, url);
-//    }
-// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
     String getPassword() {
         return getString(PASSWORD_KEY);
@@ -275,26 +278,9 @@ class Prefs {
         setDouble(LENGTH_OF_TWILIGHT_KEY, LENGTH_OF_TWILIGHT_SECONDS);
     }
 
-// --Commented out by Inspection START (12-Jun-17 2:21 PM):
-//    boolean getSimCardDetected() {
-//        return getBoolean(SIM_CARD_DETECTED_KEY);
-//    }
-// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
-
-// --Commented out by Inspection START (12-Jun-17 2:21 PM):
-//    void setSimCardDetected(boolean isSimCardDetected) {
-//        setBoolean(SIM_CARD_DETECTED_KEY, isSimCardDetected);
-//    }
-// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
-
-
     boolean getHasRootAccess() {
         return getBoolean(HAS_ROOT_ACCESS_KEY);
     }
-
-//    boolean getIsCurrentlyRecording() {
-//        return getBoolean(IS_CURRENTLY_RECORDING_KEY);
-//    }
 
     boolean getUseTestServer() {
         return getBoolean(USE_TEST_SERVER_KEY);
@@ -308,23 +294,21 @@ class Prefs {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
-
-
     void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
 
+    boolean getUseFullLogging() {
+        return getBoolean(USE_FULL_LOGGING_KEY);
+    }
 
+    void setUseFullLogging(boolean useFullLogging) {
+        setBoolean(USE_FULL_LOGGING_KEY, useFullLogging);
+    }
 
     void setUseTestServer(boolean useTestServer) {
         setBoolean(USE_TEST_SERVER_KEY, useTestServer);
     }
-
-// --Commented out by Inspection START (12-Jun-17 2:21 PM):
-//    double getBatteryLevel() {
-//        return getDouble(BATTERY_LEVEL_KEY);
-//    }
-// --Commented out by Inspection STOP (12-Jun-17 2:21 PM)
 
     void setBatteryLevel(double batteryLevel) {
         setDouble(BATTERY_LEVEL_KEY, batteryLevel);
@@ -335,10 +319,7 @@ class Prefs {
     }
 
     void setMaximumBatteryLevel(double batteryLevel) {
-        //if (batteryLevel > getDouble(MAXIMUM_BATTERY_LEVEL_KEY)){
         setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
-        // }
-
     }
 
     void setDateTimeLastUpload(long dateTimeLastUpload) {
@@ -364,6 +345,4 @@ class Prefs {
     void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
     }
-
-
 }
