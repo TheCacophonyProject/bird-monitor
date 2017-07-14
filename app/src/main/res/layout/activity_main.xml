@@ -146,15 +146,6 @@
         android:layout_marginTop="28dp"
         android:onClick="disableFlightMode" />
 
-    <Button
-        android:text="@string/enable_flight_mode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/disableFlightMode"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp"
-        android:onClick="enableFlightMode" />
 
 
 

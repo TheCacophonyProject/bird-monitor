@@ -174,22 +174,31 @@ class Util {
     }
 
 static Logger getAndConfigureLogger(Context context, String callingLogTag){
-    if (!logbackConfigured){
-        Util.configureLogbackDirectly(context);
-        logbackConfigured = true;
-        // And log that this happened!
-        //getAndConfigureLogger(context, LOG_TAG);
-        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-    }
+//    if (!logbackConfigured){
+//        Util.configureLogbackDirectly(context);
+//        logbackConfigured = true;
+//        // And log that this happened!
+//        //getAndConfigureLogger(context, LOG_TAG);
+//        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+//    }
 
     Logger logger = (Logger)LoggerFactory.getLogger(callingLogTag);
 
     Prefs prefs = new Prefs(context, logger); // needed this constructor to fix loop of Prefs calling Util calling Prefs
     // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
     if (prefs.getUseFullLogging()){
-
+        if (!logbackConfigured){
+            Util.configureLogbackDirectly(context, true);
+            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+            logbackConfigured = true;
+        }
         logger.setLevel(Level.DEBUG);
     }else {
+        if (!logbackConfigured){
+            Util.configureLogbackDirectly(context, false);
+            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+            logbackConfigured = true;
+        }
         logger.setLevel(Level.ERROR);
     }
     return logger;
@@ -257,6 +266,10 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
 
     static String getDeviceID(Context context, String webToken) throws Exception {
+        if (webToken == null){
+            return "";
+        }
+
         String webTokenBody = Util.decoded(context, webToken);
         JSONObject jObject = new JSONObject(webTokenBody);
         return jObject.getString("id");
@@ -743,7 +756,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         return toast;
     }
 
-    static void configureLogbackDirectly(Context context) {
+    static void configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
         // reset the default context (which may already have been initialized)
         // since we want to reconfigure it
         LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
@@ -752,7 +765,13 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         // setup FileAppender
         PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
         encoder1.setContext(lc);
-        encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+        //https://stackoverflow.com/questions/23123934/logback-show-logs-with-line-number
+        if (includeCodeLineNumber){
+            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\\(%line\\) - %msg%n");
+        }else{
+            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+        }
+
         encoder1.start();
 
         FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
@@ -829,5 +848,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             }
         }
         return sb.toString();
+    }
+
+    public static void setLogbackConfigured(boolean logbackConfigured) {
+        Util.logbackConfigured = logbackConfigured;
     }
 }

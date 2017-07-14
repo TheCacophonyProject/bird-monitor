@@ -9,7 +9,8 @@ import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.TimeZone;
 import static android.content.Context.ALARM_SERVICE;
-import ch.qos.logback.classic.Logger;
+//import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 
 /**
  * Created by User on 07-Mar-17.

@@ -48,28 +48,28 @@ class Server {
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
+        logger.info("updateServerConnectionStatus method");
+try {
+    Util.disableFlightMode(context);
+    // Now wait for network connection as setFlightMode takes a while
+    if (!Util.waitForNetworkConnection(context, true)) {
 
-        Util.disableFlightMode(context);
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(context, true)){
-//            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-            logger.error("Failed to disable airplane mode");
-            return ;
-        }
-//        Log.i(LOG_TAG, "Updating server connection status.");
-        logger.error("Updating server connection status.");
+        logger.error("Failed to disable airplane mode");
+        return;
+    }
 
-        if (!ping(context)) {
-//            Log.e(LOG_TAG, "Could not connect to server");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Could not connect to server");
-            logger.error("Could not connect to server");
 
-        } else {
-            login(context);
-        }
 
-        Util.enableFlightMode(context);
+    if (!ping(context)) {
+        logger.error("Could not connect to server");
+    } else {
+        login(context);
+    }
+
+    Util.enableFlightMode(context);
+}catch (Exception ex){
+    logger.error(ex.getLocalizedMessage());
+}
     }
 
     /**
@@ -309,7 +309,7 @@ class Server {
             if (!login(context)) {
 //                Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "sendFile: no JWT. Aborting upload");
-                logger.warn("sendFile: no JWT. Aborting upload");
+                logger.error("sendFile: no JWT. Aborting upload");
 
                 return false; // Can't upload without JWT, login/register device to get JWT.
             }
@@ -354,7 +354,7 @@ class Server {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
 //                Log.w(LOG_TAG, "sendFile: onSuccess: Failed upload.");
-                logger.warn("Failed upload.");
+                logger.error("Failed upload.");
 
                 uploadSuccess = false;
             }

@@ -302,7 +302,7 @@ public class SetupActivity extends AppCompatActivity {
 
 
 //        Log.i(LOG_TAG, "Update location button");
-        logger.info("Update location button");
+        logger.debug("Update location button");
         Util.getToast(getApplicationContext(),"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -374,6 +374,7 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setUseFullLogging(false);
         }
+        Util.setLogbackConfigured(false);
     }
 
     public void onCheckboxUseTestServerClicked(View v) {

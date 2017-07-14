@@ -28,8 +28,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name="nz.org.cacophony.cacophonometerlite.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"
-                       />
+                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -12,7 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+//import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -41,7 +42,7 @@ class RecordAndUpload {
 
 
 
-    static void doRecord(Context context, String typeOfRecording, Handler handler){
+    static boolean doRecord(Context context, String typeOfRecording, Handler handler){
         if (logger == null){
             logger = Util.getAndConfigureLogger(context, LOG_TAG);
             logger.info("Starting doRecord method");
@@ -52,7 +53,7 @@ class RecordAndUpload {
 //            Log.e(LOG_TAG, "typeOfRecording is null");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "typeOfRecording is null");
             logger.error("typeOfRecording is null");
-            return;
+            return false;
         }
 
         Prefs prefs = new Prefs(context);
@@ -78,7 +79,7 @@ class RecordAndUpload {
                 if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait){
 //                    Log.w(LOG_TAG, "A repeating alarm happened to soon and so was aborted");
                     logger.warn("A repeating alarm happened to soon and so was aborted");
-                    return;
+                    return false;
                 }else{
                     prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
                 }
@@ -99,12 +100,13 @@ class RecordAndUpload {
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
         long timeIntervalBetweenUploads = 1000 * (long)prefs.getTimeBetweenUploadsSeconds();
-
-            if (typeOfRecording.equalsIgnoreCase("testButton") ){
+        boolean uploadedFilesSuccessfully = false;
+        if (typeOfRecording.equalsIgnoreCase("testButton") ){
 
                 // Always upload when test button pressed
 
-                uploadFiles(context);
+                uploadedFilesSuccessfully = uploadFiles(context);
+
                 prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
                 prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
 
@@ -113,13 +115,20 @@ class RecordAndUpload {
                 DawnDuskAlarms.configureDuskAlarms(context);
                 prefs.setDateTimeLastCalculatedDawnDusk(0);
             }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
-            if (uploadFiles(context)){
+
+            uploadedFilesSuccessfully = uploadFiles(context);
+            if (uploadedFilesSuccessfully){
 
                 prefs.setDateTimeLastUpload(now);
             }
 
         }
 
+        if (!uploadedFilesSuccessfully){
+            logger.error("Files failed to upload");
+            return false;
+
+        }
 
             if (typeOfRecording.equalsIgnoreCase("repeating")  ){
                 // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
@@ -135,9 +144,10 @@ class RecordAndUpload {
                 }
 
             }
+            return true;
     }
 
-    private static void makeRecording(Context context,  long recordTimeSeconds){
+    private static boolean makeRecording(Context context,  long recordTimeSeconds){
 
         // Get recording file.
         Date date = new Date(System.currentTimeMillis());
@@ -207,7 +217,7 @@ class RecordAndUpload {
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Could be due to phone connected to pc as usb storage");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, e.getLocalizedMessage());
 
-            return ;
+            return false;
         }
 
         // Start recording.
@@ -217,7 +227,7 @@ class RecordAndUpload {
 //            Log.e(LOG_TAG, "mRecorder.start " + e.getLocalizedMessage());
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "mRecorder.start " + e.getLocalizedMessage());
             logger.error("mRecorder.start " + e.getLocalizedMessage());
-            return ;
+            return false;
         }
 
         // Sleep for duration of recording.
@@ -229,7 +239,7 @@ class RecordAndUpload {
 //            Log.e(LOG_TAG, "Failed sleeping in recording thread.");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed sleeping in recording thread.");
             logger.error("Failed sleeping in recording thread.");
-            return ;
+            return false;
         }
 
         // Stop recording.
@@ -251,6 +261,7 @@ class RecordAndUpload {
 
             logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         }
+        return true;
     }
 
     private static boolean uploadFiles(Context context){
@@ -302,16 +313,23 @@ class RecordAndUpload {
                 for (File aFile : recordingFiles) {
 
                     if (sendFile(context, aFile)) {
-                        if (!aFile.delete()) {
-//                            Log.w(LOG_TAG, "Deleting audio file failed");
-//                            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Deleting audio file failed");
+                        // deleting files can cause app to crash when phone connected to pc, so put in try catch
+                        boolean fileSuccessfullyDeleted = false;
+                        try {
+                            fileSuccessfullyDeleted = aFile.delete();
 
-                            logger.warn("Deleting audio file failed");
+                        }catch (Exception ex){
+                            logger.error(ex.getLocalizedMessage());
+
+                        }
+                        if (!fileSuccessfullyDeleted) {
+                            // for some reason file did not delete so exit for loop
+                            break;
                         }
                     } else {
 //                        Log.w(LOG_TAG, "Failed to upload file to server");
 //                        Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to upload file to server");
-                        logger.warn("Failed to upload file to server");
+                        logger.error("Failed to upload file to server");
 
                         Util.enableFlightMode(context);
 
@@ -338,7 +356,7 @@ class RecordAndUpload {
                 }
 
             }
-        }catch (Exception e){
+        }catch (Exception ex){
 
             Util.enableFlightMode(context);
 
@@ -355,7 +373,7 @@ class RecordAndUpload {
 //            Log.e(LOG_TAG, "Error with upload");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with upload");
 
-            logger.error("Error with upload");
+            logger.error(ex.getLocalizedMessage());
             return false;
         }
         // The airplane was not showing on the phone (even though it seems to be in flight mode, so try the next code to wait for network connection to die
@@ -456,7 +474,7 @@ class RecordAndUpload {
 
             additionalMetadata.put("Local Log ", localLog);
 
-            String logLevel = logger.getLevel().levelStr;
+            String logLevel = ((ch.qos.logback.classic.Logger)logger).getLevel().levelStr;
             additionalMetadata.put("Log level is ", logLevel);
 
             additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);

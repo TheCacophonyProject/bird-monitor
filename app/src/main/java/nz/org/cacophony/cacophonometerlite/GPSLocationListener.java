@@ -11,7 +11,7 @@ import android.os.Message;
 //import android.widget.Toast;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.LoggerFactory;
 
 class GPSLocationListener implements LocationListener {
     private static final String LOG_TAG = Server.class.getName();
@@ -26,23 +26,30 @@ class GPSLocationListener implements LocationListener {
         this.context = context;
         this.handler = handler;
         logger = Util.getAndConfigureLogger(context, LOG_TAG);
+        logger.debug("End of GPSLocationListener");
     }
 
     public void onLocationChanged(Location location) {
+        logger.debug("onLocationChanged method entered");
+       try {
+           double lat = location.getLatitude();
+           double lon = location.getLongitude();
+           // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
+           logger.info("Latitude: " + lat + ", Longitude: " + lon);
+           Prefs prefs = new Prefs(context);
+           prefs.setLatitude(lat);
+           prefs.setLongitude(lon);
 
-        Util.getToast(context,"New Location saved", false ).show();
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-       // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
-        logger.info("Latitude: "+lat+", Longitude: "+lon);
-        Prefs prefs = new Prefs(context);
-        prefs.setLatitude(lat);
-        prefs.setLongitude(lon);
+           // Tell SetupActivity to resume.
+           Util.getToast(context, "New Location saved", false).show();
+           Message message = handler.obtainMessage();
+           message.what = SetupActivity.RESUME;
+           message.sendToTarget();
 
-        // Tell SetupActivity to resume.
-        Message message = handler.obtainMessage();
-        message.what = SetupActivity.RESUME;
-        message.sendToTarget();
+       }catch (Exception ex){
+           logger.error(ex.getLocalizedMessage());
+       }
+        logger.debug("onLocationChanged method finished");
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}

@@ -8,6 +8,8 @@ import android.os.Message;
 
 import org.slf4j.Logger;
 
+import static nz.org.cacophony.cacophonometerlite.RecordAndUpload.doRecord;
+
 /**
  * Created by User on 29-Mar-17.
  * Recordings made from the test button needed to run in a thread
@@ -54,8 +56,10 @@ class MainThread implements Runnable {
         message.what = StartRecordingReceiver.RECORDING_STARTED;
         message.sendToTarget();
 
+        boolean recordAndUploadedSuccessfully = false;
         try {
-            RecordAndUpload.doRecord(context, "testButton",handler);
+
+            recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, "testButton",handler);
         }catch (Exception e){
             message = handler.obtainMessage();
             message.what = StartRecordingReceiver.RECORDING_FAILED;
@@ -63,7 +67,12 @@ class MainThread implements Runnable {
             return;
         }
         message = handler.obtainMessage();
-        message.what = StartRecordingReceiver.UPLOADING_FINISHED;
+        if (recordAndUploadedSuccessfully){
+            message.what = StartRecordingReceiver.UPLOADING_FINISHED;
+        }else{
+            message.what = StartRecordingReceiver.RECORDING_FAILED;
+        }
+
         message.sendToTarget();
         Looper.loop();
     }

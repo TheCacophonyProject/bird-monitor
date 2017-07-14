@@ -3,6 +3,7 @@ package nz.org.cacophony.cacophonometerlite;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,32 +17,39 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 //import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
+
 
 import static android.widget.Toast.makeText;
+import static nz.org.cacophony.cacophonometerlite.R.id.disableFlightMode;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
     private static Logger logger = null;
+//    private IntentFilter filter;
+//    private Myreceiver reMyreceive;
 //    static {
 //        BasicLogcatConfigurator.configureDefaultContext();
 //    }
@@ -80,6 +88,37 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(intentAction);
+
+
+    }
+
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String message = intent.getStringExtra("message");
+                if (message != null) {
+                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
+                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
+                    }
+                }
+
+            }catch (Exception ex){
+                logger.error(ex.getLocalizedMessage());
+            }
+        }
+    };
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
     @Override
@@ -147,7 +186,28 @@ public class MainActivity extends AppCompatActivity {
 
             logger.warn("ActionBar ab is null");
         }
+     //  https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+    //    LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("event"));
+
+        refreshVitals();
     } //end onCreate
+
+//    @Override
+//    protected void onDestroy() {
+//        // Unregister since the activity is about to be closed.
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+//        super.onDestroy();
+//    }
+
+//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            // Get extra data included in the Intent
+//            String message = intent.getStringExtra("message");
+//            Log.d("receiver", "Got message: " + message);
+//        }
+//    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -226,6 +286,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         super.onResume();
+
+        IntentFilter iff = new IntentFilter("event");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
     /**
@@ -264,49 +327,60 @@ public class MainActivity extends AppCompatActivity {
 
 
 public void setup(@SuppressWarnings("UnusedParameters") View v) {
+    try{
+        logger.info("Setup Device button pressed");
     if (!Util.isNetworkConnected(getApplicationContext())){
-        Util.getToast(getApplicationContext(),"There is no network connection - please connect and try again", true ).show();
+        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.  Press this button again in a minute", true ).show();
+        disableFlightMode(null);
         return;
     }
 
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
+    }catch (Exception ex){
+        logger.error(ex.getLocalizedMessage());
     }
+}
 
     public void testRecording(@SuppressWarnings("UnusedParameters") View v) {
-        logger.info("Perform a test recording button pressed");
-        if (Server.loggedIn != true){
-
-            Util.getToast(getApplicationContext(),"NOT logged in - Press REFRESH and if App Vitals show all OK, try again", true ).show();
-
-            return;
-        }
-
-
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-           // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
-            Util.getToast(getApplicationContext(),"Turn OFF GPS before testing", true ).show();
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-            return;
-        }
-
-
-
-        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
         try {
-            myIntent.putExtra("type","testButton");
+            logger.info("Perform a test recording button pressed");
 
-        }catch (Exception ex){
+            if (Server.loggedIn != true) {
+
+                Util.getToast(getApplicationContext(), "NOT logged in - Press REFRESH and if App Vitals show all OK, try again", true).show();
+
+                return;
+            }
+
+
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+            //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
+                Util.getToast(getApplicationContext(), "Turn OFF GPS before testing", true).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+                return;
+            }
+
+
+            Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+            try {
+                myIntent.putExtra("type", "testButton");
+
+            } catch (Exception ex) {
 //            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
-            logger.error( ex.getLocalizedMessage());
-        }
-        Util.getToast(getApplicationContext(),"Getting ready to record - please wait", false ).show();
+                logger.error(ex.getLocalizedMessage());
+            }
+            Util.getToast(getApplicationContext(), "Getting ready to record - please wait", false).show();
+            ((Button)v).setEnabled(false);
 
-        sendBroadcast(myIntent);
+            sendBroadcast(myIntent);
+        }catch (Exception ex){
+            logger.error(ex.getLocalizedMessage());
+        }
     }
 
     /**
@@ -314,6 +388,8 @@ public void setup(@SuppressWarnings("UnusedParameters") View v) {
      * @param v View
      */
     public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
+        logger.info("Refresh button pressed");
+        Util.getToast(getApplicationContext(), "About to update App vitals - please wait a moment", false).show();
         refreshVitals();
     }
 
@@ -321,62 +397,72 @@ public void setup(@SuppressWarnings("UnusedParameters") View v) {
      * Check the vitals again and update the UI.
      */
     private void refreshVitals() {
-        logger.info("Refresh button pressed");
+        try {
 
-        Util.getToast(getApplicationContext(),"About to update App vitals - please wait a moment", false ).show();
-        Thread server = new Thread() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                Server.updateServerConnectionStatus(getApplicationContext());
-                Message message = handler.obtainMessage();
-                message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
-                message.sendToTarget();
-                Looper.loop();
-            }
-        };
-        server.start();
+            Thread server = new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Server.updateServerConnectionStatus(getApplicationContext());
+                    Message message = handler.obtainMessage();
+                    message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
+                    message.sendToTarget();
+                    Looper.loop();
+                }
+            };
+            server.start();
+        }catch (Exception ex){
+            Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
+            logger.error(ex.getLocalizedMessage());
+        }
     }
 
 
 
     public  void disableFlightMode(@SuppressWarnings("UnusedParameters") View v){
+        try {
+            logger.info("Disable Flight Mode button pressed");
+            Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to connect", false).show();
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Util.disableFlightMode(getApplicationContext());
-                } catch (Exception ex) {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Util.disableFlightMode(getApplicationContext());
+                    } catch (Exception ex) {
 //                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
 //                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error disabling flight mode");
-                   // Log.e(LOG_TAG, "Error disabling flight mode");
-                    logger.error("Error disabling flight mode" );
-                    logger.error(ex.getLocalizedMessage());
+                        // Log.e(LOG_TAG, "Error disabling flight mode");
+                        logger.error("Error disabling flight mode");
+                        logger.error(ex.getLocalizedMessage());
+                    }
                 }
-            }
-        };
-        thread.start();
+            };
+            thread.start();
+        }catch (Exception ex){
+            logger.error(ex.getLocalizedMessage());
+            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+        }
     }
 
-    public  void enableFlightMode(@SuppressWarnings("UnusedParameters") View v) {
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Util.enableFlightMode(getApplicationContext());
-                } catch (Exception ex) {
-                  //  Log.e(LOG_TAG, "Error enabling flight mode");
-                    logger.error("Error disabling flight mode");
-                    logger.error(ex.getLocalizedMessage() );
-//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
-//                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error enabling flight mode");
-                }
-            }
-        };
-        thread.start();
-    }
+//    public  void enableFlightMode(@SuppressWarnings("UnusedParameters") View v) {
+//
+//        Thread thread = new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Util.enableFlightMode(getApplicationContext());
+//                } catch (Exception ex) {
+//                  //  Log.e(LOG_TAG, "Error enabling flight mode");
+//                    logger.error("Error disabling flight mode");
+//                    logger.error(ex.getLocalizedMessage() );
+////                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
+////                    Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error enabling flight mode");
+//                }
+//            }
+//        };
+//        thread.start();
+//    }
 
 
 
