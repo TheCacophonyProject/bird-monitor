@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -269,7 +270,7 @@ public class SetupActivity extends AppCompatActivity {
             return;
         }
 
-        Util.disableFlightMode(getApplicationContext());
+        disableFlightMode();
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
@@ -390,6 +391,29 @@ public class SetupActivity extends AppCompatActivity {
         unregister(false);// false means don't display unregistered message
     }
 
+    public void disableFlightMode(){
+        try {
+            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
+            new Thread()
+            {
+                public void run()
+                {
+                    SetupActivity.this.runOnUiThread(new Runnable()
+                    {
+                        public void run()
+                        {
+                            Util.disableFlightMode(getApplicationContext());
+                        }
+                    });
+                }
+            }.start();
 
+
+
+        }catch (Exception ex){
+            logger.error(ex.getLocalizedMessage());
+            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+        }
+    }
 
 }

@@ -46,6 +46,7 @@ class Prefs {
 
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
     private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
+//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  //for testing
 
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes

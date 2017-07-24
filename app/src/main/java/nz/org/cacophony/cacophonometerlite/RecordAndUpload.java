@@ -36,6 +36,7 @@ class RecordAndUpload {
     private static Logger logger = null;
 
 
+
     private RecordAndUpload(){
 
     }
@@ -202,20 +203,10 @@ class RecordAndUpload {
 
         } catch (Exception e) {
 
-//            Log.e(LOG_TAG, "Setup recording failed.");
-//            Log.e(LOG_TAG, "Could be due to lack of sdcard");
-//            Log.e(LOG_TAG, "Could be due to phone connected to pc as usb storage");
-//            Log.e(LOG_TAG, e.getLocalizedMessage());
-
             logger.error("Setup recording failed.");
             logger.error("Could be due to lack of sdcard");
             logger.error("Could be due to phone connected to pc as usb storage");
             logger.error(e.getLocalizedMessage());
-
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Setup recording failed.");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Could be due to lack of sdcard");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Could be due to phone connected to pc as usb storage");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, e.getLocalizedMessage());
 
             return false;
         }
@@ -224,8 +215,7 @@ class RecordAndUpload {
         try {
             mRecorder.start();
         }catch (Exception e){
-//            Log.e(LOG_TAG, "mRecorder.start " + e.getLocalizedMessage());
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "mRecorder.start " + e.getLocalizedMessage());
+
             logger.error("mRecorder.start " + e.getLocalizedMessage());
             return false;
         }
@@ -236,8 +226,7 @@ class RecordAndUpload {
             Thread.sleep(recordTimeSeconds * 1000);
 
         } catch (InterruptedException e) {
-//            Log.e(LOG_TAG, "Failed sleeping in recording thread.");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed sleeping in recording thread.");
+
             logger.error("Failed sleeping in recording thread.");
             return false;
         }
@@ -255,21 +244,17 @@ class RecordAndUpload {
         try {
             Thread.sleep(5 * 1000);
         } catch (InterruptedException ex) {
-//            Log.e(LOG_TAG, "Failed sleeping in recording thread.");
-//            ex.printStackTrace();
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed sleeping in recording thread." +  ex.getLocalizedMessage());
-
             logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         }
         return true;
     }
 
     private static boolean uploadFiles(Context context){
+        boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
             if (recordingsFolder == null){
-//                Log.e(LOG_TAG, "Error getting recordings folder");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error getting recordings folder");
+
                 logger.error("Error getting recordings folder");
                 return false;
             }
@@ -279,9 +264,6 @@ class RecordAndUpload {
 
                 // Now wait for network connection as setFlightMode takes a while
                 if (!Util.waitForNetworkConnection(context, true)){
-//                            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-
                     logger.error("Failed to disable airplane mode");
                     return false;
                 }
@@ -292,20 +274,8 @@ class RecordAndUpload {
                 if (getToken() == null) {
 
                     if (!Server.login(context)) {
-//                        Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
-//                        Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "sendFile: no JWT. Aborting upload");
-
                         logger.warn("sendFile: no JWT. Aborting upload");
 
-                        Util.enableFlightMode(context);
-
-                        // Now wait for network connection to close as  setFlightMode takes a while
-                        if (!Util.waitForNetworkConnection(context, false)){
-//                            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-                            logger.error("Failed to disable airplane mode");
-                            return false;
-                        }
 
                         return false; // Can't upload without JWT, login/register device to get JWT.
                     }
@@ -324,68 +294,32 @@ class RecordAndUpload {
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
+                            logger.error("Failed to delete file");
+                            returnValue = false;
                             break;
                         }
                     } else {
-//                        Log.w(LOG_TAG, "Failed to upload file to server");
-//                        Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to upload file to server");
+                        returnValue = false;
                         logger.error("Failed to upload file to server");
-
-                        Util.enableFlightMode(context);
-
-                        // Now wait for network connection to close as  setFlightMode takes a while
-                        if (!Util.waitForNetworkConnection(context, false)){
-//                            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-
-                            logger.error("Failed to disable airplane mode");
-                            return false;
-                        }
                         return false;
                     }
                 }
-                Util.enableFlightMode(context);
-
-                // Now wait for network connection to close as  setFlightMode takes a while
-                if (!Util.waitForNetworkConnection(context, false)){
-//                    Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-
-                    logger.error("Failed to disable airplane mode");
-                    return false;
-                }
-
             }
+            return returnValue;
         }catch (Exception ex){
-
-            Util.enableFlightMode(context);
-
-
-            // Now wait for network connection to close as  setFlightMode takes a while
-            if (!Util.waitForNetworkConnection(context, false)){
-//                Log.e(LOG_TAG, "Failed to disable airplane mode");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-
-                logger.error("Failed to disable airplane mode");
-                return false;
-            }
-
-//            Log.e(LOG_TAG, "Error with upload");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with upload");
 
             logger.error(ex.getLocalizedMessage());
             return false;
-        }
-        // The airplane was not showing on the phone (even though it seems to be in flight mode, so try the next code to wait for network connection to die
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(context, false)){
-//            Log.e(LOG_TAG, "Failed to disable airplane mode");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
+        }finally {
+            Util.enableFlightMode(context);
+            // Now wait for network connection to close as  setFlightMode takes a while
+            if (!Util.waitForNetworkConnection(context, false)){
 
-            logger.error("Failed to disable airplane mode");
-            return false;
+                logger.error("Failed to disable airplane mode");
+
+            }
         }
-        return true;
+
     }
 
     private static boolean sendFile(Context context, File aFile) {
@@ -395,8 +329,7 @@ class RecordAndUpload {
         JSONObject audioRecording = new JSONObject();
 
         String fileName = aFile.getName();
-//        Log.i(LOG_TAG, "fileName: " + fileName);
- //       logger.error("fileName: " + fileName);
+
         // http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
         String[] fileNameParts = fileName.split("[. ]");
@@ -434,8 +367,6 @@ class RecordAndUpload {
 
         String localFilePath = Util.getRecordingsFolder(context) + "/" + fileName;
         if (! new File(localFilePath).exists()){
-//            Log.e(LOG_TAG, localFilePath + " does not exist");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, localFilePath + " does not exist");
 
             logger.error(localFilePath + " does not exist");
             return false;
@@ -482,8 +413,6 @@ class RecordAndUpload {
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
 
-
-
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
 
@@ -492,14 +421,10 @@ class RecordAndUpload {
                 additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
             }
 
-
-
             audioRecording.put("additionalMetadata", additionalMetadata);
 
-
         } catch (JSONException ex) {
-            ex.printStackTrace();
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+         //   ex.printStackTrace();
             logger.error(ex.getLocalizedMessage());
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);

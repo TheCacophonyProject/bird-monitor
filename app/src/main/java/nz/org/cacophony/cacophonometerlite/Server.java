@@ -1,6 +1,8 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import cz.msebera.android.httpclient.Header;
+
+import static nz.org.cacophony.cacophonometerlite.Util.sendMainActivityAMessage;
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -69,6 +73,10 @@ try {
     Util.enableFlightMode(context);
 }catch (Exception ex){
     logger.error(ex.getLocalizedMessage());
+}finally {
+    Util.sendMainActivityAMessage(context, "enable_vitals_button");
+    Util.sendMainActivityAMessage(context, "enable_test_recording_button");
+    Util.sendMainActivityAMessage(context, "enable_setup_button");
 }
     }
 
@@ -139,7 +147,7 @@ try {
         String group = prefs.getGroupName();
         if (devicename == null || password == null || group == null) {
 
-            // One or more credentials are null, failed login.
+            // One or more credentials are null, so can not attempt to login.
 //            Log.e(LOG_TAG, "No credentials to login with.");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "No credentials to login with.");
             logger.error("No credentials to login with.");
@@ -383,7 +391,16 @@ try {
     }
 
 
-
+//    static void sendMainActivityAMessage(Context context, String message){
+//        // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//        Intent intent = new Intent("event");
+//        // You can also include some extra data.
+//      //  intent.putExtra("message", "enable_vitals_button");
+//        intent.putExtra("message", message);
+//        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//
+//    }
 
 
 }

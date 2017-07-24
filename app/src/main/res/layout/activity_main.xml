@@ -57,11 +57,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
 
-        android:onClick="setup" />
+        android:onClick="setupButtonClick" />
 
     <TextView
         android:id="@+id/appVitalsText"
         android:text="@string/app_vitals"
+        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/setUpDeviceButton"
@@ -90,7 +91,7 @@
 
             <TextView
                 android:id="@+id/connectToServerText"
-                android:text="@string/connected_to_server"
+                android:text="@string/can_connect_to_server"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/mainRegisteredStatus"
@@ -98,7 +99,7 @@
                 android:layout_alignParentStart="true" />
     <TextView
         android:id="@+id/loggedInText"
-        android:text="@string/device_logged_in"
+        android:text="ggggg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/connectToServerText"
@@ -115,14 +116,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="@string/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="refreshButton"
-        android:layout_alignTop="@id/appVitalsText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+
+
+            <Button
+                android:id="@+id/refreshVitals"
+                android:text="@string/refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="refreshButton"
+                android:layout_alignTop="@id/appVitalsText"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
     <Button
         android:id="@+id/testRecording"
@@ -133,7 +137,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp"
-        android:onClick="testRecording" />
+        android:onClick="testRecordingButtonClick" />
 
     <Button
         android:id="@+id/disableFlightMode"
@@ -144,7 +148,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp"
-        android:onClick="disableFlightMode" />
+        android:onClick="disableFlightModeButtonClick" />
+
+
+
 
 
 

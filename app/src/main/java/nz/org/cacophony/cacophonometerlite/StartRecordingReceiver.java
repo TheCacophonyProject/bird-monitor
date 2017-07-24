@@ -1,7 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 //import android.util.Log;
 
 import org.slf4j.Logger;
 
-import static android.R.attr.action;
 import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 
 public class StartRecordingReceiver extends BroadcastReceiver{
@@ -46,27 +43,27 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 case RECORDING_FAILED:
 
                     Util.getToast(context,"Recording failed", true ).show();
-                    sendMainActivityAMesage(context);
+                    enableButtons(context);
                     break;
                 case RECORDING_FINISHED:
 
-                    Util.getToast(context,"Recording has finished. Now uploading it to server ", false ).show();
+                    Util.getToast(context,"Recording has finished. Now uploading it to server - please wait", false ).show();
                     break;
                 case UPLOADING_FINISHED:
 
-                    Util.getToast(context,"Recording has been uploaded to the server", false ).show();
-                    sendMainActivityAMesage(context);
+                    Util.getToast(context,"Recording has been uploaded to the server - all done", false ).show();
+                    enableButtons(context);
                     break;
                 case NO_PERMISSIONS_TO_RECORD:
 
                     Util.getToast(context,"Did not have proper permissions to record", true ).show();
-                    sendMainActivityAMesage(context);
+                    enableButtons(context);
                     break;
                 default:
 //                    Log.w(LOG_TAG, "Unknown handler what.");
 //                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");
                     logger.error("Unknown handler what.");
-                    sendMainActivityAMesage(context);
+                    enableButtons(context);
                     break;
             }
         }
@@ -194,15 +191,12 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
     }
 
-     static void sendMainActivityAMesage(Context context){
-       // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+     static void enableButtons(Context context){
+         Util.sendMainActivityAMessage(context, "enable_vitals_button");
+         Util.sendMainActivityAMessage(context, "enable_test_recording_button");
+         Util.sendMainActivityAMessage(context, "enable_setup_button");
 
-         Intent intent = new Intent("event");
-         // You can also include some extra data.
-         intent.putExtra("message", "enable_test_recording_button");
-         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-    }
+          }
 
 
 }

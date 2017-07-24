@@ -11,8 +11,10 @@ import android.net.ConnectivityManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 //import android.util.Log;
 import android.widget.Toast;
@@ -93,7 +95,8 @@ class Util {
 
     }
 
-    private static File getHomeFile(Context context) {
+    private static File getAppDataFolder(Context context) {
+    //    logger.info("getAppDataFolder method called");
         // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
         // This is because if sdcard is 'dodgy' can get inconsistent results.
         // Need context to get internal storage location, so need to pass this around the code.
@@ -102,28 +105,46 @@ class Util {
 
 
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
-        File homeFile = null;
+        File appDataFolder = null;
         try {
             String appName = context.getResources().getString(R.string.main_activity_name);
 //            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony2");
-            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
-            if (homeFile == null) {
+            appDataFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
+
+            if (appDataFolder == null) {
 //                Log.e(LOG_TAG, "HomeFile location problem");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
-                logger.error("HomeFile location problem");
+
             } else {
-                if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
-//                    Log.e(LOG_TAG, "HomeFile location problem");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
-                    logger.error("HomeFile location problem");
+                if (!appDataFolder.exists()){
+                 boolean appDataFolderCreated =   appDataFolder.mkdirs();
+                    if (!appDataFolderCreated){
+                 //       logger.error("Could not create AppDataFolder");
+                        return null;
+                    }
+                    // check it got created
+                    if (!appDataFolder.exists()){
+
+                 //       logger.error("Could not create AppDataFolder");
+                        return null;
+                    }
                 }
+
+
+
+//                if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
+////                    Log.e(LOG_TAG, "HomeFile location problem");
+////                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
+//                    logger.error("HomeFile location problem");
+//                }
             }
         } catch (Exception ex) {
 //            Log.e(LOG_TAG, "HomeFile location problem");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
-            logger.error("HomeFile location problem");
+          //  logger.error(ex.getLocalizedMessage());
+          //  logger.error("AppDataFolder problem");
         }
-        return homeFile;
+        return appDataFolder;
     }
 
 
@@ -139,22 +160,44 @@ class Util {
 
         File localFolderFile = null;
         try {
-            localFolderFile = new File(getHomeFile(context), localFolderStr);
+
+            File appDataFolder = getAppDataFolder(context);
+            if (appDataFolder == null){
+            //    logger.error("appDataFolder is null");
+                return null;
+            }
+          //  localFolderFile = new File(getAppDataFolder(context), localFolderStr);
+            localFolderFile = new File(appDataFolder, localFolderStr);
             if (localFolderFile == null) {
 //                Log.e(LOG_TAG, "Folder location is null");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location is null");
-                logger.error("Folder location is null");
-            } else if (!localFolderFile.exists() && !localFolderFile.isDirectory() && !localFolderFile.mkdirs()) {
+            //    logger.error("Folder location is null");
+            } else {
+                    if (!localFolderFile.exists()){
+                        localFolderFile.mkdirs();
+
+                        // now check it exists
+                         if (!localFolderFile.exists()){
+                   //         logger.error("Folder location problem");
+                            localFolderFile = null;
+                        }
+                    }
+
+                    // now check it is there
+
+
+                   // !localFolderFile.exists() && !localFolderFile.isDirectory() && !localFolderFile.mkdirs())
+              //  {
 //                Log.e(LOG_TAG, "Folder location problem");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location problem");
-                logger.error("Folder location problem");
-                localFolderFile = null;
+
+              //  }
             }
             return localFolderFile;
         } catch (Exception ex) {
 //            Log.e(LOG_TAG, ex.getLocalizedMessage());
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-            logger.error(ex.getLocalizedMessage());
+        //    logger.error(ex.getLocalizedMessage());
             return null;
         }
     }
@@ -201,6 +244,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         }
         logger.setLevel(Level.ERROR);
     }
+    setLogger(logger);
     return logger;
 
 }
@@ -540,41 +584,47 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
 
 
-    static void disableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+    static void disableFlightMode(Context context) {
+        try {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                // API 17 onwards.
+                // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
+                // Must be a rooted device
+                Prefs prefs = new Prefs(context);
+                if (!prefs.getHasRootAccess()) {
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            // API 17 onwards.
-           // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
-            // Must be a rooted device
-            Prefs prefs = new Prefs(context);
-            if (!prefs.getHasRootAccess()) {
-//                Log.i(LOG_TAG, "Do NOT have required ROOT access");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
-                logger.info("Do NOT have required ROOT access");
-               // Toast.makeText(context, "Root access required to change airplane mode", Toast.LENGTH_LONG).show();
-                Util.getToast(context,"Root access required to change airplane mode", true ).show();
-                return;
+                    logger.info("Do NOT have required ROOT access");
+                    Util.getToast(context, "Root access required to change airplane mode", true).show();
+
+
+                    return ;
+                }
+
+                // Set Airplane / Flight mode using su commands.
+                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
+                executeCommandWithoutWait("-c", command);
+                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
+                executeCommandWithoutWait("-c", command);
+
+            } else {
+                // API 16 and earlier.
+                // Log.d(LOG_TAG, "API 16 and earlier.");
+                //  boolean enabled = isFlightModeEnabled(context);
+                //noinspection deprecation
+                Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
+                Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                intent.putExtra("state", false);
+                context.sendBroadcast(intent);
             }
 
-            // Set Airplane / Flight mode using su commands.
-            String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-            executeCommandWithoutWait("-c", command);
-            command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-            executeCommandWithoutWait("-c", command);
+        }catch (Exception ex){
+            logger.error(ex.getLocalizedMessage());
 
-        } else {
-            // API 16 and earlier.
-           // Log.d(LOG_TAG, "API 16 and earlier.");
-            //  boolean enabled = isFlightModeEnabled(context);
-            //noinspection deprecation
-            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", false);
-            context.sendBroadcast(intent);
         }
+        return ;
     }
 
-    static void enableFlightMode(Context context) { // if enable is true, then this means turn on flight mode ie turn off network and save power
+    static void enableFlightMode(Context context) {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             // API 17 onwards.
@@ -690,62 +740,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         return simStateStr;
     }
 
-//    static String getLogCat(Context context) {
-//        //https://stackoverflow.com/questions/12692103/read-logcat-programmatically-within-application
-//        String logCatToReturn;
-//        BufferedReader bufferedReader = null;
-//        InputStreamReader inputStreamReader = null;
-//        try {
-////            Process process = Runtime.getRuntime().exec("logcat -t 500 -v long *:W");
-//            Process process = Runtime.getRuntime().exec("logcat -d");
-//
-//            inputStreamReader = new InputStreamReader(process.getInputStream());
-//             bufferedReader = new BufferedReader(inputStreamReader);
-//
-//            StringBuilder log = new StringBuilder();
-//            String line;
-//            String separator = System.getProperty("line.separator");
-//            while ((line = bufferedReader.readLine()) != null)  {
-//                        log.append(line);
-//                log.append(separator);
-//            }
-//            return log.toString();
-//        } catch (Exception ex) {
-////            Log.e("LOG_TAG", "Error getting log cat");
-////            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
-//            logger.error("Error getting log cat");
-//            logCatToReturn = "Error getting log cat";
-//            return logCatToReturn;
-//        }finally{
-//            try {
-//                bufferedReader.close();
-//                inputStreamReader.close();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-////                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-//                logger.error(ex.getLocalizedMessage());
-//            }
-//        }
-//
-//         }
-
-
-//    static void clearLog(Context context) {
-//        try {
-//
-//            new ProcessBuilder()
-//                    .command("logcat", "-c")
-//                    .redirectErrorStream(true)
-//                    .start();
-//        } catch (IOException ex) {
-////            Log.e(LOG_TAG, "Error clearing log cat");
-////            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG,"Error clearing log cat");
-//            logger.error("Error clearing log cat");
-//
-//        }
-//    }
 
     static Toast getToast(Context context, String message, boolean standOut){
+
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         if (standOut){
             toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
@@ -762,7 +759,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
         lc.reset();
 
-        // setup FileAppender
+        // setupButtonClick FileAppender
         PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
         encoder1.setContext(lc);
         //https://stackoverflow.com/questions/23123934/logback-show-logs-with-line-number
@@ -782,7 +779,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         fileAppender.setEncoder(encoder1);
         fileAppender.start();
 
-        // setup LogcatAppender
+        // setupButtonClick LogcatAppender
         PatternLayoutEncoder encoder2 = new PatternLayoutEncoder();
         encoder2.setContext(lc);
         encoder2.setPattern("[%thread] %msg%n");
@@ -852,5 +849,26 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
     public static void setLogbackConfigured(boolean logbackConfigured) {
         Util.logbackConfigured = logbackConfigured;
+    }
+
+    static void sendMainActivityAMessage(Context context, String message){
+        // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+        Intent intent = new Intent("event");
+        // You can also include some extra data.
+        intent.putExtra("message", message);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+    }
+
+    public static Logger getLogger() {
+        if (logger == null){
+
+        }
+        return logger;
+    }
+
+    public static void setLogger(Logger logger) {
+        Util.logger = logger;
     }
 }
