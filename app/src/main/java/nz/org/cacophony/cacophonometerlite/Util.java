@@ -109,7 +109,13 @@ class Util {
         try {
             String appName = context.getResources().getString(R.string.main_activity_name);
 //            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony2");
-            appDataFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
+            String externalStorageState = Environment.getExternalStorageState();
+            if (externalStorageState.equalsIgnoreCase("mounted")){
+                appDataFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
+            }else{
+                appDataFolder = context.getFilesDir();
+            }
+
 
             if (appDataFolder == null) {
 //                Log.e(LOG_TAG, "HomeFile location problem");
@@ -120,6 +126,7 @@ class Util {
                  boolean appDataFolderCreated =   appDataFolder.mkdirs();
                     if (!appDataFolderCreated){
                  //       logger.error("Could not create AppDataFolder");
+
                         return null;
                     }
                     // check it got created
@@ -212,7 +219,11 @@ class Util {
 //        int month = cal.get(Calendar.MONTH);
 //        int day = cal.get(Calendar.DAY_OF_MONTH);
 //        String todaysLogFileNameStr = Integer.toString(year) + "_" + Integer.toString(month + 1)+ "_" + Integer.toString(day);
-        return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
+        try {
+            return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
+        }catch (Exception ex){
+            return null;
+        }
 
     }
 
@@ -231,14 +242,18 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
     // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
     if (prefs.getUseFullLogging()){
         if (!logbackConfigured){
-            Util.configureLogbackDirectly(context, true);
+           if (!Util.configureLogbackDirectly(context, true)){
+               return null;
+           }
             LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
             logbackConfigured = true;
         }
         logger.setLevel(Level.DEBUG);
     }else {
         if (!logbackConfigured){
-            Util.configureLogbackDirectly(context, false);
+           if( !Util.configureLogbackDirectly(context, false)){
+               return null;
+           }
             LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
             logbackConfigured = true;
         }
@@ -753,7 +768,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         return toast;
     }
 
-    static void configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
+    static boolean configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
         // reset the default context (which may already have been initialized)
         // since we want to reconfigure it
         LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
@@ -774,6 +789,11 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
         fileAppender.setContext(lc);
         String logFileStr = Util.getLocalLogStr(context);
+        if (logFileStr == null){
+            Util.getToast(context, "Could not create required folder - try inserting a memory card into your phone", true).show();
+            return false;
+        }
+
         //   fileAppender.setFile(this.getFileStreamPath("app.log").getAbsolutePath());
         fileAppender.setFile(logFileStr);
         fileAppender.setEncoder(encoder1);
@@ -795,6 +815,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.addAppender(fileAppender);
         root.addAppender(logcatAppender);
+        return true;
     }
 
     static String readLocalLog(Context context, File logFileToRead)  {

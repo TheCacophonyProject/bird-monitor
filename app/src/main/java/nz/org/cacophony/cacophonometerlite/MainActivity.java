@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 
 
 import static android.widget.Toast.makeText;
+import static com.loopj.android.http.AsyncHttpClient.log;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -133,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
+        if (logger == null){
+            finish();
+        }
         logger.info("MainActivity onCreate" );
 
         this.setTitle(R.string.main_activity_name);
@@ -316,7 +320,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         logger.info("Setup Device button pressed");
     if (!Util.isNetworkConnected(getApplicationContext())){
         Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.  Press this button again in a minute", true ).show();
-        disableFlightModeButtonClick(null);
+       // disableFlightModeButtonClick(null);
+        disableFlightMode();
         return;
     }
 
@@ -340,6 +345,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
 
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
 
             //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -421,7 +427,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public  void disableFlightModeButtonClick(@SuppressWarnings("UnusedParameters") View v){
         logger.info("Disable Flight Mode button pressed");
-        Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
+
         disableFlightMode();
     }
 
@@ -429,6 +435,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public void disableFlightMode(){
         try {
+            Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
         new Thread()
         {
