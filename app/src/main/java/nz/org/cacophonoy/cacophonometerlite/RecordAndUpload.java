@@ -90,7 +90,8 @@ public class RecordAndUpload {
             if (typeOfRecording.equalsIgnoreCase("repeating")  ){
                 // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
                 long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-                 long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
+               //  long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
+                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 ; // 1 minute for testing
 //                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 2; // 2 hours for testing
 //                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 ; // 1 hour for testing
 
