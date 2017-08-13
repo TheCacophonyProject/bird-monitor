@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="nz.org.cacophonoy.cacophonometerlite">
+    package="nz.org.cacophony.cacophonometerlite">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_LOGS"/>
 
 
     <uses-feature android:name="android.hardware.location.gps" />
@@ -25,47 +26,49 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name="nz.org.cacophony.cacophonometerlite.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"
-                       />
+                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".BootReceiver">
+        <receiver android:name="nz.org.cacophony.cacophonometerlite.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".StartRecordingReceiver" />
+        <receiver android:name="nz.org.cacophony.cacophonometerlite.StartRecordingReceiver" />
 
-        <service android:name=".MainService" />
+        <service android:name="nz.org.cacophony.cacophonometerlite.MainService" />
 
         <activity
-            android:name=".SetupActivity"
+            android:name="nz.org.cacophony.cacophonometerlite.SetupActivity"
             android:label="@string/title_activity_setup"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="nz.org.cacophony.cacophonometerlite.MainActivity"
             tools:targetApi="jelly_bean">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
+                android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
         </activity>
         <activity
-            android:name=".HelpActivity"
+            android:name="nz.org.cacophony.cacophonometerlite.HelpActivity"
             android:label="@string/title_activity_help"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="nz.org.cacophony.cacophonometerlite.MainActivity"
             tools:targetApi="jelly_bean">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophonoy.cacophonometerlite.MainActivity" />
+                android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
         </activity>
 
 
     </application>
+
+
+
 
 </manifest>

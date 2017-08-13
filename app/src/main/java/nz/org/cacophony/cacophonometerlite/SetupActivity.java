@@ -1,11 +1,10 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -13,39 +12,38 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import static nz.org.cacophonoy.cacophonometerlite.R.mipmap.ic_launcher;
-import static nz.org.cacophonoy.cacophonometerlite.R.string.unregister;
-//import static nz.org.cacophonoy.cacophonometerlite.Util.disableAirplaneMode;
+import org.slf4j.Logger;
+
 
 //public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity {
     private static final String LOG_TAG = SetupActivity.class.getName();
 
     // Handler status indicators
-    static final int REGISTER_SUCCESS = 1;
-    static final int REGISTER_FAIL = 2;
+    private static final int REGISTER_SUCCESS = 1;
+    private static final int REGISTER_FAIL = 2;
     static final int RESUME = 3;
+    private static Logger logger = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-      //  EditText serverUrlEditText = (EditText) findViewById(R.id.setupServerUrlInput);
-        Prefs prefs = new Prefs(getApplicationContext());
-       // serverUrlEditText.setText(prefs.getServerUrl());
+
+        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
+        logger.info("SetupActivity onCreate" );
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -53,9 +51,16 @@ public class SetupActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setDisplayUseLogoEnabled(true);
-        ab.setLogo(R.mipmap.ic_launcher);
+        if (ab != null){
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setLogo(R.mipmap.ic_launcher);
+        }else{
+//            Log.w(LOG_TAG, "ActionBar ab is null");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "ActionBar ab is null");
+            logger.warn("ActionBar ab is null");
+        }
+
 
     }
 
@@ -68,13 +73,10 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                // User chose the "Settings" item, show the app settings UI...
-//                return true;
 
             case R.id.action_help:
                 openHelp();
-                // Toast.makeText(getApplicationContext(), "Settings updated.", Toast.LENGTH_LONG).show();
+
                 return true;
 
             default:
@@ -92,8 +94,6 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-//        ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
-//        mainScrollView.fullScroll(ScrollView.FOCUS_UP);
 
         TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
@@ -113,12 +113,6 @@ public class SetupActivity extends AppCompatActivity {
         } else
             registerStatus.setText(R.string.not_registered);
 
-        boolean simPresent = prefs.getSimCardDetected();
-        final CheckBox checkBoxSim = (CheckBox) findViewById(R.id.cbUseTestServer);
-        if (simPresent) {
-            checkBoxSim.setChecked(true);
-        } else
-            checkBoxSim.setChecked(false);
 
         boolean hasRootAccess = prefs.getHasRootAccess();
         final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
@@ -140,15 +134,21 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxUseUseShortRecordings.setChecked(true);
         } else
             checkBoxUseUseShortRecordings.setChecked(false);
+        super.onResume();
 
-
+        boolean useFullLogging = prefs.getUseFullLogging();
+        final CheckBox checkBoxUseFullLogging = (CheckBox) findViewById(R.id.cbUseFullLogging);
+        if (useFullLogging) {
+            checkBoxUseFullLogging.setChecked(true);
+        } else
+            checkBoxUseFullLogging.setChecked(false);
         super.onResume();
     }
 
-    Handler handler = new Handler(Looper.getMainLooper()) {
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
-            Log.d(LOG_TAG, "Received message.");
+
             switch (inputMessage.what) {
                 case REGISTER_SUCCESS:
                     onResume();
@@ -157,9 +157,11 @@ public class SetupActivity extends AppCompatActivity {
                     try {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
                     }catch (Exception ex){
-                        Log.e(LOG_TAG, ex.getLocalizedMessage());
+                        //Log.e(LOG_TAG, ex.getLocalizedMessage());
+                        logger.error(ex.getLocalizedMessage());
                     }
-                    Toast.makeText(getApplicationContext(), "Registered device.", Toast.LENGTH_SHORT).show();
+
+                    Util.getToast(getApplicationContext(),"Success - Device has been registered with the server :-)", false ).show();
                     break;
                 case REGISTER_FAIL:
                     onResume();
@@ -168,7 +170,8 @@ public class SetupActivity extends AppCompatActivity {
                     if(Server.getErrorMessage() != null){
                         errorMessage = Server.getErrorMessage();
                     }
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+
+                    Util.getToast(getApplicationContext(),errorMessage, true ).show();
                 case RESUME:
                     onResume();
                 default:
@@ -180,24 +183,38 @@ public class SetupActivity extends AppCompatActivity {
 
     public void registerButton(View v) {
 
-        Util.disableFlightMode(getApplicationContext());
+        Prefs prefs = new Prefs(getApplicationContext());
 
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
-            Log.e(LOG_TAG, "Failed to disable airplane mode");
-            return ;
+        if (prefs.getGroupName() != null){
+            Util.getToast(getApplicationContext(),"Already registered - press UNREGISTER first (if you really want to change group)", true ).show();
+            return;
+        }
+        // Check that the group name is valid, at least 4 characters.
+        String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
+        if (group == null || group.length() < 1){
+            Util.getToast(getApplicationContext(),"Please enter a group name of at least 4 characters (no spaces)", true ).show();
+            return;
+        }else if (group.length() < 4) {
+//            Log.i("Register", "Invalid group name: "+group);
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Invalid group name: "+group);
+            logger.info("Invalid group name: "+group);
+
+            Util.getToast(getApplicationContext(),group + " is not a valid group name. Please use at least 4 characters (no spaces)", true ).show();
+            return;
         }
 
 
+
+        Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
+
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        //Get Group from text field.
-        String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
-        Prefs prefs = new Prefs(getApplicationContext());
+
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-            Toast.makeText(getApplicationContext(), "Already registered with that group.", Toast.LENGTH_SHORT).show();
+
+            Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
             return;
         }
         register(group, getApplicationContext());
@@ -207,28 +224,32 @@ public class SetupActivity extends AppCompatActivity {
      * Un-registered a device deleting the password, devicename, and JWT.
      * @param v View
      */
-    public void unRegisterButton(View v) {
-        unregister();
+    public void unRegisterButton(@SuppressWarnings("UnusedParameters") View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        if (prefs.getGroupName() == null){
+            Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
+            return;
+        }
+        unregister(true);
 
-//        Log.d(LOG_TAG, "Un-register device.");
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        prefs.setGroupName(null);
-//        prefs.setPassword(null);
-//        prefs.setDeviceName(null);
-//        Server.loggedIn = false;
-//        onResume();
     }
 
-    public void unregister(){
+    private void unregister(boolean displayUnregisterdMessage){
         try {
-            Log.d(LOG_TAG, "Un-register device.");
+        //    Log.d(LOG_TAG, "Un-register device.");
             Prefs prefs = new Prefs(getApplicationContext());
             prefs.setGroupName(null);
             prefs.setPassword(null);
             prefs.setDeviceName(null);
             Server.loggedIn = false;
+            if (displayUnregisterdMessage){
+                Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
+            }
+
         }catch(Exception ex){
-            Log.e(LOG_TAG, "Error Un-registering device.");
+//            Log.e(LOG_TAG, "Error Un-registering device.");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error Un-registering device.");
+            logger.error("Error Un-registering device.");
         }
         onResume();
         ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
@@ -237,14 +258,26 @@ public class SetupActivity extends AppCompatActivity {
 
     /**
      * Will register the device in the given group saving the JSON Web Token, devicename, and password.
-     * @param group name of goup to join.
+     * @param group name of group to join.
      */
-    public void register(final String group, final Context context) {
+    private void register(final String group, final Context context) {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
-            Log.i("Register", "Invalid group name: "+group);
-            Toast.makeText(context, "Invalid Group name: "+group, Toast.LENGTH_SHORT).show();
+
+//            Log.e(LOG_TAG, "Invalid group name - this should have already been picked up");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Invalid group name - this should have already been picked up");
+            logger.error("Invalid group name - this should have already been picked up");
             return;
+        }
+
+        disableFlightMode();
+
+        // Now wait for network connection as setFlightMode takes a while
+        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
+//            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Failed to disable airplane mode");
+            logger.error("Failed to disable airplane mode");
+            return ;
         }
 
 
@@ -254,7 +287,6 @@ public class SetupActivity extends AppCompatActivity {
                 Message message = handler.obtainMessage();
                 if (Server.register(group, context)) {
                     message.what = REGISTER_SUCCESS;
-
 
                 } else {
                     message.what = REGISTER_FAIL;
@@ -267,25 +299,12 @@ public class SetupActivity extends AppCompatActivity {
 
 
 
-//    public void updateServerUrlButton(View v) {
-//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//        String newUrl =  ((EditText) findViewById(R.id.setupServerUrlInput)).getText().toString();
-//        if (URLUtil.isValidUrl(newUrl)) {
-//            Prefs prefs = new Prefs(getApplicationContext());
-//            prefs.setServerUrl(newUrl);
-//            Toast.makeText(getApplicationContext(), "Updated Server URL", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
-    public void updateGPSLocationButton(View v) {
+    public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
 
 
-        Log.i(LOG_TAG, "Update location button");
-        Toast.makeText(getApplicationContext(), "Getting new Location...", Toast.LENGTH_SHORT).show();
-
+//        Log.i(LOG_TAG, "Update location button");
+        logger.debug("Update location button");
+        Util.getToast(getApplicationContext(),"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
@@ -294,19 +313,18 @@ public class SetupActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-
-
-
         GPSLocationListener gpsLocationListener = new GPSLocationListener(getApplicationContext(), handler);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, getApplicationContext().getMainLooper());
         } catch (SecurityException e) {
-            Log.e(LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
+//            Log.e(LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
+            logger.error("Unable to get GPS location. Don't have required permissions.");
         }
 
     }
 
-    public void disableGPSButton(View v) {
+    public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -315,24 +333,14 @@ public class SetupActivity extends AppCompatActivity {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
         }else{
-            Toast.makeText(getApplicationContext(), "GPS is already off", Toast.LENGTH_LONG).show();
+
+            Util.getToast(getApplicationContext(),"GPS is already off", true ).show();
         }
 
 
 
     }
 
-//    public void onCheckboxSimPresentClicked(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setSimCardDetected(true);
-//        }else{
-//            prefs.setSimCardDetected(false);
-//        }
-//
-//    }
 
     public void onCheckboxRootedClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -358,6 +366,18 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
+    public void onCheckboxUseFullLogginClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseFullLogging(true);
+        }else{
+            prefs.setUseFullLogging(false);
+        }
+        Util.setLogbackConfigured(false);
+    }
+
     public void onCheckboxUseTestServerClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
@@ -368,9 +388,32 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setUseTestServer(false);
         }
-        unregister();
+        unregister(false);// false means don't display unregistered message
     }
 
+    public void disableFlightMode(){
+        try {
+            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
+            new Thread()
+            {
+                public void run()
+                {
+                    SetupActivity.this.runOnUiThread(new Runnable()
+                    {
+                        public void run()
+                        {
+                            Util.disableFlightMode(getApplicationContext());
+                        }
+                    });
+                }
+            }.start();
 
+
+
+        }catch (Exception ex){
+            logger.error(ex.getLocalizedMessage());
+            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+        }
+    }
 
 }

@@ -1,32 +1,24 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
-
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+//import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import cz.msebera.android.httpclient.Header;
 
-import static android.R.attr.data;
-
+import static nz.org.cacophony.cacophonometerlite.Util.sendMainActivityAMessage;
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -46,7 +38,13 @@ class Server {
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
-
+    private static Logger logger = null;
+    static
+    {
+        if (logger == null){
+            logger =  LoggerFactory.getLogger(LOG_TAG); // couldn't call getAndConfigureLogger as no context is currently available.  But this should work as Util.configureLogbackDirectly(context) should have been called by now.
+        }
+    }
 
     /**
      * Will ping server and try to login.
@@ -54,28 +52,32 @@ class Server {
      * @param context app context
      */
     static void updateServerConnectionStatus(Context context) {
+        logger.info("updateServerConnectionStatus method");
+try {
+    Util.disableFlightMode(context);
+    // Now wait for network connection as setFlightMode takes a while
+    if (!Util.waitForNetworkConnection(context, true)) {
+
+        logger.error("Failed to disable airplane mode");
+        return;
+    }
 
 
 
-        Util.disableFlightMode(context);
+    if (!ping(context)) {
+        logger.error("Could not connect to server");
+    } else {
+        login(context);
+    }
 
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(context, true)){
-            Log.e(LOG_TAG, "Failed to disable airplane mode");
-            return ;
-        }
-
-
-        Log.i(LOG_TAG, "Updating server connection status.");
-
-        if (!ping(context)) {
-            Log.d(LOG_TAG, "Could not connect to server");
-
-        } else {
-            login(context);
-        }
-
-        Util.enableFlightMode(context);
+    Util.enableFlightMode(context);
+}catch (Exception ex){
+    logger.error(ex.getLocalizedMessage());
+}finally {
+    Util.sendMainActivityAMessage(context, "enable_vitals_button");
+    Util.sendMainActivityAMessage(context, "enable_test_recording_button");
+    Util.sendMainActivityAMessage(context, "enable_setup_button");
+}
     }
 
     /**
@@ -90,15 +92,16 @@ class Server {
             Util.disableFlightMode(context);
         }
 
-
-
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(context, true)){
-            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
+            logger.error("Failed to disable airplane mode");
             return false;
         }
 
         SyncHttpClient client = new SyncHttpClient();
+
         Prefs prefs = new Prefs(context);
         boolean useTestServer = prefs.getUseTestServer();
         client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
@@ -124,28 +127,30 @@ class Server {
      * @return if login was successful
      */
 //    private static boolean login(Context context) {
-    public static boolean login(Context context) {
-
+    static boolean login(Context context) {
 
         Util.disableFlightMode(context);
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(context, true)){
-            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            Log.e(LOG_TAG, "Failed to disable airplane mode");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
+
+            logger.error("Failed to disable airplane mode");
             return false;
         }
 
         // Get credentials from shared preferences.
-
         Prefs prefs = new Prefs(context);
-
         String devicename = prefs.getDeviceName();
         String password = prefs.getPassword();
         String group = prefs.getGroupName();
         if (devicename == null || password == null || group == null) {
 
-            // One or more credentials are null, failed login.
-            Log.d(LOG_TAG, "No credentials to login with.");
+            // One or more credentials are null, so can not attempt to login.
+//            Log.e(LOG_TAG, "No credentials to login with.");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "No credentials to login with.");
+            logger.error("No credentials to login with.");
             loggedIn = false;
             return false;
         }
@@ -166,17 +171,19 @@ class Server {
                 try {
                     JSONObject joRes = new JSONObject(responseString);
                     if (joRes.getBoolean("success")) {
-                        Log.i("Login", "Successful login.");
+//                        Log.i("Login", "Successful login.");
+                        logger.info("Login", "Successful login.");
                         loggedIn = true;
                         setToken(joRes.getString("token"));  // Save JWT (JSON Web Token)
-
 
                     } else {
                         loggedIn = false;
                         setToken(null);
                     }
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, "Error with parsing register response into a JSON.");
+                   // Log.e(LOG_TAG, "Error with parsing register response into a JSON.");
+                    logger.error("Error with parsing register response into a JSON.");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -186,7 +193,8 @@ class Server {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 if (statusCode == 401) {
                     loggedIn = false;
-                    Log.e(LOG_TAG, "Invalid devicename or password for login.");
+//                    Log.e(LOG_TAG, "Invalid devicename or password for login.");
+                    logger.error("Invalid devicename or password for login.");
                 } else {
                     loggedIn = false;
                 }
@@ -207,7 +215,9 @@ class Server {
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
-            Log.i("Register", "Invalid group name: " + group);
+//            Log.i("Register", "Invalid group name: " + group);
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Invalid group name: " + group);
+            logger.info("Register", "Invalid group name: " + group);
             return false;
         }
         SyncHttpClient client = new SyncHttpClient();
@@ -236,7 +246,7 @@ class Server {
                         setToken(joRes.getString("token"));
 
                         // look at web token
-                        String deviceID = Util.getDeviceID(getToken());
+                        String deviceID = Util.getDeviceID(context, getToken());
                         prefs.setDeviceId(deviceID);
 
                         prefs.setDeviceName(devicename);
@@ -248,11 +258,15 @@ class Server {
                         // Failed register.
                         loggedIn = false;
                     }
-                } catch (JSONException e) {
+                } catch (JSONException ex) {
                     loggedIn = false;
-                    Log.e(LOG_TAG, "Error with parsing register response into a JSON");
-                } catch (Exception e) {
-                    e.printStackTrace();
+//                    Log.e(LOG_TAG, "Error with parsing register response into a JSON");
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register response into a JSON");
+                    logger.error("Error with parsing register response into a JSON");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+                    logger.error(ex.getLocalizedMessage());
                 }
             }
 
@@ -264,12 +278,17 @@ class Server {
                    JSONArray messages = joRes.getJSONArray("messages");
                     String firstMessage = (String) messages.get(0);
                     setErrorMessage(firstMessage);
-                    Log.i(LOG_TAG, firstMessage);
+//                    Log.i(LOG_TAG, firstMessage);
+                    logger.info(firstMessage);
                 }catch (Exception ex){
-                    Log.e(LOG_TAG, "Error with parsing register errorResponse into a JSON");
+//                    Log.e(LOG_TAG, "Error with parsing register errorResponse into a JSON");
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register errorResponse into a JSON");
+                    logger.error("Error with parsing register errorResponse into a JSON");
                 }
                 loggedIn = false;
-                Log.e(LOG_TAG, "Error with getting response from server");
+//                Log.e(LOG_TAG, "Error with getting response from server");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getting response from server");
+                logger.error("Error with getting response from server");
             }
         });
         return loggedIn;
@@ -287,14 +306,18 @@ class Server {
         Prefs prefs = new Prefs(context);
 
         if (audioFile == null || data == null) {
-            Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
+//            Log.e(LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
+            logger.error("uploadAudioRecording: Invalid audioFile or JSONObject. Aborting upload");
             return false;
         }
 
         // Check that there is a JWT (JSON Web Token)
         if (getToken() == null) {
             if (!login(context)) {
-                Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
+//                Log.w(LOG_TAG, "sendFile: no JWT. Aborting upload");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "sendFile: no JWT. Aborting upload");
+                logger.error("sendFile: no JWT. Aborting upload");
 
                 return false; // Can't upload without JWT, login/register device to get JWT.
             }
@@ -308,12 +331,16 @@ class Server {
         try {
             params.put("file", audioFile);
         } catch (FileNotFoundException e) {
-            Log.e(LOG_TAG, "File not found, can't upload...");
+//            Log.e(LOG_TAG, "File not found, can't upload...");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "File not found, can't upload...");
+            logger.error("File not found, can't upload...");
             return false;
         }
 
         if (uploading) {
-            Log.d(LOG_TAG, "Already uploading. Wait until last upload is finished.");
+//            Log.d(LOG_TAG, "Already uploading. Wait until last upload is finished.");
+//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Already uploading. Wait until last upload is finished.");
+            logger.info("Already uploading. Wait until last upload is finished.");
             return false;
         }
         uploading = true;
@@ -326,41 +353,54 @@ class Server {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
-                Log.i(LOG_TAG, "sendFile: onSuccess: Successful upload.");
+//                Log.i(LOG_TAG, "sendFile: onSuccess: Successful upload.");
+                logger.info("Successful upload");
                 uploadSuccess = true;
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                Log.i(LOG_TAG, "sendFile: onSuccess: Failed upload.");
+//                Log.w(LOG_TAG, "sendFile: onSuccess: Failed upload.");
+                logger.error("Failed upload.");
+
                 uploadSuccess = false;
             }
         });
-        Log.d(LOG_TAG, "uploadAudioRecording: finished.");
+//        Log.d(LOG_TAG, "uploadAudioRecording: finished.");
+    //    logger.info("uploadAudioRecording: finished.");
         uploading = false;
 
         return uploadSuccess;
     }
 
-    public static String getToken() {
+    static String getToken() {
         return token;
     }
 
-    public static void setToken(String token) {
+    private static void setToken(String token) {
         Server.token = token;
     }
 
-    public static void setErrorMessage(String errorMessage){
+    private static void setErrorMessage(String errorMessage){
         Server.errorMessage = errorMessage;
     }
 
-    public static String getErrorMessage() {
+    static String getErrorMessage() {
         return errorMessage;
     }
 
 
-
+//    static void sendMainActivityAMessage(Context context, String message){
+//        // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//        Intent intent = new Intent("event");
+//        // You can also include some extra data.
+//      //  intent.putExtra("message", "enable_vitals_button");
+//        intent.putExtra("message", message);
+//        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//
+//    }
 
 
 }

@@ -1,36 +1,49 @@
-package nz.org.cacophonoy.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-
 import java.util.GregorianCalendar;
-
 import java.util.Calendar;
 import java.util.TimeZone;
-
-
 import static android.content.Context.ALARM_SERVICE;
+//import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 
 /**
  * Created by User on 07-Mar-17.
+ * This class is used to calculate the actual times of dawn and dusk for each day at any specified location
+ * It is used by the code that sets the extra alarms/recordings around dawn and dusk
  */
 
-public class DawnDuskAlarms {
+class DawnDuskAlarms {
 
     // Need to have recordings that automatically run around dawn and dusk
     // Use code from https://github.com/mikereedell/sunrisesunsetlib-java to get sunrise and sunset for either today or tomorrow, and then offset by the length of twilight - average of 29 mins for NZ
     // To make app robust (hopefully) these alarms are reset every time a periodic alarm runs.
 
-    // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
-    // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
+// --Commented out by Inspection START (12-Jun-17 1:56 PM):
+//    // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
+//    // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
+//    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
+// --Commented out by Inspection STOP (12-Jun-17 1:56 PM)
+
     private static final String LOG_TAG = DawnDuskAlarms.class.getName();
 
+    static Logger logger;
 
-    public static void configureDawnAlarms(Context context) {
-        //
+          static  Logger getLogger (Context context){
+                if (logger == null){
+                    logger = Util.getAndConfigureLogger(context, LOG_TAG);
+                }
+                return logger;
+            }
+
+
+    static void configureDawnAlarms(Context context) {
+        getLogger(context).info("About to configure Dawn Alarms");
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
@@ -43,17 +56,13 @@ public class DawnDuskAlarms {
         nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
       //  System.out.println("nowTomorrow " + nowTomorrow.getTime());
 
-        PendingIntent pendingIntent = null;
-        Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dawn");
 
-
-
         Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
-
-
         Calendar dawnTomorrowCalendar =  Util.getDawn(context, nowTomorrow);
 
         dawnTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds);
@@ -112,54 +121,28 @@ public class DawnDuskAlarms {
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
         }
-
-//        // test dawn/dusk alarms
-//        timeUri = Uri.parse("dawnDuskTest1");
-//        myIntent.setData(timeUri);
-//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 1, pendingIntent);
-//
-//        timeUri = Uri.parse("dawnDuskTest2");
-//        myIntent.setData(timeUri);
-//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 2, pendingIntent);
-//
-//        timeUri = Uri.parse("dawnDuskTest3");
-//        myIntent.setData(timeUri);
-//        pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, nowToday.getTimeInMillis() + 1000 * 60 * 3, pendingIntent);
-
     }
 
 
-    public static void configureDuskAlarms(Context context) {
+    static void configureDuskAlarms(Context context) {
+        getLogger(context).info("About to configure Dusk Alarms");
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
         int differenceBetweenSmallAndLarge = dawnDuskOffsetLargeSeconds - dawnDuskOffsetSmallSeconds; // used later to set alarms relative to each other
-     //   int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
 
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
         Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
         nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        //  System.out.println("nowTomorrow " + nowTomorrow.getTime());
 
-        PendingIntent pendingIntent = null;
-        Uri timeUri = null; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         myIntent.putExtra("type", "dusk");
 
-//        Calendar sunSetTodayCalendar = Util.getSunrise(context, nowToday);
-//        Calendar duskTodayCalendar = (Calendar) sunSetTodayCalendar.clone();
-//        duskTodayCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
         Calendar duskTodayCalendar = Util.getDusk(context, nowToday);
-
-//        Calendar sunSetTomorrowCalendar = Util.getSunrise(context, nowTomorrow);
-//        Calendar duskTomorrowCalendar = (Calendar) sunSetTomorrowCalendar.clone();
-//        duskTomorrowCalendar.add(Calendar.SECOND, lengthOfTwilight); // going to use dusk rather than sunset
-
         Calendar duskTomorrowCalendar = Util.getDusk(context, nowTomorrow);
 
         duskTodayCalendar.add(Calendar.SECOND, -dawnDuskOffsetLargeSeconds); // 40 minutes before dusk
@@ -169,10 +152,10 @@ public class DawnDuskAlarms {
         pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
-           // System.out.println("today dawnMinus40Minutes " + duskTodayCalendar.getTime());
+
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
-           // System.out.println("tomorrow dawnMinus40Minutes " + duskTomorrowCalendar.getTime());
+
         }
 
         duskTodayCalendar.add(Calendar.SECOND, differenceBetweenSmallAndLarge); // now 10 minutes before dusk
@@ -218,12 +201,6 @@ public class DawnDuskAlarms {
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
         }
-
-
-
-
     }
-
-
 
 }

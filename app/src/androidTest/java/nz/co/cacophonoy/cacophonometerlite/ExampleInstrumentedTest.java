@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("nz.co.cacophonoy.cacophonometerlite", appContext.getPackageName());
+        assertEquals("nz.co.cacophony.cacophonometerlite", appContext.getPackageName());
     }
 }
