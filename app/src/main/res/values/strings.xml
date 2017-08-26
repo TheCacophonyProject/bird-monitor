@@ -18,10 +18,12 @@
     <string name="enable_flight_mode">Enable Flight (Airplane) mode</string>
 
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
-    <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details">Select the following box if the phone is rooted and the app is a system app (refer to help for details)</string>
+    <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app is a system app</string>
     <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed as system app.</string>
     <string name="device_not_registered">Device Not Registered</string>
-    <string name="to_register_a_device___">To register a device: 1) Register/login on the Cacophonometer website. 2) Create a Group with that user. 3) Enter the Group name in the field above and press Register. Multiple devices can be in the same group.</string>
+    <string name="to_register_title">To register this device</string>
+
+    <string name="to_register_intructions">(Press the ? icon for full instructions): \n\n1) Register on the Cacophonometer data server (http://103.16.20.22). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
 
@@ -55,13 +57,10 @@
     <string name="required_permissions_false">Required Permissions: ✘</string>
     <string name="not_registered">Device not registered.</string>
 
-    <string name="help_text">Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow us to monitor the birdsong near your phone.
+    <string name="help_text">Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.
 \n\n
-To use this app you will first need to register on the data server and create a group.  You will then enter the group name into this app.
-        \n\n
-        You are then ready to press the \'Setup Device\' button to configure the app:\n1) Register the phone with your group,\n2) Get the GPS location,\n\nAnd for Experts only \n3) Decide on the server and \n4) Select if you are using \'root\' access.  This is only needed if you are using a solar panel AND your phone uses Android 4.2 or above.  It allows the app to turn airplane (flight) mode on and off to save power.
-\n\n
-After you have finished the setup, go back to the main screen and press the \'REFRESH\' button to check that the app can connect to the server - if all is OK you will see ticks next to the various App Vitals, and a \'Device ID\' number.  You can then press the \'START TEST RECORDING\' button.  This will make a 5 second recording and send it to the server.
+To use this app first register on the data server (http://103.16.20.22) AND create a group name (also on the server).
+        \n\nOnce you have created the group name on the data server, press the \'Setup Device\' button and follow the instructions to configure the app.
 \n\n
 If you are using a solar panel then it is important to turn off and/or remove everything on your phone that might consume power e.g. email accounts that sync with the server, set screen brightness and timeout to a minimum, turn off bluetooth and GPS.  It might be a good idea to disable as many of the apps that came with the phone.
 \n\n
@@ -70,7 +69,7 @@ Once recordings have been sent to the server (once every 6 hours) you will be ab
 Thank you again for supporting The Cacophony Project\n
 https://cacophony.org.nz/</string>
 
-    <string name="perform_a_test_recording">Perform a Test Recording</string>
+    <string name="perform_a_test_recording">Perform a 5 second Test Recording</string>
     <string name="group_name">Group name</string>
     <string name="refresh">Refresh</string>
 

@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -319,8 +321,10 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
     try{
         logger.info("Setup Device button pressed");
     if (!Util.isNetworkConnected(getApplicationContext())){
-        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.  Press this button again in a minute", true ).show();
-       // disableFlightModeButtonClick(null);
+        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.", true ).show();
+        Util.getToast(getApplicationContext(),"You will need to press the SETUP button again once there is a network connection", true ).show();
+
+        // disableFlightModeButtonClick(null);
         disableFlightMode();
         return;
     }
@@ -365,7 +369,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
                 logger.error(ex.getLocalizedMessage());
             }
-            Util.getToast(getApplicationContext(), "Getting ready to record - please wait", false).show();
+        //    Util.getToast(getApplicationContext(), "Getting ready to record - please wait", false).show();
             ((Button)v).setEnabled(false);
             ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
             ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(false);

@@ -577,14 +577,14 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             }
 
             numberOfLoops += 1;
-            if (numberOfLoops > 20) {
+            if (numberOfLoops > 60) {
 //                Log.e(LOG_TAG, "Number of loops > 20");
-                logger.error("Number of loops > 20");
+                logger.error("Number of loops > 60");
                 break;
             }
         }
         //noinspection RedundantIfStatement
-        if (numberOfLoops > 20) {
+        if (numberOfLoops > 60) {
             return false;
         }
         return true;

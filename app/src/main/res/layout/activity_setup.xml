@@ -41,26 +41,35 @@
             >
 
             <TextView
+                android:id="@+id/toRegisterTitle"
+                android:text="@string/to_register_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupDeviceRegisterInfo"
+                android:text="@string/to_register_intructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toRegisterTitle"
+
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+            <TextView
                 android:id="@+id/setupRegisterStatus"
-                android:layout_alignParentTop="true"
                 android:text="@string/device_not_registered"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/setupDeviceRegisterInfo"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp"
                 />
-
-            <TextView
-                android:id="@+id/setupDeviceRegisterInfo"
-                android:text="@string/to_register_a_device___"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupRegisterStatus"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
 
             <EditText
                 android:id="@+id/setupGroupNameInput"
@@ -69,7 +78,7 @@
                 android:inputType="text"
                 android:ems="10"
                 android:hint="@string/group_name"
-                android:layout_below="@id/setupDeviceRegisterInfo"
+                android:layout_below="@id/setupRegisterStatus"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -167,43 +176,6 @@
                 android:layout_below="@id/disableGPSButton"
                 android:layout_marginTop="5dp" />
 
-            <TextView
-                android:id="@+id/useTestServerTitle"
-                android:text="@string/set_test_server_title"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor3"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/useTestServerMessage"
-                android:text="@string/set_test_server_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/useTestServerTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbUseTestServer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/useTestServerMessage"
-                android:checked="false"
-                android:onClick="onCheckboxUseTestServerClicked"
-                android:text="@string/set_test_server_cb_message" />
-
-            <View
-                android:id="@+id/SplitLine_hor4"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/cbUseTestServer"
-                android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/setupRootTitle"
@@ -213,12 +185,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor4"
+                android:layout_below="@id/SplitLine_hor3"
                 android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/rootMessage"
-                android:text="@string/select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app_refer_to_help_for_details"
+                android:text="@string/select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupRootTitle"
