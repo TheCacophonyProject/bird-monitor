@@ -184,9 +184,11 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
-            return batteryPercent > 75;
+          //  return batteryPercent > 75;
+            return batteryPercent > 85;
         }else { // must be a dawn or dusk alarm
-            return batteryPercent > 50;
+            //return batteryPercent > 50;
+            return batteryPercent > 75;
         }
 
     }

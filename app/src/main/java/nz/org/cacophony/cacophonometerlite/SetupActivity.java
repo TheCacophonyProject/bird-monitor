@@ -121,12 +121,12 @@ public class SetupActivity extends AppCompatActivity {
         } else
             checkBoxRootAccess.setChecked(false);
 
-        boolean useTestServer = prefs.getUseTestServer();
-        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
-        if (useTestServer) {
-            checkBoxUseTestServer.setChecked(true);
-        } else
-            checkBoxUseTestServer.setChecked(false);
+//        boolean useTestServer = prefs.getUseTestServer();
+//        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
+//        if (useTestServer) {
+//            checkBoxUseTestServer.setChecked(true);
+//        } else
+//            checkBoxUseTestServer.setChecked(false);
 
         boolean useShortRecordings = prefs.getUseShortRecordings();
         final CheckBox checkBoxUseUseShortRecordings = (CheckBox) findViewById(R.id.cbShortRecordings);
@@ -378,18 +378,18 @@ public class SetupActivity extends AppCompatActivity {
         Util.setLogbackConfigured(false);
     }
 
-    public void onCheckboxUseTestServerClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setUseTestServer(true);
-
-        }else{
-            prefs.setUseTestServer(false);
-        }
-        unregister(false);// false means don't display unregistered message
-    }
+//    public void onCheckboxUseTestServerClicked(View v) {
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        // Is the view now checked?
+//        boolean checked = ((CheckBox) v).isChecked();
+//        if (checked){
+//            prefs.setUseTestServer(true);
+//
+//        }else{
+//            prefs.setUseTestServer(false);
+//        }
+//        unregister(false);// false means don't display unregistered message
+//    }
 
     public void disableFlightMode(){
         try {

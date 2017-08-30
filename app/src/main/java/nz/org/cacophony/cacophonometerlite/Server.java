@@ -103,8 +103,9 @@ try {
         SyncHttpClient client = new SyncHttpClient();
 
         Prefs prefs = new Prefs(context);
-        boolean useTestServer = prefs.getUseTestServer();
-        client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
+//        boolean useTestServer = prefs.getUseTestServer();
+//        client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
+             client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -161,9 +162,10 @@ try {
         params.put("devicename", devicename);
         params.put("password", password);
 
-        boolean useTestServer = prefs.getUseTestServer();
-
-        client.post(prefs.getServerUrl(useTestServer) + LOGIN_URL, params, new AsyncHttpResponseHandler() {
+//        boolean useTestServer = prefs.getUseTestServer();
+//
+//        client.post(prefs.getServerUrl(useTestServer) + LOGIN_URL, params, new AsyncHttpResponseHandler() {
+            client.post(prefs.getServerUrl() + LOGIN_URL, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -233,9 +235,9 @@ try {
         final Prefs prefs = new Prefs(context);
 
         // Sent Post request.
-        boolean useTestServer = prefs.getUseTestServer();
-        client.post(prefs.getServerUrl(useTestServer) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
-
+//        boolean useTestServer = prefs.getUseTestServer();
+//        client.post(prefs.getServerUrl(useTestServer) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl() + REGISTER_URL, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 String responseString = new String(response);
@@ -347,9 +349,9 @@ try {
 
 
         // Send request
-        boolean useTestServer = prefs.getUseTestServer();
-        client.post(prefs.getServerUrl(useTestServer) + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
-
+       // boolean useTestServer = prefs.getUseTestServer();
+//        client.post(prefs.getServerUrl(useTestServer) + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
