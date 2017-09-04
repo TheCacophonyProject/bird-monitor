@@ -50,6 +50,8 @@ public class MainService extends IntentService {
       }catch (Exception ex){
 //          Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
           logger.error(ex.getLocalizedMessage());
+      }finally {
+          Util.enableFlightMode(getApplicationContext());
       }
 
     }

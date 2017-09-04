@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 
 import static android.widget.Toast.makeText;
 import static com.loopj.android.http.AsyncHttpClient.log;
+import static nz.org.cacophony.cacophonometerlite.R.id.gpsText;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -234,7 +235,9 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onResume() {
+     //   super.onResume();
         logger.info("MainActivity onResume" );
+        disableFlightMode();
         checkPermissions();
 
         Prefs prefs = new Prefs(getApplicationContext());
@@ -267,7 +270,23 @@ public class MainActivity extends AppCompatActivity {
             deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),Server.getToken()));
         } catch (Exception e) {
 
-            logger.error("Device ID not available using my method");
+            logger.error("Device ID not available");
+        }
+
+        // GPS text.
+
+        try {
+            double lat = prefs.getLatitude();
+            double lon = prefs.getLongitude();
+
+            if (lat != 0 && lon != 0) {
+                TextView gpsText = (TextView) findViewById(R.id.gpsText);
+                gpsText.setText(getString(R.string.gps_text) + " " + "Latitude: "+lat+", Longitude: "+lon);
+            }
+
+        } catch (Exception e) {
+
+            logger.error("Device ID not available");
         }
 
         // Application name text  appNameVersionText
@@ -439,7 +458,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public void disableFlightMode(){
         try {
-            Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
+           // Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
         new Thread()
         {
@@ -449,7 +468,11 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
                 {
                     public void run()
                     {
-                        Util.disableFlightMode(getApplicationContext());
+                        String message = Util.disableFlightMode(getApplicationContext());
+                        if (message != null){
+                            ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
+                        }
+
                     }
                 });
             }

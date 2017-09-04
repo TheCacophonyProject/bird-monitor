@@ -118,6 +118,23 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+            <TextView
+                android:id="@+id/gpsText"
+                android:text="@string/gps_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/deviceIDText"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/messageText"
+                android:text="@string/message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gpsText"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
 
             <Button
@@ -135,7 +152,7 @@
         android:text="@string/perform_a_test_recording"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/deviceIDText"
+        android:layout_below="@id/messageText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp"

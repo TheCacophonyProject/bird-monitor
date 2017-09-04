@@ -599,7 +599,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
 
 
-    static void disableFlightMode(Context context) {
+    static String disableFlightMode(Context context) {
         try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 // API 17 onwards.
@@ -609,10 +609,11 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
                 if (!prefs.getHasRootAccess()) {
 
                     logger.info("Do NOT have required ROOT access");
-                    Util.getToast(context, "Root access required to change airplane mode", true).show();
+                 //   Util.getToast(context, "Root access required to change airplane mode", true).show();
+                //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
 
+                    return "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details.";
 
-                    return ;
                 }
 
                 // Set Airplane / Flight mode using su commands.
@@ -636,7 +637,7 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             logger.error(ex.getLocalizedMessage());
 
         }
-        return ;
+        return null;
     }
 
     static void enableFlightMode(Context context) {
@@ -652,7 +653,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
                 logger.error("Do NOT have required ROOT access");
 
-                Util.getToast(context,"Root access required to change airplane mode", true ).show();
+           //     Util.getToast(context,"Root access required to change airplane mode", true ).show();
+                Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
+
                 return;
             }
 

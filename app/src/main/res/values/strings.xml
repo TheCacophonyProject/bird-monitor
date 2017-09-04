@@ -41,6 +41,8 @@
     <string name="help">Help</string>
 
     <string name="device_id">Device ID</string>
+    <string name="gps_text">GPS location: </string>
+    <string name="message_text">Messages: </string>message_text
     <string name="version">Version ID</string>
 
     <string name="short_record_length_title">Short Record Length (Testing Only)</string>

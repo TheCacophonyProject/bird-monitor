@@ -44,6 +44,8 @@ public class BootReceiver extends BroadcastReceiver {
 //        }
         logger = Util.getAndConfigureLogger(context, LOG_TAG);
         logger.info("BootReceiver onReceive" );
+
+        Util.enableFlightMode(context);
         String intentAction = intent.getAction();
 
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);

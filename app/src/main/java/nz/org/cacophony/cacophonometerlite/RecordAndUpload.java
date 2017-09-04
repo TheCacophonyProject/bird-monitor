@@ -312,13 +312,13 @@ class RecordAndUpload {
             logger.error(ex.getLocalizedMessage());
             return false;
         }finally {
-            Util.enableFlightMode(context);
-            // Now wait for network connection to close as  setFlightMode takes a while
-            if (!Util.waitForNetworkConnection(context, false)){
-
-                logger.error("Failed to disable airplane mode");
-
-            }
+//            Util.enableFlightMode(context);
+//            // Now wait for network connection to close as  setFlightMode takes a while
+//            if (!Util.waitForNetworkConnection(context, false)){
+//
+//                logger.error("Failed to disable airplane mode");
+//
+//            }
         }
 
     }

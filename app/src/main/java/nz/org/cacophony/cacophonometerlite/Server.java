@@ -70,7 +70,7 @@ try {
         login(context);
     }
 
-    Util.enableFlightMode(context);
+//    Util.enableFlightMode(context);
 }catch (Exception ex){
     logger.error(ex.getLocalizedMessage());
 }finally {
