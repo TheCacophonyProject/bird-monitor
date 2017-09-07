@@ -11,16 +11,18 @@ import android.content.Intent;
 import android.net.Uri;
 
 import android.os.SystemClock;
+import android.util.Log;
 //import android.util.Log;
 
 
-import org.slf4j.Logger;
+//import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
 import static android.content.Context.ALARM_SERVICE;
-
+//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 public class BootReceiver extends BroadcastReceiver {
@@ -28,8 +30,8 @@ public class BootReceiver extends BroadcastReceiver {
     // This means the recordings will be made without having to reopen the application
     // Note: If you need to change any settings, then you will need to open the application which will save those settings
     // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
-    private static final String LOG_TAG = "BootReceiver";
-    private static Logger logger = null;
+    private static final String TAG = "BootReceiver";
+  //  private static Logger logger = null;
 //    static {
 //        BasicLogcatConfigurator.configureDefaultContext();
 //    }
@@ -42,8 +44,8 @@ public class BootReceiver extends BroadcastReceiver {
 //        for (int i = 0; i < 10; i++) {
 //            logger.info("BootReceiver onCreate");
 //        }
-        logger = Util.getAndConfigureLogger(context, LOG_TAG);
-        logger.info("BootReceiver onReceive" );
+       // logger = Util.getAndConfigureLogger(context, LOG_TAG);
+      //  logger.info("BootReceiver onReceive" );
 
         Util.enableFlightMode(context);
         String intentAction = intent.getAction();
@@ -58,9 +60,9 @@ public class BootReceiver extends BroadcastReceiver {
 
         }catch (Exception ex){
 
-//            Log.e(LOG_TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-            logger.error(ex.getLocalizedMessage());
+        //    logger.error(ex.getLocalizedMessage());
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);

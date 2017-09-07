@@ -7,17 +7,20 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 //import android.util.Log;
 //import android.widget.Toast;
 
 import org.slf4j.Logger;
+
+import static android.content.ContentValues.TAG;
 //import org.slf4j.LoggerFactory;
 
 class GPSLocationListener implements LocationListener {
-    private static final String LOG_TAG = Server.class.getName();
+    private static final String TAG = Server.class.getName();
 
     private Context context = null;
-    private static Logger logger = null;
+//    private static Logger logger = null;
     private Handler handler = null;
 
 
@@ -25,17 +28,17 @@ class GPSLocationListener implements LocationListener {
     GPSLocationListener(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
-        logger = Util.getAndConfigureLogger(context, LOG_TAG);
-        logger.debug("End of GPSLocationListener");
+//        logger = Util.getAndConfigureLogger(context, LOG_TAG);
+//        logger.debug("End of GPSLocationListener");
     }
 
     public void onLocationChanged(Location location) {
-        logger.debug("onLocationChanged method entered");
+//        logger.debug("onLocationChanged method entered");
        try {
            double lat = location.getLatitude();
            double lon = location.getLongitude();
            // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
-           logger.info("Latitude: " + lat + ", Longitude: " + lon);
+//           logger.info("Latitude: " + lat + ", Longitude: " + lon);
            Prefs prefs = new Prefs(context);
            prefs.setLatitude(lat);
            prefs.setLongitude(lon);
@@ -47,9 +50,10 @@ class GPSLocationListener implements LocationListener {
            message.sendToTarget();
 
        }catch (Exception ex){
-           logger.error(ex.getLocalizedMessage());
+//           logger.error(ex.getLocalizedMessage());
+           Log.e(TAG, ex.getLocalizedMessage());
        }
-        logger.debug("onLocationChanged method finished");
+//        logger.debug("onLocationChanged method finished");
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}

@@ -30,20 +30,21 @@ class DawnDuskAlarms {
 //    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
 // --Commented out by Inspection STOP (12-Jun-17 1:56 PM)
 
-    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
+//    private static final String LOG_TAG = DawnDuskAlarms.class.getName();
+    private static final String TAG = DawnDuskAlarms.class.getName();
 
-    static Logger logger;
-
-          static  Logger getLogger (Context context){
-                if (logger == null){
-                    logger = Util.getAndConfigureLogger(context, LOG_TAG);
-                }
-                return logger;
-            }
+//    static Logger logger;
+//
+//          static  Logger getLogger (Context context){
+//                if (logger == null){
+//                    logger = Util.getAndConfigureLogger(context, LOG_TAG);
+//                }
+//                return logger;
+//            }
 
 
     static void configureDawnAlarms(Context context) {
-        getLogger(context).info("About to configure Dawn Alarms");
+//        getLogger(context).info("About to configure Dawn Alarms");
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
@@ -125,7 +126,7 @@ class DawnDuskAlarms {
 
 
     static void configureDuskAlarms(Context context) {
-        getLogger(context).info("About to configure Dusk Alarms");
+//        getLogger(context).info("About to configure Dusk Alarms");
         Prefs prefs = new Prefs(context);
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();

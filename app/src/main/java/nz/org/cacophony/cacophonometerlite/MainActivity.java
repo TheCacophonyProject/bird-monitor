@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 //import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,18 +37,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import org.slf4j.Logger;
+//import org.slf4j.Logger;
 
 
 import static android.widget.Toast.makeText;
+//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static com.loopj.android.http.AsyncHttpClient.log;
+//import static nz.org.cacophony.cacophonometerlite.DawnDuskAlarms.logger;
 import static nz.org.cacophony.cacophonometerlite.R.id.gpsText;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String LOG_TAG = MainActivity.class.getName();
+//    private static final String LOG_TAG = MainActivity.class.getName();
+private static final String TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
-    private static Logger logger = null;
+  //  private static Logger logger = null;
+ // private static Log logger = null;
 
 
     /**
@@ -56,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
-          //  Log.d(LOG_TAG, "Main activity received message.");
-            logger.info("Main activity received message." );
+           // Log.d(LOG_TAG, "Main activity received message.");
+            Log.d(TAG, "Main activity received message.");
+         //   logger.info("Main activity received message." );
             switch (inputMessage.what) {
                 case RESUME:
                     onResume();
@@ -113,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             }catch (Exception ex){
-                logger.error(ex.getLocalizedMessage());
+//                logger.error(ex.getLocalizedMessage());
+                Log.e(TAG,ex.getLocalizedMessage());
             }
         }
     };
@@ -136,11 +144,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
-        if (logger == null){
-            finish();
-        }
-        logger.info("MainActivity onCreate" );
+//        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
+//        if (logger == null){
+//            Log.e(LOG_TAG, "logger is null");
+////https://stackoverflow.com/questions/6330200/how-to-quit-android-application-programmatically
+//            this.finish();
+//            System.exit(0);
+//        }
+//        logger.info("MainActivity onCreate" );
 
         this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);
@@ -158,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
 
 
-            logger.error("Error with intent setupButtonClick");
+//            logger.error("Error with intent setupButtonClick");
+            Log.e(TAG, "Error with intent setupButtonClick");
 
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
@@ -194,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
         }else{
 
 
-            logger.warn("ActionBar ab is null");
+//            logger.warn("ActionBar ab is null");
+            Log.w(TAG, "ActionBar ab is null");
         }
 
         refreshVitals();
@@ -240,8 +253,10 @@ public class MainActivity extends AppCompatActivity {
         }   catch (Exception ex){
             // This is very poor, but I have no idea why super.onResume give a null pointer exception
             // Need to spend time on this
+            Log.e(TAG, "Error calling super.onResume");
         }
-        logger.info("MainActivity onResume" );
+//        logger.info("MainActivity onResume" );
+        Log.i(TAG, "MainActivity onResume" );
         disableFlightMode();
         checkPermissions();
 
@@ -275,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
             deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),Server.getToken()));
         } catch (Exception e) {
 
-            logger.error("Device ID not available");
+//            logger.error("Device ID not available");
+            Log.e(TAG, "Device ID not available");
         }
 
         // GPS text.
@@ -291,7 +307,8 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (Exception e) {
 
-            logger.error("Device ID not available");
+//            logger.error("Device ID not available");
+            Log.e(TAG, "Device ID not available");
         }
 
         // Application name text  appNameVersionText
@@ -335,15 +352,15 @@ public class MainActivity extends AppCompatActivity {
 
         Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
 
-        logger.warn(missingPermissionMessage );
-
+//        logger.warn(missingPermissionMessage );
+Log.w(TAG, missingPermissionMessage);
 
     }
 
 
 public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
     try{
-        logger.info("Setup Device button pressed");
+
     if (!Util.isNetworkConnected(getApplicationContext())){
         Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.", true ).show();
         Util.getToast(getApplicationContext(),"You will need to press the SETUP button again once there is a network connection", true ).show();
@@ -356,13 +373,14 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
     }catch (Exception ex){
-        logger.error(ex.getLocalizedMessage());
+//        logger.error(ex.getLocalizedMessage());
+        Log.e(TAG, ex.getLocalizedMessage());
     }
 }
 
     public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            logger.info("Perform a test recording button pressed");
+
 
             if (Server.loggedIn != true) {
 
@@ -391,7 +409,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
             } catch (Exception ex) {
 
-                logger.error(ex.getLocalizedMessage());
+//                logger.error(ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage());
             }
         //    Util.getToast(getApplicationContext(), "Getting ready to record - please wait", false).show();
             ((Button)v).setEnabled(false);
@@ -400,7 +419,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
             sendBroadcast(myIntent);
         }catch (Exception ex){
-            logger.error(ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
             ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
             ((Button) findViewById(R.id.testRecording)).setEnabled(false);
             ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(false);
@@ -412,7 +432,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
      * @param v View
      */
     public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
-        logger.info("Refresh button pressed");
+
 
         refreshVitals();
 
@@ -444,7 +464,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
             server.start();
         }catch (Exception ex){
             Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
-            logger.error(ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
             ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
             ((Button) findViewById(R.id.testRecording)).setEnabled(true);
             ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(true);
@@ -454,7 +475,6 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
 
     public  void disableFlightModeButtonClick(@SuppressWarnings("UnusedParameters") View v){
-        logger.info("Disable Flight Mode button pressed");
 
         disableFlightMode();
     }
@@ -486,7 +506,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
 
         }catch (Exception ex){
-            logger.error(ex.getLocalizedMessage());
+           // logger.error(ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
     }

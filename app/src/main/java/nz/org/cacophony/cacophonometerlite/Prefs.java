@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  */
@@ -16,7 +18,7 @@ import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 class Prefs {
     private static final boolean isLocalLog = true;
 
-    private static final String LOG_TAG = "Prefs.java";
+    private static final String TAG = "Prefs.java";
     private static Context context = null;
 
 
@@ -71,16 +73,16 @@ class Prefs {
 
     Prefs(Context context) {
         this.context = context;
-        if (logger == null){
-            logger = Util.getAndConfigureLogger(context,LOG_TAG );
-        }
+//        if (logger == null){
+//            logger = Util.getAndConfigureLogger(context,LOG_TAG );
+//        }
     }
 
-    Prefs(Context context, Logger logger) { // needed this constructor to fix loop of Prefs calling Util calling Prefs
-        this.context = context;
-        this.logger = logger;
-
-    }
+//    Prefs(Context context, Logger logger) { // needed this constructor to fix loop of Prefs calling Util calling Prefs
+//        this.context = context;
+//        this.logger = logger;
+//
+//    }
 
 
 

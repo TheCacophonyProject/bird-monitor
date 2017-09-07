@@ -6,9 +6,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 //import android.util.Log;
 
 import org.slf4j.Logger;
+
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 /**
  * Created by User on 29-Mar-17.
@@ -16,8 +19,8 @@ import org.slf4j.Logger;
  */
 
 public class MainService extends IntentService {
-    private static final String LOG_TAG = MainService.class.getName();
-    private static Logger logger = null;
+    private static final String TAG = MainService.class.getName();
+//    private static Logger logger = null;
 
     // --Commented out by Inspection (12-Jun-17 1:56 PM):private static final String LOG_TAG = MainService.class.getName();
 
@@ -29,7 +32,7 @@ public class MainService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
       try {
-          logger = Util.getAndConfigureLogger(getApplicationContext(),LOG_TAG);
+//          logger = Util.getAndConfigureLogger(getApplicationContext(),LOG_TAG);
           Bundle bundle = intent != null ? intent.getExtras() : null;
           if (bundle != null){
               String alarmIntentType = bundle.getString("type");
@@ -37,19 +40,21 @@ public class MainService extends IntentService {
                   alarmIntentType = "unknown";
 //                  Log.w(LOG_TAG, "alarmIntentType = unknown");
 //                  Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "alarmIntentType = unknown");
-                  logger.warn("alarmIntentType = unknown");
+//                  logger.warn("alarmIntentType = unknown");
+                  Log.w(TAG, "alarmIntentType = unknown");
               }
                   RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType, null);
 
           }else{
-//              Log.e(LOG_TAG, "MainService error");
+              Log.e(TAG, "MainService error");
 //              Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "MainService error");
-              logger.warn("MainService error");
+//              logger.warn("MainService error");
           }
 
       }catch (Exception ex){
 //          Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
-          logger.error(ex.getLocalizedMessage());
+//          logger.error(ex.getLocalizedMessage());
+          Log.e(TAG,ex.getLocalizedMessage() );
       }finally {
           Util.enableFlightMode(getApplicationContext());
       }

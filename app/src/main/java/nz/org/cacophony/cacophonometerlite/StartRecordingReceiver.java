@@ -9,10 +9,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 //import android.util.Log;
 
 import org.slf4j.Logger;
 
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 
 public class StartRecordingReceiver extends BroadcastReceiver{
@@ -21,8 +23,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     public static final int RECORDING_FINISHED = 3;
     public static final int NO_PERMISSIONS_TO_RECORD = 4;
     public static final int UPLOADING_FINISHED = 5;
-    private static final String LOG_TAG = StartRecordingReceiver.class.getName();
-    private static Logger logger = null;
+    private static final String TAG = StartRecordingReceiver.class.getName();
+//    private static Logger logger = null;
 
     private Context context = null;
     // Handler to pass to recorder.
@@ -31,8 +33,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         public void handleMessage(Message inputMessage) {
 
             if (context == null) {
-//                Log.e(LOG_TAG, "Context was null for handler.");
-                logger.error("Context was null for handler.");
+                Log.e(TAG, "Context was null for handler.");
+//                logger.error("Context was null for handler.");
 
             }
             switch (inputMessage.what) {
@@ -60,9 +62,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                     enableButtons(context);
                     break;
                 default:
-//                    Log.w(LOG_TAG, "Unknown handler what.");
+                    Log.w(TAG, "Unknown handler what.");
 //                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");
-                    logger.error("Unknown handler what.");
+//                    logger.error("Unknown handler what.");
                     enableButtons(context);
                     break;
             }
@@ -73,15 +75,15 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     public void onReceive(final Context context, Intent intent) {
 
         this.context = context;
-        logger = Util.getAndConfigureLogger(context, LOG_TAG);
-        logger.info("StartRecordingReceiver onReceive" );
+//        logger = Util.getAndConfigureLogger(context, LOG_TAG);
+//        logger.info("StartRecordingReceiver onReceive" );
         if (!Util.checkPermissionsForRecording(context)) {
 
             Util.getToast(context,"Do not have proper permissions to record", true ).show();
 
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Don't have proper permissions to record");
-//            Log.e(LOG_TAG, "Don't have proper permissions to record");
-            logger.error("Don't have proper permissions to record");
+            Log.e(TAG, "Don't have proper permissions to record");
+//            logger.error("Don't have proper permissions to record");
             return;
         }
         Prefs prefs = new Prefs(context);
@@ -92,9 +94,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
 
         if (alarmIntentType == null){
-//            Log.e(LOG_TAG, "Intent does not have a type");
+            Log.e(TAG, "Intent does not have a type");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Intent does not have a type");
-            logger.error("Intent does not have a type");
+//            logger.error("Intent does not have a type");
             alarmIntentType = "unknown"; // shouldn't get here
         }
 
@@ -116,9 +118,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
             double batteryPercent = batteryRatioLevel * 100;
             if (!enoughBatteryToContinue( batteryPercent, alarmIntentType)){
-//                Log.w(LOG_TAG, "Battery level too low to do a recording");
+                Log.w(TAG, "Battery level too low to do a recording");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Battery level too low to do a recording");
-                logger.warn("Battery level too low to do a recording");
+//                logger.warn("Battery level too low to do a recording");
                 return;
             }
 
@@ -127,9 +129,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             double batteryPercentLevel = getBatteryLevelByIntent(context);
 
             if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType)){
-//                Log.w(LOG_TAG, "Battery level too low to do a recording");
+                Log.w(TAG, "Battery level too low to do a recording");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Battery level too low to do a recording");
-                logger.warn("Battery level too low to do a recording");
+//                logger.warn("Battery level too low to do a recording");
                 return;
             }
         }
@@ -161,9 +163,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 mainServiceIntent.putExtra("type",alarmIntentType);
 
             }catch (Exception e){
-//                Log.e(LOG_TAG, "Error setting up intent");
+                Log.e(TAG, "Error setting up intent");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error setting up intent");
-                logger.warn("Error setting up intent");
+//                logger.warn("Error setting up intent");
             }
             context.startService(mainServiceIntent);
 

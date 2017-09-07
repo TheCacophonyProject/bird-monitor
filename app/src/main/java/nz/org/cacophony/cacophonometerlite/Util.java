@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 //import android.util.Log;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
@@ -25,8 +26,8 @@ import com.luckycatlabs.sunrisesunset.dto.Location;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+//import ch.qos.logback.classic.Level;
+//import ch.qos.logback.classic.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,15 +49,17 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+
 
 class Util {
-    private static final String LOG_TAG = Util.class.getName();
+    private static final String TAG = Util.class.getName();
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_LOGS_FOLDER = "logs";
 
     private static boolean logbackConfigured = false;
-    private static Logger logger = null;
+//    private static Logger logger = null;
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -74,8 +77,8 @@ class Util {
         boolean permissionForRecording = false;
         try{
             if (context == null) {
-//                Log.e(LOG_TAG, "Context was null when checking permissions");
-                logger.error("Context was null when checking permissions");
+                Log.e(TAG, "Context was null when checking permissions");
+//                logger.error("Context was null when checking permissions");
             }else{
                 boolean storagePermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -87,9 +90,9 @@ class Util {
             }
 
         }catch (Exception ex){
-//            Log.e(LOG_TAG, "Error with checkPermissionsForRecording");
+            Log.e(TAG, "Error with checkPermissionsForRecording");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with checkPermissionsForRecording");
-            logger.error("Error with checkPermissionsForRecording");
+//            logger.error("Error with checkPermissionsForRecording");
         }
       return permissionForRecording;
 
@@ -227,42 +230,42 @@ class Util {
 
     }
 
-static Logger getAndConfigureLogger(Context context, String callingLogTag){
-//    if (!logbackConfigured){
-//        Util.configureLogbackDirectly(context);
-//        logbackConfigured = true;
-//        // And log that this happened!
-//        //getAndConfigureLogger(context, LOG_TAG);
-//        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+//static Logger getAndConfigureLogger(Context context, String callingLogTag){
+////    if (!logbackConfigured){
+////        Util.configureLogbackDirectly(context);
+////        logbackConfigured = true;
+////        // And log that this happened!
+////        //getAndConfigureLogger(context, LOG_TAG);
+////        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+////    }
+//
+//    Logger logger = (Logger)LoggerFactory.getLogger(callingLogTag);
+//
+//    Prefs prefs = new Prefs(context, logger); // needed this constructor to fix loop of Prefs calling Util calling Prefs
+//    // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
+//    if (prefs.getUseFullLogging()){
+//        if (!logbackConfigured){
+//           if (!Util.configureLogbackDirectly(context, true)){
+//               return null;
+//           }
+//            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+//            logbackConfigured = true;
+//        }
+//        logger.setLevel(Level.DEBUG);
+//    }else {
+//        if (!logbackConfigured){
+//           if( !Util.configureLogbackDirectly(context, false)){
+//               return null;
+//           }
+//            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
+//            logbackConfigured = true;
+//        }
+//        logger.setLevel(Level.ERROR);
 //    }
-
-    Logger logger = (Logger)LoggerFactory.getLogger(callingLogTag);
-
-    Prefs prefs = new Prefs(context, logger); // needed this constructor to fix loop of Prefs calling Util calling Prefs
-    // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
-    if (prefs.getUseFullLogging()){
-        if (!logbackConfigured){
-           if (!Util.configureLogbackDirectly(context, true)){
-               return null;
-           }
-            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-            logbackConfigured = true;
-        }
-        logger.setLevel(Level.DEBUG);
-    }else {
-        if (!logbackConfigured){
-           if( !Util.configureLogbackDirectly(context, false)){
-               return null;
-           }
-            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-            logbackConfigured = true;
-        }
-        logger.setLevel(Level.ERROR);
-    }
-    setLogger(logger);
-    return logger;
-
-}
+//    setLogger(logger);
+//    return logger;
+//
+//}
 
 //    static void writeLocalLogEntryUsingLogback(Context context, Logger callingLogger, String message){
 //        if (logger == null){
@@ -344,9 +347,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
             webTokenBody = getJson(split[1]);
         } catch (UnsupportedEncodingException e) {
-//            Log.e(LOG_TAG, "Error decoding JWT");
+            Log.e(TAG, "Error decoding JWT");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error decoding JWT");
-            logger.error("Error decoding JWT");
+//            logger.error("Error decoding JWT");
         }
         return webTokenBody;
     }
@@ -380,7 +383,8 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             } catch (Exception ex) {
                 ex.printStackTrace();
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-                logger.error( ex.getLocalizedMessage());
+//                logger.error( ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage());
             }
 
         }
@@ -389,9 +393,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             try {
                 batteryLevel = Double.parseDouble(batteryLevelStr);
             } catch (Exception ex) {
-//                Log.e(LOG_TAG, "converting double");
+                Log.e(TAG, "converting double");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "converting double");
-                logger.error("converting double");
+//                logger.error("converting double");
             }
         }
         return batteryLevel;
@@ -408,9 +412,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             batteryLevel = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
             return batteryLevel;
         } catch (Exception ex) {
-//            Log.e(LOG_TAG, "Error with getBatteryLevelByIntent");
+            Log.e(TAG, "Error with getBatteryLevelByIntent");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getBatteryLevelByIntent");
-            logger.error("Error with getBatteryLevelByIntent");
+//            logger.error("Error with getBatteryLevelByIntent");
             return -1;
         }
 
@@ -468,9 +472,9 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             }
             return batteryStatusToReturn;
         } catch (Exception ex) {
-//            Log.e(LOG_TAG, "getBatteryStatus");
+            Log.e(TAG, "getBatteryStatus");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "getBatteryStatus");
-            logger.error("getBatteryStatus");
+//            logger.error("getBatteryStatus");
             return "Error";
         }
 
@@ -571,15 +575,16 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             try {
                 Thread.sleep(1000); // give time for airplane mode to turn off
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+//                ex.printStackTrace();
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-                logger.error( ex.getLocalizedMessage());
+//                logger.error( ex.getLocalizedMessage());
+                Log.e(TAG,ex.getLocalizedMessage() );
             }
 
             numberOfLoops += 1;
             if (numberOfLoops > 60) {
-//                Log.e(LOG_TAG, "Number of loops > 20");
-                logger.error("Number of loops > 60");
+                Log.e(TAG, "Number of loops > 60");
+//                logger.error("Number of loops > 60");
                 break;
             }
         }
@@ -608,7 +613,8 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
                 Prefs prefs = new Prefs(context);
                 if (!prefs.getHasRootAccess()) {
 
-                    logger.info("Do NOT have required ROOT access");
+//                    logger.info("Do NOT have required ROOT access");
+                    Log.w(TAG, "Do NOT have required ROOT access");
                  //   Util.getToast(context, "Root access required to change airplane mode", true).show();
                 //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
 
@@ -634,7 +640,8 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             }
 
         }catch (Exception ex){
-            logger.error(ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
 
         }
         return null;
@@ -648,10 +655,10 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
-//                Log.e(LOG_TAG, "Do NOT have required ROOT access");
+                Log.e(TAG, "Do NOT have required ROOT access");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
 
-                logger.error("Do NOT have required ROOT access");
+//                logger.error("Do NOT have required ROOT access");
 
            //     Util.getToast(context,"Root access required to change airplane mode", true ).show();
                 Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
@@ -771,109 +778,109 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
         return toast;
     }
 
-    static boolean configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
-        // reset the default context (which may already have been initialized)
-        // since we want to reconfigure it
-        LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
-        lc.reset();
+//    static boolean configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
+//        // reset the default context (which may already have been initialized)
+//        // since we want to reconfigure it
+//        LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
+//        lc.reset();
+//
+//        // setupButtonClick FileAppender
+//        PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
+//        encoder1.setContext(lc);
+//        //https://stackoverflow.com/questions/23123934/logback-show-logs-with-line-number
+//        if (includeCodeLineNumber){
+//            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\\(%line\\) - %msg%n");
+//        }else{
+//            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+//        }
+//
+//        encoder1.start();
+//
+//        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
+//        fileAppender.setContext(lc);
+//        String logFileStr = Util.getLocalLogStr(context);
+//        if (logFileStr == null){
+//            Util.getToast(context, "Could not create required folder - try inserting a memory card into your phone", true).show();
+//            return false;
+//        }
+//
+//        //   fileAppender.setFile(this.getFileStreamPath("app.log").getAbsolutePath());
+//        fileAppender.setFile(logFileStr);
+//        fileAppender.setEncoder(encoder1);
+//        fileAppender.start();
+//
+//        // setupButtonClick LogcatAppender
+//        PatternLayoutEncoder encoder2 = new PatternLayoutEncoder();
+//        encoder2.setContext(lc);
+//        encoder2.setPattern("[%thread] %msg%n");
+//        encoder2.start();
+//
+//        LogcatAppender logcatAppender = new LogcatAppender();
+//        logcatAppender.setContext(lc);
+//        logcatAppender.setEncoder(encoder2);
+//        logcatAppender.start();
+//
+//        // add the newly created appenders to the root logger;
+//        // qualify Logger to disambiguate from org.slf4j.Logger
+//        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//        root.addAppender(fileAppender);
+//        root.addAppender(logcatAppender);
+//        return true;
+//    }
 
-        // setupButtonClick FileAppender
-        PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
-        encoder1.setContext(lc);
-        //https://stackoverflow.com/questions/23123934/logback-show-logs-with-line-number
-        if (includeCodeLineNumber){
-            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\\(%line\\) - %msg%n");
-        }else{
-            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
-        }
+//    static String readLocalLog(Context context, File logFileToRead)  {
+//        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
+//
+//        StringBuilder sb = new StringBuilder();
+//     //   sb.append(logFileToRead.getName());
+//        Scanner input = null;
+//        try {
+//            input = new Scanner(logFileToRead);
+//            while (input.hasNext()){
+//                String aLine = input.next();
+//                sb.append(aLine);
+//                sb.append(" ");
+//            }
+//
+//        }catch (Exception ex){
+////            Log.e(LOG_TAG, ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+//        }finally{
+//            input.close();
+//            logFileToRead.delete();  // delete and recreate this file to remove the logs that have now been sent to server
+//            try {
+//                logFileToRead.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//        return sb.toString();
+//    }
 
-        encoder1.start();
+//    static String getAllLocalLogEntries(Context context){
+//        StringBuilder sb = new StringBuilder();
+//        File localLogsFolder = Util.getLogFolder(context);
+//        if (localLogsFolder == null){
+////            Log.d(LOG_TAG, "Error getting recordings folder");
+//            logger.error("Error getting recordings folder");
+//            return null;
+//        }
+//        File logFiles[] = localLogsFolder.listFiles();
+//
+//        if (logFiles != null){
+//            for (int i=0;i<logFiles.length;i++){
+//                sb.append(readLocalLog( context,  logFiles[i]));
+//                // logFiles[i].delete();
+//            }
+//        }
+//        return sb.toString();
+//    }
 
-        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
-        fileAppender.setContext(lc);
-        String logFileStr = Util.getLocalLogStr(context);
-        if (logFileStr == null){
-            Util.getToast(context, "Could not create required folder - try inserting a memory card into your phone", true).show();
-            return false;
-        }
-
-        //   fileAppender.setFile(this.getFileStreamPath("app.log").getAbsolutePath());
-        fileAppender.setFile(logFileStr);
-        fileAppender.setEncoder(encoder1);
-        fileAppender.start();
-
-        // setupButtonClick LogcatAppender
-        PatternLayoutEncoder encoder2 = new PatternLayoutEncoder();
-        encoder2.setContext(lc);
-        encoder2.setPattern("[%thread] %msg%n");
-        encoder2.start();
-
-        LogcatAppender logcatAppender = new LogcatAppender();
-        logcatAppender.setContext(lc);
-        logcatAppender.setEncoder(encoder2);
-        logcatAppender.start();
-
-        // add the newly created appenders to the root logger;
-        // qualify Logger to disambiguate from org.slf4j.Logger
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.addAppender(fileAppender);
-        root.addAppender(logcatAppender);
-        return true;
-    }
-
-    static String readLocalLog(Context context, File logFileToRead)  {
-        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
-
-        StringBuilder sb = new StringBuilder();
-     //   sb.append(logFileToRead.getName());
-        Scanner input = null;
-        try {
-            input = new Scanner(logFileToRead);
-            while (input.hasNext()){
-                String aLine = input.next();
-                sb.append(aLine);
-                sb.append(" ");
-            }
-
-        }catch (Exception ex){
-//            Log.e(LOG_TAG, ex.getLocalizedMessage());
-            logger.error(ex.getLocalizedMessage());
-        }finally{
-            input.close();
-            logFileToRead.delete();  // delete and recreate this file to remove the logs that have now been sent to server
-            try {
-                logFileToRead.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        return sb.toString();
-    }
-
-    static String getAllLocalLogEntries(Context context){
-        StringBuilder sb = new StringBuilder();
-        File localLogsFolder = Util.getLogFolder(context);
-        if (localLogsFolder == null){
-//            Log.d(LOG_TAG, "Error getting recordings folder");
-            logger.error("Error getting recordings folder");
-            return null;
-        }
-        File logFiles[] = localLogsFolder.listFiles();
-
-        if (logFiles != null){
-            for (int i=0;i<logFiles.length;i++){
-                sb.append(readLocalLog( context,  logFiles[i]));
-                // logFiles[i].delete();
-            }
-        }
-        return sb.toString();
-    }
-
-    public static void setLogbackConfigured(boolean logbackConfigured) {
-        Util.logbackConfigured = logbackConfigured;
-    }
+//    public static void setLogbackConfigured(boolean logbackConfigured) {
+//        Util.logbackConfigured = logbackConfigured;
+//    }
 
     static void sendMainActivityAMessage(Context context, String message){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
@@ -885,14 +892,14 @@ static Logger getAndConfigureLogger(Context context, String callingLogTag){
 
     }
 
-    public static Logger getLogger() {
-        if (logger == null){
+//    public static Logger getLogger() {
+//        if (logger == null){
+//
+//        }
+//        return logger;
+//    }
 
-        }
-        return logger;
-    }
-
-    public static void setLogger(Logger logger) {
-        Util.logger = logger;
-    }
+//    public static void setLogger(Logger logger) {
+//        Util.logger = logger;
+//    }
 }

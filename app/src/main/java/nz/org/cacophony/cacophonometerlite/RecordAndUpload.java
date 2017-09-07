@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 //import android.util.Log;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
@@ -32,8 +34,8 @@ import static nz.org.cacophony.cacophonometerlite.Server.getToken;
  */
 
 class RecordAndUpload {
-    private static final String LOG_TAG = RecordAndUpload.class.getName();
-    private static Logger logger = null;
+    private static final String TAG = RecordAndUpload.class.getName();
+//    private static Logger logger = null;
 
 
 
@@ -44,16 +46,16 @@ class RecordAndUpload {
 
 
     static boolean doRecord(Context context, String typeOfRecording, Handler handler){
-        if (logger == null){
-            logger = Util.getAndConfigureLogger(context, LOG_TAG);
-            logger.info("Starting doRecord method");
-        }
+//        if (logger == null){
+//            logger = Util.getAndConfigureLogger(context, LOG_TAG);
+//            logger.info("Starting doRecord method");
+//        }
 
 
         if (typeOfRecording == null){
-//            Log.e(LOG_TAG, "typeOfRecording is null");
+            Log.e(TAG, "typeOfRecording is null");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "typeOfRecording is null");
-            logger.error("typeOfRecording is null");
+//            logger.error("typeOfRecording is null");
             return false;
         }
 
@@ -78,8 +80,8 @@ class RecordAndUpload {
                 long now = new Date().getTime();
                 long minFractionOfRepeatTimeToWait = (long)(prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9) ; // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
                 if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait){
-//                    Log.w(LOG_TAG, "A repeating alarm happened to soon and so was aborted");
-                    logger.warn("A repeating alarm happened to soon and so was aborted");
+                    Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
+//                    logger.warn("A repeating alarm happened to soon and so was aborted");
                     return false;
                 }else{
                     prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
@@ -126,8 +128,10 @@ class RecordAndUpload {
         }
 
         if (!uploadedFilesSuccessfully){
-            logger.error("Files failed to upload");
+//            logger.error("Files failed to upload");
+            Log.e(TAG, "Files failed to upload");
             return false;
+
 
         }
 
@@ -202,12 +206,14 @@ class RecordAndUpload {
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mRecorder.prepare();
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
 
-            logger.error("Setup recording failed.");
-            logger.error("Could be due to lack of sdcard");
-            logger.error("Could be due to phone connected to pc as usb storage");
-            logger.error(e.getLocalizedMessage());
+//            logger.error("Setup recording failed.");
+//            logger.error("Could be due to lack of sdcard");
+//            logger.error("Could be due to phone connected to pc as usb storage");
+//            logger.error(e.getLocalizedMessage());
+            Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
+            Log.e(TAG, ex.getLocalizedMessage());
 
             return false;
         }
@@ -217,7 +223,8 @@ class RecordAndUpload {
             mRecorder.start();
         }catch (Exception e){
 
-            logger.error("mRecorder.start " + e.getLocalizedMessage());
+//            logger.error("mRecorder.start " + e.getLocalizedMessage());
+            Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
             return false;
         }
 
@@ -228,7 +235,8 @@ class RecordAndUpload {
 
         } catch (InterruptedException e) {
 
-            logger.error("Failed sleeping in recording thread.");
+//            logger.error("Failed sleeping in recording thread.");
+            Log.e(TAG, "Failed sleeping in recording thread.");
             return false;
         }
 
@@ -245,7 +253,8 @@ class RecordAndUpload {
         try {
             Thread.sleep(5 * 1000);
         } catch (InterruptedException ex) {
-            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
+//            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
+            Log.e(TAG, "Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         }
         return true;
     }
@@ -256,7 +265,8 @@ class RecordAndUpload {
             File recordingsFolder = Util.getRecordingsFolder(context);
             if (recordingsFolder == null){
 
-                logger.error("Error getting recordings folder");
+//                logger.error("Error getting recordings folder");
+                Log.e(TAG,"Error getting recordings folder" );
                 return false;
             }
             File recordingFiles[] = recordingsFolder.listFiles();
@@ -265,7 +275,8 @@ class RecordAndUpload {
 
                 // Now wait for network connection as setFlightMode takes a while
                 if (!Util.waitForNetworkConnection(context, true)){
-                    logger.error("Failed to disable airplane mode");
+//                    logger.error("Failed to disable airplane mode");
+                    Log.e(TAG, "Failed to disable airplane mode");
                     return false;
                 }
 
@@ -275,7 +286,8 @@ class RecordAndUpload {
                 if (getToken() == null) {
 
                     if (!Server.login(context)) {
-                        logger.warn("sendFile: no JWT. Aborting upload");
+//                        logger.warn("sendFile: no JWT. Aborting upload");
+                        Log.w(TAG, "sendFile: no JWT. Aborting upload");
 
 
                         return false; // Can't upload without JWT, login/register device to get JWT.
@@ -290,18 +302,21 @@ class RecordAndUpload {
                             fileSuccessfullyDeleted = aFile.delete();
 
                         }catch (Exception ex){
-                            logger.error(ex.getLocalizedMessage());
+//                            logger.error(ex.getLocalizedMessage());
+                            Log.e(TAG, ex.getLocalizedMessage());
 
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
-                            logger.error("Failed to delete file");
+//                            logger.error("Failed to delete file");
+                            Log.e(TAG, "Failed to delete file");
                             returnValue = false;
                             break;
                         }
                     } else {
                         returnValue = false;
-                        logger.error("Failed to upload file to server");
+//                        logger.error("Failed to upload file to server");
+                        Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
                 }
@@ -309,7 +324,8 @@ class RecordAndUpload {
             return returnValue;
         }catch (Exception ex){
 
-            logger.error(ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
             return false;
         }finally {
 //            Util.enableFlightMode(context);
@@ -339,7 +355,7 @@ class RecordAndUpload {
         if (fileNameParts.length != 14) {
           if (aFile.delete()){
 //              Log.i(LOG_TAG, "deleted file: " + fileName);
-              logger.error("deleted file: " + fileName);
+//              logger.error("deleted file: " + fileName);
               return false;
           }
 
@@ -369,7 +385,8 @@ class RecordAndUpload {
         String localFilePath = Util.getRecordingsFolder(context) + "/" + fileName;
         if (! new File(localFilePath).exists()){
 
-            logger.error(localFilePath + " does not exist");
+//            logger.error(localFilePath + " does not exist");
+            Log.e(TAG,localFilePath + " does not exist" );
             return false;
         }
         String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
@@ -402,12 +419,12 @@ class RecordAndUpload {
 
             JSONObject additionalMetadata = new JSONObject();
 
-            String localLog = Util.getAllLocalLogEntries(context);
-
-            additionalMetadata.put("Local Log ", localLog);
-
-            String logLevel = ((ch.qos.logback.classic.Logger)logger).getLevel().levelStr;
-            additionalMetadata.put("Log level is ", logLevel);
+//            String localLog = Util.getAllLocalLogEntries(context);
+//
+//            additionalMetadata.put("Local Log ", localLog);
+//
+//            String logLevel = ((ch.qos.logback.classic.Logger)logger).getLevel().levelStr;
+//            additionalMetadata.put("Log level is ", logLevel);
 
             additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);
             additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
@@ -426,7 +443,8 @@ class RecordAndUpload {
 
         } catch (JSONException ex) {
          //   ex.printStackTrace();
-            logger.error(ex.getLocalizedMessage());
+//            logger.error(ex.getLocalizedMessage());
+            Log.e(TAG,ex.getLocalizedMessage() );
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);
     }
