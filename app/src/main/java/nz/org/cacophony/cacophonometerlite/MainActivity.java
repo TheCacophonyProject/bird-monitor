@@ -235,7 +235,12 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onResume() {
-     //   super.onResume();
+        try {
+            super.onResume();
+        }   catch (Exception ex){
+            // This is very poor, but I have no idea why super.onResume give a null pointer exception
+            // Need to spend time on this
+        }
         logger.info("MainActivity onResume" );
         disableFlightMode();
         checkPermissions();
@@ -295,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
         versionNameText.setText(getString(R.string.version) + " " + versionName);
 
-        super.onResume();
+      //  super.onResume();
 
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
