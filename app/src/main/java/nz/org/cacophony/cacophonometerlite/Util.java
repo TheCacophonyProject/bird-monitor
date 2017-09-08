@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Base64;
 //import android.util.Log;
 import android.util.Log;
@@ -32,14 +33,22 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 //import java.lang.reflect.Field;
 //import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 //import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -50,6 +59,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+import static java.security.AccessController.getContext;
 
 
 class Util {
@@ -106,17 +116,40 @@ class Util {
         // If I could be sure the homeFile was set before any of the other directories are needed then I
         // wouldn't need to pass context around to the other methods :-(
 
+//        String[] storageDirectories = getStorageDirectories(context);
+//        for (String storageDirectory : storageDirectories) {
+//            Log.e(TAG, storageDirectory);
+//        }
+
+        File appDataFolder = null;
+        String sDCardAvailable = isRemovableSDCardAvailable( context);
+        Log.e(TAG, sDCardAvailable);
+
+        String canCreateFile = null;
+        if (sDCardAvailable != null){
+            canCreateFile = canCreateFile(sDCardAvailable);
+        }
+
+
+
 
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
-        File appDataFolder = null;
+        //File appDataFolder = null;
         try {
             String appName = context.getResources().getString(R.string.main_activity_name);
-//            homeFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/cacophony2");
+
+            if (canCreateFile != null){
+                // Use the sdcard
+                appDataFolder = new File(canCreateFile + "/" + appName);
+                return appDataFolder;
+            }
+
             String externalStorageState = Environment.getExternalStorageState();
             if (externalStorageState.equalsIgnoreCase("mounted")){
                 appDataFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
             }else{
                 appDataFolder = context.getFilesDir();
+
             }
 
 
@@ -203,11 +236,17 @@ class Util {
 
               //  }
             }
+            if (localFolderFile == null){
+                Log.e(TAG, "There is a problem writing to the memory - please fix");
+                getToast(context, "There is a problem writing to the memory - please fix", true).show();
+            }
+
             return localFolderFile;
         } catch (Exception ex) {
-//            Log.e(LOG_TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage());
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
         //    logger.error(ex.getLocalizedMessage());
+            getToast(context, "There is a problem writing to the memory - please fix", true).show();
             return null;
         }
     }
@@ -661,7 +700,7 @@ class Util {
 //                logger.error("Do NOT have required ROOT access");
 
            //     Util.getToast(context,"Root access required to change airplane mode", true ).show();
-                Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
+//                Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
 
                 return;
             }
@@ -902,4 +941,106 @@ class Util {
 //    public static void setLogger(Logger logger) {
 //        Util.logger = logger;
 //    }
+
+    /**
+     * Returns all available external SD-Card roots in the system.
+     *
+     * @return paths to all available external SD-Card roots in the system.
+     */
+
+    //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
+    public static String[] getStorageDirectories(Context context) {
+        String [] storageDirectories;
+        String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            List<String> results = new ArrayList<String>();
+            File[] externalDirs = context.getExternalFilesDirs(null);
+            for (File file : externalDirs) {
+                String path = file.getPath().split("/Android")[0];
+                if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Environment.isExternalStorageRemovable(file))
+                        || rawSecondaryStoragesStr != null && rawSecondaryStoragesStr.contains(path)){
+                    results.add(path);
+                }
+            }
+            storageDirectories = results.toArray(new String[0]);
+        }else{
+            final Set<String> rv = new HashSet<String>();
+
+            if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
+                final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+                Collections.addAll(rv, rawSecondaryStorages);
+            }
+            storageDirectories = rv.toArray(new String[rv.size()]);
+        }
+        return storageDirectories;
+    }
+
+//https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
+   static  public String isRemovableSDCardAvailable(Context context) {
+        final String FLAG = "mnt";
+        final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
+        final String EXTERNAL_STORAGE_DOCOMO = System.getenv("EXTERNAL_STORAGE_DOCOMO");
+        final String EXTERNAL_SDCARD_STORAGE = System.getenv("EXTERNAL_SDCARD_STORAGE");
+        final String EXTERNAL_SD_STORAGE = System.getenv("EXTERNAL_SD_STORAGE");
+        final String EXTERNAL_STORAGE = System.getenv("EXTERNAL_STORAGE");
+
+        Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<Integer, String>();
+        listEnvironmentVariableStoreSDCardRootDirectory.put(0, SECONDARY_STORAGE);
+        listEnvironmentVariableStoreSDCardRootDirectory.put(1, EXTERNAL_STORAGE_DOCOMO);
+        listEnvironmentVariableStoreSDCardRootDirectory.put(2, EXTERNAL_SDCARD_STORAGE);
+        listEnvironmentVariableStoreSDCardRootDirectory.put(3, EXTERNAL_SD_STORAGE);
+        listEnvironmentVariableStoreSDCardRootDirectory.put(4, EXTERNAL_STORAGE);
+
+        File externalStorageList[] = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            externalStorageList = context.getExternalFilesDirs(null);
+        }
+        String directory = null;
+        int size = listEnvironmentVariableStoreSDCardRootDirectory.size();
+        for (int i = 0; i < size; i++) {
+            if (externalStorageList != null && externalStorageList.length > 1 && externalStorageList[1] != null)
+                directory = externalStorageList[1].getAbsolutePath();
+            else
+                directory = listEnvironmentVariableStoreSDCardRootDirectory.get(i);
+
+            directory = canCreateFile(directory);
+            if (directory != null && directory.length() != 0) {
+                if (i == size - 1) {
+                    if (directory.contains(FLAG)) {
+                        Log.e(TAG, "SD Card's directory: " + directory);
+                        return directory;
+                    } else {
+                        return null;
+                    }
+                }
+                Log.e(TAG, "SD Card's directory: " + directory);
+                return directory;
+            }
+        }
+        return null;
+    }
+
+
+    static public String canCreateFile(String directory) {
+        final String FILE_DIR = directory + File.separator + "hoang.txt";
+        File tempFlie = null;
+        try {
+            tempFlie = new File(FILE_DIR);
+            FileOutputStream fos = new FileOutputStream(tempFlie);
+            fos.write(new byte[1024]);
+            fos.flush();
+            fos.close();
+            Log.e(TAG, "Can write file on this directory: " + FILE_DIR);
+        } catch (Exception e) {
+            Log.e(TAG, "Write file error: " + e.getMessage());
+            return null;
+        } finally {
+            if (tempFlie != null && tempFlie.exists() && tempFlie.isFile()) {
+                // tempFlie.delete();
+                tempFlie = null;
+            }
+        }
+        return directory;
+    }
 }
