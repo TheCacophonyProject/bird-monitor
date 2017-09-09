@@ -210,7 +210,7 @@ private static final String TAG = MainActivity.class.getName();
             Log.w(TAG, "ActionBar ab is null");
         }
 
-        refreshVitals();
+      //  refreshVitals();
     } //end onCreate
 
 
@@ -360,15 +360,15 @@ Log.w(TAG, missingPermissionMessage);
 
 public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
     try{
-
-    if (!Util.isNetworkConnected(getApplicationContext())){
-        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.", true ).show();
-        Util.getToast(getApplicationContext(),"You will need to press the SETUP button again once there is a network connection", true ).show();
-
-        // disableFlightModeButtonClick(null);
         disableFlightMode();
-        return;
-    }
+//    if (!Util.isNetworkConnected(getApplicationContext())){
+//        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.", true ).show();
+//        Util.getToast(getApplicationContext(),"You will need to press the SETUP button again once there is a network connection", true ).show();
+//
+//        // disableFlightModeButtonClick(null);
+//        disableFlightMode();
+//        return;
+//    }
 
         Intent intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
@@ -383,10 +383,12 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
 
             if (Server.loggedIn != true) {
+                Prefs prefs = new Prefs(getApplicationContext());
+                if (!prefs.getNoNetwork()){
+                    Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
+                    return;
+                }
 
-                Util.getToast(getApplicationContext(), "NOT logged in - Press REFRESH and if App Vitals show all OK, try again", true).show();
-
-                return;
             }
 
 

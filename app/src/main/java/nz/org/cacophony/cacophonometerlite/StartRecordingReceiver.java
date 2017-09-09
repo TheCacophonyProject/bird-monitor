@@ -22,13 +22,17 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     public static final int RECORDING_FAILED = 2;
     public static final int RECORDING_FINISHED = 3;
     public static final int NO_PERMISSIONS_TO_RECORD = 4;
-    public static final int UPLOADING_FINISHED = 5;
+    public static final int RECORDING_AND_UPLOADING_FINISHED = 5;
+    public static final int RECORDING_FINISHED_BUT_UPLOAD_FAILED = 6;
+    public static final int  RECORDING_FINISHED_NO_NETWORK = 7;
+
     private static final String TAG = StartRecordingReceiver.class.getName();
 //    private static Logger logger = null;
 
     private Context context = null;
     // Handler to pass to recorder.
     private final Handler handler = new Handler(Looper.getMainLooper()) {
+
         @Override
         public void handleMessage(Message inputMessage) {
 
@@ -39,28 +43,43 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             }
             switch (inputMessage.what) {
                 case RECORDING_STARTED:
-
                     Util.getToast(context,"Recording started", false ).show();
                     break;
-                case RECORDING_FAILED:
 
+                case RECORDING_FAILED:
                     Util.getToast(context,"Recording failed", true ).show();
                     enableButtons(context);
                     break;
+
                 case RECORDING_FINISHED:
-
-                    Util.getToast(context,"Recording has finished. Now uploading it to server - please wait", false ).show();
+                    if (Server.loggedIn) {
+                        Util.getToast(context, "Recording has finished. Now uploading it to server - please wait", false).show();
+                    }else{
+                        Util.getToast(context, "Recording has finished.", false).show();
+                        enableButtons(context);
+                    }
                     break;
-                case UPLOADING_FINISHED:
 
+                case RECORDING_FINISHED_NO_NETWORK:
+                        Util.getToast(context, "Recording has finished - all done.", false).show();
+                        enableButtons(context);
+                    break;
+
+                case RECORDING_AND_UPLOADING_FINISHED:
                     Util.getToast(context,"Recording has been uploaded to the server - all done", false ).show();
                     enableButtons(context);
                     break;
-                case NO_PERMISSIONS_TO_RECORD:
 
+                case RECORDING_FINISHED_BUT_UPLOAD_FAILED:
+                    Util.getToast(context,"Recording finished BUT failed to upload to server", true ).show();
+                    enableButtons(context);
+                    break;
+
+                case NO_PERMISSIONS_TO_RECORD:
                     Util.getToast(context,"Did not have proper permissions to record", true ).show();
                     enableButtons(context);
                     break;
+
                 default:
                     Log.w(TAG, "Unknown handler what.");
 //                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");

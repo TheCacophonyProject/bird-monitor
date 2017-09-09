@@ -143,6 +143,14 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxUseUseShortRecordings.setChecked(true);
         } else
             checkBoxUseUseShortRecordings.setChecked(false);
+
+        boolean noNetwork = prefs.getNoNetwork();
+        final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbNoNetwork);
+        if (noNetwork) {
+            checkBoxNoNetwork.setChecked(true);
+        } else
+            checkBoxNoNetwork.setChecked(false);
+
 //        super.onResume();
 
 //        boolean useFullLogging = prefs.getUseFullLogging();
@@ -193,6 +201,16 @@ public class SetupActivity extends AppCompatActivity {
     public void registerButton(View v) {
 
         Prefs prefs = new Prefs(getApplicationContext());
+
+        if (prefs.getNoNetwork()){
+            Util.getToast(getApplicationContext(),"The No Network Connection checkbox is checked - so this device can not be registered", true ).show();
+            return;
+        }
+
+        if (!Util.isNetworkConnected(getApplicationContext())){
+            Util.getToast(getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+            return;
+        }
 
         if (prefs.getGroupName() != null){
             Util.getToast(getApplicationContext(),"Already registered - press UNREGISTER first (if you really want to change group)", true ).show();
@@ -372,6 +390,17 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setUseShortRecordings(true);
         }else{
             prefs.setUseShortRecordings(false);
+        }
+    }
+
+    public void onCheckboxNoNetworkClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setNoNetwork(true);
+        }else{
+            prefs.setNoNetwork(false);
         }
     }
 

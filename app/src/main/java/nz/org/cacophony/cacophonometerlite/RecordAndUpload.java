@@ -45,7 +45,8 @@ class RecordAndUpload {
 
 
 
-    static boolean doRecord(Context context, String typeOfRecording, Handler handler){
+    static String doRecord(Context context, String typeOfRecording, Handler handler){
+        String returnValue = null;
 //        if (logger == null){
 //            logger = Util.getAndConfigureLogger(context, LOG_TAG);
 //            logger.info("Starting doRecord method");
@@ -56,7 +57,8 @@ class RecordAndUpload {
             Log.e(TAG, "typeOfRecording is null");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "typeOfRecording is null");
 //            logger.error("typeOfRecording is null");
-            return false;
+            returnValue = "error";
+            return returnValue;
         }
 
         Prefs prefs = new Prefs(context);
@@ -82,7 +84,7 @@ class RecordAndUpload {
                 if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait){
                     Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
 //                    logger.warn("A repeating alarm happened to soon and so was aborted");
-                    return false;
+                    return "repeating alarm happened to soon";
                 }else{
                     prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
                 }
@@ -91,11 +93,19 @@ class RecordAndUpload {
 
         makeRecording(context, recordTimeSeconds);
 
+        returnValue = "recorded successfully";
+
         if (typeOfRecording.equalsIgnoreCase("testButton")  ){
             if (handler !=null){
                 Message message = handler.obtainMessage();
-                message.what = StartRecordingReceiver.RECORDING_FINISHED;
-                message.sendToTarget();
+                if (prefs.getNoNetwork()){
+//
+                    returnValue = "recorded successfully no network";
+                }else{
+                    message.what = StartRecordingReceiver.RECORDING_FINISHED;
+                    message.sendToTarget();
+                }
+
             }
         }
 
@@ -106,9 +116,12 @@ class RecordAndUpload {
         boolean uploadedFilesSuccessfully = false;
         if (typeOfRecording.equalsIgnoreCase("testButton") ){
 
-                // Always upload when test button pressed
-
+                // Always upload when test button pressed - unless no network checkbox in setup checked
+            if (!prefs.getNoNetwork()) {
                 uploadedFilesSuccessfully = uploadFiles(context);
+                if (uploadedFilesSuccessfully){
+                    returnValue = "recorded and uploaded successfully";
+                }
 
                 prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
                 prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
@@ -117,23 +130,23 @@ class RecordAndUpload {
                 DawnDuskAlarms.configureDawnAlarms(context);
                 DawnDuskAlarms.configureDuskAlarms(context);
                 prefs.setDateTimeLastCalculatedDawnDusk(0);
+            }
             }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
-
-            uploadedFilesSuccessfully = uploadFiles(context);
-            if (uploadedFilesSuccessfully){
-
-                prefs.setDateTimeLastUpload(now);
+            if (!prefs.getNoNetwork()) {
+                uploadedFilesSuccessfully = uploadFiles(context);
+                if (uploadedFilesSuccessfully){
+                    returnValue = "recorded and uploaded successfully";
+                    prefs.setDateTimeLastUpload(now);
+                }else {
+                    returnValue = "recorded BUT did not upload";
+                    Log.e(TAG, "Files failed to upload");
+                }
             }
 
-        }
-
-        if (!uploadedFilesSuccessfully){
-//            logger.error("Files failed to upload");
-            Log.e(TAG, "Files failed to upload");
-            return false;
-
 
         }
+
+
 
             if (typeOfRecording.equalsIgnoreCase("repeating")  ){
                 // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
@@ -150,7 +163,9 @@ class RecordAndUpload {
                 }
 
             }
-            return true;
+
+
+            return returnValue;
     }
 
     private static boolean makeRecording(Context context,  long recordTimeSeconds){

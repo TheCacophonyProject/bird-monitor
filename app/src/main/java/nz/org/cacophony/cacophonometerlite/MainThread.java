@@ -9,6 +9,7 @@ import android.util.Log;
 
 import org.slf4j.Logger;
 
+import static android.R.id.message;
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static nz.org.cacophony.cacophonometerlite.RecordAndUpload.doRecord;
 
@@ -58,7 +59,7 @@ class MainThread implements Runnable {
         message.what = StartRecordingReceiver.RECORDING_STARTED;
         message.sendToTarget();
 
-        boolean recordAndUploadedSuccessfully = false;
+        String recordAndUploadedSuccessfully = null;
         try {
 
             recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, "testButton",handler);
@@ -69,9 +70,20 @@ class MainThread implements Runnable {
             return;
         }
         message = handler.obtainMessage();
-        if (recordAndUploadedSuccessfully){
-            message.what = StartRecordingReceiver.UPLOADING_FINISHED;
-        }else{
+        if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully")){
+            message.what = StartRecordingReceiver.RECORDING_FINISHED;
+
+        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded and uploaded successfully")){
+            message.what = StartRecordingReceiver.RECORDING_AND_UPLOADING_FINISHED;
+
+        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded BUT did not upload")){
+            message.what = StartRecordingReceiver.RECORDING_FINISHED_BUT_UPLOAD_FAILED;
+
+        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully no network")){
+            message.what = StartRecordingReceiver.RECORDING_FINISHED_NO_NETWORK;
+
+        }
+        else{
             message.what = StartRecordingReceiver.RECORDING_FAILED;
         }
 

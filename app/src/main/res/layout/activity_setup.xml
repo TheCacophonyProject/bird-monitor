@@ -253,7 +253,35 @@
                 android:layout_below="@id/cbShortRecordings"
                 android:layout_marginTop="5dp" />
 
+            <TextView
+                android:id="@+id/setupNoNetworkTitle"
+                android:text="@string/no_network_title"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/SplitLine_hor6"
+                android:layout_marginTop="5dp" />
 
+            <TextView
+                android:id="@+id/noNetworkMessage"
+                android:text="@string/no_network_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupNoNetworkTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbNoNetwork"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/noNetworkMessage"
+                android:checked="false"
+                android:onClick="onCheckboxNoNetworkClicked"
+                android:text="@string/no_netowrk_cb_message" />
 
 
         </RelativeLayout>
