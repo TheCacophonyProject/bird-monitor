@@ -485,7 +485,12 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public  void disableFlightModeButtonClick(@SuppressWarnings("UnusedParameters") View v){
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            Util.getToast(getApplicationContext(), "Root access required to change airplane mode", true).show();
+            Prefs prefs = new Prefs(getApplicationContext());
+            if (!prefs.getHasRootAccess()){
+                Util.getToast(getApplicationContext(), "Root access required to change airplane mode", true).show();
+                return;
+            }
+
         }
         disableFlightMode();
     }
