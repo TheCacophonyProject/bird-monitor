@@ -660,14 +660,14 @@ class Util {
                 // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
                 // Must be a rooted device
                 Prefs prefs = new Prefs(context);
-                if (!prefs.getHasRootAccess()) {
+                if (!prefs.getHasRootAccess() && !prefs.getOffLineMode()) {
 
 //                    logger.info("Do NOT have required ROOT access");
                     Log.w(TAG, "Do NOT have required ROOT access");
                  //   Util.getToast(context, "Root access required to change airplane mode", true).show();
                 //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
 
-                    return "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details.";
+                    return "Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.";
 
                 }
 

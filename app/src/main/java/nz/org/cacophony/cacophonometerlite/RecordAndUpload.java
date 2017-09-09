@@ -12,9 +12,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ch.qos.logback.classic.Level;
 //import ch.qos.logback.classic.Logger;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -25,7 +23,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
@@ -98,7 +95,7 @@ class RecordAndUpload {
         if (typeOfRecording.equalsIgnoreCase("testButton")  ){
             if (handler !=null){
                 Message message = handler.obtainMessage();
-                if (prefs.getNoNetwork()){
+                if (prefs.getOffLineMode()){
 //
                     returnValue = "recorded successfully no network";
                 }else{
@@ -117,7 +114,7 @@ class RecordAndUpload {
         if (typeOfRecording.equalsIgnoreCase("testButton") ){
 
                 // Always upload when test button pressed - unless no network checkbox in setup checked
-            if (!prefs.getNoNetwork()) {
+            if (!prefs.getOffLineMode()) {
                 uploadedFilesSuccessfully = uploadFiles(context);
                 if (uploadedFilesSuccessfully){
                     returnValue = "recorded and uploaded successfully";
@@ -132,7 +129,7 @@ class RecordAndUpload {
                 prefs.setDateTimeLastCalculatedDawnDusk(0);
             }
             }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
-            if (!prefs.getNoNetwork()) {
+            if (!prefs.getOffLineMode()) {
                 uploadedFilesSuccessfully = uploadFiles(context);
                 if (uploadedFilesSuccessfully){
                     returnValue = "recorded and uploaded successfully";

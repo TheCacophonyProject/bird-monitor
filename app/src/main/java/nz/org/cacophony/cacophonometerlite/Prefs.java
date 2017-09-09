@@ -5,11 +5,6 @@ import android.content.SharedPreferences;
 //import android.util.Log;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
@@ -62,7 +57,7 @@ class Prefs {
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
    // private static final String  IS_CURRENTLY_RECORDING_KEY = "IS_CURRENTLY_RECORDING";
     private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
-    private static final String  NO_NETWORK_KEY = "NO_NETWORK";
+    private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
     private static final String  USE_FULL_LOGGING_KEY = "USE_FULL_LOGGING";
    // private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
@@ -303,16 +298,16 @@ class Prefs {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
-    boolean getNoNetwork() {
-        return getBoolean(NO_NETWORK_KEY);
+    boolean getOffLineMode() {
+        return getBoolean(OFFLINE_MODE_KEY);
     }
 
     void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
 
-    void setNoNetwork(boolean noNetwork) {
-        setBoolean(NO_NETWORK_KEY, noNetwork);
+    void setOffLineMode(boolean OffLineMode) {
+        setBoolean(OFFLINE_MODE_KEY, OffLineMode);
     }
 
     boolean getUseFullLogging() {

@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,10 +43,7 @@ import java.util.List;
 
 import static android.widget.Toast.makeText;
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-import static com.loopj.android.http.AsyncHttpClient.log;
 //import static nz.org.cacophony.cacophonometerlite.DawnDuskAlarms.logger;
-import static nz.org.cacophony.cacophonometerlite.R.id.gpsText;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -380,11 +378,20 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            Prefs prefs = new Prefs(getApplicationContext());
+
+            // test for network connection
+            if (!prefs.getOffLineMode()){
+                if (!Util.isNetworkConnected(getApplicationContext())){
+                    Util.getToast(getApplicationContext(), "There is no network connection - please fix and try again", true).show();
+                    return;
+                }
+            }
 
 
             if (Server.loggedIn != true) {
-                Prefs prefs = new Prefs(getApplicationContext());
-                if (!prefs.getNoNetwork()){
+
+                if (!prefs.getOffLineMode()){
                     Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
                     return;
                 }
@@ -477,7 +484,9 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
 
     public  void disableFlightModeButtonClick(@SuppressWarnings("UnusedParameters") View v){
-
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            Util.getToast(getApplicationContext(), "Root access required to change airplane mode", true).show();
+        }
         disableFlightMode();
     }
 
@@ -485,6 +494,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 
     public void disableFlightMode(){
         try {
+
            // Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
         new Thread()

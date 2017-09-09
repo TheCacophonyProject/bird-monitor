@@ -46,11 +46,11 @@
     <string name="version">Version ID</string>
 
     <string name="short_record_length_title">Short Record Length (Testing Only)</string>
-    <string name="no_network_title">No Network Connection</string>
+    <string name="offline_mode_title">Offline Mode</string>
     <string name="short_recordings_message">Use this if you are testing where recordings need to be kept confidential - they are very short.</string>
-    <string name="no_network_message">If you know that you will not have a network connection, use this to save power and confusion</string>
+    <string name="offline_mode_message">If you know that you will not have a network connection, use this so you do not have to register with the server.  It will also save power.  You may want to use a micro SD card to make it easier to retrieve the recordings</string>
     <string name="use_short_record_cb_message">Use short recordings.</string>
-    <string name="no_netowrk_cb_message">Check this box if you know you will not have a network connection</string>
+    <string name="offline_mode_cb_message">Offline (no network connection) mode</string>
 
     <string name="registered_true">Registered: ✔</string>
     <string name="registered_false">Registered: ✘</string>

@@ -254,8 +254,8 @@
                 android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/setupNoNetworkTitle"
-                android:text="@string/no_network_title"
+                android:id="@+id/setupOffLineModeTitle"
+                android:text="@string/offline_mode_title"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -265,23 +265,23 @@
                 android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/noNetworkMessage"
-                android:text="@string/no_network_message"
+                android:id="@+id/OffLineModeMessage"
+                android:text="@string/offline_mode_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/setupNoNetworkTitle"
+                android:layout_below="@id/setupOffLineModeTitle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
 
             <CheckBox
-                android:id="@+id/cbNoNetwork"
+                android:id="@+id/cbOffLineMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/noNetworkMessage"
+                android:layout_below="@id/OffLineModeMessage"
                 android:checked="false"
-                android:onClick="onCheckboxNoNetworkClicked"
-                android:text="@string/no_netowrk_cb_message" />
+                android:onClick="onCheckboxOffLineModeClicked"
+                android:text="@string/offline_mode_cb_message" />
 
 
         </RelativeLayout>

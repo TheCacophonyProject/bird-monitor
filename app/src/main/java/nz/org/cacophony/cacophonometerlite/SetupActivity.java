@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -22,8 +21,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import org.slf4j.Logger;
 
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
@@ -144,8 +141,8 @@ public class SetupActivity extends AppCompatActivity {
         } else
             checkBoxUseUseShortRecordings.setChecked(false);
 
-        boolean noNetwork = prefs.getNoNetwork();
-        final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbNoNetwork);
+        boolean noNetwork = prefs.getOffLineMode();
+        final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbOffLineMode);
         if (noNetwork) {
             checkBoxNoNetwork.setChecked(true);
         } else
@@ -202,7 +199,7 @@ public class SetupActivity extends AppCompatActivity {
 
         Prefs prefs = new Prefs(getApplicationContext());
 
-        if (prefs.getNoNetwork()){
+        if (prefs.getOffLineMode()){
             Util.getToast(getApplicationContext(),"The No Network Connection checkbox is checked - so this device can not be registered", true ).show();
             return;
         }
@@ -393,14 +390,14 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    public void onCheckboxNoNetworkClicked(View v) {
+    public void onCheckboxOffLineModeClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
         if (checked){
-            prefs.setNoNetwork(true);
+            prefs.setOffLineMode(true);
         }else{
-            prefs.setNoNetwork(false);
+            prefs.setOffLineMode(false);
         }
     }
 
