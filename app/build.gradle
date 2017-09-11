@@ -18,13 +18,13 @@ android {
 //    buildToolsVersion '25.0.0'
     buildToolsVersion '25.0.3'
     defaultConfig {
-        applicationId "nz.co.cacophonoy.cacophonometerlite"
+        applicationId "nz.org.cacophonoy.cacophonometerlite"
 //        minSdkVersion 8
         minSdkVersion 9
         targetSdkVersion 25
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.960"
+        versionName "0.962"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -54,6 +54,6 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
-    compile files('libs/logback-android-1.1.1-6.jar')
-    compile files('libs/slf4j-api-1.7.21.jar')
+//    compile files('libs/logback-android-1.1.1-6.jar')
+//    compile files('libs/slf4j-api-1.7.21.jar')
 }

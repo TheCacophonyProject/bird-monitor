@@ -124,7 +124,12 @@ class Util {
 
         File appDataFolder = null;
         String sDCardAvailable = isRemovableSDCardAvailable( context);
-        Log.e(TAG, sDCardAvailable);
+        if (sDCardAvailable == null){
+            Log.i(TAG, "Not sd card detected");
+        }else{
+            Log.i(TAG, "sd card IS detected");
+        }
+
 
         String canCreateFile = null;
         if (sDCardAvailable != null){
@@ -697,13 +702,16 @@ class Util {
     }
 
     static void enableFlightMode(Context context) {
+        Log.d(TAG, "enableFlightMode 1");
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            Log.d(TAG, "enableFlightMode 2");
             // API 17 onwards.
 
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
+                Log.d(TAG, "enableFlightMode 3");
                 Log.e(TAG, "Do NOT have required ROOT access");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
 
@@ -714,7 +722,7 @@ class Util {
 
                 return;
             }
-
+            Log.d(TAG, "enableFlightMode 4");
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
@@ -723,6 +731,7 @@ class Util {
             executeCommandWithoutWait("-c", command);
 
         } else {
+            Log.d(TAG, "enableFlightMode 5");
             // API 16 and earlier.
           //  Log.d(LOG_TAG, "API 16 and earlier.");
             //    boolean enabled = isFlightModeEnabled(context);
@@ -738,27 +747,34 @@ class Util {
 
 
     private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
+        Log.d(TAG, "executeCommandWithoutWait 1");
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
         // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
         String su = "su";
         for (int i = 0; i < 3; i++) {
+            Log.d(TAG, "executeCommandWithoutWait 2");
             // "su" command executed successfully.
             if (success) {
                 // Stop executing alternative su commands below.
+                Log.d(TAG, "executeCommandWithoutWait 3");
                 break;
             }
             if (i == 1) {
+                Log.d(TAG, "executeCommandWithoutWait 4");
                 su = "/system/xbin/su";
             } else if (i == 2) {
+                Log.d(TAG, "executeCommandWithoutWait 5");
                 su = "/system/bin/su";
             }
             try {
+                Log.d(TAG, "executeCommandWithoutWait 6");
                 // execute command
                 Runtime.getRuntime().exec(new String[]{su, option, command});
                 success = true;
 
             } catch (IOException e) {
+                Log.d(TAG, "executeCommandWithoutWait 7");
 
                 success = false;
             }
@@ -958,33 +974,33 @@ class Util {
      * @return paths to all available external SD-Card roots in the system.
      */
 
-    //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
-    public static String[] getStorageDirectories(Context context) {
-        String [] storageDirectories;
-        String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            List<String> results = new ArrayList<String>();
-            File[] externalDirs = context.getExternalFilesDirs(null);
-            for (File file : externalDirs) {
-                String path = file.getPath().split("/Android")[0];
-                if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Environment.isExternalStorageRemovable(file))
-                        || rawSecondaryStoragesStr != null && rawSecondaryStoragesStr.contains(path)){
-                    results.add(path);
-                }
-            }
-            storageDirectories = results.toArray(new String[0]);
-        }else{
-            final Set<String> rv = new HashSet<String>();
-
-            if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
-                final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
-                Collections.addAll(rv, rawSecondaryStorages);
-            }
-            storageDirectories = rv.toArray(new String[rv.size()]);
-        }
-        return storageDirectories;
-    }
+//    //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
+//    public static String[] getStorageDirectories(Context context) {
+//        String [] storageDirectories;
+//        String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            List<String> results = new ArrayList<String>();
+//            File[] externalDirs = context.getExternalFilesDirs(null);
+//            for (File file : externalDirs) {
+//                String path = file.getPath().split("/Android")[0];
+//                if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Environment.isExternalStorageRemovable(file))
+//                        || rawSecondaryStoragesStr != null && rawSecondaryStoragesStr.contains(path)){
+//                    results.add(path);
+//                }
+//            }
+//            storageDirectories = results.toArray(new String[0]);
+//        }else{
+//            final Set<String> rv = new HashSet<String>();
+//
+//            if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
+//                final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+//                Collections.addAll(rv, rawSecondaryStorages);
+//            }
+//            storageDirectories = rv.toArray(new String[rv.size()]);
+//        }
+//        return storageDirectories;
+//    }
 
 //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
    static  public String isRemovableSDCardAvailable(Context context) {
