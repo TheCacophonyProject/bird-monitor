@@ -95,12 +95,13 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume 1");
         try{
             super.onResume();
         }catch (Exception ex){
             Log.e(TAG, "Error calling super.onResume");
         }
-
+//        Log.d(TAG, "onResume 2");
         TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
 
@@ -111,7 +112,7 @@ public class SetupActivity extends AppCompatActivity {
             TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
             locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
         }
-
+//        Log.d(TAG, "onResume 3");
         String group = prefs.getGroupName();
         if (group != null) {
             String str = "Registered in group: " + group;
@@ -119,7 +120,7 @@ public class SetupActivity extends AppCompatActivity {
         } else
             registerStatus.setText(R.string.not_registered);
 
-
+//        Log.d(TAG, "onResume 4");
         boolean hasRootAccess = prefs.getHasRootAccess();
         final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
         if (hasRootAccess) {
@@ -145,8 +146,11 @@ public class SetupActivity extends AppCompatActivity {
         final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbOffLineMode);
         if (noNetwork) {
             checkBoxNoNetwork.setChecked(true);
-        } else
+//            Log.d(TAG, "onResume 5 - no network");
+        } else {
             checkBoxNoNetwork.setChecked(false);
+//            Log.d(TAG, "onResume 6 - has network");
+        }
 
 //        super.onResume();
 

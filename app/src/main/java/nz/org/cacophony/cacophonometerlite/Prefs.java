@@ -13,7 +13,8 @@ import org.slf4j.Logger;
 class Prefs {
     private static final boolean isLocalLog = true;
 
-    private static final String TAG = "Prefs.java";
+    //private static final String TAG = "Prefs.java";
+    private static final String TAG = Prefs.class.getName();
     private static Context context = null;
 
 

@@ -35,6 +35,7 @@ class MainThread implements Runnable {
     }
     @Override
     public void run() {
+        Log.d(TAG, "MainThread 1");
         Looper.prepare();
         //        if (context == null || handler == null) {
         if (context == null ) {

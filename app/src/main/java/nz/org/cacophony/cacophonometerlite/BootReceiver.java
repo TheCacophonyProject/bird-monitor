@@ -30,7 +30,8 @@ public class BootReceiver extends BroadcastReceiver {
     // This means the recordings will be made without having to reopen the application
     // Note: If you need to change any settings, then you will need to open the application which will save those settings
     // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
-    private static final String TAG = "BootReceiver";
+   // private static final String TAG = "BootReceiver";
+    private static final String TAG = BootReceiver.class.getName();
   //  private static Logger logger = null;
 //    static {
 //        BasicLogcatConfigurator.configureDefaultContext();
@@ -47,35 +48,41 @@ public class BootReceiver extends BroadcastReceiver {
        // logger = Util.getAndConfigureLogger(context, LOG_TAG);
       //  logger.info("BootReceiver onReceive" );
 
+//        Log.d(TAG, "BootReceiver 1");
+
         Util.enableFlightMode(context);
+//        Log.d(TAG, "BootReceiver 2");
         String intentAction = intent.getAction();
 
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
-
+//        Log.d(TAG, "BootReceiver 3");
         try {
             myIntent.putExtra("type","repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
-
+//            Log.d(TAG, "BootReceiver 4");
         }catch (Exception ex){
 
             Log.e(TAG, ex.getLocalizedMessage());
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
         //    logger.error(ex.getLocalizedMessage());
         }
+try {
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
-
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        Prefs prefs = new Prefs(context);
+    AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+    Prefs prefs = new Prefs(context);
 
 
-        long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
-        long delay = 1000 * timeBetweenRecordingsSeconds ;
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() ,
-                delay, pendingIntent);
+    long timeBetweenRecordingsSeconds = (long) prefs.getTimeBetweenRecordingsSeconds();
+    long delay = 1000 * timeBetweenRecordingsSeconds;
+    alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime(),
+            delay, pendingIntent);
+}catch (Exception ex){
+    Log.e(TAG, ex.getLocalizedMessage());
+}
 
     }
 

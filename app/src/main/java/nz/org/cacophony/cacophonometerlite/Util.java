@@ -125,7 +125,7 @@ class Util {
         File appDataFolder = null;
         String sDCardAvailable = isRemovableSDCardAvailable( context);
         if (sDCardAvailable == null){
-            Log.i(TAG, "Not sd card detected");
+            Log.i(TAG, "No sd card detected");
         }else{
             Log.i(TAG, "sd card IS detected");
         }
@@ -259,21 +259,21 @@ class Util {
 
 
 
-    static String getLocalLogStr(Context context){
-//        Date date = new Date(); // your date
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(date);
-//        int year = cal.get(Calendar.YEAR);
-//        int month = cal.get(Calendar.MONTH);
-//        int day = cal.get(Calendar.DAY_OF_MONTH);
-//        String todaysLogFileNameStr = Integer.toString(year) + "_" + Integer.toString(month + 1)+ "_" + Integer.toString(day);
-        try {
-            return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
-        }catch (Exception ex){
-            return null;
-        }
-
-    }
+//    static String getLocalLogStr(Context context){
+////        Date date = new Date(); // your date
+////        Calendar cal = Calendar.getInstance();
+////        cal.setTime(date);
+////        int year = cal.get(Calendar.YEAR);
+////        int month = cal.get(Calendar.MONTH);
+////        int day = cal.get(Calendar.DAY_OF_MONTH);
+////        String todaysLogFileNameStr = Integer.toString(year) + "_" + Integer.toString(month + 1)+ "_" + Integer.toString(day);
+//        try {
+//            return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
+//        }catch (Exception ex){
+//            return null;
+//        }
+//
+//    }
 
 //static Logger getAndConfigureLogger(Context context, String callingLogTag){
 ////    if (!logbackConfigured){
@@ -702,16 +702,16 @@ class Util {
     }
 
     static void enableFlightMode(Context context) {
-        Log.d(TAG, "enableFlightMode 1");
+//        Log.d(TAG, "enableFlightMode 1");
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            Log.d(TAG, "enableFlightMode 2");
+//            Log.d(TAG, "enableFlightMode 2");
             // API 17 onwards.
 
             // Must be a rooted device
             Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
-                Log.d(TAG, "enableFlightMode 3");
+//                Log.d(TAG, "enableFlightMode 3");
                 Log.e(TAG, "Do NOT have required ROOT access");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
 
@@ -722,7 +722,7 @@ class Util {
 
                 return;
             }
-            Log.d(TAG, "enableFlightMode 4");
+//            Log.d(TAG, "enableFlightMode 4");
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
@@ -731,7 +731,7 @@ class Util {
             executeCommandWithoutWait("-c", command);
 
         } else {
-            Log.d(TAG, "enableFlightMode 5");
+//            Log.d(TAG, "enableFlightMode 5");
             // API 16 and earlier.
           //  Log.d(LOG_TAG, "API 16 and earlier.");
             //    boolean enabled = isFlightModeEnabled(context);
@@ -747,34 +747,34 @@ class Util {
 
 
     private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
-        Log.d(TAG, "executeCommandWithoutWait 1");
+//        Log.d(TAG, "executeCommandWithoutWait 1");
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
         // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
         String su = "su";
         for (int i = 0; i < 3; i++) {
-            Log.d(TAG, "executeCommandWithoutWait 2");
+//            Log.d(TAG, "executeCommandWithoutWait 2");
             // "su" command executed successfully.
             if (success) {
                 // Stop executing alternative su commands below.
-                Log.d(TAG, "executeCommandWithoutWait 3");
+//                Log.d(TAG, "executeCommandWithoutWait 3");
                 break;
             }
             if (i == 1) {
-                Log.d(TAG, "executeCommandWithoutWait 4");
+//                Log.d(TAG, "executeCommandWithoutWait 4");
                 su = "/system/xbin/su";
             } else if (i == 2) {
-                Log.d(TAG, "executeCommandWithoutWait 5");
+//                Log.d(TAG, "executeCommandWithoutWait 5");
                 su = "/system/bin/su";
             }
             try {
-                Log.d(TAG, "executeCommandWithoutWait 6");
+//                Log.d(TAG, "executeCommandWithoutWait 6");
                 // execute command
                 Runtime.getRuntime().exec(new String[]{su, option, command});
                 success = true;
 
             } catch (IOException e) {
-                Log.d(TAG, "executeCommandWithoutWait 7");
+//                Log.d(TAG, "executeCommandWithoutWait 7");
 
                 success = false;
             }
@@ -1034,13 +1034,13 @@ class Util {
             if (directory != null && directory.length() != 0) {
                 if (i == size - 1) {
                     if (directory.contains(FLAG)) {
-                        Log.e(TAG, "SD Card's directory: " + directory);
+//                        Log.i(TAG, "SD Card's directory: " + directory);
                         return directory;
                     } else {
                         return null;
                     }
                 }
-                Log.e(TAG, "SD Card's directory: " + directory);
+//                Log.i(TAG, "SD Card's directory: " + directory);
                 return directory;
             }
         }
@@ -1057,9 +1057,9 @@ class Util {
             fos.write(new byte[1024]);
             fos.flush();
             fos.close();
-            Log.e(TAG, "Can write file on this directory: " + FILE_DIR);
+//            Log.i(TAG, "Can write file on this directory: " + FILE_DIR);
         } catch (Exception e) {
-            Log.e(TAG, "Write file error: " + e.getMessage());
+//            Log.i(TAG, "Write file error: " + e.getMessage());
             return null;
         } finally {
             if (tempFlie != null && tempFlie.exists() && tempFlie.isFile()) {

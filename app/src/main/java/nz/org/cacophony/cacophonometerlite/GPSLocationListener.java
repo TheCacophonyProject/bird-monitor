@@ -17,7 +17,7 @@ import static android.content.ContentValues.TAG;
 //import org.slf4j.LoggerFactory;
 
 class GPSLocationListener implements LocationListener {
-    private static final String TAG = Server.class.getName();
+    private static final String TAG = GPSLocationListener.class.getName();
 
     private Context context = null;
 //    private static Logger logger = null;
@@ -35,6 +35,7 @@ class GPSLocationListener implements LocationListener {
     public void onLocationChanged(Location location) {
 //        logger.debug("onLocationChanged method entered");
        try {
+           Log.d(TAG, "onLocationChanged 1");
            double lat = location.getLatitude();
            double lon = location.getLongitude();
            // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
@@ -45,10 +46,13 @@ class GPSLocationListener implements LocationListener {
 
            // Tell SetupActivity to resume.
            Util.getToast(context, "New Location saved", false).show();
-           Message message = handler.obtainMessage();
-           message.what = SetupActivity.RESUME;
-           message.sendToTarget();
 
+           // Trying to find reason for crashing - seems to be connected with getting GPS - so will try commenting out the next
+           // few lines that are telling the SetupActivity to resume
+//           Message message = handler.obtainMessage();
+//           message.what = SetupActivity.RESUME;
+//           message.sendToTarget();
+           Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){
 //           logger.error(ex.getLocalizedMessage());
            Log.e(TAG, ex.getLocalizedMessage());
