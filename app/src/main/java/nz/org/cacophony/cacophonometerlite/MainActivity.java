@@ -268,12 +268,12 @@ private static final String TAG = MainActivity.class.getName();
         else
             registered.setText(getString(R.string.registered_false));
 
-        // Server connection text.
-        TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
-        if (Server.serverConnection)
-            connectToServerText.setText(getString(R.string.connected_to_server_true));
-        else
-            connectToServerText.setText(getString(R.string.connected_to_server_false));
+//        // Server connection text.
+//        TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
+//        if (Server.serverConnection)
+//            connectToServerText.setText(getString(R.string.connected_to_server_true));
+//        else
+//            connectToServerText.setText(getString(R.string.connected_to_server_false));
 
         // Logged In text.
         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);

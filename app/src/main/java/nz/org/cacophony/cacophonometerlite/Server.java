@@ -66,13 +66,16 @@ try {
     }
 
 
+// removed ping check as this feature has been removed from server
+//    if (!ping(context)) {
+////        logger.error("Could not connect to server");
+//        Log.e(TAG,"Could not connect to server" );
+//        Util.getToast(context, "Could not connect to server", true);
+//    } else {
+//        login(context);
+//    }
 
-    if (!ping(context)) {
-//        logger.error("Could not connect to server");
-        Log.e(TAG,"Could not connect to server" );
-    } else {
-        login(context);
-    }
+    login(context);
 
 //    Util.enableFlightMode(context);
 }catch (Exception ex){
@@ -92,40 +95,40 @@ try {
      *
      * @return if got a response from server.
      */
-    private static boolean ping(Context context) {
-
-        if (!Util.isNetworkConnected(context)){
-            Util.disableFlightMode(context);
-        }
-
-        // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(context, true)){
-            Log.e(TAG, "Failed to disable airplane mode");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
-//            logger.error("Failed to disable airplane mode");
-            return false;
-        }
-
-        SyncHttpClient client = new SyncHttpClient();
-
-        Prefs prefs = new Prefs(context);
-//        boolean useTestServer = prefs.getUseTestServer();
-//        client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
-             client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                String responseString = new String(response);
-                serverConnection = (responseString.equals("pong..."));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                serverConnection = false;
-            }
-        });
-        return serverConnection;
-    }
+//    private static boolean ping(Context context) {
+//
+//        if (!Util.isNetworkConnected(context)){
+//            Util.disableFlightMode(context);
+//        }
+//
+//        // Now wait for network connection as setFlightMode takes a while
+//        if (!Util.waitForNetworkConnection(context, true)){
+//            Log.e(TAG, "Failed to disable airplane mode");
+////            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Failed to disable airplane mode");
+////            logger.error("Failed to disable airplane mode");
+//            return false;
+//        }
+//
+//        SyncHttpClient client = new SyncHttpClient();
+//
+//        Prefs prefs = new Prefs(context);
+////        boolean useTestServer = prefs.getUseTestServer();
+////        client.get(prefs.getServerUrl(useTestServer) + PING_URL, null, new AsyncHttpResponseHandler() {
+//             client.get(prefs.getServerUrl() + PING_URL, null, new AsyncHttpResponseHandler() {
+//
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+//                String responseString = new String(response);
+//                serverConnection = (responseString.equals("pong..."));
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+//                serverConnection = false;
+//            }
+//        });
+//        return serverConnection;
+//    }
 
     /**
      * Will login and save JSON Web Token. Can't be run on main/UI thread as it does a synchronous http request.
