@@ -1,8 +1,8 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Build;
+import android.util.JsonReader;
 import android.util.Log;
 //import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -12,15 +12,22 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import cz.msebera.android.httpclient.Header;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-import static nz.org.cacophony.cacophonometerlite.Util.sendMainActivityAMessage;
+import javax.net.ssl.HttpsURLConnection;
+
+import cz.msebera.android.httpclient.Header;
+import info.guardianproject.netcipher.NetCipher;
+
+import static android.R.id.message;
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -83,9 +90,9 @@ try {
     Log.e(TAG,ex.getLocalizedMessage() );
 
 }finally {
-    Util.sendMainActivityAMessage(context, "enable_vitals_button");
-    Util.sendMainActivityAMessage(context, "enable_test_recording_button");
-    Util.sendMainActivityAMessage(context, "enable_setup_button");
+    Util.broadcastAMessage(context, "enable_vitals_button");
+    Util.broadcastAMessage(context, "enable_test_recording_button");
+    Util.broadcastAMessage(context, "enable_setup_button");
 }
     }
 
@@ -174,7 +181,9 @@ try {
 //        boolean useTestServer = prefs.getUseTestServer();
 //
 //        client.post(prefs.getServerUrl(useTestServer) + LOGIN_URL, params, new AsyncHttpResponseHandler() {
-            client.post(prefs.getServerUrl() + LOGIN_URL, params, new AsyncHttpResponseHandler() {
+        String url = prefs.getServerUrl(false) + LOGIN_URL;
+//            client.post(prefs.getServerUrl() + LOGIN_URL, params, new AsyncHttpResponseHandler() {
+        client.post(url, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -202,6 +211,23 @@ try {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+               if (headers !=null){
+                   for (Header header : headers){
+                       Log.e(TAG, header.toString());
+                   }
+               }else{
+                   Log.e(TAG, "headers is null");
+               }
+if (errorResponse != null){
+    String s = new String(errorResponse);
+    Log.e(TAG, s);
+}else{
+    Log.e(TAG, "errorResponse is null");
+}
+
+
+                Log.e(TAG, e.getLocalizedMessage());
+
                 if (statusCode == 401) {
                     loggedIn = false;
                     Log.e(TAG, "Invalid devicename or password for login.");
@@ -231,79 +257,18 @@ try {
 //            logger.info("Register", "Invalid group name: " + group);
             return false;
         }
-        SyncHttpClient client = new SyncHttpClient();
-        RequestParams params = new RequestParams();
 
-        final String devicename = RandomStringUtils.random(20, true, true);
-        final String password = RandomStringUtils.random(20, true, true);
+        boolean loggedIn = false;
 
-        params.put("devicename", devicename);
-        params.put("password", password);
-        params.put("group", group);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            loggedIn = registerForAPI16AndAbove( group,  context);
+        }else{
+            loggedIn = registerForAPI15AndBelow( group,  context);
+        }
 
-        final Prefs prefs = new Prefs(context);
-
-        // Sent Post request.
-//        boolean useTestServer = prefs.getUseTestServer();
-//        client.post(prefs.getServerUrl(useTestServer) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
-        client.post(prefs.getServerUrl() + REGISTER_URL, params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                String responseString = new String(response);
-                try {
-                    JSONObject joRes = new JSONObject(responseString);
-                    if (joRes.getBoolean("success")) {
-                        loggedIn = true;
-                        setToken(joRes.getString("token"));
-
-                        // look at web token
-                        String deviceID = Util.getDeviceID(context, getToken());
-                        prefs.setDeviceId(deviceID);
-
-                        prefs.setDeviceName(devicename);
-                        prefs.setGroupName(group);
-                        prefs.setPassword(password);
-
-                        prefs.setDeviceId(deviceID);
-                    } else {
-                        // Failed register.
-                        loggedIn = false;
-                    }
-                } catch (JSONException ex) {
-                    loggedIn = false;
-                    Log.e(TAG, "Error with parsing register response into a JSON");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register response into a JSON");
-//                    logger.error("Error with parsing register response into a JSON");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-//                    logger.error(ex.getLocalizedMessage());
-                    Log.e(TAG, ex.getLocalizedMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                try {
-                    JSONObject joRes = new JSONObject(responseString);
-                   JSONArray messages = joRes.getJSONArray("messages");
-                    String firstMessage = (String) messages.get(0);
-                    setErrorMessage(firstMessage);
-                    Log.i(TAG, firstMessage);
-//                    logger.info(firstMessage);
-                }catch (Exception ex){
-                    Log.e(TAG, "Error with parsing register errorResponse into a JSON");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register errorResponse into a JSON");
-//                    logger.error("Error with parsing register errorResponse into a JSON");
-                }
-                loggedIn = false;
-                Log.e(TAG, "Error with getting response from server");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getting response from server");
-//                logger.error("Error with getting response from server");
-            }
-        });
         return loggedIn;
+
+
     }
 
     /**
@@ -361,7 +326,7 @@ try {
         // Send request
        // boolean useTestServer = prefs.getUseTestServer();
 //        client.post(prefs.getServerUrl(useTestServer) + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
-        client.post(prefs.getServerUrl() + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl(false) + UPLOAD_AUDIO_API_URL, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
@@ -403,7 +368,7 @@ try {
     }
 
 
-//    static void sendMainActivityAMessage(Context context, String message){
+//    static void broadcastAMessage(Context context, String message){
 //        // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 //
 //        Intent intent = new Intent("event");
@@ -414,5 +379,164 @@ try {
 //
 //    }
 
+    static boolean registerForAPI16AndAbove(final String group, final Context context) {
+        // Android API 16 and above can use TLSv1.2 so will use https
+        final Prefs prefs = new Prefs(context);
+        //https://code.tutsplus.com/tutorials/android-from-scratch-using-rest-apis--cms-27117
+        // https://stackoverflow.com/questions/42767249/android-post-request-with-json
+        String registerUrl = prefs.getServerUrl(true) + REGISTER_URL;
+        URL cacophonyRegisterEndpoint = null;
+        try {
+            cacophonyRegisterEndpoint = new URL(registerUrl);
+            // Create connection
+            HttpsURLConnection myConnection = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&  Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                //  HttpsURLConnection myConnection = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
+                //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
+                myConnection = NetCipher.getHttpsURLConnection(cacophonyRegisterEndpoint);
+            }else{
+                myConnection = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
+            }
 
+            myConnection.setRequestMethod("POST");
+            myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            myConnection.setRequestProperty("Accept","application/json");
+            myConnection.setDoOutput(true);
+            myConnection.setDoInput(true);
+
+            final String devicename = RandomStringUtils.random(20, true, true);
+            final String password = RandomStringUtils.random(20, true, true);
+
+
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("devicename", devicename);
+            jsonParam.put("password", password);
+            jsonParam.put("group", group);
+            DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
+            os.writeBytes(jsonParam.toString());
+            os.flush();
+
+            //  Here you read any answer from server.
+            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+            String responseLine;
+
+            responseLine = serverAnswer.readLine();
+            os.close();
+            serverAnswer.close();
+
+            Log.i("STATUS", String.valueOf(myConnection.getResponseCode()));
+            String status = String.valueOf(myConnection.getResponseCode());
+            Log.i("MSG" , myConnection.getResponseMessage());
+            String responseCode = String.valueOf(myConnection.getResponseCode());
+
+            myConnection.disconnect();
+
+            String responseString = new String(responseLine);
+
+                JSONObject joRes = new JSONObject(responseString);
+                if (joRes.getBoolean("success")) {
+                    loggedIn = true;
+                    setToken(joRes.getString("token"));
+
+                    // look at web token
+                    String deviceID = Util.getDeviceID(context, getToken());
+                    prefs.setDeviceId(deviceID);
+
+                    prefs.setDeviceName(devicename);
+                    prefs.setGroupName(group);
+                    prefs.setPassword(password);
+
+                    prefs.setDeviceId(deviceID);
+                } else {
+                    // Failed register.
+                    loggedIn = false;
+                }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return loggedIn;
+    }
+
+    static boolean registerForAPI15AndBelow(final String group, final Context context) {
+        // For now can't use https
+        final Prefs prefs = new Prefs(context);
+        SyncHttpClient client = new SyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        final String devicename = RandomStringUtils.random(20, true, true);
+        final String password = RandomStringUtils.random(20, true, true);
+
+        params.put("devicename", devicename);
+        params.put("password", password);
+        params.put("group", group);
+
+        //    final Prefs prefs = new Prefs(context);
+
+        // Sent Post request.
+//        boolean useTestServer = prefs.getUseTestServer();
+//        client.post(prefs.getServerUrl(useTestServer) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
+        client.post(prefs.getServerUrl(false) + REGISTER_URL, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                try {
+                    JSONObject joRes = new JSONObject(responseString);
+                    if (joRes.getBoolean("success")) {
+                        loggedIn = true;
+                        setToken(joRes.getString("token"));
+
+                        // look at web token
+                        String deviceID = Util.getDeviceID(context, getToken());
+                        prefs.setDeviceId(deviceID);
+
+                        prefs.setDeviceName(devicename);
+                        prefs.setGroupName(group);
+                        prefs.setPassword(password);
+
+                        prefs.setDeviceId(deviceID);
+                    } else {
+                        // Failed register.
+                        loggedIn = false;
+                    }
+                } catch (JSONException ex) {
+                    loggedIn = false;
+                    Log.e(TAG, "Error with parsing register response into a JSON");
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register response into a JSON");
+//                    logger.error("Error with parsing register response into a JSON");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
+//                    logger.error(ex.getLocalizedMessage());
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                try {
+                    JSONObject joRes = new JSONObject(responseString);
+                    JSONArray messages = joRes.getJSONArray("messages");
+                    String firstMessage = (String) messages.get(0);
+                    setErrorMessage(firstMessage);
+                    Log.i(TAG, firstMessage);
+//                    logger.info(firstMessage);
+                }catch (Exception ex){
+                    Log.e(TAG, "Error with parsing register errorResponse into a JSON");
+//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with parsing register errorResponse into a JSON");
+//                    logger.error("Error with parsing register errorResponse into a JSON");
+                }
+                loggedIn = false;
+                Log.e(TAG, "Error with getting response from server");
+//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getting response from server");
+//                logger.error("Error with getting response from server");
+            }
+        });
+
+
+        return loggedIn;
+    }
 }

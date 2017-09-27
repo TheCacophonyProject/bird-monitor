@@ -947,7 +947,7 @@ class Util {
 //        Util.logbackConfigured = logbackConfigured;
 //    }
 
-    static void sendMainActivityAMessage(Context context, String message){
+    static void broadcastAMessage(Context context, String message){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         Intent intent = new Intent("event");

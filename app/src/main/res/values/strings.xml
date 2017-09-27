@@ -23,7 +23,7 @@
     <string name="device_not_registered">Device Not Registered</string>
     <string name="to_register_title">To register this device</string>
 
-    <string name="to_register_intructions">(Press the ? icon for full instructions): \n\n1) Register on the Cacophonometer data server (http://103.16.20.22). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
+    <string name="to_register_intructions">(Press the ? icon for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
 

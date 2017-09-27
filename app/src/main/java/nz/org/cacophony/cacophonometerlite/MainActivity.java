@@ -97,6 +97,7 @@ private static final String TAG = MainActivity.class.getName();
     private BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
+        // broadcast notification coming from ??
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
@@ -317,6 +318,7 @@ private static final String TAG = MainActivity.class.getName();
 
       //  super.onResume();
 
+        // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }

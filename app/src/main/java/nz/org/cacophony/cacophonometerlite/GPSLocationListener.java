@@ -52,6 +52,10 @@ class GPSLocationListener implements LocationListener {
 //           Message message = handler.obtainMessage();
 //           message.what = SetupActivity.RESUME;
 //           message.sendToTarget();
+
+           // send a broadcast for SetupActivity to update gps location text
+           Util.broadcastAMessage(context, "refresh_gps_coordinates");
+
            Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){
 //           logger.error(ex.getLocalizedMessage());

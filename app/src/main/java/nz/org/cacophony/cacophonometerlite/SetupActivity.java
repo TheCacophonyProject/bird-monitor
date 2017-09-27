@@ -1,13 +1,16 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
@@ -65,6 +69,30 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String message = intent.getStringExtra("message");
+                if (message != null) {
+                    if (message.equalsIgnoreCase("refresh_gps_coordinates")) {
+                        updateGpsDisplay(context);
+                    }
+
+                }
+
+
+
+
+            }catch (Exception ex){
+//                logger.error(ex.getLocalizedMessage());
+                Log.e(TAG,ex.getLocalizedMessage());
+            }
+        }
+    };
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -105,13 +133,15 @@ public class SetupActivity extends AppCompatActivity {
         TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
 
-        double lat = prefs.getLatitude();
-        double lon = prefs.getLongitude();
+//        double lat = prefs.getLatitude();
+//        double lon = prefs.getLongitude();
+//
+//        if (lat != 0 && lon != 0) {
+//            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
+//            locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
+//        }
 
-        if (lat != 0 && lon != 0) {
-            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
-            locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
-        }
+        updateGpsDisplay(getApplicationContext());
 //        Log.d(TAG, "onResume 3");
         String group = prefs.getGroupName();
         if (group != null) {
@@ -161,6 +191,9 @@ public class SetupActivity extends AppCompatActivity {
 //        } else
 //            checkBoxUseFullLogging.setChecked(false);
 //        super.onResume();
+
+        IntentFilter iff = new IntentFilter("event");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -453,6 +486,18 @@ public class SetupActivity extends AppCompatActivity {
 //            logger.error(ex.getLocalizedMessage());
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+        }
+    }
+
+    void updateGpsDisplay(Context context){
+        Prefs prefs = new Prefs(context);
+
+        double lat = prefs.getLatitude();
+        double lon = prefs.getLongitude();
+
+        if (lat != 0 && lon != 0) {
+            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
+            locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
         }
     }
 

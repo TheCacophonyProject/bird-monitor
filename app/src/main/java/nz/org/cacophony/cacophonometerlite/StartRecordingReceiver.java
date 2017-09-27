@@ -8,13 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 //import android.util.Log;
 
-import org.slf4j.Logger;
-
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 
 public class StartRecordingReceiver extends BroadcastReceiver{
@@ -215,9 +211,9 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     }
 
      static void enableButtons(Context context){
-         Util.sendMainActivityAMessage(context, "enable_vitals_button");
-         Util.sendMainActivityAMessage(context, "enable_test_recording_button");
-         Util.sendMainActivityAMessage(context, "enable_setup_button");
+         Util.broadcastAMessage(context, "enable_vitals_button");
+         Util.broadcastAMessage(context, "enable_test_recording_button");
+         Util.broadcastAMessage(context, "enable_setup_button");
 
           }
 

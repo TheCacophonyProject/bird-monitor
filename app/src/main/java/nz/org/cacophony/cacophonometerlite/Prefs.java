@@ -20,7 +20,9 @@ class Prefs {
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 //    private static final String TEST_SERVER_URL = "http://138.68.237.249:8888/";       // Server URL
-    private static final String PRODUCTION_SERVER_URL = "http://103.16.20.22";       // Server URL
+//    private static final String PRODUCTION_SERVER_URL = "http://103.16.20.22";       // Server URL
+    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Server URL
+    private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Server URL
 
     private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
@@ -185,8 +187,13 @@ class Prefs {
 //        }
 //    }
 
-    String getServerUrl() {
-        return PRODUCTION_SERVER_URL;
+    String getServerUrl(boolean useHttps) {
+        if (useHttps){
+            return PRODUCTION_SERVER_URL;
+        }else{
+            return PRODUCTION_SERVER_URL_HTTP;
+        }
+
 
     }
 
