@@ -47,6 +47,7 @@ import static android.widget.Toast.makeText;
 
 
 public class MainActivity extends AppCompatActivity {
+    // Testing new Git Repository
 //    private static final String LOG_TAG = MainActivity.class.getName();
 private static final String TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
