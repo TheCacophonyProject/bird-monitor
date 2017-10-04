@@ -56,12 +56,7 @@ public class MultipartUtility {
         // creates a unique boundary based on time stamp
         boundary = "---" + System.currentTimeMillis() + "---";
 
-//        URL url = new URL(requestURL);
-//        httpConn = (HttpURLConnection) url.openConnection();
 
-        //https://code.tutsplus.com/tutorials/android-from-scratch-using-rest-apis--cms-27117
-        // https://stackoverflow.com/questions/42767249/android-post-request-with-json
-       // String registerUrl = prefs.getServerUrl(true) + REGISTER_URL;
         URL cacophonyRegisterEndpoint = null;
        // HttpsURLConnection httpConn = null;
         try {
@@ -69,7 +64,6 @@ public class MultipartUtility {
             // Create connection
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&  Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                //  HttpsURLConnection myConnection = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
                 //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
                 httpConn = NetCipher.getHttpsURLConnection(cacophonyRegisterEndpoint);
             }else{
@@ -90,7 +84,6 @@ public class MultipartUtility {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
     }
 

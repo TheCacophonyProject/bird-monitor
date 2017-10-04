@@ -458,6 +458,6 @@ class RecordAndUpload {
 //            logger.error(ex.getLocalizedMessage());
             Log.e(TAG,ex.getLocalizedMessage() );
         }
-        return Server.uploadAudioRecording5(aFile, audioRecording, context);
+        return Server.uploadAudioRecording(aFile, audioRecording, context);
     }
 }
