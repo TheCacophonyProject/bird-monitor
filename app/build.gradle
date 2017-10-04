@@ -24,7 +24,7 @@ android {
         targetSdkVersion 25
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.969"
+        versionName "0.970"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
