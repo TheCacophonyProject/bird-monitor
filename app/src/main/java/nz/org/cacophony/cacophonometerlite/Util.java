@@ -22,8 +22,13 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
-import com.luckycatlabs.sunrisesunset.dto.Location;
+import com.luckycatlabs.SunriseSunsetCalculator;
+import com.luckycatlabs.dto.Location;
+import com.luckycatlabs.calculator.SolarEventCalculator;
+
+
+//import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+//import com.luckycatlabs.sunrisesunset.dto.Location;
 
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -678,9 +683,11 @@ class Util {
 
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-                executeCommandWithoutWait("-c", command);
+               // executeCommandWithoutWait("-c", command);
+                executeCommandTim( command);
                 command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-                executeCommandWithoutWait("-c", command);
+              //  executeCommandWithoutWait("-c", command);
+                executeCommandTim( command);
 
             } else {
                 // API 16 and earlier.
@@ -700,6 +707,32 @@ class Util {
         }
         return null;
     }
+
+//    static String disableFlightModeTestSU(Context context) {
+//        try {
+//
+//
+//
+//
+//                // Set Airplane / Flight mode using su commands.
+//                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
+////                executeCommandWithoutWait("-c", command);
+//            executeCommandTim( command);
+//                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
+////                executeCommandWithoutWait("-c", command);
+//            executeCommandTim( command);
+//
+//
+//
+//
+//        }catch (Exception ex){
+////            logger.error(ex.getLocalizedMessage());
+//            Log.e(TAG, ex.getLocalizedMessage());
+//
+//        }
+//        return null;
+//    }
+
 
     static void enableFlightMode(Context context) {
 //        Log.d(TAG, "enableFlightMode 1");
@@ -726,9 +759,11 @@ class Util {
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-            executeCommandWithoutWait("-c", command);
+         //   executeCommandWithoutWait("-c", command);
+            executeCommandTim( command);
             command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-            executeCommandWithoutWait("-c", command);
+        //    executeCommandWithoutWait("-c", command);
+            executeCommandTim( command);
 
         } else {
 //            Log.d(TAG, "enableFlightMode 5");
@@ -743,7 +778,23 @@ class Util {
         }
     }
 
+//    static void enableFlightModeTestSU(Context context) {
+//        String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
+//        executeCommandTim( command);
+//        command = COMMAND_FLIGHT_MODE_2 + " " + "true";
+//        executeCommandTim( command);
+//
+//    }
 
+private static void executeCommandTim(String command){
+    try {
+        ExecuteAsRootBaseTim executeAsRootBaseTim = new ExecuteAsRootBaseTim();
+        executeAsRootBaseTim.addCommand(command);
+        executeAsRootBaseTim.execute();
+    }catch (Exception ex){
+        Log.e(TAG, ex.getLocalizedMessage());
+    }
+}
 
 
     private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {

@@ -142,24 +142,36 @@ class RecordAndUpload {
 
 
         }
+boolean repeatingRecording = false;
+        if (typeOfRecording.equalsIgnoreCase("repeating")){
+            repeatingRecording = true;
+        }
 
-
-
-            if (typeOfRecording.equalsIgnoreCase("repeating")  ){
-                // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
-                long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-               //  long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
-                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 ; // 1 minute for testing
-//                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 2; // 2 hours for testing
-//                long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 ; // 1 hour for testing
-
-                if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
+        if (repeatingRecording){
+            Log.d(TAG, "repeating");
+            long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
+            long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
+            if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
                     DawnDuskAlarms.configureDawnAlarms(context);
                     DawnDuskAlarms.configureDuskAlarms(context);
                     prefs.setDateTimeLastCalculatedDawnDusk(now);
                 }
+        }else{
+            Log.d(TAG, "Not repeating");
+        }
 
-            }
+//            if (typeOfRecording.equalsIgnoreCase("repeating")  ){
+//                // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
+//                long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
+//                 long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
+//
+////                if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
+////                    DawnDuskAlarms.configureDawnAlarms(context);
+////                    DawnDuskAlarms.configureDuskAlarms(context);
+////                    prefs.setDateTimeLastCalculatedDawnDusk(now);
+////                }
+//
+//            }
 
 
             return returnValue;
@@ -305,7 +317,14 @@ class RecordAndUpload {
                         return false; // Can't upload without JWT, login/register device to get JWT.
                     }
                 }
+
+                int numberOfFilesUploaded = 0;  // put a limit on the number of file uploads as if there are too many I think it may be timing out
                 for (File aFile : recordingFiles) {
+                    if (numberOfFilesUploaded > 9){
+                        break;
+                    }
+
+
 
                     if (sendFile(context, aFile)) {
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
@@ -331,6 +350,7 @@ class RecordAndUpload {
                         Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
+                    numberOfFilesUploaded++;
                 }
             }
             return returnValue;

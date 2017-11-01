@@ -48,6 +48,7 @@ class Server {
 
         try {
             Util.disableFlightMode(context);
+         //   Util.disableFlightModeTestSU(context);
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
@@ -68,6 +69,8 @@ class Server {
     static boolean login(Context context) {
         try {
             Util.disableFlightMode(context);
+        //    Util.disableFlightModeTestSU(context);
+
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {

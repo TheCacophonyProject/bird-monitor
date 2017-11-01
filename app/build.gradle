@@ -13,10 +13,11 @@ android {
             storePassword 'Pppother1'
         }
     }
-    compileSdkVersion 25
+   // compileSdkVersion 26
+   compileSdkVersion 25
     //   compileSdkVersion 24
 //    buildToolsVersion '25.0.0'
-    buildToolsVersion '25.0.3'
+  //  buildToolsVersion '25.0.3' // told to remove this after upgrading Gradle Plugin
     defaultConfig {
         applicationId "nz.org.cacophonoy.cacophonometerlite"
 //        minSdkVersion 8
@@ -24,7 +25,7 @@ android {
         targetSdkVersion 25
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.970"
+        versionName "0.974test"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -53,7 +54,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
+  //  compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
 //    compile files('libs/logback-android-1.1.1-6.jar')
 //    compile files('libs/slf4j-api-1.7.21.jar')
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection

@@ -41,7 +41,9 @@ import java.util.List;
 //import org.slf4j.Logger;
 
 
+import static android.R.id.message;
 import static android.widget.Toast.makeText;
+//import static nz.org.cacophony.cacophonometerlite.Util.disableFlightModeTestSU;
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 //import static nz.org.cacophony.cacophonometerlite.DawnDuskAlarms.logger;
 
@@ -187,6 +189,8 @@ private static final String TAG = MainActivity.class.getName();
         prefs.setDawnDuskOffsetLargeSeconds();
         prefs.setLengthOfTwilightSeconds();
         prefs.setTimeBetweenUploadsSeconds();
+        prefs.setBatteryLevelCutoffRepeatingRecordings();
+        prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
 
         long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
@@ -514,7 +518,10 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
                 {
                     public void run()
                     {
-                        String message = Util.disableFlightMode(getApplicationContext());
+                      String message = Util.disableFlightMode(getApplicationContext());
+                       // String message =  Util.disableFlightModeTestSU(getApplicationContext());
+
+
                         if (message != null){
                             ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
                         }

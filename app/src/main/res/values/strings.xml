@@ -18,8 +18,8 @@
     <string name="enable_flight_mode">Enable Flight (Airplane) mode</string>
 
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
-    <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app is a system app</string>
-    <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed as system app.</string>
+    <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app has been given root permission.</string>
+    <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed has root permission.</string>
     <string name="device_not_registered">Device Not Registered</string>
     <string name="to_register_title">To register this device</string>
 
@@ -65,11 +65,13 @@
     <string name="help_text">Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.
 \n\n
 To use this app first register on the data server (https://browse.cacophony.org.nz/) AND create a group name (also on the server).
-        \n\nOnce you have created the group name on the data server, press the \'Setup Device\' button and follow the instructions to configure the app.
+        \n\nOnce you have created the group name on the data server, press the \'Setup Device\' button (in this app) and follow the instructions to configure the app.
 \n\n
 If you are using a solar panel then it is important to turn off and/or remove everything on your phone that might consume power e.g. email accounts that sync with the server, set screen brightness and timeout to a minimum, turn off bluetooth and GPS.  It might be a good idea to disable as many of the apps that came with the phone.
 \n\n
-Once recordings have been sent to the server (once every 6 hours) you will be able to log back in and listen to them - as will anyone who has your password!\n\nWe intend to perform automatic machine analysis of all recordings rather than have a human listen to each recording.  We also expect to implement a system to automatically remove any speech present in the recordings.\n\nIf you believe you have inadvertently recorded a private conversation, please use the delete function on the server to remove it.
+If your phone\'s Android version is 4.2(17) or higher then you will need to \'root\' the phone to save power (important if you are using a solar panel).  Once the phone has been rooted, running the app will cause a prompt asking if you grant superuser permission to the Cacophony - you need to grant permission each time the phone restarts.
+        \n\n
+        Once recordings have been sent to the server you will be able to log back in and listen to them - as will anyone who has your password!\n\nWe intend to perform automatic machine analysis of all recordings rather than have a human listen to each recording.  We also expect to implement a system to automatically remove any speech present in the recordings.\n\nIf you believe you have inadvertently recorded a private conversation, please use the delete function on the server to remove it.
 \n\n
 Thank you again for supporting The Cacophony Project\n
 https://cacophony.org.nz/</string>

@@ -132,7 +132,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
             double batteryPercent = batteryRatioLevel * 100;
-            if (!enoughBatteryToContinue( batteryPercent, alarmIntentType)){
+            if (!enoughBatteryToContinue( batteryPercent, alarmIntentType, prefs)){
                 Log.w(TAG, "Battery level too low to do a recording");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Battery level too low to do a recording");
 //                logger.warn("Battery level too low to do a recording");
@@ -143,7 +143,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         }else { // will need to get battery level using intent method
             double batteryPercentLevel = getBatteryLevelByIntent(context);
 
-            if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType)){
+            if (!enoughBatteryToContinue( batteryPercentLevel, alarmIntentType, prefs)){
                 Log.w(TAG, "Battery level too low to do a recording");
 //                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Battery level too low to do a recording");
 //                logger.warn("Battery level too low to do a recording");
@@ -192,7 +192,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType){
+    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs){
         // The battery level required to continue depends on the type of alarm
 
         if (alarmType.equalsIgnoreCase("testButton")){
@@ -201,9 +201,12 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
-            return batteryPercent > 85;
+
+//            return batteryPercent > 85;
+            return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
         }else { // must be a dawn or dusk alarm
-            return batteryPercent > 70;
+           // return batteryPercent > 70;
+            return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
         }
 
     }

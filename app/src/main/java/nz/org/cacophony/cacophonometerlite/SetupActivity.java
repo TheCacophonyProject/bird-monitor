@@ -475,6 +475,7 @@ public class SetupActivity extends AppCompatActivity {
                         public void run()
                         {
                             Util.disableFlightMode(getApplicationContext());
+                          //  Util.disableFlightModeTestSU(getApplicationContext());
                         }
                     });
                 }
