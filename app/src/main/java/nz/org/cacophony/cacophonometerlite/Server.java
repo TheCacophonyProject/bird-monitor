@@ -319,8 +319,10 @@ class Server {
 
         } catch (IOException ex) {
             Log.e(TAG, ex.getLocalizedMessage());
+        }finally {
+            uploading = false;
         }
-        uploading = false;
+       // uploading = false;
         return uploadSuccess;
     }
 

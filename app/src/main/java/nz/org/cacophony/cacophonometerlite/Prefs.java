@@ -56,6 +56,12 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0;
 //    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
     private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  //for testing
 
+    private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
+    private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
+
+    private static final String DAWN_DUSK_INCREMENT_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
+    private static final double DAWN_DUSK_INCREMENT_MINUTES = 10;
+
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes
 
@@ -294,6 +300,22 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0;
 
     double getDawnDuskOffsetLargeSeconds() {
         return getDouble(DAWN_DUSK_OFFSET_LARGE_KEY);
+    }
+
+    double getDawnDuskOffsetMinutes() {
+        return getDouble(DAWN_DUSK_OFFSET_MINUTES_KEY);
+    }
+
+    void setDawnDuskOffsetMinutes() {
+        setDouble(DAWN_DUSK_OFFSET_MINUTES_KEY, DAWN_DUSK_OFFSET_MINUTES);
+    }
+
+    double getDawnDuskIncrementMinutes(){
+        return getDouble(DAWN_DUSK_INCREMENT_MINUTES_KEY);
+    }
+
+    void setDawnDuskIncrementMinutes() {
+        setDouble(DAWN_DUSK_INCREMENT_MINUTES_KEY, DAWN_DUSK_INCREMENT_MINUTES);
     }
 
     void setDawnDuskOffsetLargeSeconds() {

@@ -124,8 +124,10 @@ class RecordAndUpload {
                 prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
 
                 // Always set up dawn/dusk alarms when test button pressed
-                DawnDuskAlarms.configureDawnAlarms(context);
-                DawnDuskAlarms.configureDuskAlarms(context);
+              //  DawnDuskAlarms.configureDawnAlarms(context);
+                DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
+//                DawnDuskAlarms.configureDuskAlarms(context);
+                DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
                 prefs.setDateTimeLastCalculatedDawnDusk(0);
             }
             }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
@@ -152,8 +154,10 @@ boolean repeatingRecording = false;
             long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
             long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
             if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
-                    DawnDuskAlarms.configureDawnAlarms(context);
-                    DawnDuskAlarms.configureDuskAlarms(context);
+                  //  DawnDuskAlarms.configureDawnAlarms(context);
+                DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
+//                DawnDuskAlarms.configureDuskAlarms(context);
+                DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
                     prefs.setDateTimeLastCalculatedDawnDusk(now);
                 }
         }else{
@@ -459,7 +463,7 @@ boolean repeatingRecording = false;
 //            additionalMetadata.put("Log level is ", logLevel);
 
             additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);
-            additionalMetadata.put("Phone has been rooted", prefs.getHasRootAccess());
+            additionalMetadata.put("App has root access", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
 

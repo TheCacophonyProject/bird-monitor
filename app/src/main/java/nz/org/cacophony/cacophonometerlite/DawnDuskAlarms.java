@@ -42,6 +42,83 @@ class DawnDuskAlarms {
 //                return logger;
 //            }
 
+    static void configureDawnAlarmsUsingLoop(Context context) {
+
+        Prefs prefs = new Prefs(context);
+        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+        Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+        nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
+
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+        myIntent.putExtra("type", "dawn");
+
+        Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
+        Calendar dawnTomorrowCalendar =  Util.getDawn(context, nowTomorrow);
+
+        int dawnDuskOffsetMinutes = (int)prefs.getDawnDuskOffsetMinutes();
+        int dawnDuskIncrementMinutes = (int)prefs.getDawnDuskIncrementMinutes();
+        int currentOffsetSeconds = dawnDuskOffsetMinutes * 60 * -1; // 1 hour before
+
+        while (currentOffsetSeconds <= (dawnDuskOffsetMinutes * 60) ){ // we are going to keep adding alarms until currentOffsetSeconds reaches dawn + minutesBeforeAfterDawnToDoExtraRecordings
+            dawnTodayCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+            dawnTomorrowCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+            String currentOffsetAsString = Integer.toString(currentOffsetSeconds); // need this to label alarm so it can be overwritten when dawn changes, otherwise more alarms will be added each time calculation is done
+            timeUri = Uri.parse("dawn" + currentOffsetAsString);
+            myIntent.setData(timeUri);
+            pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+            if (nowToday.getTimeInMillis() < dawnTodayCalendar.getTimeInMillis()) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+                //  System.out.println("today dawnMinus40Minutes " + dawnTodayCalendar.getTime());
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
+            }
+
+            currentOffsetSeconds +=  (dawnDuskIncrementMinutes * 60);
+        }
+
+    }
+
+    static void configureDuskAlarmsUsingLoop(Context context) {
+
+        Prefs prefs = new Prefs(context);
+        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+        Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+        nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
+
+        PendingIntent pendingIntent;
+        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+        myIntent.putExtra("type", "dusk");
+
+        Calendar duskTodayCalendar = Util.getDusk(context, nowToday);
+        Calendar duskTomorrowCalendar = Util.getDusk(context, nowTomorrow);
+
+        int dawnDuskOffsetMinutes = (int)prefs.getDawnDuskOffsetMinutes();
+        int dawnDuskIncrementMinutes = (int)prefs.getDawnDuskIncrementMinutes();
+        int currentOffsetSeconds = dawnDuskOffsetMinutes * 60 * -1; // 1 hour before
+
+        while (currentOffsetSeconds <= (dawnDuskOffsetMinutes * 60) ) { // we are going to keep adding alarms until currentOffsetSeconds reaches dawn + minutesBeforeAfterDawnToDoExtraRecordings
+            duskTodayCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+            duskTomorrowCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+            String currentOffsetAsString = Integer.toString(currentOffsetSeconds); // need this to label alarm so it can be overwritten when dawn changes, otherwise more alarms will be added each time calculation is done
+            timeUri = Uri.parse("dusk" + currentOffsetAsString);
+            myIntent.setData(timeUri);
+            pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+            if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
+
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
+
+            }
+            currentOffsetSeconds +=  (dawnDuskIncrementMinutes * 60);
+        }
+    }
 
     static void configureDawnAlarms(Context context) {
 //        getLogger(context).info("About to configure Dawn Alarms");
@@ -49,13 +126,11 @@ class DawnDuskAlarms {
         int dawnDuskOffsetSmallSeconds = (int) prefs.getDawnDuskOffsetSmallSeconds();
         int dawnDuskOffsetLargeSeconds = (int) prefs.getDawnDuskOffsetLargeSeconds();
         int differenceBetweenSmallAndLarge = dawnDuskOffsetLargeSeconds - dawnDuskOffsetSmallSeconds; // used later to set alarms relative to each other
-      //  int lengthOfTwilight = (int)prefs.getLengthOfTwilightSeconds();
 
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
         Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
         nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
-      //  System.out.println("nowTomorrow " + nowTomorrow.getTime());
 
         PendingIntent pendingIntent;
         Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
@@ -123,6 +198,7 @@ class DawnDuskAlarms {
             alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
         }
     }
+
 
 
     static void configureDuskAlarms(Context context) {
