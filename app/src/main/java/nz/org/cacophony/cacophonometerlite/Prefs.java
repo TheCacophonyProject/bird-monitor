@@ -36,13 +36,14 @@ class Prefs {
    private static final double RECORDING_DURATION_SECONDS = 60;
 //     private static final double RECORDING_DURATION_SECONDS = 1;
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-   // private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 //    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 1800;  //half hour
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 86400;  //86400 is one day!
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
     //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
   //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
 //    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 85;
@@ -59,8 +60,8 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0;
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
 
-    private static final String DAWN_DUSK_INCREMENT_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
-    private static final double DAWN_DUSK_INCREMENT_MINUTES = 10;
+    private static final String DAWN_DUSK_INCREMENT_MINUTES_KEY = "DAWN_DUSK_INCREMENT_MINUTES";
+    private static final double DAWN_DUSK_INCREMENT_MINUTES = 2;
 
     private static final String DAWN_DUSK_OFFSET_LARGE_KEY = "DAWN_DUSK_OFFSET_LARGE";
     private static final double DAWN_DUSK_OFFSET_LARGE_SECONDS = 40 * 60; // 40 minutes

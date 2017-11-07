@@ -43,6 +43,7 @@ class RecordAndUpload {
 
 
     static String doRecord(Context context, String typeOfRecording, Handler handler){
+        Log.d(TAG, "typeOfRecording is " + typeOfRecording);
         String returnValue = null;
 //        if (logger == null){
 //            logger = Util.getAndConfigureLogger(context, LOG_TAG);
@@ -72,6 +73,7 @@ class RecordAndUpload {
                 recordTimeSeconds = 5;  // short test
             }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
                 recordTimeSeconds +=  2; // help to recognise dawn/dusk recordings
+                Log.d(TAG, "typeOfRecording is dawn or dusk");
             }else if (typeOfRecording.equalsIgnoreCase("repeating") ){
 
                 // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
@@ -123,13 +125,14 @@ class RecordAndUpload {
                 prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
                 prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
 
-                // Always set up dawn/dusk alarms when test button pressed
-              //  DawnDuskAlarms.configureDawnAlarms(context);
-                DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
-//                DawnDuskAlarms.configureDuskAlarms(context);
-                DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
-                prefs.setDateTimeLastCalculatedDawnDusk(0);
             }
+            // Always set up dawn/dusk alarms when test button pressed
+            //  DawnDuskAlarms.configureDawnAlarms(context);
+            DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
+//                DawnDuskAlarms.configureDuskAlarms(context);
+            DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
+            prefs.setDateTimeLastCalculatedDawnDusk(0);
+
             }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
             if (!prefs.getOffLineMode()) {
                 uploadedFilesSuccessfully = uploadFiles(context);
