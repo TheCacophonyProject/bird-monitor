@@ -127,9 +127,7 @@ class RecordAndUpload {
 
             }
             // Always set up dawn/dusk alarms when test button pressed
-            //  DawnDuskAlarms.configureDawnAlarms(context);
             DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
-//                DawnDuskAlarms.configureDuskAlarms(context);
             DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
             prefs.setDateTimeLastCalculatedDawnDusk(0);
 
@@ -155,31 +153,18 @@ boolean repeatingRecording = false;
         if (repeatingRecording){
             Log.d(TAG, "repeating");
             long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-            long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
-            if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
-                  //  DawnDuskAlarms.configureDawnAlarms(context);
-                DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
-//                DawnDuskAlarms.configureDuskAlarms(context);
-                DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
+            long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235; // 23.5 hours - seemed like a good period to wait.
+            if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation) {
+                if (DawnDuskAlarms.isOutsideDawnDuskRecordings(context, prefs)) {
+
+                    DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
+                    DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
                     prefs.setDateTimeLastCalculatedDawnDusk(now);
                 }
+            }
         }else{
             Log.d(TAG, "Not repeating");
         }
-
-//            if (typeOfRecording.equalsIgnoreCase("repeating")  ){
-//                // Update dawn/dusk times if it has been more than 23.5 hours since last time. It will do this if the current alarm is a repeating alarm or a dawn/dusk alarm
-//                long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-//                 long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235;
-//
-////                if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation){
-////                    DawnDuskAlarms.configureDawnAlarms(context);
-////                    DawnDuskAlarms.configureDuskAlarms(context);
-////                    prefs.setDateTimeLastCalculatedDawnDusk(now);
-////                }
-//
-//            }
-
 
             return returnValue;
     }

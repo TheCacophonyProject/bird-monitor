@@ -184,8 +184,6 @@ private static final String TAG = MainActivity.class.getName();
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
         prefs.setTimeBetweenRecordingsSeconds();
-        prefs.setDawnDuskOffsetLargeSeconds();
-        prefs.setDawnDuskOffsetSmallSeconds();
         prefs.setDawnDuskOffsetMinutes();
         prefs.setDawnDuskIncrementMinutes();
         prefs.setLengthOfTwilightSeconds();
