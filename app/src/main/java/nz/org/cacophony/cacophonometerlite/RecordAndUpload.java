@@ -1,10 +1,14 @@
 package nz.org.cacophony.cacophonometerlite;
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 //import android.util.Log;
@@ -43,6 +47,8 @@ class RecordAndUpload {
 
 
     static String doRecord(Context context, String typeOfRecording, Handler handler){
+
+
         Log.d(TAG, "typeOfRecording is " + typeOfRecording);
         String returnValue = null;
 //        if (logger == null){

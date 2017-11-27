@@ -30,30 +30,25 @@ class Prefs {
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
-//    private static final double RECORDING_DURATION_SECONDS = 120;
    private static final double RECORDING_DURATION_SECONDS = 60;
-//     private static final double RECORDING_DURATION_SECONDS = 1;
+
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 1800;  //half hour
-  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 86400;  //86400 is one day!
-  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 600;  //600 is ten minutes
-    //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 300;  //300 is five minutes
-  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 60;  //60 is one minute
-  //  private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+
+//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 85;
-//private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0;
+//private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
 
     private static final String BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 70;
-//    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0;
+//    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
 
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
     private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
-//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  //for testing
+//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  // for testing battery
 
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;

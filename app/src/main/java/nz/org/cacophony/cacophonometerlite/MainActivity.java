@@ -18,6 +18,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -43,20 +44,17 @@ import java.util.List;
 
 import static android.R.id.message;
 import static android.widget.Toast.makeText;
-//import static nz.org.cacophony.cacophonometerlite.Util.disableFlightModeTestSU;
-//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-//import static nz.org.cacophony.cacophonometerlite.DawnDuskAlarms.logger;
+
 
 
 public class MainActivity extends AppCompatActivity {
-    // Testing new Git Repository
-    // and again
-//    private static final String LOG_TAG = MainActivity.class.getName();
+
 private static final String TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
-  //  private static Logger logger = null;
- // private static Log logger = null;
 
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSION_RECORD_AUDIO = 1;
+    private static final int PERMISSION_LOCATION = 2;
 
     /**
      * Handler for Main Activity
@@ -332,6 +330,9 @@ private static final String TAG = MainActivity.class.getName();
      * Checks if the app has the required permissions. Storage, Microphone, Location.
      */
     private void checkPermissions() {
+        if (!requestPermissions()) {
+            return;  // will need to press button again.
+        }
         boolean storagePermission =
                 ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean microphonePermission =
@@ -384,6 +385,12 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
 }
 
     public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
+
+            if (!requestPermissions()){
+            return;  // will need to press button again.
+        }
+
+
         try {
             Prefs prefs = new Prefs(getApplicationContext());
 
@@ -537,6 +544,86 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
+    }
+
+    boolean requestPermissions(){
+        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
+//        https://developer.android.com/training/permissions/requesting.html
+
+        boolean allPermissionsAlreadyGranted = true;
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSION_WRITE_EXTERNAL_STORAGE);
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    PERMISSION_RECORD_AUDIO);
+
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_LOCATION);
+
+        }
+
+
+
+        return allPermissionsAlreadyGranted;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+
+                Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
+            } else {
+                Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
+            }
+        }
+
+        if (requestCode == PERMISSION_RECORD_AUDIO) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+
+                Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
+            } else {
+                Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
+            }
+        }
+
+
+
+
+
+        // END_INCLUDE(onRequestPermissionsResult)
     }
 
 
