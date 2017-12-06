@@ -13,14 +13,18 @@ import android.util.Log;
 
 class Prefs {
 
+    private static boolean testing = true;
+
     private static final String TAG = Prefs.class.getName();
     private static Context context = null;
 
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
-    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Server URL
-    private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Server URL
+    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // HTTPS Server URL
+    private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
+
+    private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Server URL
 
     private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
@@ -33,22 +37,21 @@ class Prefs {
    private static final double RECORDING_DURATION_SECONDS = 60;
 
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-
-//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
 
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
-    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 85;
-//private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
+//    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
+private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
 
     private static final String BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
-    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 70;
-//    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
+//    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 50;
+    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
 
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
-    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
-//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  // for testing battery
+//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
+    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  // for testing battery
 
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
@@ -164,11 +167,20 @@ class Prefs {
 
 
     String getServerUrl(boolean useHttps) {
-        if (useHttps){
-            return PRODUCTION_SERVER_URL;
+        if (testing){
+            return TEST_SERVER_URL;
         }else{
-            return PRODUCTION_SERVER_URL_HTTP;
+            if (useHttps){
+                return PRODUCTION_SERVER_URL;
+            }else{
+                return PRODUCTION_SERVER_URL_HTTP;
+            }
         }
+
+    }
+
+    String getTestServerUrl() {
+            return TEST_SERVER_URL;
     }
 
 

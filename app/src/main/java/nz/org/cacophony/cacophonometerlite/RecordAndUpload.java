@@ -419,8 +419,15 @@ boolean repeatingRecording = false;
             Log.e(TAG,localFilePath + " does not exist" );
             return false;
         }
-        String recordingDateTime = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-        String recordingTime = hour + ":" + minute + ":" + second;
+        //https://stackoverflow.com/questions/11399491/java-timezone-offset
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
+        String offset = String.format("%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60));
+        offset = (offsetInMillis >= 0 ? "+" : "-") + offset;
+
+        String recordingDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second+offset;
+      //  String recordingTime = hour + ":" + minute + ":" + second; // 7/12/12 Agreed with Cameron to stop sending this
 
         try {
 
@@ -431,7 +438,7 @@ boolean repeatingRecording = false;
             audioRecording.put("duration", recordTimeSeconds);
             audioRecording.put("localFilePath", localFilePath);
             audioRecording.put("recordingDateTime", recordingDateTime);
-            audioRecording.put("recordingTime", recordingTime);
+       //     audioRecording.put("recordingTime", recordingTime);
             audioRecording.put("batteryCharging", batteryStatus);
 
             audioRecording.put("batteryLevel", batteryLevel);
