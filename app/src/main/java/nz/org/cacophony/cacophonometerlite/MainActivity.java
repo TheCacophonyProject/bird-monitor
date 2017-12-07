@@ -182,15 +182,16 @@ private static final String TAG = MainActivity.class.getName();
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
         prefs.setTimeBetweenRecordingsSeconds();
+        prefs.setTimeBetweenFrequentRecordingsSeconds();
         prefs.setDawnDuskOffsetMinutes();
         prefs.setDawnDuskIncrementMinutes();
         prefs.setLengthOfTwilightSeconds();
         prefs.setTimeBetweenUploadsSeconds();
+        prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
-
-        long timeBetweenRecordingsSeconds = (long)prefs.getTimeBetweenRecordingsSeconds();
+        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
 
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 

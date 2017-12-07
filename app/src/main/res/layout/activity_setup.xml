@@ -214,45 +214,6 @@
                 android:background="@color/colorPrimaryDark"
                 android:layout_below="@id/cbHasRootAccess"
                 android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/setupShortRecordLengthTitle"
-                android:text="@string/short_record_length_title"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor5"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:id="@+id/shortRecordingsMessage"
-                android:text="@string/short_recordings_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupShortRecordLengthTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="5dp" />
-
-            <CheckBox
-                android:id="@+id/cbShortRecordings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/shortRecordingsMessage"
-                android:checked="false"
-                android:onClick="onCheckboxShortRecordingsClicked"
-                android:text="@string/use_short_record_cb_message" />
-
-            <View
-                android:id="@+id/SplitLine_hor6"
-                android:layout_width="match_parent"
-                android:layout_height= "2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/cbShortRecordings"
-                android:layout_marginTop="5dp" />
-
             <TextView
                 android:id="@+id/setupOffLineModeTitle"
                 android:text="@string/offline_mode_title"
@@ -261,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor6"
+                android:layout_below="@id/SplitLine_hor5"
                 android:layout_marginTop="5dp" />
 
             <TextView
@@ -282,6 +243,80 @@
                 android:checked="false"
                 android:onClick="onCheckboxOffLineModeClicked"
                 android:text="@string/offline_mode_cb_message" />
+
+            <View
+                android:id="@+id/SplitLine_hor6"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/cbOffLineMode"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupTestingTitle"
+                android:text="@string/testing_title"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/SplitLine_hor6"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/testingMessage"
+                android:text="@string/short_recordings_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupTestingTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbShortRecordings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/testingMessage"
+                android:checked="false"
+                android:onClick="onCheckboxShortRecordingsClicked"
+                android:text="@string/use_short_record_cb_message" />
+            <CheckBox
+                android:id="@+id/cbUseTestServer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbShortRecordings"
+                android:checked="false"
+                android:onClick="onCheckboxUseTestServerClicked"
+                android:text="@string/use_test_server_cb_message" />
+            <CheckBox
+                android:id="@+id/cbUseFrequentRecordings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbUseTestServer"
+                android:checked="false"
+                android:onClick="onCheckboxUseFrequentRecordingsClicked"
+                android:text="@string/use_frequent_recordings_cb_message" />
+            <CheckBox
+                android:id="@+id/cbUseFrequentUploads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbUseFrequentRecordings"
+                android:checked="false"
+                android:onClick="onCheckboxUseFrequentUploadsClicked"
+                android:text="@string/use_frequent_uploads_cb_message" />
+            <CheckBox
+                android:id="@+id/cbIgnoreLowBattery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbUseFrequentUploads"
+                android:checked="false"
+                android:onClick="onCheckboxIgnoreLowBatteryClicked"
+                android:text="@string/ignore_low_battery_cb_message" />
+
+
+
+
 
 
         </RelativeLayout>

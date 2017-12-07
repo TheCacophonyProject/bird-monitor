@@ -158,12 +158,7 @@ public class SetupActivity extends AppCompatActivity {
         } else
             checkBoxRootAccess.setChecked(false);
 
-//        boolean useTestServer = prefs.getUseTestServer();
-//        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
-//        if (useTestServer) {
-//            checkBoxUseTestServer.setChecked(true);
-//        } else
-//            checkBoxUseTestServer.setChecked(false);
+
 
         boolean useShortRecordings = prefs.getUseShortRecordings();
         final CheckBox checkBoxUseUseShortRecordings = (CheckBox) findViewById(R.id.cbShortRecordings);
@@ -171,6 +166,34 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxUseUseShortRecordings.setChecked(true);
         } else
             checkBoxUseUseShortRecordings.setChecked(false);
+
+        boolean useTestServer = prefs.getUseTestServer();
+        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
+        if (useTestServer) {
+            checkBoxUseTestServer.setChecked(true);
+        } else
+            checkBoxUseTestServer.setChecked(false);
+
+        boolean useFrequentRecordings = prefs.getUseFrequentRecordings();
+        final CheckBox checkBoxUseFrequentRecordings = (CheckBox) findViewById(R.id.cbUseFrequentRecordings);
+        if (useFrequentRecordings) {
+            checkBoxUseFrequentRecordings.setChecked(true);
+        } else
+            checkBoxUseFrequentRecordings.setChecked(false);
+
+        boolean useFrequentUploads = prefs.getUseFrequentUploads();
+        final CheckBox checkBoxUseFrequentUploads = (CheckBox) findViewById(R.id.cbUseFrequentUploads);
+        if (useFrequentUploads) {
+            checkBoxUseFrequentUploads.setChecked(true);
+        } else
+            checkBoxUseFrequentUploads.setChecked(false);
+
+        boolean ignoreLowBattery = prefs.getIgnoreLowBattery();
+        final CheckBox checkBoxIgnoreLowBattery = (CheckBox) findViewById(R.id.cbIgnoreLowBattery);
+        if (ignoreLowBattery) {
+            checkBoxIgnoreLowBattery.setChecked(true);
+        } else
+            checkBoxIgnoreLowBattery.setChecked(false);
 
         boolean noNetwork = prefs.getOffLineMode();
         final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbOffLineMode);
@@ -424,6 +447,50 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setUseShortRecordings(true);
         }else{
             prefs.setUseShortRecordings(false);
+        }
+    }
+
+    public void onCheckboxUseTestServerClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseTestServer(true);
+        }else{
+            prefs.setUseTestServer(false);
+        }
+    }
+
+    public void onCheckboxUseFrequentRecordingsClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseFrequentRecordings(true);
+        }else{
+            prefs.setUseFrequentRecordings(false);
+        }
+    }
+
+    public void onCheckboxUseFrequentUploadsClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setUseFrequentUploads(true);
+        }else{
+            prefs.setUseFrequentUploads(false);
+        }
+    }
+
+    public void onCheckboxIgnoreLowBatteryClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setIgnoreLowBattery(true);
+        }else{
+            prefs.setIgnoreLowBattery(false);
         }
     }
 

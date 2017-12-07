@@ -26,7 +26,7 @@ class Prefs {
 
     private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Server URL
 
-    private static final String SERVER_URL_KEY = "SERVER_URL";
+    //private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
     private static final String GROUP_NAME_KEY = "GROUP_NAME";
@@ -37,21 +37,28 @@ class Prefs {
    private static final double RECORDING_DURATION_SECONDS = 60;
 
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-//    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 120;  //120 is two minute
+    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+    private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
+    private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minute
 
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
-//    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
-private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
+    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
+
+    private static final String IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
+    private static final double IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
 
     private static final String BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
-//    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 50;
-    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
+    private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 50;
+
+    private static final String IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
+    private static final double IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
 
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
-//    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
-    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 1;  // for testing battery
+    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
+
+    private static final String TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS";
+    private static final double TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS = 1;  // for testing battery
 
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
@@ -65,7 +72,12 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // fo
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+    private static final String  USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
     private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
+    private static final String  USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
+    private static final String  IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
+
+    private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
     private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
@@ -237,27 +249,52 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // fo
     }
 
     double getTimeBetweenRecordingsSeconds() {
-        return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+        if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
+            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+        }else{
+            return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+        }
     }
 
     void setTimeBetweenRecordingsSeconds() {
         setDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_RECORDINGS_SECONDS);
     }
 
+
+    void setTimeBetweenFrequentRecordingsSeconds() {
+        setDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS);
+    }
+
     double getTimeBetweenUploadsSeconds() {
-        return getDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY);
+        if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
+            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+        }else{
+            return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+        }
     }
 
     void setTimeBetweenUploadsSeconds() {
         setDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY, TIME_BETWEEN_UPLOADS_SECONDS);
     }
 
+    void setTimeBetweenFrequentUploadsSeconds() {
+        setDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS);
+    }
+
     double getBatteryLevelCutoffRepeatingRecordings() {
-        return getDouble(BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
+        if (getBoolean(IGNORE_LOW_BATTERY_KEY)){
+            return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
+        }else{
+            return getDouble(BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
+        }
     }
 
     double getBatteryLevelCutoffDawnDuskRecordings() {
-        return getDouble(BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY );
+        if (getBoolean(IGNORE_LOW_BATTERY_KEY)){
+            return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY );
+        }else{
+            return getDouble(BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY );
+        }
     }
 
     void setBatteryLevelCutoffRepeatingRecordings() {
@@ -308,6 +345,22 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // fo
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
+    boolean getUseTestServer() {
+        return getBoolean(USE_TEST_SERVER_KEY);
+    }
+
+    boolean getUseFrequentRecordings() {
+        return getBoolean(USE_FREQUENT_RECORDINGS_KEY);
+    }
+
+    boolean getUseFrequentUploads() {
+        return getBoolean(USE_FREQUENT_UPLOADS_KEY);
+    }
+
+    boolean getIgnoreLowBattery() {
+        return getBoolean(IGNORE_LOW_BATTERY_KEY);
+    }
+
     boolean getOffLineMode() {
         return getBoolean(OFFLINE_MODE_KEY);
     }
@@ -315,6 +368,24 @@ private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // fo
     void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
+
+    void setUseTestServer(boolean useTestServer) {
+        setBoolean(USE_TEST_SERVER_KEY, useTestServer);
+    }
+
+    void setUseFrequentRecordings(boolean useFrequentRecordings) {
+        setBoolean(USE_FREQUENT_RECORDINGS_KEY, useFrequentRecordings);
+    }
+
+    void setUseFrequentUploads(boolean useFrequentUploads) {
+        setBoolean(USE_FREQUENT_UPLOADS_KEY, useFrequentUploads);
+    }
+
+    void setIgnoreLowBattery(boolean ignoreLowBattery) {
+        setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
+    }
+
+
 
     void setOffLineMode(boolean OffLineMode) {
         setBoolean(OFFLINE_MODE_KEY, OffLineMode);
