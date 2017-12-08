@@ -9,6 +9,7 @@ import android.util.Log;
 
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
+ * Expanded to keep all settings in one place
  */
 
 class Prefs {
@@ -22,7 +23,7 @@ class Prefs {
     private static final String PREFS_NAME = "CacophonyPrefs";
 
     private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // HTTPS Server URL
-    private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
+   // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
 
     private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Server URL
 
@@ -30,6 +31,10 @@ class Prefs {
     private static final String PASSWORD_KEY = "PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
     private static final String GROUP_NAME_KEY = "GROUP_NAME";
+    private static final String TOKEN_KEY = "TOKEN";
+    private static final long TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
+   // private static final long TOKEN_LAST_REFRESHED = 0;
+    private static final String TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
@@ -38,6 +43,7 @@ class Prefs {
 
     private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minute
 
@@ -90,6 +96,10 @@ class Prefs {
     Prefs(Context context) {
         this.context = context;
 
+    }
+
+    public static long getTokenTimeoutSeconds() {
+        return TOKEN_TIMEOUT_SECONDS;
     }
 
 
@@ -178,18 +188,13 @@ class Prefs {
 
 
 
-    String getServerUrl(boolean useHttps) {
-        if (testing){
+     String getServerUrl() {
+        if (getBoolean(USE_TEST_SERVER_KEY)){
             return TEST_SERVER_URL;
         }else{
-            if (useHttps){
-                return PRODUCTION_SERVER_URL;
-            }else{
-                return PRODUCTION_SERVER_URL_HTTP;
+             return PRODUCTION_SERVER_URL;
             }
-        }
-
-    }
+     }
 
     String getTestServerUrl() {
             return TEST_SERVER_URL;
@@ -210,6 +215,22 @@ class Prefs {
 
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
+    }
+
+    void setToken(String token){
+        setString(TOKEN_KEY, token);
+    }
+
+    String getToken(){
+        return getString(TOKEN_KEY);
+    }
+
+    long getTokenLastRefreshed(){
+        return getLong(TOKEN_LAST_REFRESHED_KEY);
+    }
+
+    void setTokenLastRefreshed(long timeTokenLastRefreshed){
+        setLong(TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
     }
 
     String getGroupName() {
@@ -266,10 +287,10 @@ class Prefs {
     }
 
     double getTimeBetweenUploadsSeconds() {
-        if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
-            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+        if (getBoolean(USE_FREQUENT_UPLOADS_KEY)){
+            return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
         }else{
-            return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+            return getDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY);
         }
     }
 
@@ -426,4 +447,6 @@ class Prefs {
     void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
     }
+
+
 }

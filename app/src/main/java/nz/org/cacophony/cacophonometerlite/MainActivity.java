@@ -113,7 +113,14 @@ private static final String TAG = MainActivity.class.getName();
                         ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
                     }else if (message.equalsIgnoreCase("enable_setup_button")) {
                         ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(true);
+                    }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
+                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
+                    }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
+                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
                     }
+
 
                 }
 
@@ -282,7 +289,11 @@ private static final String TAG = MainActivity.class.getName();
 
         // Logged In text.
         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
-        if (Server.loggedIn)
+
+// Check the age of the webToken
+        boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
+
+        if (Server.loggedIn && webTokenIsCurrent)
             loggedInText.setText(getString(R.string.logged_in_to_server_true));
         else
             loggedInText.setText(getString(R.string.logged_in_to_server_false));
@@ -290,7 +301,8 @@ private static final String TAG = MainActivity.class.getName();
         // Device ID text.
         TextView deviceIDText = (TextView) findViewById(R.id.deviceIDText);
         try {
-            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),Server.getToken()));
+//            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),Server.getToken()));
+            deviceIDText.setText(getString(R.string.device_id) + " " + Util.getDeviceID(getApplicationContext(),prefs.getToken()));
         } catch (Exception e) {
 
 //            logger.error("Device ID not available");
@@ -403,15 +415,26 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
                 }
             }
 
+            if (Server.loggedIn){
+                //Make sure GUI shows that it is logged in (couldn't work out how to do this from background thread)
+                TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                loggedInText.setText(getString(R.string.logged_in_to_server_true));
 
-            if (Server.loggedIn != true) {
-
+            }else{
                 if (!prefs.getOffLineMode()){
                     Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
                     return;
                 }
-
             }
+
+
+//            if (Server.loggedIn != true) {
+//
+//                if (!prefs.getOffLineMode()){
+//                        Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
+//                        return;
+//                }
+//            }
 
 
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);

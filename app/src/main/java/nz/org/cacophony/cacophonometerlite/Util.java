@@ -49,6 +49,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1119,5 +1120,20 @@ private static void executeCommandTim(String command){
             }
         }
         return directory;
+    }
+
+    static boolean isWebTokenCurrent(Prefs prefs){
+       long currentTimeMilliSeconds = new Date().getTime();
+       long tokenLastRefreshedMilliSeconds = prefs.getTokenLastRefreshed();
+       long tokenTimeOutSeconds = Prefs.getTokenTimeoutSeconds();
+       long tokenTimeOutMilliSeconds = tokenTimeOutSeconds * 1000;
+       if ((currentTimeMilliSeconds-tokenLastRefreshedMilliSeconds) > tokenTimeOutMilliSeconds){
+           prefs.setToken(null);
+           Log.d(TAG, "Web token out of date and so set to null");
+           Server.loggedIn = false;
+           return false;
+       }else{
+           return true;
+       }
     }
 }

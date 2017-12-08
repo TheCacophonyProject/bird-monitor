@@ -23,7 +23,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import info.guardianproject.netcipher.NetCipher;
 
-import static nz.org.cacophony.cacophonometerlite.Server.getToken;
+//import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
@@ -49,7 +49,7 @@ public class MultipartUtility {
      * @param charset
      * @throws IOException
      */
-    public MultipartUtility(String requestURL, String charset)
+    public MultipartUtility(String requestURL, String charset, String token)
             throws IOException {
         this.charset = charset;
 
@@ -77,7 +77,8 @@ public class MultipartUtility {
             httpConn.setRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + boundary);
             httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
-            httpConn.setRequestProperty("Authorization", getToken());
+//            httpConn.setRequestProperty("Authorization", getToken());
+            httpConn.setRequestProperty("Authorization", token);
             outputStream = httpConn.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
                     true);

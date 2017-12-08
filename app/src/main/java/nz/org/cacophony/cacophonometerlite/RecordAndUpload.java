@@ -27,7 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static nz.org.cacophony.cacophonometerlite.Server.getToken;
+//import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
  * Created by User on 29-Mar-17.
@@ -305,7 +305,14 @@ boolean repeatingRecording = false;
 
                 // Check here to see if can connect to server and abort (for all files) if can't
                 // Check that there is a JWT (JSON Web Token)
-                if (getToken() == null) {
+//                if (getToken() == null) {
+                Prefs prefs = new Prefs(context);
+
+                // check to see if webToken needs updating
+                boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
+
+
+                if ((prefs.getToken() == null) || !tokenIsCurrent) {
 
                     if (!Server.login(context)) {
 //                        logger.warn("sendFile: no JWT. Aborting upload");

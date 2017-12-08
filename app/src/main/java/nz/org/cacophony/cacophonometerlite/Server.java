@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -32,13 +33,13 @@ class Server {
     private static final String TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
-    private static final String PING_URL = "/ping";
+    //private static final String PING_URL = "/ping";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
 
     static boolean serverConnection = false;
     static boolean loggedIn = false;
-    private static String token = null;
+  //  private static String token = null;
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -93,7 +94,7 @@ class Server {
             }
 
 
-            String serverUrl = prefs.getServerUrl(true) + LOGIN_URL;
+            String serverUrl = prefs.getServerUrl() + LOGIN_URL;
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("devicename", devicename);
             jsonParam.put("password", password);
@@ -129,18 +130,24 @@ class Server {
                     Log.i(TAG, "Successful login.");
 //                        logger.info("Login", "Successful login.");
                     loggedIn = true;
-                    setToken(joRes.getString("token"));  // Save JWT (JSON Web Token)
-
+                  //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
+                    prefs.setToken(joRes.getString("token"));
+                    Log.d(TAG, "Web token has been refreshed");
+                    prefs.setTokenLastRefreshed(new Date().getTime());
+                    Util.broadcastAMessage(context, "tick_logged_in_to_server");
 
                 } else { // not success
                     loggedIn = false;
-                    setToken(null);
+                    //setToken(null);
+                    prefs.setToken(null);
+                    Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
                 loggedIn = false;
                 Log.e(TAG, "Invalid devicename or password for login.");
-                setToken(null);
+               // setToken(null);
+                prefs.setToken(null);
             }
 
         } catch (Exception ex) {
@@ -197,7 +204,7 @@ class Server {
         final Prefs prefs = new Prefs(context);
 
         // https://stackoverflow.com/questions/42767249/android-post-request-with-json
-        String registerUrl = prefs.getServerUrl(true) + REGISTER_URL;
+        String registerUrl = prefs.getServerUrl() + REGISTER_URL;
         URL cacophonyRegisterEndpoint = null;
         try {
             HttpsURLConnection myConnection = getHttpsURLConnection(registerUrl);
@@ -242,10 +249,12 @@ class Server {
                 JSONObject joRes = new JSONObject(responseString);
                 if (joRes.getBoolean("success")) {
                     registered = true;
-                    setToken(joRes.getString("token"));
+                  //  setToken(joRes.getString("token"));
+                    prefs.setToken(joRes.getString("token"));
 
                     // look at web token
-                    String deviceID = Util.getDeviceID(context, getToken());
+//                    String deviceID = Util.getDeviceID(context, getToken());
+                    String deviceID = Util.getDeviceID(context, prefs.getToken());
                     prefs.setDeviceId(deviceID);
 
                     prefs.setDeviceName(devicename);
@@ -288,9 +297,9 @@ class Server {
         String charset = "UTF-8";
 
         Prefs prefs = new Prefs(context);
-        String uploadUrl = prefs.getServerUrl(true) + UPLOAD_AUDIO_API_URL;
+        String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
-            MultipartUtility multipart = new MultipartUtility(uploadUrl, charset);
+            MultipartUtility multipart = new MultipartUtility(uploadUrl, charset, prefs.getToken());
 
 
             multipart.addFormField("data", data.toString());
@@ -326,13 +335,14 @@ class Server {
         return uploadSuccess;
     }
 
-    static String getToken() {
-        return token;
-    }
+//    static String getToken() {
+//        return token;
+//
+//    }
 
-    private static void setToken(String token) {
-        Server.token = token;
-    }
+//    private static void setToken(String token) {
+//        Server.token = token;
+//    }
 
     private static void setErrorMessage(String errorMessage) {
         Server.errorMessage = errorMessage;
