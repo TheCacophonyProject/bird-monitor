@@ -50,16 +50,9 @@
          />
 
 
-    <Button
-        android:id="@+id/setUpDeviceButton"
-        android:text="@string/setup_device"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appNameVersionText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
 
-        android:onClick="setupButtonClick" />
+
+
 
     <TextView
         android:id="@+id/appVitalsText"
@@ -67,11 +60,21 @@
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/setUpDeviceButton"
+        android:layout_below="@id/appNameVersionText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="15dp"
          />
+
+            <Button
+                android:id="@+id/refreshVitals"
+                android:text="@string/refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="refreshButton"
+                android:layout_alignTop="@id/appVitalsText"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/appPermissionText"
@@ -129,40 +132,15 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
-
             <Button
-                android:id="@+id/refreshVitals"
-                android:text="@string/refresh"
-                android:layout_width="wrap_content"
+                android:id="@+id/recordNowButton"
+                android:text="@string/record_now"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="refreshButton"
-                android:layout_alignTop="@id/appVitalsText"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-    <Button
-        android:id="@+id/testRecording"
-        android:text="@string/perform_a_test_recording"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/messageText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp"
-        android:onClick="testRecordingButtonClick" />
-
-    <Button
-        android:id="@+id/disableFlightMode"
-        android:text="@string/disable_flight_mode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/testRecording"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp"
-        android:onClick="disableFlightModeButtonClick" />
-
-
+                android:layout_below="@id/messageText"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:onClick="recordNowButtonClicked" />
 
 
 

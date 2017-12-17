@@ -2,9 +2,9 @@
 
     <string name="app_name">Cacophon ometer</string>
     <string name="main_activity_name">Cacophonometer</string>
-    <string name="title_activity_setup">Setup</string>
+    <string name="title_activity_setup">Settings</string>
     <string name="title_activity_help">Help</string>
-
+    <string name="title_activity_walk">Walking</string>
 
 
     <string name="setup_device">Setup Device</string>
@@ -17,15 +17,27 @@
     <string name="disable_flight_mode">Disable Flight (Airplane) mode</string>
     <string name="enable_flight_mode">Enable Flight (Airplane) mode</string>
 
+    <string name="launch_walk_screen">Launch Walk Screen</string>
+
+
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
     <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app has been given root permission.</string>
     <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed has root permission.</string>
     <string name="device_not_registered">Device Not Registered</string>
     <string name="to_register_title">To register this device</string>
+    <string name="walk_screen_title">Setup Walk Recording</string>
 
     <string name="to_register_intructions">(Press the ? icon for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
+    <string name="walk_screen_intructions">Use this screen to control recording when out walking.  A short warning sound will be played before each periodic recording.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
+    <string name="record_now">Record Now</string>
+    <string name="start_periodic_recording">Start Periodic Recording</string>
+    <string name="stop_periodic_recording">Stop Periodic Recording</string>
+    <string name="upload_recordings">Upload Recordings</string>
+
+    <string name="periodic_recordings_enabled">Periodic recordings enabled</string>
+    <string name="periodic_recordings_disabled">Periodic recordings disabled</string>
 
     <string name="set_test_server_title">Use Test Server (Experts Only)</string>
     <string name="set_test_server_message">Select the following box if you want to use the test server (you will need to re-register the phone)</string>
@@ -39,22 +51,35 @@
     <string name="disable_gps_to_save_power">Disable GPS to save power</string>
 
     <string name="help">Help</string>
+    <string name="settings">Settings</string>
+
 
     <string name="device_id">Device ID</string>
     <string name="gps_text">GPS location: </string>
     <string name="message_text">Messages: </string>message_text
     <string name="version">Version ID</string>
 
-    <string name="testing_title">Settings for testing (App developers only)</string>
+    <string name="testing_title">Settings for testing</string>
+
     <string name="offline_mode_title">Offline Mode</string>
+    <string name="warning_sound_title">Warning Sound</string>
+    <string name="ignore_low_battery_title">Ignore Low Battery</string>
+    <string name="frequent_recordings_title">Frequent Recordings</string>
     <string name="short_recordings_message">The following settings are for testing various aspects of the app.</string>
     <string name="offline_mode_message">If you know that you will not have a network connection, use this so you do not have to register with the server.  It will also save power.  You may want to use a micro SD card to make it easier to retrieve the recordings</string>
+    <string name="warning_sound_message">Play a short waning sound before a recording is made (useful for when out walking with the phone)</string>
+    <string name="ignore_low_battery_message">Normally the app will not record when the battery is getting low.  But, you can ignore a low battery when out walking.</string>
+    <string name="use_frequent_recordings_message">Use this to increase the frequency of recordings (Useful when out walking)</string>
     <string name="use_short_record_cb_message">Use short recordings.</string>
+    <string name="walk_continuous_cb_message">Use short recordings.</string>
     <string name="use_test_server_cb_message">Use the Test Server (You will need to register device).</string>
     <string name="use_frequent_recordings_cb_message">Use frequent recordings.</string>
+    <string name="use_very_frequent_recordings_cb_message">Use very frequent recordings.</string>
     <string name="use_frequent_uploads_cb_message">Use frequent uploads.</string>
     <string name="ignore_low_battery_cb_message">Keep recording when battery is low.</string>
+    <string name="frequent_recordings_cb_message">Record more often.</string>
     <string name="offline_mode_cb_message">Offline (no network connection) mode</string>
+    <string name="warning_sound_cb_message">Check this box to play a warning sound before and after recording.</string>
 
     <string name="registered_true">Registered: ✔</string>
     <string name="registered_false">Registered: ✘</string>
@@ -87,5 +112,6 @@ https://cacophony.org.nz/</string>
     <string name="use_full_logging_title">Full Logging (Testing Only)</string>
     <string name="use_full_logging_message">Use this if you are testing and want to log everything to server.</string>
     <string name="use_full_logging_cb_message">Use full logging.</string>
+
 
 </resources>

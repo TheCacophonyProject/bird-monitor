@@ -3,7 +3,6 @@ package nz.org.cacophony.cacophonometerlite;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.util.Log;
 
 //import org.slf4j.Logger;
 
@@ -15,6 +14,7 @@ import android.util.Log;
 class Prefs {
 
     private static boolean testing = true;
+    private static boolean walkingPeriodicRecordingsEnabled = false;
 
     private static final String TAG = Prefs.class.getName();
     private static Context context = null;
@@ -45,7 +45,10 @@ class Prefs {
     private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
-    private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minute
+    private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
+
+    private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
+    private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
 
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
@@ -78,13 +81,19 @@ class Prefs {
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
     private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
-    private static final String  USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
+
+    private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
+    private static final String USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
+
+
+
     private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
     private static final String  USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
     private static final String  IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
 
     private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
     private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
+    private static final String PLAY_WARNING_SOUND_KEY = "PLAY_WARNING_SOUND";
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
     private static final String MAXIMUM_BATTERY_LEVEL_KEY = "MAXIMUM_BATTERY_LEVEL";
@@ -100,6 +109,14 @@ class Prefs {
 
     public static long getTokenTimeoutSeconds() {
         return TOKEN_TIMEOUT_SECONDS;
+    }
+
+    public static boolean isWalkingPeriodicRecordingsEnabled() {
+        return walkingPeriodicRecordingsEnabled;
+    }
+
+    public static void setWalkingPeriodicRecordingsEnabled(boolean walkingPeriodicRecordingsEnabled) {
+        Prefs.walkingPeriodicRecordingsEnabled = walkingPeriodicRecordingsEnabled;
     }
 
 
@@ -270,8 +287,10 @@ class Prefs {
     }
 
     double getTimeBetweenRecordingsSeconds() {
-        if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
-            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+        if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)){
+            return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
+        }else  if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
+                return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
         }else{
             return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
         }
@@ -281,6 +300,10 @@ class Prefs {
         setDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_RECORDINGS_SECONDS);
     }
 
+
+    void setTimeBetweenVeryFrequentRecordingsSeconds() {
+        setDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS);
+    }
 
     void setTimeBetweenFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS);
@@ -370,6 +393,10 @@ class Prefs {
         return getBoolean(USE_TEST_SERVER_KEY);
     }
 
+    boolean getUseVeryFrequentRecordings() {
+        return getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY);
+    }
+
     boolean getUseFrequentRecordings() {
         return getBoolean(USE_FREQUENT_RECORDINGS_KEY);
     }
@@ -386,12 +413,22 @@ class Prefs {
         return getBoolean(OFFLINE_MODE_KEY);
     }
 
+    boolean getPlayWarningSound() {
+        return getBoolean(PLAY_WARNING_SOUND_KEY);
+    }
+
+
+
     void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
 
     void setUseTestServer(boolean useTestServer) {
         setBoolean(USE_TEST_SERVER_KEY, useTestServer);
+    }
+
+    void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
+        setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
     void setUseFrequentRecordings(boolean useFrequentRecordings) {
@@ -410,6 +447,10 @@ class Prefs {
 
     void setOffLineMode(boolean OffLineMode) {
         setBoolean(OFFLINE_MODE_KEY, OffLineMode);
+    }
+
+    void setPlayWarningSound(boolean playWarningSound) {
+        setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);
     }
 
     void setBatteryLevel(double batteryLevel) {

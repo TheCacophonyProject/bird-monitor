@@ -3,7 +3,9 @@ import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -46,104 +48,93 @@ class RecordAndUpload {
 
 
 
-    static String doRecord(Context context, String typeOfRecording, Handler handler){
+//    static String doRecord(Context context, String typeOfRecording, Handler handler){
+static String doRecord(Context context, String typeOfRecording) {
 
-
-        Log.d(TAG, "typeOfRecording is " + typeOfRecording);
-        String returnValue = null;
+    Log.d(TAG, "typeOfRecording is " + typeOfRecording);
+    String returnValue = null;
 //        if (logger == null){
 //            logger = Util.getAndConfigureLogger(context, LOG_TAG);
 //            logger.info("Starting doRecord method");
 //        }
 
 
-        if (typeOfRecording == null){
-            Log.e(TAG, "typeOfRecording is null");
+    if (typeOfRecording == null) {
+        Log.e(TAG, "typeOfRecording is null");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "typeOfRecording is null");
 //            logger.error("typeOfRecording is null");
-            returnValue = "error";
-            return returnValue;
-        }
+        returnValue = "error";
+        return returnValue;
+    }
 
-        Prefs prefs = new Prefs(context);
-
-
-        long recordTimeSeconds =  (long)prefs.getRecordingDuration();
-
-        if (prefs.getUseShortRecordings()){
-            recordTimeSeconds = 1;
-        }
+    Prefs prefs = new Prefs(context);
 
 
-            if (typeOfRecording.equalsIgnoreCase("testButton")  ){
-                recordTimeSeconds = 5;  // short test
-            }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
-                recordTimeSeconds +=  2; // help to recognise dawn/dusk recordings
-                Log.d(TAG, "typeOfRecording is dawn or dusk");
-            }else if (typeOfRecording.equalsIgnoreCase("repeating") ){
+    long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
-                // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
-                long dateTimeLastRepeatingAlarmFired = prefs.getDateTimeLastRepeatingAlarmFired();
-                long now = new Date().getTime();
-                long minFractionOfRepeatTimeToWait = (long)(prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9) ; // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
-                if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait){
-                    Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
+    if (prefs.getUseShortRecordings()) {
+        recordTimeSeconds = 1;
+    }
+
+
+//            if (typeOfRecording.equalsIgnoreCase("testButton")  ){
+//                recordTimeSeconds = 5;  // short test
+//            }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
+    if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
+        recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
+        Log.d(TAG, "typeOfRecording is dawn or dusk");
+    } else if (typeOfRecording.equalsIgnoreCase("repeating")) {
+
+        // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
+        long dateTimeLastRepeatingAlarmFired = prefs.getDateTimeLastRepeatingAlarmFired();
+        long now = new Date().getTime();
+        long minFractionOfRepeatTimeToWait = (long) (prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9); // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
+        if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait) {
+            Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
 //                    logger.warn("A repeating alarm happened to soon and so was aborted");
-                    return "repeating alarm happened to soon";
-                }else{
-                    prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
-                }
-
-            }
-
-        makeRecording(context, recordTimeSeconds);
-
-        returnValue = "recorded successfully";
-
-        if (typeOfRecording.equalsIgnoreCase("testButton")  ){
-            if (handler !=null){
-                Message message = handler.obtainMessage();
-                if (prefs.getOffLineMode()){
-//
-                    returnValue = "recorded successfully no network";
-                }else{
-                    message.what = StartRecordingReceiver.RECORDING_FINISHED;
-                    message.sendToTarget();
-                }
-
-            }
+            return "repeating alarm happened to soon";
+        } else {
+            prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
         }
 
+    } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
+        recordTimeSeconds += 1; // help to recognise recordNowButton recordings
+        long now = new Date().getTime();
+        prefs.setDateTimeLastRepeatingAlarmFired(now); // Helped when testing, but probably don't need when app is running normally
+
+    }
+
+    makeRecording(context, recordTimeSeconds);
+
+    returnValue = "recorded successfully";
+
+
+    if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
+        Util.broadcastAMessage(context, "recordNowButton_finished");
+    }
+//        if (typeOfRecording.equalsIgnoreCase("walkRecordNowButton") || typeOfRecording.equalsIgnoreCase("walkModeRepeating") ){
+//
+//                    returnValue = "recorded successfully walk mode";
+//
+//        }
+// Checked that it has a webToken before trying to upload
+    if (prefs.getToken() == null) {
+        returnValue =  "not logged in";
+    }else {
         // only upload recordings if sufficient time has passed since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
-        long timeIntervalBetweenUploads = 1000 * (long)prefs.getTimeBetweenUploadsSeconds();
+        long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
         boolean uploadedFilesSuccessfully = false;
-        if (typeOfRecording.equalsIgnoreCase("testButton") ){
 
-                // Always upload when test button pressed - unless no network checkbox in setup checked
-            if (!prefs.getOffLineMode()) {
+ if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads) { // don't upload if not enough time has passed
+
+            if (!prefs.getOffLineMode()) { // don't upload if in offline mode
                 uploadedFilesSuccessfully = uploadFiles(context);
-                if (uploadedFilesSuccessfully){
-                    returnValue = "recorded and uploaded successfully";
-                }
-
-                prefs.setDateTimeLastUpload(0); // this is to allow the recording to upload the next time the periodic recording happens
-                prefs.setDateTimeLastRepeatingAlarmFired(0); // this will allow recording to be made next time repeating alarm fires
-
-            }
-            // Always set up dawn/dusk alarms when test button pressed
-            DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
-            DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
-            prefs.setDateTimeLastCalculatedDawnDusk(0);
-
-            }else if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads){
-            if (!prefs.getOffLineMode()) {
-                uploadedFilesSuccessfully = uploadFiles(context);
-                if (uploadedFilesSuccessfully){
+                if (uploadedFilesSuccessfully) {
                     returnValue = "recorded and uploaded successfully";
                     prefs.setDateTimeLastUpload(now);
-                }else {
+                } else {
                     returnValue = "recorded BUT did not upload";
                     Log.e(TAG, "Files failed to upload");
                 }
@@ -151,31 +142,16 @@ class RecordAndUpload {
 
 
         }
-boolean repeatingRecording = false;
-        if (typeOfRecording.equalsIgnoreCase("repeating")){
-            repeatingRecording = true;
-        }
-
-        if (repeatingRecording){
-            Log.d(TAG, "repeating");
-            long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
-            long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235; // 23.5 hours - seemed like a good period to wait.
-            if ((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation) {
-                if (DawnDuskAlarms.isOutsideDawnDuskRecordings(context, prefs)) {
-
-                    DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
-                    DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
-                    prefs.setDateTimeLastCalculatedDawnDusk(now);
-                }
-            }
-        }else{
-            Log.d(TAG, "Not repeating");
-        }
+    }
+    //    boolean repeatingRecording = false;
+    if (typeOfRecording.equalsIgnoreCase("repeating")) {
+        DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
+    }
 
             return returnValue;
     }
 
-    private static boolean makeRecording(Context context,  long recordTimeSeconds){
+    public static boolean makeRecording(Context context,  long recordTimeSeconds){
 
         // Get recording file.
         Date date = new Date(System.currentTimeMillis());
@@ -230,25 +206,37 @@ boolean repeatingRecording = false;
 
         } catch (Exception ex) {
 
-//            logger.error("Setup recording failed.");
-//            logger.error("Could be due to lack of sdcard");
-//            logger.error("Could be due to phone connected to pc as usb storage");
-//            logger.error(e.getLocalizedMessage());
+
             Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
             Log.e(TAG, ex.getLocalizedMessage());
 
             return false;
         }
 
+        Prefs prefs = new Prefs(context);
+        if (prefs.getPlayWarningSound()){
+
+                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,5000);
+                try{
+                    Thread.sleep(5000);
+                }catch (Exception ex){
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+        }
+
         // Start recording.
         try {
             mRecorder.start();
+            Util.broadcastAMessage(context, "recording_started");
         }catch (Exception e){
 
 //            logger.error("mRecorder.start " + e.getLocalizedMessage());
             Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
             return false;
         }
+
+
 
         // Sleep for duration of recording.
         try {
@@ -272,6 +260,13 @@ boolean repeatingRecording = false;
         mRecorder = null; // attempting to fix error media recorder went away with unhandled events
 
              // Give time for file to be saved.
+        if (prefs.getPlayWarningSound()){
+
+            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,2000);
+
+
+        }
         try {
             Thread.sleep(5 * 1000);
         } catch (InterruptedException ex) {
@@ -282,6 +277,7 @@ boolean repeatingRecording = false;
     }
 
     private static boolean uploadFiles(Context context){
+        Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
@@ -357,6 +353,9 @@ boolean repeatingRecording = false;
                     }
                     numberOfFilesUploaded++;
                 }
+            }
+            if (returnValue){
+                Util.broadcastAMessage(context, "files_successfully_uploaded");
             }
             return returnValue;
         }catch (Exception ex){

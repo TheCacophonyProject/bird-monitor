@@ -38,7 +38,7 @@ class Server {
     private static final String REGISTER_URL = "/api/v1/devices";
 
     static boolean serverConnection = false;
-    static boolean loggedIn = false;
+  //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
   //  private static String token = null;
     private static String errorMessage = null;
     private static boolean uploading = false;
@@ -61,13 +61,14 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage());
         } finally {
             Util.broadcastAMessage(context, "enable_vitals_button");
-            Util.broadcastAMessage(context, "enable_test_recording_button");
-            Util.broadcastAMessage(context, "enable_setup_button");
+//            Util.broadcastAMessage(context, "enable_test_recording_button");
+//            Util.broadcastAMessage(context, "enable_setup_button");
         }
     }
 
 
     static boolean login(Context context) {
+        final Prefs prefs = new Prefs(context);
         try {
             Util.disableFlightMode(context);
         //    Util.disableFlightModeTestSU(context);
@@ -79,7 +80,7 @@ class Server {
                 return false;
             }
 
-            final Prefs prefs = new Prefs(context);
+//            final Prefs prefs = new Prefs(context);
             String devicename = prefs.getDeviceName();
             String password = prefs.getPassword();
             String group = prefs.getGroupName();
@@ -89,8 +90,9 @@ class Server {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
-                loggedIn = false;
-                return loggedIn;
+             //   loggedIn = false;
+//                return loggedIn;
+                return false;
             }
 
 
@@ -129,22 +131,22 @@ class Server {
 
                     Log.i(TAG, "Successful login.");
 //                        logger.info("Login", "Successful login.");
-                    loggedIn = true;
+               //     loggedIn = true;
                   //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
                     prefs.setToken(joRes.getString("token"));
                     Log.d(TAG, "Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
-                    Util.broadcastAMessage(context, "tick_logged_in_to_server");
+
 
                 } else { // not success
-                    loggedIn = false;
+                //    loggedIn = false;
                     //setToken(null);
                     prefs.setToken(null);
                     Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
-                loggedIn = false;
+            //    loggedIn = false;
                 Log.e(TAG, "Invalid devicename or password for login.");
                // setToken(null);
                 prefs.setToken(null);
@@ -153,8 +155,13 @@ class Server {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-
-        return loggedIn;
+        Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
+        if (prefs.getToken() == null){
+            return false;
+        }else {
+            return true;
+        }
+       // return loggedIn;
     }
 
 
@@ -290,6 +297,7 @@ class Server {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Already uploading. Wait until last upload is finished.");
 //            logger.info("Already uploading. Wait until last upload is finished.");
+            Util.broadcastAMessage(context, "already_uploading");
             return false;
         }
         uploading = true;

@@ -3,16 +3,20 @@ package nz.org.cacophony.cacophonometerlite;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,11 +28,7 @@ import android.widget.Toast;
 
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
-import com.luckycatlabs.calculator.SolarEventCalculator;
-
-
-//import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
-//import com.luckycatlabs.sunrisesunset.dto.Location;
+import static android.content.Context.ALARM_SERVICE;
 
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -1123,6 +1123,9 @@ private static void executeCommandTim(String command){
     }
 
     static boolean isWebTokenCurrent(Prefs prefs){
+       if (prefs.getToken() == null){
+           return false;
+       }
        long currentTimeMilliSeconds = new Date().getTime();
        long tokenLastRefreshedMilliSeconds = prefs.getTokenLastRefreshed();
        long tokenTimeOutSeconds = Prefs.getTokenTimeoutSeconds();
@@ -1130,10 +1133,40 @@ private static void executeCommandTim(String command){
        if ((currentTimeMilliSeconds-tokenLastRefreshedMilliSeconds) > tokenTimeOutMilliSeconds){
            prefs.setToken(null);
            Log.d(TAG, "Web token out of date and so set to null");
-           Server.loggedIn = false;
+          // Server.loggedIn = false;
            return false;
        }else{
            return true;
        }
+    }
+
+//    public static void createAlarms(Context context){
+public static void createAlarms(Context context, String type, String timeUriParameter){
+        Prefs prefs = new Prefs(context);
+        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+
+        try {
+            myIntent.putExtra("type","repeating");
+            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+            myIntent.setData(timeUri);
+
+        }catch (Exception e){
+            Log.e(TAG, e.getLocalizedMessage());
+
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+
+        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
+
+        long delay = 1000 * timeBetweenRecordingsSeconds ;
+
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() ,
+                delay, pendingIntent);
+
     }
 }

@@ -1,6 +1,7 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -59,27 +60,27 @@ private static final String TAG = MainActivity.class.getName();
     /**
      * Handler for Main Activity
      */
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message inputMessage) {
-           // Log.d(LOG_TAG, "Main activity received message.");
-            Log.d(TAG, "Main activity received message.");
-         //   logger.info("Main activity received message." );
-            switch (inputMessage.what) {
-                case RESUME:
-                    onResume();
-                    break;
-                case RESUME_AND_DISPLAY_REFRESH_MESSAGE:
-                    Util.getToast(getApplicationContext(),"Vitals have been updated", false ).show();
-                   // ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-                    onResume();
-                    break;
-                default:
-                    // Unknown case
-                    break;
-            }
-        }
-    };
+//    private final Handler handler = new Handler(Looper.getMainLooper()) {
+//        @Override
+//        public void handleMessage(Message inputMessage) {
+//           // Log.d(LOG_TAG, "Main activity received message.");
+//            Log.d(TAG, "Main activity received message.");
+//         //   logger.info("Main activity received message." );
+//            switch (inputMessage.what) {
+//                case RESUME:
+//                    onResume();
+//                    break;
+//                case RESUME_AND_DISPLAY_REFRESH_MESSAGE:
+//                    Util.getToast(getApplicationContext(),"Vitals have been updated", false ).show();
+//                   // ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
+//                    onResume();
+//                    break;
+//                default:
+//                    // Unknown case
+//                    break;
+//            }
+//        }
+//    };
 
     /**
      * Handler states
@@ -105,20 +106,47 @@ private static final String TAG = MainActivity.class.getName();
             try {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
-                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
-                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
+//                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
+//                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
+//                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
+                    if (message.equalsIgnoreCase("enable_vitals_button")) {
                         ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
-                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
-                    }else if (message.equalsIgnoreCase("enable_setup_button")) {
-                        ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(true);
+//                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
+//                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
                     }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
+                    }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
+                    ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                }else if (message.equalsIgnoreCase("recording_started")){
+                        Util.getToast(getApplicationContext(),"Recording started", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_finished")){
+                        Util.getToast(getApplicationContext(),"Recording finished", false ).show();
+                    }else if (message.equalsIgnoreCase("about_to_upload_files")){
+                        Util.getToast(getApplicationContext(),"About to upload files", false ).show();
+                    }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
+                        Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
+                    }else if (message.equalsIgnoreCase("already_uploading")){
+                        Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
+                    }else if (message.equalsIgnoreCase("no_permission_to_record")){
+                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_failed")){
+                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
+                        Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
+                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
+                    }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
+                        Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_failed")){
+                        Util.getToast(getApplicationContext(),"Recording failed", true ).show();
+                    }else if (message.equalsIgnoreCase("not_logged_in")){
+                        Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
+                    }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
+                        refreshVitalsDisplayedText();
                     }
 
 
@@ -151,45 +179,36 @@ private static final String TAG = MainActivity.class.getName();
     {
         super.onCreate(savedInstanceState);
 
-
-//        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
-//        if (logger == null){
-//            Log.e(LOG_TAG, "logger is null");
-////https://stackoverflow.com/questions/6330200/how-to-quit-android-application-programmatically
-//            this.finish();
-//            System.exit(0);
-//        }
-//        logger.info("MainActivity onCreate" );
-
         this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-
-        try {
-            myIntent.putExtra("type","repeating");
-            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
-            myIntent.setData(timeUri);
-
-        }catch (Exception e){
-
-
-//            logger.error("Error with intent setupButtonClick");
-            Log.e(TAG, "Error with intent setupButtonClick");
-
-        }
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
-
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+//
+//        try {
+//            myIntent.putExtra("type","repeating");
+//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+//            myIntent.setData(timeUri);
+//
+//        }catch (Exception e){
+//
+//
+////            logger.error("Error with intent setupButtonClick");
+//            Log.e(TAG, "Error with intent setupButtonClick");
+//
+//        }
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
+//
+//        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
         prefs.setTimeBetweenRecordingsSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
+        prefs.setTimeBetweenVeryFrequentRecordingsSeconds();
         prefs.setDawnDuskOffsetMinutes();
         prefs.setDawnDuskIncrementMinutes();
         prefs.setLengthOfTwilightSeconds();
@@ -197,14 +216,35 @@ private static final String TAG = MainActivity.class.getName();
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
+        prefs.setDateTimeLastRepeatingAlarmFired(0);
+        prefs.setDateTimeLastUpload(0);
 
-        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
+     //   Util.createAlarms(getApplicationContext());
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), false);
 
-        long delay = 1000 * timeBetweenRecordingsSeconds ;
 
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() ,
-                delay, pendingIntent);
+//        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
+//
+//        long delay = 1000 * timeBetweenRecordingsSeconds ;
+//        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+//
+//        try {
+//            myIntent.putExtra("type","repeating");
+//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+//            myIntent.setData(timeUri);
+//
+//        }catch (Exception e){
+//
+//
+////            logger.error("Error with intent setupButtonClick");
+//            Log.e(TAG, "Error with intent setupButtonClick");
+//
+//        }
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                SystemClock.elapsedRealtime() ,
+//                delay, pendingIntent);
 
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
@@ -235,6 +275,10 @@ private static final String TAG = MainActivity.class.getName();
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.action_settings:
+                openSettings();
+                return true;
 
             case R.id.action_help:
                 openHelp();
@@ -270,9 +314,26 @@ private static final String TAG = MainActivity.class.getName();
         disableFlightMode();
         checkPermissions();
 
+       // Prefs prefs = new Prefs(getApplicationContext());
+
+    refreshVitalsDisplayedText();
+
+
+        // Application name text  appNameVersionText
+        // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
+        String versionName = BuildConfig.VERSION_NAME;
+        TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
+        versionNameText.setText(getString(R.string.version) + " " + versionName);
+
+      //  super.onResume();
+
+        // listens for events broadcast from ?
+        IntentFilter iff = new IntentFilter("event");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+    }
+
+    void refreshVitalsDisplayedText(){
         Prefs prefs = new Prefs(getApplicationContext());
-
-
         // Device registered text
         TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
         if (prefs.getGroupName() != null)
@@ -293,7 +354,8 @@ private static final String TAG = MainActivity.class.getName();
 // Check the age of the webToken
         boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
-        if (Server.loggedIn && webTokenIsCurrent)
+//        if (Server.loggedIn && webTokenIsCurrent)
+        if ( webTokenIsCurrent)
             loggedInText.setText(getString(R.string.logged_in_to_server_true));
         else
             loggedInText.setText(getString(R.string.logged_in_to_server_false));
@@ -325,18 +387,6 @@ private static final String TAG = MainActivity.class.getName();
 //            logger.error("Device ID not available");
             Log.e(TAG, "Device ID not available");
         }
-
-        // Application name text  appNameVersionText
-        // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
-        String versionName = BuildConfig.VERSION_NAME;
-        TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
-        versionNameText.setText(getString(R.string.version) + " " + versionName);
-
-      //  super.onResume();
-
-        // listens for events broadcast from ?
-        IntentFilter iff = new IntentFilter("event");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
     /**
@@ -378,111 +428,88 @@ Log.w(TAG, missingPermissionMessage);
 
 
 public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
-    try{
-        disableFlightMode();
-//    if (!Util.isNetworkConnected(getApplicationContext())){
-//        Util.getToast(getApplicationContext(),"There is no network connection - I'll disable flight mode to see if that fixes it.", true ).show();
-//        Util.getToast(getApplicationContext(),"You will need to press the SETUP button again once there is a network connection", true ).show();
-//
-//        // disableFlightModeButtonClick(null);
-//        disableFlightMode();
-//        return;
-//    }
-
-        Intent intent = new Intent(this, SetupActivity.class);
-        startActivity(intent);
-    }catch (Exception ex){
-//        logger.error(ex.getLocalizedMessage());
-        Log.e(TAG, ex.getLocalizedMessage());
-    }
+    openSettings();
 }
 
-    public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
-
-            if (!requestPermissions()){
-            return;  // will need to press button again.
-        }
-
-
-        try {
-            Prefs prefs = new Prefs(getApplicationContext());
-
-            // test for network connection
-            if (!prefs.getOffLineMode()){
-                if (!Util.isNetworkConnected(getApplicationContext())){
-                    Util.getToast(getApplicationContext(), "There is no network connection - please fix and try again", true).show();
-                    return;
-                }
-            }
-
-            if (Server.loggedIn){
-                //Make sure GUI shows that it is logged in (couldn't work out how to do this from background thread)
-                TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
-                loggedInText.setText(getString(R.string.logged_in_to_server_true));
-
-            }else{
-                if (!prefs.getOffLineMode()){
-                    Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
-                    return;
-                }
-            }
-
-
-//            if (Server.loggedIn != true) {
-//
-//                if (!prefs.getOffLineMode()){
-//                        Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
-//                        return;
-//                }
-//            }
-
-
-            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-
-            //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
-                Util.getToast(getApplicationContext(), "Turn OFF GPS before testing", true).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-                return;
-            }
-
-
-            Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-            try {
-                myIntent.putExtra("type", "testButton");
-
-            } catch (Exception ex) {
-
-//                logger.error(ex.getLocalizedMessage());
-                Log.e(TAG, ex.getLocalizedMessage());
-            }
-        //    Util.getToast(getApplicationContext(), "Getting ready to record - please wait", false).show();
-            ((Button)v).setEnabled(false);
-            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-            ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(false);
-
-            sendBroadcast(myIntent);
+    private void openSettings() {
+        try{
+            disableFlightMode();
+            Intent intent = new Intent(this, SetupActivity.class);
+            startActivity(intent);
         }catch (Exception ex){
-//            logger.error(ex.getLocalizedMessage());
             Log.e(TAG, ex.getLocalizedMessage());
-            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-            ((Button) findViewById(R.id.testRecording)).setEnabled(false);
-            ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(false);
         }
     }
+
+//    public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
+//            if (!requestPermissions()){
+//            return;  // will need to press button again.
+//        }
+//
+//
+//        try {
+//            Prefs prefs = new Prefs(getApplicationContext());
+//
+//            // test for network connection
+//            if (!prefs.getOffLineMode()){
+//                if (!Util.isNetworkConnected(getApplicationContext())){
+//                    Util.getToast(getApplicationContext(), "There is no network connection - please fix and try again", true).show();
+//                    return;
+//                }
+//            }
+//
+//            if (Server.loggedIn){
+//                //Make sure GUI shows that it is logged in (couldn't work out how to do this from background thread)
+//                TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+//                loggedInText.setText(getString(R.string.logged_in_to_server_true));
+//
+//            }else{
+//                if (!prefs.getOffLineMode()){
+//                    Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
+//                    return;
+//                }
+//            }
+//
+//            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//
+//            //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+//            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//                // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
+//                Util.getToast(getApplicationContext(), "Turn OFF GPS before testing", true).show();
+//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                startActivity(intent);
+//                return;
+//            }
+//
+//
+//            Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+//            try {
+//                myIntent.putExtra("type", "testButton");
+//
+//            } catch (Exception ex) {
+//                Log.e(TAG, ex.getLocalizedMessage());
+//            }
+//
+//            ((Button)v).setEnabled(false);
+//            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
+//
+//
+//            sendBroadcast(myIntent);
+//        }catch (Exception ex){
+//
+//            Log.e(TAG, ex.getLocalizedMessage());
+//            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
+//         //   ((Button) findViewById(R.id.testRecording)).setEnabled(false);
+//
+//        }
+//    }
 
     /**
      * UI button to refresh vitals
      * @param v View
      */
     public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
-
-
         refreshVitals();
-
     }
 
     /**
@@ -490,8 +517,8 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
      */
     private void refreshVitals() {
         ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-        ((Button) findViewById(R.id.testRecording)).setEnabled(false);
-        ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(false);
+       // ((Button) findViewById(R.id.testRecording)).setEnabled(false);
+
 
 
         Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
@@ -502,20 +529,20 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
                 public void run() {
                     Looper.prepare();
                     Server.updateServerConnectionStatus(getApplicationContext());
-                    Message message = handler.obtainMessage();
-                    message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
-                    message.sendToTarget();
+//                    Message message = handler.obtainMessage();
+//                    message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
+//                    message.sendToTarget();
                     Looper.loop();
                 }
             };
             server.start();
         }catch (Exception ex){
             Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
-//            logger.error(ex.getLocalizedMessage());
+
             Log.e(TAG, ex.getLocalizedMessage());
             ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-            ((Button) findViewById(R.id.testRecording)).setEnabled(true);
-            ((Button) findViewById(R.id.setUpDeviceButton)).setEnabled(true);
+          //  ((Button) findViewById(R.id.testRecording)).setEnabled(true);
+
         }
     }
 
@@ -533,12 +560,13 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         disableFlightMode();
     }
 
-
+    public  void launchWalkScreenButtonClick(@SuppressWarnings("UnusedParameters") View v){
+        Intent intent = new Intent(this, WalkActivity.class);
+        startActivity(intent);
+    }
 
     public void disableFlightMode(){
         try {
-
-           // Util.getToast(getApplicationContext(), "About to disable flight mode - it will take up to a minute to get a network connection", false).show();
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
         new Thread()
         {
@@ -549,8 +577,6 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
                     public void run()
                     {
                       String message = Util.disableFlightMode(getApplicationContext());
-                       // String message =  Util.disableFlightModeTestSU(getApplicationContext());
-
 
                         if (message != null){
                             ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
@@ -561,10 +587,7 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
             }
         }.start();
 
-
-
         }catch (Exception ex){
-           // logger.error(ex.getLocalizedMessage());
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
@@ -650,5 +673,19 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         // END_INCLUDE(onRequestPermissionsResult)
     }
 
+    public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+        Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
 
+        ((Button) findViewById(R.id.recordNowButton)).setEnabled(false);
+
+        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+        try {
+            myIntent.putExtra("type", "recordNowButton");
+            sendBroadcast(myIntent);
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);// use for testing, should remove
+    }
 }

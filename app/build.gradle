@@ -13,11 +13,11 @@ android {
             storePassword 'Pppother1'
         }
     }
-   // compileSdkVersion 26
-   compileSdkVersion 25
+    // compileSdkVersion 26
+    compileSdkVersion 25
     //   compileSdkVersion 24
 //    buildToolsVersion '25.0.0'
-  //  buildToolsVersion '25.0.3' // told to remove this after upgrading Gradle Plugin
+    //  buildToolsVersion '25.0.3' // told to remove this after upgrading Gradle Plugin
     defaultConfig {
         applicationId "nz.org.cacophonoy.cacophonometerlite"
 //        minSdkVersion 8
@@ -25,7 +25,7 @@ android {
         targetSdkVersion 25
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.983"
+        versionName "0.985 Exact Alarms"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    //implementation 'com.android.support:design:25.4.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -54,7 +56,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
-  //  compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
+    //  compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
 //    compile files('libs/logback-android-1.1.1-6.jar')
 //    compile files('libs/slf4j-api-1.7.21.jar')
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection

@@ -20,13 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 //public class SetupActivity extends Activity {
@@ -61,7 +60,8 @@ public class SetupActivity extends AppCompatActivity {
             ab.setDisplayUseLogoEnabled(true);
             ab.setLogo(R.mipmap.ic_launcher);
         }else{
-            Log.w(LOG_TAG, "ActionBar ab is null");
+//            Log.w(LOG_TAG, "ActionBar ab is null");
+            Log.w(TAG, "ActionBar ab is null");
 //            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "ActionBar ab is null");
 //            logger.warn("ActionBar ab is null");
         }
@@ -95,7 +95,7 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
     }
 
@@ -103,16 +103,26 @@ public class SetupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+
+
             case R.id.action_help:
                 openHelp();
-
                 return true;
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    private void openSettings() {
+        try{
+            disableFlightMode();
+            Intent intent = new Intent(this, SetupActivity.class);
+            startActivity(intent);
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
         }
     }
 
@@ -181,6 +191,13 @@ public class SetupActivity extends AppCompatActivity {
         } else
             checkBoxUseFrequentRecordings.setChecked(false);
 
+        boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
+        final CheckBox checkBoxUseVeryFrequentRecordings = (CheckBox) findViewById(R.id.cbUseVeryFrequentRecordings);
+        if (useVeryFrequentRecordings) {
+            checkBoxUseVeryFrequentRecordings.setChecked(true);
+        } else
+            checkBoxUseVeryFrequentRecordings.setChecked(false);
+
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
         final CheckBox checkBoxUseFrequentUploads = (CheckBox) findViewById(R.id.cbUseFrequentUploads);
         if (useFrequentUploads) {
@@ -199,10 +216,16 @@ public class SetupActivity extends AppCompatActivity {
         final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbOffLineMode);
         if (noNetwork) {
             checkBoxNoNetwork.setChecked(true);
-//            Log.d(TAG, "onResume 5 - no network");
         } else {
             checkBoxNoNetwork.setChecked(false);
-//            Log.d(TAG, "onResume 6 - has network");
+        }
+
+        boolean playWarningSound = prefs.getPlayWarningSound();
+        final CheckBox checkBoxPlayWarningSound = (CheckBox) findViewById(R.id.cbPlayWarningSound);
+        if (playWarningSound) {
+            checkBoxPlayWarningSound.setChecked(true);
+        } else {
+            checkBoxPlayWarningSound.setChecked(false);
         }
 
 //        super.onResume();
@@ -325,11 +348,13 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setGroupName(null);
             prefs.setPassword(null);
             prefs.setDeviceName(null);
-            Server.loggedIn = false;
+           // Server.loggedIn = false;
+            prefs.setToken(null);
             if (displayUnregisterdMessage){
                 Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
             }
 
+            Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
         }catch(Exception ex){
             Log.e(TAG, "Error Un-registering device.");
 //            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error Un-registering device.");
@@ -466,9 +491,9 @@ public class SetupActivity extends AppCompatActivity {
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
         if (checked){
-            prefs.setUseFrequentRecordings(true);
+            prefs.setUseVeryFrequentRecordings(true);
         }else{
-            prefs.setUseFrequentRecordings(false);
+            prefs.setUseVeryFrequentRecordings(false);
         }
     }
 
@@ -494,6 +519,36 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
+    public void onCheckboxFrequentRecordingsClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+//        if (checked){
+//            prefs.setUseFrequentRecordings(true);
+//           Util.createAlarms(getApplicationContext());
+//        }else{
+//            prefs.setUseFrequentRecordings(false);
+//            Util.createAlarms(getApplicationContext());
+//        }
+        prefs.setUseFrequentRecordings(checked);
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+    }
+    public void onCheckboxVeryFrequentRecordingsClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+//        if (checked){
+//            prefs.setUseVeryFrequentRecordings(true);
+//            Util.createAlarms(getApplicationContext());
+//        }else{
+//            prefs.setUseVeryFrequentRecordings(false);
+//            Util.createAlarms(getApplicationContext());
+//        }
+        prefs.setUseVeryFrequentRecordings(checked);
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+    }
+
+
     public void onCheckboxOffLineModeClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
@@ -502,6 +557,17 @@ public class SetupActivity extends AppCompatActivity {
             prefs.setOffLineMode(true);
         }else{
             prefs.setOffLineMode(false);
+        }
+    }
+
+    public void onCheckboxWarningSoundClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        if (checked){
+            prefs.setPlayWarningSound(true);
+        }else{
+            prefs.setPlayWarningSound(false);
         }
     }
 

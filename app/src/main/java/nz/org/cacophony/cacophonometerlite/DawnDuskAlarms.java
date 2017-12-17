@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -35,7 +37,22 @@ class DawnDuskAlarms {
 
     private static final String TAG = DawnDuskAlarms.class.getName();
 
+    static void configureDawnAndDuskAlarms(Context context, boolean ignoreTimeConstraints){
+        Prefs prefs = new Prefs(context);
+        long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
+        long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235; // 23.5 hours - seemed like a good period to wait.
+        long now = new Date().getTime();
+        if (((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation) || ignoreTimeConstraints) {
+            if ((DawnDuskAlarms.isOutsideDawnDuskRecordings(context, prefs)) || ignoreTimeConstraints) {
 
+                DawnDuskAlarms.configureDawnAlarmsUsingLoop(context);
+                DawnDuskAlarms.configureDuskAlarmsUsingLoop(context);
+                prefs.setDateTimeLastCalculatedDawnDusk(now);
+            }
+        }
+
+
+    }
 
     static void configureDawnAlarmsUsingLoop(Context context) {
 
@@ -67,10 +84,20 @@ class DawnDuskAlarms {
             myIntent.setData(timeUri);
             pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
             if (nowToday.getTimeInMillis() < dawnTodayCalendar.getTimeInMillis()) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
-                //  System.out.println("today dawnMinus40Minutes " + dawnTodayCalendar.getTime());
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+                }else{
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+                }
+             //   alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+
             } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                }else{
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                }
+
                 // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
             }
             Log.d(TAG, "Dawn alarm set with offset of " + currentOffsetSeconds + " seconds");
@@ -79,6 +106,49 @@ class DawnDuskAlarms {
         }
 
     }
+
+//    static void configureDawnAlarmsUsingLoop(Context context) {
+//
+//        Prefs prefs = new Prefs(context);
+//        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+//        Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+//        nowTomorrow.add(Calendar.DAY_OF_YEAR, 1);
+//
+//        PendingIntent pendingIntent;
+//        Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+//        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+//        myIntent.putExtra("type", "dawn");
+//
+//        int dawnDuskOffsetMinutes = (int)prefs.getDawnDuskOffsetMinutes();
+//        int dawnDuskIncrementMinutes = (int)prefs.getDawnDuskIncrementMinutes();
+//
+//        int currentOffsetSeconds = dawnDuskOffsetMinutes * 60 * -1;
+//
+//        while (currentOffsetSeconds <= (dawnDuskOffsetMinutes * 60) ){ // we are going to keep adding alarms until currentOffsetSeconds reaches dawn + minutesBeforeAfterDawnToDoExtraRecordings
+//            Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
+//            Calendar dawnTomorrowCalendar =  Util.getDawn(context, nowTomorrow);
+//
+//            dawnTodayCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+//            dawnTomorrowCalendar.add(Calendar.SECOND, +currentOffsetSeconds);
+//
+//            String currentOffsetAsString = Integer.toString(currentOffsetSeconds); // need this to label alarm so it can be overwritten when dawn changes, otherwise more alarms will be added each time calculation is done
+//            timeUri = Uri.parse("dawn" + currentOffsetAsString);
+//            myIntent.setData(timeUri);
+//            pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+//            if (nowToday.getTimeInMillis() < dawnTodayCalendar.getTimeInMillis()) {
+//                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+//                //  System.out.println("today dawnMinus40Minutes " + dawnTodayCalendar.getTime());
+//            } else {
+//                alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+//                // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
+//            }
+//            Log.d(TAG, "Dawn alarm set with offset of " + currentOffsetSeconds + " seconds");
+//
+//            currentOffsetSeconds +=  (dawnDuskIncrementMinutes * 60);
+//        }
+//
+//    }
 
     static boolean isOutsideDawnDuskRecordings(Context context, Prefs prefs){
         // Trying to fix bug of not all 13 dawn or dusk recordings happening - maybe it is because
@@ -141,10 +211,20 @@ return true;
             myIntent.setData(timeUri);
             pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
             if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
+                }else{
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
+                }
+
                 //  System.out.println("today dawnMinus40Minutes " + dawnTodayCalendar.getTime());
             } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                }else{
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                }
+
                 // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
             }
             Log.d(TAG, "Dusk alarm set with offset of " + currentOffsetSeconds + " seconds");

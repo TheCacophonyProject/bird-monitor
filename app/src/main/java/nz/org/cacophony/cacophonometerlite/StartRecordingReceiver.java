@@ -14,77 +14,83 @@ import android.util.Log;
 import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 
 public class StartRecordingReceiver extends BroadcastReceiver{
-    public static final int RECORDING_STARTED = 1;
-    public static final int RECORDING_FAILED = 2;
-    public static final int RECORDING_FINISHED = 3;
-    public static final int NO_PERMISSIONS_TO_RECORD = 4;
-    public static final int RECORDING_AND_UPLOADING_FINISHED = 5;
-    public static final int RECORDING_FINISHED_BUT_UPLOAD_FAILED = 6;
-    public static final int  RECORDING_FINISHED_NO_NETWORK = 7;
+//    public static final int RECORDING_STARTED = 1;
+//    public static final int RECORDING_FAILED = 2;
+//    public static final int RECORDING_FINISHED = 3;
+//    public static final int NO_PERMISSIONS_TO_RECORD = 4;
+//    public static final int RECORDING_AND_UPLOADING_FINISHED = 5;
+//    public static final int RECORDING_FINISHED_BUT_UPLOAD_FAILED = 6;
+//    public static final int  RECORDING_FINISHED_NO_NETWORK = 7;
+//    public static final int  RECORDING_FINISHED_WALK_MODE = 8;
 
     private static final String TAG = StartRecordingReceiver.class.getName();
 //    private static Logger logger = null;
 
     private Context context = null;
     // Handler to pass to recorder.
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
-
-        @Override
-        public void handleMessage(Message inputMessage) {
-
-            if (context == null) {
-                Log.e(TAG, "Context was null for handler.");
-//                logger.error("Context was null for handler.");
-
-            }
-            switch (inputMessage.what) {
-                case RECORDING_STARTED:
-                    Util.getToast(context,"Recording started", false ).show();
-                    break;
-
-                case RECORDING_FAILED:
-                    Util.getToast(context,"Recording failed", true ).show();
-                    enableButtons(context);
-                    break;
-
-                case RECORDING_FINISHED:
-                    if (Server.loggedIn) {
-                        Util.getToast(context, "Recording has finished. Now uploading it to server - please wait", false).show();
-                    }else{
-                        Util.getToast(context, "Recording has finished.", false).show();
-                        enableButtons(context);
-                    }
-                    break;
-
-                case RECORDING_FINISHED_NO_NETWORK:
-                        Util.getToast(context, "Recording has finished - all done.", false).show();
-                        enableButtons(context);
-                    break;
-
-                case RECORDING_AND_UPLOADING_FINISHED:
-                    Util.getToast(context,"Recording has been uploaded to the server - all done", false ).show();
-                    enableButtons(context);
-                    break;
-
-                case RECORDING_FINISHED_BUT_UPLOAD_FAILED:
-                    Util.getToast(context,"Recording finished BUT failed to upload to server", true ).show();
-                    enableButtons(context);
-                    break;
-
-                case NO_PERMISSIONS_TO_RECORD:
-                    Util.getToast(context,"Did not have proper permissions to record", true ).show();
-                    enableButtons(context);
-                    break;
-
-                default:
-                    Log.w(TAG, "Unknown handler what.");
-//                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");
-//                    logger.error("Unknown handler what.");
-                    enableButtons(context);
-                    break;
-            }
-        }
-    };
+//    private final Handler handler = new Handler(Looper.getMainLooper()) {
+//
+//        @Override
+//        public void handleMessage(Message inputMessage) {
+//
+//            if (context == null) {
+//                Log.e(TAG, "Context was null for handler.");
+////                logger.error("Context was null for handler.");
+//
+//            }
+//            switch (inputMessage.what) {
+//                case RECORDING_STARTED:
+//                    Util.getToast(context,"Recording started", false ).show();
+//                    break;
+//
+//                case RECORDING_FAILED:
+//                    Util.getToast(context,"Recording failed", true ).show();
+//                    enableButtons(context);
+//                    break;
+//
+//                case RECORDING_FINISHED:
+//                    if (Server.loggedIn) {
+//                        Util.getToast(context, "Recording has finished. Now uploading it to server - please wait", false).show();
+//                    }else{
+//                        Util.getToast(context, "Recording has finished.", false).show();
+//                        enableButtons(context);
+//                    }
+//                    break;
+//
+//                case RECORDING_FINISHED_NO_NETWORK:
+//                        Util.getToast(context, "Recording has finished - all done.", false).show();
+//                        enableButtons(context);
+//                    break;
+//
+//                case RECORDING_AND_UPLOADING_FINISHED:
+//                    Util.getToast(context,"Recording has been uploaded to the server - all done", false ).show();
+//                    enableButtons(context);
+//                    break;
+//
+//                case RECORDING_FINISHED_BUT_UPLOAD_FAILED:
+//                    Util.getToast(context,"Recording finished BUT failed to upload to server", true ).show();
+//                    enableButtons(context);
+//                    break;
+//
+//                case NO_PERMISSIONS_TO_RECORD:
+//                    Util.getToast(context,"Did not have proper permissions to record", true ).show();
+//                    enableButtons(context);
+//                    break;
+//
+//                case RECORDING_FINISHED_WALK_MODE:
+//                    Util.getToast(context,"Recording finished", false ).show();
+//                    enableWalkScreenButtons(context);
+//                    break;
+//
+//                default:
+//                    Log.w(TAG, "Unknown handler what.");
+////                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");
+////                    logger.error("Unknown handler what.");
+//                    enableButtons(context);
+//                    break;
+//            }
+//        }
+//    };
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -105,14 +111,14 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
         // need to determine the source of the intent ie Main UI or boot receiver
         Bundle bundle = intent.getExtras();
-        String alarmIntentType = bundle.getString("type");
+       final String alarmIntentType = bundle.getString("type");
 
 
         if (alarmIntentType == null){
             Log.e(TAG, "Intent does not have a type");
 //            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Intent does not have a type");
 //            logger.error("Intent does not have a type");
-            alarmIntentType = "unknown"; // shouldn't get here
+        //    alarmIntentType = "unknown"; // shouldn't get here
         }
 
 
@@ -154,7 +160,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
         // need to determine the source of the intent ie Main UI or boot receiver
 
-        if (alarmIntentType.equalsIgnoreCase("testButton")){
+       // if (alarmIntentType.equalsIgnoreCase("testButton") || alarmIntentType.equalsIgnoreCase("recordNowButton")){
+            if ( alarmIntentType.equalsIgnoreCase("recordNowButton")){
             try {
                 // Start recording in new thread.
 
@@ -162,7 +169,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                     @Override
                     public void run() {
 //                        Looper.prepare();
-                        MainThread mainThread = new MainThread(context, handler);
+//                        MainThread mainThread = new MainThread(context, handler, alarmIntentType);
+                        MainThread mainThread = new MainThread(context, alarmIntentType);
                         mainThread.run();
                     }
                 };
@@ -171,7 +179,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 e.printStackTrace();
             }
 
-        }else{ // intent came from boot receiver or app (not test record)
+
+        }else{ // intent came from boot receiver or app (not test record, or walk )
 
             Intent mainServiceIntent = new Intent(context, MainService.class);
             try {
@@ -195,7 +204,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs){
         // The battery level required to continue depends on the type of alarm
 
-        if (alarmType.equalsIgnoreCase("testButton")){
+        if (alarmType.equalsIgnoreCase("recordNowButton") ){
             // Test button was pressed
             return true;
         }
@@ -211,12 +220,14 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
     }
 
-     static void enableButtons(Context context){
-         Util.broadcastAMessage(context, "enable_vitals_button");
-         Util.broadcastAMessage(context, "enable_test_recording_button");
-         Util.broadcastAMessage(context, "enable_setup_button");
+//     static void enableButtons(Context context){
+//         Util.broadcastAMessage(context, "enable_vitals_button");
+//         Util.broadcastAMessage(context, "enable_test_recording_button");
+//         Util.broadcastAMessage(context, "enable_setup_button");
+//
+//          }
 
-          }
+
 
 
 }
