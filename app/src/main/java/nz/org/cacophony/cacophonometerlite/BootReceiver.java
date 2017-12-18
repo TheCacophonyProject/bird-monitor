@@ -54,6 +54,7 @@ public class BootReceiver extends BroadcastReceiver {
 //        Log.d(TAG, "BootReceiver 2");
    //     String intentAction = intent.getAction();
         Util.createAlarms(context, "repeating", "normal");
+        DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
 
 //        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
 ////        Log.d(TAG, "BootReceiver 3");

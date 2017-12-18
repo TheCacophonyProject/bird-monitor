@@ -79,7 +79,7 @@
     <string name="ignore_low_battery_cb_message">Keep recording when battery is low.</string>
     <string name="frequent_recordings_cb_message">Record more often.</string>
     <string name="offline_mode_cb_message">Offline (no network connection) mode</string>
-    <string name="warning_sound_cb_message">Check this box to play a warning sound before and after recording.</string>
+    <string name="warning_sound_cb_message">Play a warning sound before and after recording.</string>
 
     <string name="registered_true">Registered: ✔</string>
     <string name="registered_false">Registered: ✘</string>

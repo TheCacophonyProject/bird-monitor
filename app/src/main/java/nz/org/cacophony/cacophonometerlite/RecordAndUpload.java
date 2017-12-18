@@ -77,9 +77,6 @@ static String doRecord(Context context, String typeOfRecording) {
     }
 
 
-//            if (typeOfRecording.equalsIgnoreCase("testButton")  ){
-//                recordTimeSeconds = 5;  // short test
-//            }else if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")){
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
         recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
         Log.d(TAG, "typeOfRecording is dawn or dusk");
@@ -99,8 +96,8 @@ static String doRecord(Context context, String typeOfRecording) {
 
     } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         recordTimeSeconds += 1; // help to recognise recordNowButton recordings
-        long now = new Date().getTime();
-        prefs.setDateTimeLastRepeatingAlarmFired(now); // Helped when testing, but probably don't need when app is running normally
+      //  long now = new Date().getTime();
+        prefs.setDateTimeLastRepeatingAlarmFired(0); // Helped when testing, but probably don't need when app is running normally
 
     }
 

@@ -258,6 +258,7 @@ class Server {
                     registered = true;
                   //  setToken(joRes.getString("token"));
                     prefs.setToken(joRes.getString("token"));
+                    prefs.setTokenLastRefreshed(new Date().getTime());
 
                     // look at web token
 //                    String deviceID = Util.getDeviceID(context, getToken());

@@ -57,112 +57,14 @@ private static final String TAG = MainActivity.class.getName();
     private static final int PERMISSION_RECORD_AUDIO = 1;
     private static final int PERMISSION_LOCATION = 2;
 
-    /**
-     * Handler for Main Activity
-     */
-//    private final Handler handler = new Handler(Looper.getMainLooper()) {
-//        @Override
-//        public void handleMessage(Message inputMessage) {
-//           // Log.d(LOG_TAG, "Main activity received message.");
-//            Log.d(TAG, "Main activity received message.");
-//         //   logger.info("Main activity received message." );
-//            switch (inputMessage.what) {
-//                case RESUME:
-//                    onResume();
-//                    break;
-//                case RESUME_AND_DISPLAY_REFRESH_MESSAGE:
-//                    Util.getToast(getApplicationContext(),"Vitals have been updated", false ).show();
-//                   // ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-//                    onResume();
-//                    break;
-//                default:
-//                    // Unknown case
-//                    break;
-//            }
-//        }
-//    };
 
-    /**
-     * Handler states
-     */
-    private static final int RESUME = 1;
-    private static final int RESUME_AND_DISPLAY_REFRESH_MESSAGE = 2;
 
     @Override
     protected void onStart() {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(intentAction);
-
-
     }
-
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
-//                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
-//                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
-                    if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
-//                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
-                    }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
-                    }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                    }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-                    ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
-                }else if (message.equalsIgnoreCase("recording_started")){
-                        Util.getToast(getApplicationContext(),"Recording started", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_finished")){
-                        Util.getToast(getApplicationContext(),"Recording finished", false ).show();
-                    }else if (message.equalsIgnoreCase("about_to_upload_files")){
-                        Util.getToast(getApplicationContext(),"About to upload files", false ).show();
-                    }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
-                        Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
-                    }else if (message.equalsIgnoreCase("already_uploading")){
-                        Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
-                    }else if (message.equalsIgnoreCase("no_permission_to_record")){
-                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_failed")){
-                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
-                        Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
-                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
-                    }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
-                        Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_failed")){
-                        Util.getToast(getApplicationContext(),"Recording failed", true ).show();
-                    }else if (message.equalsIgnoreCase("not_logged_in")){
-                        Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
-                    }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
-                        refreshVitalsDisplayedText();
-                    }
-
-
-                }
-
-
-
-
-            }catch (Exception ex){
-//                logger.error(ex.getLocalizedMessage());
-                Log.e(TAG,ex.getLocalizedMessage());
-            }
-        }
-    };
-
-
 
     @Override
     protected void onPause() {
@@ -171,8 +73,6 @@ private static final String TAG = MainActivity.class.getName();
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -183,26 +83,6 @@ private static final String TAG = MainActivity.class.getName();
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
-//        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-//
-//        try {
-//            myIntent.putExtra("type","repeating");
-//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
-//            myIntent.setData(timeUri);
-//
-//        }catch (Exception e){
-//
-//
-////            logger.error("Error with intent setupButtonClick");
-//            Log.e(TAG, "Error with intent setupButtonClick");
-//
-//        }
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,0);
-//
-//        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
@@ -224,28 +104,6 @@ private static final String TAG = MainActivity.class.getName();
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), false);
 
 
-//        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
-//
-//        long delay = 1000 * timeBetweenRecordingsSeconds ;
-//        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-//
-//        try {
-//            myIntent.putExtra("type","repeating");
-//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
-//            myIntent.setData(timeUri);
-//
-//        }catch (Exception e){
-//
-//
-////            logger.error("Error with intent setupButtonClick");
-//            Log.e(TAG, "Error with intent setupButtonClick");
-//
-//        }
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() ,
-//                delay, pendingIntent);
-
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
         if (ab != null){
@@ -254,13 +112,10 @@ private static final String TAG = MainActivity.class.getName();
         ab.setDisplayUseLogoEnabled(true);
         ab.setLogo(R.mipmap.ic_launcher);
         }else{
-
-
-//            logger.warn("ActionBar ab is null");
             Log.w(TAG, "ActionBar ab is null");
         }
 
-      //  refreshVitals();
+
     } //end onCreate
 
 
@@ -341,12 +196,6 @@ private static final String TAG = MainActivity.class.getName();
         else
             registered.setText(getString(R.string.registered_false));
 
-//        // Server connection text.
-//        TextView connectToServerText = (TextView) findViewById(R.id.connectToServerText);
-//        if (Server.serverConnection)
-//            connectToServerText.setText(getString(R.string.connected_to_server_true));
-//        else
-//            connectToServerText.setText(getString(R.string.connected_to_server_false));
 
         // Logged In text.
         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
@@ -440,69 +289,6 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
     }
-
-//    public void testRecordingButtonClick(@SuppressWarnings("UnusedParameters") View v) {
-//            if (!requestPermissions()){
-//            return;  // will need to press button again.
-//        }
-//
-//
-//        try {
-//            Prefs prefs = new Prefs(getApplicationContext());
-//
-//            // test for network connection
-//            if (!prefs.getOffLineMode()){
-//                if (!Util.isNetworkConnected(getApplicationContext())){
-//                    Util.getToast(getApplicationContext(), "There is no network connection - please fix and try again", true).show();
-//                    return;
-//                }
-//            }
-//
-//            if (Server.loggedIn){
-//                //Make sure GUI shows that it is logged in (couldn't work out how to do this from background thread)
-//                TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
-//                loggedInText.setText(getString(R.string.logged_in_to_server_true));
-//
-//            }else{
-//                if (!prefs.getOffLineMode()){
-//                    Util.getToast(getApplicationContext(), "Not logged in - press REFRESH to connect", true).show();
-//                    return;
-//                }
-//            }
-//
-//            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//
-//            //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-//            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//                // makeText(getApplicationContext(), "Turn OFF GPS before testing", Toast.LENGTH_LONG).show();
-//                Util.getToast(getApplicationContext(), "Turn OFF GPS before testing", true).show();
-//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                startActivity(intent);
-//                return;
-//            }
-//
-//
-//            Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-//            try {
-//                myIntent.putExtra("type", "testButton");
-//
-//            } catch (Exception ex) {
-//                Log.e(TAG, ex.getLocalizedMessage());
-//            }
-//
-//            ((Button)v).setEnabled(false);
-//            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-//
-//
-//            sendBroadcast(myIntent);
-//        }catch (Exception ex){
-//
-//            Log.e(TAG, ex.getLocalizedMessage());
-//            ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-//         //   ((Button) findViewById(R.id.testRecording)).setEnabled(false);
-//
-//        }
-//    }
 
     /**
      * UI button to refresh vitals
@@ -688,4 +474,71 @@ public void setupButtonClick(@SuppressWarnings("UnusedParameters") View v) {
         }
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);// use for testing, should remove
     }
+
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+        // broadcast notification coming from ??
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String message = intent.getStringExtra("message");
+                if (message != null) {
+//                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
+//                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
+//                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
+                    if (message.equalsIgnoreCase("enable_vitals_button")) {
+                        ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
+//                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
+//                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
+                    }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
+                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
+                    }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
+                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
+                    }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
+                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                    }else if (message.equalsIgnoreCase("recording_started")){
+                        Util.getToast(getApplicationContext(),"Recording started", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_finished")){
+                        Util.getToast(getApplicationContext(),"Recording finished", false ).show();
+                    }else if (message.equalsIgnoreCase("about_to_upload_files")){
+                        Util.getToast(getApplicationContext(),"About to upload files", false ).show();
+                    }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
+                        Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
+                    }else if (message.equalsIgnoreCase("already_uploading")){
+                        Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
+                    }else if (message.equalsIgnoreCase("no_permission_to_record")){
+                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_failed")){
+                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
+                        Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
+                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
+                    }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
+                        Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
+                    }else if (message.equalsIgnoreCase("recording_failed")){
+                        Util.getToast(getApplicationContext(),"Recording failed", true ).show();
+                    }else if (message.equalsIgnoreCase("not_logged_in")){
+                        Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
+                    }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
+                        refreshVitalsDisplayedText();
+                    }
+
+
+                }
+
+
+
+
+            }catch (Exception ex){
+//                logger.error(ex.getLocalizedMessage());
+                Log.e(TAG,ex.getLocalizedMessage());
+            }
+        }
+    };
+
+
 }
