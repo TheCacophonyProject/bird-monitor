@@ -42,6 +42,7 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
@@ -103,7 +104,9 @@ public class SetupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-
+            case R.id.action_vitals:
+                openVitals();
+                return true;
 
             case R.id.action_help:
                 openHelp();
@@ -116,14 +119,11 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void openSettings() {
-        try{
-            disableFlightMode();
-            Intent intent = new Intent(this, SetupActivity.class);
-            startActivity(intent);
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
+
+
+    private void openVitals() {
+        Intent intent = new Intent(this, VitalsActivity.class);
+        startActivity(intent);
     }
 
     private void openHelp() {
@@ -227,6 +227,10 @@ public class SetupActivity extends AppCompatActivity {
         } else {
             checkBoxPlayWarningSound.setChecked(false);
         }
+
+        boolean alwaysUpdateGPS = prefs.getAlwaysUpdateGPS();
+        final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbAlwaysUpdateGPS);
+        checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
 //        super.onResume();
 
@@ -409,29 +413,9 @@ public class SetupActivity extends AppCompatActivity {
 
 
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
-
-
-//        Log.i(LOG_TAG, "Update location button");
-     //   logger.debug("Update location button");
-        Util.getToast(getApplicationContext(),"Getting new Location...", false ).show();
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
-        GPSLocationListener gpsLocationListener = new GPSLocationListener(getApplicationContext(), handler);
-        try {
-            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, getApplicationContext().getMainLooper());
-        } catch (SecurityException e) {
-            Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
-         //   logger.error("Unable to get GPS location. Don't have required permissions.");
-        }
-
+        Util.updateGPSLocation(getApplicationContext());
     }
+
 
     public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
 
@@ -460,6 +444,14 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setHasRootAccess(false);
         }
+    }
+
+
+    public void onCheckboxAlwaysUpdateLocationClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+            prefs.setAlwaysUpdateGPS(checked);
     }
 
 

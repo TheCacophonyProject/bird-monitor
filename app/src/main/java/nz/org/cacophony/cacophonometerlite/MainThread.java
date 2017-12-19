@@ -109,11 +109,10 @@ class MainThread implements Runnable {
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully no network")){
            // message.what = StartRecordingReceiver.RECORDING_FINISHED_NO_NETWORK;
             Util.broadcastAMessage(context, "recorded_successfully_no_network");
-
-
-
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("not logged in")){
             Util.broadcastAMessage(context, "not_logged_in");
+        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("isRecording")){
+            Util.broadcastAMessage(context, "is_already_recording");
         }
         else{
            // message.what = StartRecordingReceiver.RECORDING_FAILED;

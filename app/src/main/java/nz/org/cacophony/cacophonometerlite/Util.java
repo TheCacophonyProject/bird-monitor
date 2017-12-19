@@ -9,18 +9,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Base64;
 //import android.util.Log;
 import android.util.Log;
@@ -31,7 +32,6 @@ import com.luckycatlabs.dto.Location;
 import static android.content.Context.ALARM_SERVICE;
 
 import org.json.JSONObject;
-import org.slf4j.LoggerFactory;
 
 //import ch.qos.logback.classic.Level;
 //import ch.qos.logback.classic.Logger;
@@ -46,27 +46,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 //import java.lang.reflect.Field;
 //import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
 
 //import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-import ch.qos.logback.classic.android.LogcatAppender;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.FileAppender;
-
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-import static java.security.AccessController.getContext;
 
 
 class Util {
@@ -677,8 +663,8 @@ class Util {
                     Log.w(TAG, "Do NOT have required ROOT access");
                  //   Util.getToast(context, "Root access required to change airplane mode", true).show();
                 //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
-
-                    return "Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.";
+                        Util.broadcastAMessage(context,  "can_not_toggle_airplane_mode");
+                        return null;
 
                 }
 
@@ -1160,7 +1146,23 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
-        long timeBetweenRecordingsSeconds  = (long)prefs.getTimeBetweenRecordingsSeconds();
+        long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
+
+    String mode = prefs.getMode();
+    switch(mode) {
+        case "off":
+            // don't change
+            break;
+        case "normal":
+            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+            break;
+        case "walking":
+            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
+            break;
+    }
+
+
+
 
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
@@ -1169,4 +1171,40 @@ public static void createAlarms(Context context, String type, String timeUriPara
                 delay, pendingIntent);
 
     }
+
+    public static void updateGPSLocation(Context context){
+        ////        Log.i(LOG_TAG, "Update location button");
+//     //   logger.debug("Update location button");
+        Util.getToast(context,"Getting new Location...", false ).show();
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            context.startActivity(intent);
+        }
+
+        GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
+        try {
+            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
+        } catch (SecurityException e) {
+            Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
+//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
+         //   logger.error("Unable to get GPS location. Don't have required permissions.");
+        }
+
+    }
+
+    public static void playWarningBeeps(Context context, int durationInSeconds){
+
+            Util.getToast(context,"Prepare to start recording", false ).show();
+            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,durationInSeconds * 1000);
+            try{
+                Thread.sleep(durationInSeconds * 1000);
+            }catch (Exception ex){
+                Log.e(TAG, ex.getLocalizedMessage());
+            }
+        }
+
 }

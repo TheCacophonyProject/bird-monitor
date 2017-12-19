@@ -27,70 +27,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 //    private static Logger logger = null;
 
     private Context context = null;
-    // Handler to pass to recorder.
-//    private final Handler handler = new Handler(Looper.getMainLooper()) {
-//
-//        @Override
-//        public void handleMessage(Message inputMessage) {
-//
-//            if (context == null) {
-//                Log.e(TAG, "Context was null for handler.");
-////                logger.error("Context was null for handler.");
-//
-//            }
-//            switch (inputMessage.what) {
-//                case RECORDING_STARTED:
-//                    Util.getToast(context,"Recording started", false ).show();
-//                    break;
-//
-//                case RECORDING_FAILED:
-//                    Util.getToast(context,"Recording failed", true ).show();
-//                    enableButtons(context);
-//                    break;
-//
-//                case RECORDING_FINISHED:
-//                    if (Server.loggedIn) {
-//                        Util.getToast(context, "Recording has finished. Now uploading it to server - please wait", false).show();
-//                    }else{
-//                        Util.getToast(context, "Recording has finished.", false).show();
-//                        enableButtons(context);
-//                    }
-//                    break;
-//
-//                case RECORDING_FINISHED_NO_NETWORK:
-//                        Util.getToast(context, "Recording has finished - all done.", false).show();
-//                        enableButtons(context);
-//                    break;
-//
-//                case RECORDING_AND_UPLOADING_FINISHED:
-//                    Util.getToast(context,"Recording has been uploaded to the server - all done", false ).show();
-//                    enableButtons(context);
-//                    break;
-//
-//                case RECORDING_FINISHED_BUT_UPLOAD_FAILED:
-//                    Util.getToast(context,"Recording finished BUT failed to upload to server", true ).show();
-//                    enableButtons(context);
-//                    break;
-//
-//                case NO_PERMISSIONS_TO_RECORD:
-//                    Util.getToast(context,"Did not have proper permissions to record", true ).show();
-//                    enableButtons(context);
-//                    break;
-//
-//                case RECORDING_FINISHED_WALK_MODE:
-//                    Util.getToast(context,"Recording finished", false ).show();
-//                    enableWalkScreenButtons(context);
-//                    break;
-//
-//                default:
-//                    Log.w(TAG, "Unknown handler what.");
-////                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Unknown handler what.");
-////                    logger.error("Unknown handler what.");
-//                    enableButtons(context);
-//                    break;
-//            }
-//        }
-//    };
+
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -158,6 +95,30 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         }
 
 
+
+        String mode = prefs.getMode();
+        switch(mode) {
+            case "off":
+                if (prefs.getAlwaysUpdateGPS()){
+                    Util.updateGPSLocation(context);
+                }
+
+                break;
+            case "normal":
+                // Don't update location
+                break;
+            case "walking":
+                // Not going to do dawn/dusk alarms if in walking mode
+                if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")){
+                    return; // exit onReceive method
+                }
+
+                Util.updateGPSLocation(context);
+
+                break;
+        }
+
+
         // need to determine the source of the intent ie Main UI or boot receiver
 
        // if (alarmIntentType.equalsIgnoreCase("testButton") || alarmIntentType.equalsIgnoreCase("recordNowButton")){
@@ -205,8 +166,22 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         // The battery level required to continue depends on the type of alarm
 
         if (alarmType.equalsIgnoreCase("recordNowButton") ){
-            // Test button was pressed
+            // record now button was pressed
             return true;
+        }
+
+
+        String mode = prefs.getMode();
+        switch(mode) { // mode determined earlier
+            case "off":
+                // has no affect on decision
+                break;
+            case "normal":
+                // has no affect on decision
+                break;
+            case "walking":
+                return true;  // ignore battery level when in walking mode
+
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){

@@ -1,10 +1,10 @@
 <resources>
 
-    <string name="app_name">Cacophon ometer</string>
+    <string name="app_name">Cacophonnometer</string>
     <string name="main_activity_name">Cacophonometer</string>
     <string name="title_activity_setup">Settings</string>
     <string name="title_activity_help">Help</string>
-    <string name="title_activity_walk">Walking</string>
+    <string name="title_activity_vitals">Vitals</string>
 
 
     <string name="setup_device">Setup Device</string>
@@ -23,6 +23,8 @@
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
     <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app has been given root permission.</string>
     <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed has root permission.</string>
+    <string name="always_try_to_update_location">Always try to update the location when a recording is made.</string>
+
     <string name="device_not_registered">Device Not Registered</string>
     <string name="to_register_title">To register this device</string>
     <string name="walk_screen_title">Setup Walk Recording</string>
@@ -36,8 +38,9 @@
     <string name="stop_periodic_recording">Stop Periodic Recording</string>
     <string name="upload_recordings">Upload Recordings</string>
 
-    <string name="periodic_recordings_enabled">Periodic recordings enabled</string>
-    <string name="periodic_recordings_disabled">Periodic recordings disabled</string>
+    <string name="off">Off - Will not override any settings.</string>
+    <string name="normal_mode">Normal Mode.</string>
+    <string name="walking_mode">Walking Mode (warning beeps, updates location, offline, records more often, ignores low battery).</string>
 
     <string name="set_test_server_title">Use Test Server (Experts Only)</string>
     <string name="set_test_server_message">Select the following box if you want to use the test server (you will need to re-register the phone)</string>
@@ -45,16 +48,20 @@
 
 
     <string name="gps_location_title">GPS Location</string>
-    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (the phone settings will open if GPS needs to be turned on) and once the location is displayed press the disable GPS button to SAVE POWER.</string>
+    <string name="choose_mode">Choose Mode</string>
+    <string name="introduction">To test your device, first choose Settings from the menu (top right). Once that is done you can choose the mode below and you are ready to go.</string>
+    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (the phone settings will open if GPS needs to be turned on, press the button again).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates for each recording (will use more power).</string>
+    <string name="choose_mode_message">Select a mode to override the options selected in settings (uses most appropriate values).</string>
     <string name="location_not_set">GPS Location not set.</string>
     <string name="update_gps_location">Update GPS Location</string>
     <string name="disable_gps_to_save_power">Disable GPS to save power</string>
 
     <string name="help">Help</string>
     <string name="settings">Settings</string>
+    <string name="vitals">Vitals</string>
 
 
-    <string name="device_id">Device ID</string>
+    <string name="device_id">Device ID:</string>
     <string name="gps_text">GPS location: </string>
     <string name="message_text">Messages: </string>message_text
     <string name="version">Version ID</string>

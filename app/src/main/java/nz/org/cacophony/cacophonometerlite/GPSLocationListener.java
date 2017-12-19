@@ -21,16 +21,21 @@ class GPSLocationListener implements LocationListener {
 
     private Context context = null;
 //    private static Logger logger = null;
-    private Handler handler = null;
+ //   private Handler handler = null;
 
-
-
-    GPSLocationListener(Context context, Handler handler) {
+    GPSLocationListener(Context context) {
         this.context = context;
-        this.handler = handler;
+
 //        logger = Util.getAndConfigureLogger(context, LOG_TAG);
 //        logger.debug("End of GPSLocationListener");
     }
+
+//    GPSLocationListener(Context context, Handler handler) {
+//        this.context = context;
+//        this.handler = handler;
+////        logger = Util.getAndConfigureLogger(context, LOG_TAG);
+////        logger.debug("End of GPSLocationListener");
+//    }
 
     public void onLocationChanged(Location location) {
 //        logger.debug("onLocationChanged method entered");
@@ -54,7 +59,7 @@ class GPSLocationListener implements LocationListener {
 //           message.sendToTarget();
 
            // send a broadcast for SetupActivity to update gps location text
-           Util.broadcastAMessage(context, "refresh_gps_coordinates");
+           Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
 
            Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){

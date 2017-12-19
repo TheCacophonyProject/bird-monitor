@@ -45,16 +45,21 @@ public class MainService extends IntentService {
 //                  logger.warn("alarmIntentType = unknown");
                   Log.w(TAG, "alarmIntentType = unknown");
               }
-              if (alarmIntentType.equalsIgnoreCase("walkModeRepeating")){
-                  Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
-                  ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-                  toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,10000);
-                  try{
-                      Thread.sleep(10000);
-                  }catch (Exception ex){
-                      Log.e(TAG, ex.getLocalizedMessage());
-                  }
-              }
+
+
+
+
+
+//              if (alarmIntentType.equalsIgnoreCase("walkModeRepeating")){
+//                  Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
+//                  ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+//                  toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,10000);
+//                  try{
+//                      Thread.sleep(10000);
+//                  }catch (Exception ex){
+//                      Log.e(TAG, ex.getLocalizedMessage());
+//                  }
+//              }
 //                  RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType, null);
               RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
 

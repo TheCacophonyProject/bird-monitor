@@ -15,8 +15,8 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-
-
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
 
@@ -40,104 +40,93 @@
             android:focusableInTouchMode="true"
             >
 
-    <TextView
-        android:id="@+id/appNameVersionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-         />
 
-
-
-
-
-
-    <TextView
-        android:id="@+id/appVitalsText"
-        android:text="@string/app_vitals"
-        android:textSize="20sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appNameVersionText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp"
-         />
-
-            <Button
-                android:id="@+id/refreshVitals"
-                android:text="@string/refresh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="refreshButton"
-                android:layout_alignTop="@id/appVitalsText"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:id="@+id/appPermissionText"
-        android:text="@string/required_permissions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/appVitalsText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+            <View
+                android:id="@+id/SplitLine_hor1"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/mainRegisteredStatus"
-                android:text="@string/registered"
+                android:id="@+id/introduction"
+                android:text="@string/introduction"
+                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/appPermissionText"
+                android:layout_below="@id/SplitLine_hor1"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-
-    <TextView
-        android:id="@+id/loggedInText"
-        android:text="ggggg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mainRegisteredStatus"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-
-    <TextView
-        android:id="@+id/deviceIDText"
-        android:text="@string/device_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/loggedInText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+                android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/gpsText"
-                android:text="@string/gps_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/deviceIDText"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:id="@+id/SplitLine_hor2"
+            android:layout_width="match_parent"
+            android:layout_height= "2dp"
+            android:background="@color/colorPrimaryDark"
+            android:layout_below="@id/introduction"
+            android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/messageText"
-                android:text="@string/message_text"
+                android:id="@+id/chooseModeTitle"
+                android:text="@string/choose_mode"
+                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/gpsText"
+                android:layout_below="@id/SplitLine_hor2"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/chooseModeMessage"
+                android:text="@string/choose_mode_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chooseModeTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/chooseModeRadioButtons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/chooseModeMessage">>
+                <RadioButton android:id="@+id/offMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/off"
+                    android:onClick="onModeRadioButtonClicked"/>
+                <RadioButton android:id="@+id/normalMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/normal_mode"
+                    android:onClick="onModeRadioButtonClicked"/>
+                <RadioButton android:id="@+id/walkingMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/walking_mode"
+                    android:onClick="onModeRadioButtonClicked"/>
+            </RadioGroup>
+
+            <View
+                android:id="@+id/SplitLine_hor3"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/chooseModeRadioButtons"
+                android:layout_marginTop="5dp" />
 
             <Button
                 android:id="@+id/recordNowButton"
                 android:text="@string/record_now"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/messageText"
+                android:layout_below="@id/SplitLine_hor3"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="recordNowButtonClicked" />

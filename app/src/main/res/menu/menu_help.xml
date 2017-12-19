@@ -4,10 +4,14 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/action_settings"
-        android:title="@string/settings"  />
+        android:title="@string/settings"
+        app:showAsAction="never"/>
     <!-- app:showAsAction="ifRoom"-->
 
-
+    <item
+        android:id="@+id/action_vitals"
+        android:title="@string/vitals"
+        app:showAsAction="never"/>
 
 
 

@@ -61,6 +61,10 @@ private static final String TAG = HelpActivity.class.getName();
                 openSettings();
                 return true;
 
+            case R.id.action_vitals:
+                openVitals();
+                return true;
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -78,6 +82,11 @@ private static final String TAG = HelpActivity.class.getName();
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
         }
+    }
+
+    private void openVitals() {
+        Intent intent = new Intent(this, VitalsActivity.class);
+        startActivity(intent);
     }
 
     private void openHelp() {

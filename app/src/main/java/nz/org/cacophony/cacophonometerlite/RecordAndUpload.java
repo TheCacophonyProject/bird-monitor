@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.RadioButton;
 //import android.util.Log;
 
 import org.json.JSONArray;
@@ -39,6 +40,7 @@ import java.util.TimeZone;
 class RecordAndUpload {
     private static final String TAG = RecordAndUpload.class.getName();
 //    private static Logger logger = null;
+    public static boolean isRecording = false;
 
 
 
@@ -50,6 +52,7 @@ class RecordAndUpload {
 
 //    static String doRecord(Context context, String typeOfRecording, Handler handler){
 static String doRecord(Context context, String typeOfRecording) {
+
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
     String returnValue = null;
@@ -69,30 +72,45 @@ static String doRecord(Context context, String typeOfRecording) {
 
     Prefs prefs = new Prefs(context);
 
+    long   recordTimeSeconds = (long) prefs.getRecordingDuration();
+    boolean playWarningBeeps = false;
 
-    long recordTimeSeconds = (long) prefs.getRecordingDuration();
+    String mode = prefs.getMode();
+    switch(mode) {
+        case "off":
+            if (prefs.getUseShortRecordings()) {
+                recordTimeSeconds = 1;
+            }
+            if (prefs.getPlayWarningSound()){
+                playWarningBeeps = true;
+            }
 
-    if (prefs.getUseShortRecordings()) {
-        recordTimeSeconds = 1;
+            break;
+        case "normal":
+            playWarningBeeps = false;
+            break;
+        case "walking":
+            playWarningBeeps = true;
+            break;
     }
 
 
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
         recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
         Log.d(TAG, "typeOfRecording is dawn or dusk");
-    } else if (typeOfRecording.equalsIgnoreCase("repeating")) {
-
-        // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
-        long dateTimeLastRepeatingAlarmFired = prefs.getDateTimeLastRepeatingAlarmFired();
-        long now = new Date().getTime();
-        long minFractionOfRepeatTimeToWait = (long) (prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9); // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
-        if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait) {
-            Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
-//                    logger.warn("A repeating alarm happened to soon and so was aborted");
-            return "repeating alarm happened to soon";
-        } else {
-            prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
-        }
+//    } else if (typeOfRecording.equalsIgnoreCase("repeating")) {
+//
+//        // Did this to try to fix bug of unknown origin that sometimes gives recordings every minute around dawn
+//        long dateTimeLastRepeatingAlarmFired = prefs.getDateTimeLastRepeatingAlarmFired();
+//        long now = new Date().getTime();
+//        long minFractionOfRepeatTimeToWait = (long) (prefs.getTimeBetweenRecordingsSeconds() * 1000 * 0.9); // Do not proceed if last repeating alarm occurred within 90% of time interval for repeating alarms
+//        if ((now - dateTimeLastRepeatingAlarmFired) < minFractionOfRepeatTimeToWait) {
+//            Log.w(TAG, "A repeating alarm happened to soon and so was aborted");
+////                    logger.warn("A repeating alarm happened to soon and so was aborted");
+//            return "repeating alarm happened to soon";
+//        } else {
+//            prefs.setDateTimeLastRepeatingAlarmFired(now); // needed by above code next time repeating alarm fires.
+//        }
 
     } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         recordTimeSeconds += 1; // help to recognise recordNowButton recordings
@@ -101,19 +119,23 @@ static String doRecord(Context context, String typeOfRecording) {
 
     }
 
-    makeRecording(context, recordTimeSeconds);
-
+if (isRecording){
+   return "isRecording";
+}else{
+    makeRecording(context, recordTimeSeconds, playWarningBeeps);
     returnValue = "recorded successfully";
+}
+
+
+
 
 
     if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         Util.broadcastAMessage(context, "recordNowButton_finished");
     }
-//        if (typeOfRecording.equalsIgnoreCase("walkRecordNowButton") || typeOfRecording.equalsIgnoreCase("walkModeRepeating") ){
-//
-//                    returnValue = "recorded successfully walk mode";
-//
-//        }
+
+
+
 // Checked that it has a webToken before trying to upload
     if (prefs.getToken() == null) {
         returnValue =  "not logged in";
@@ -124,9 +146,23 @@ static String doRecord(Context context, String typeOfRecording) {
         long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
         boolean uploadedFilesSuccessfully = false;
 
+      boolean offlineMode = prefs.getOffLineMode();
+        switch(mode) { // mode determined earlier
+            case "off":
+                // don't change offline mode
+                break;
+            case "normal":
+                offlineMode = false;
+                break;
+            case "walking":
+                offlineMode = true;
+                break;
+        }
+
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads) { // don't upload if not enough time has passed
 
-            if (!prefs.getOffLineMode()) { // don't upload if in offline mode
+//            if (!prefs.getOffLineMode()) { // don't upload if in offline mode
+     if (!offlineMode) { // don't upload if in offline mode
                 uploadedFilesSuccessfully = uploadFiles(context);
                 if (uploadedFilesSuccessfully) {
                     returnValue = "recorded and uploaded successfully";
@@ -148,128 +184,133 @@ static String doRecord(Context context, String typeOfRecording) {
             return returnValue;
     }
 
-    public static boolean makeRecording(Context context,  long recordTimeSeconds){
+    public static boolean makeRecording(Context context,  long recordTimeSeconds, boolean playWarningBeeps){
+       isRecording = true;
+try {
+    // Get recording file.
+    Date date = new Date(System.currentTimeMillis());
+    // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
+    Calendar nowToday = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
-        // Get recording file.
-        Date date = new Date(System.currentTimeMillis());
-        // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
-        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+    Calendar dawn = Util.getDawn(context, nowToday);
 
-        Calendar dawn = Util.getDawn(context, nowToday);
+    long relativeToDawn = nowToday.getTimeInMillis() - dawn.getTimeInMillis();
+    relativeToDawn = relativeToDawn / 1000; // now in seconds
 
-        long relativeToDawn  =  nowToday.getTimeInMillis() - dawn.getTimeInMillis();
-        relativeToDawn  = relativeToDawn /1000; // now in seconds
+    Calendar dusk = Util.getDusk(context, nowToday);
 
-        Calendar dusk = Util.getDusk(context, nowToday);
+    long relativeToDusk = nowToday.getTimeInMillis() - dusk.getTimeInMillis();
+    relativeToDusk = relativeToDusk / 1000; // now in seconds
 
-        long relativeToDusk  = nowToday.getTimeInMillis() - dusk.getTimeInMillis();
-        relativeToDusk  = relativeToDusk /1000; // now in seconds
+    DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
+    String fileName = fileFormat.format(date);
 
-        DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
-        String fileName = fileFormat.format(date);
+    if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
+        fileName += " relativeToDawn " + relativeToDawn;
+    } else {
+        fileName += " relativeToDusk " + relativeToDusk;
+    }
 
-        if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)){
-            fileName += " relativeToDawn " + relativeToDawn;
-        }else{
-            fileName += " relativeToDusk " + relativeToDusk;
-        }
+    if (Util.isAirplaneModeOn(context)) {
+        fileName += " airplaneModeOn";
+    } else {
+        fileName += " airplaneModeOff";
+    }
 
-        if (Util.isAirplaneModeOn(context)){
-            fileName += " airplaneModeOn";
-        }else{
-            fileName += " airplaneModeOff";
-        }
+    String batteryStatus = Util.getBatteryStatus(context);
+    fileName += " " + batteryStatus;
+    double batteryLevel = Util.getBatteryLevel(context);
+    fileName += " " + batteryLevel;
+    fileName += " " + recordTimeSeconds;
+    fileName += ".3gp";
 
-        String batteryStatus = Util.getBatteryStatus(context);
-        fileName += " " + batteryStatus;
-        double batteryLevel = Util.getBatteryLevel(context);
-        fileName += " " + batteryLevel;
-        fileName += " " + recordTimeSeconds;
-        fileName += ".3gp";
+    File file = new File(Util.getRecordingsFolder(context), fileName);
+    String filePath = file.getAbsolutePath();
 
-        File file = new File(Util.getRecordingsFolder(context), fileName);
-        String filePath = file.getAbsolutePath();
+    // Setup audio recording settings.
+    MediaRecorder mRecorder = new MediaRecorder();
 
-        // Setup audio recording settings.
-        MediaRecorder mRecorder = new MediaRecorder();
+    // Try to prepare recording.
+    try {
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(filePath);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.prepare();
 
-        // Try to prepare recording.
+    } catch (Exception ex) {
+
+
+        Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
+        Log.e(TAG, ex.getLocalizedMessage());
+
+        return false;
+    }
+
+    //Prefs prefs = new Prefs(context);
+    if (playWarningBeeps) {
+
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 5000);
         try {
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setOutputFile(filePath);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mRecorder.prepare();
-
+            Thread.sleep(5000);
         } catch (Exception ex) {
-
-
-            Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
             Log.e(TAG, ex.getLocalizedMessage());
-
-            return false;
         }
+    }
 
-        Prefs prefs = new Prefs(context);
-        if (prefs.getPlayWarningSound()){
-
-                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-                toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,5000);
-                try{
-                    Thread.sleep(5000);
-                }catch (Exception ex){
-                    Log.e(TAG, ex.getLocalizedMessage());
-                }
-        }
-
-        // Start recording.
-        try {
-            mRecorder.start();
-            Util.broadcastAMessage(context, "recording_started");
-        }catch (Exception e){
+    // Start recording.
+    try {
+        mRecorder.start();
+        Util.broadcastAMessage(context, "recording_started");
+    } catch (Exception e) {
 
 //            logger.error("mRecorder.start " + e.getLocalizedMessage());
-            Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
-            return false;
-        }
+        Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
+        return false;
+    }
 
 
+    // Sleep for duration of recording.
+    try {
 
-        // Sleep for duration of recording.
-        try {
+        Thread.sleep(recordTimeSeconds * 1000);
 
-            Thread.sleep(recordTimeSeconds * 1000);
-
-        } catch (InterruptedException e) {
+    } catch (InterruptedException e) {
 
 //            logger.error("Failed sleeping in recording thread.");
-            Log.e(TAG, "Failed sleeping in recording thread.");
-            return false;
-        }
+        Log.e(TAG, "Failed sleeping in recording thread.");
+        return false;
+    }
 
-        // Stop recording.
-        mRecorder.stop();
+    // Stop recording.
+    mRecorder.stop();
 //        mRecorder.release();
-        //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
-        mRecorder.reset();
-        mRecorder.release();
+    //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+    mRecorder.reset();
+    mRecorder.release();
 
-        mRecorder = null; // attempting to fix error media recorder went away with unhandled events
-
-             // Give time for file to be saved.
-        if (prefs.getPlayWarningSound()){
-
-            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,2000);
+    mRecorder = null; // attempting to fix error media recorder went away with unhandled events
 
 
-        }
-        try {
-            Thread.sleep(5 * 1000);
-        } catch (InterruptedException ex) {
+    if (playWarningBeeps) {
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
+    }
+
+    // Give time for file to be saved. (and play beeps)
+    try {
+        Thread.sleep(5 * 1000);
+    } catch (InterruptedException ex) {
 //            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
-            Log.e(TAG, "Failed sleeping in recording thread." +  ex.getLocalizedMessage());
-        }
+        Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
+    }
+}catch (Exception ex){
+    Log.e(TAG, ex.getLocalizedMessage());
+}finally {
+    isRecording = false;
+}
+
         return true;
     }
 

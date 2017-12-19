@@ -67,8 +67,8 @@
                 android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
         </activity>
         <activity
-            android:name=".WalkActivity"
-            android:label="@string/title_activity_walk"
+            android:name=".VitalsActivity"
+            android:label="@string/title_activity_vitals"
             android:parentActivityName=".MainActivity"
             tools:targetApi="jelly_bean">
 
@@ -77,6 +77,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>

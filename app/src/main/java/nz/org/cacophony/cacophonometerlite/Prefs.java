@@ -41,8 +41,8 @@ class Prefs {
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
    private static final double RECORDING_DURATION_SECONDS = 60;
 
-    private static final String TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-    private static final double TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
+    private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
+    private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
@@ -100,6 +100,10 @@ class Prefs {
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD";
     private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
     private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
+
+    private static final String  ALWAYS_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
+
+    private static final String  MODE_KEY = "MODE";
 //    private static Logger logger = null;
 
     Prefs(Context context) {
@@ -111,13 +115,13 @@ class Prefs {
         return TOKEN_TIMEOUT_SECONDS;
     }
 
-    public static boolean isWalkingPeriodicRecordingsEnabled() {
-        return walkingPeriodicRecordingsEnabled;
-    }
-
-    public static void setWalkingPeriodicRecordingsEnabled(boolean walkingPeriodicRecordingsEnabled) {
-        Prefs.walkingPeriodicRecordingsEnabled = walkingPeriodicRecordingsEnabled;
-    }
+//    public static boolean isWalkingPeriodicRecordingsEnabled() {
+//        return walkingPeriodicRecordingsEnabled;
+//    }
+//
+//    public static void setWalkingPeriodicRecordingsEnabled(boolean walkingPeriodicRecordingsEnabled) {
+//        Prefs.walkingPeriodicRecordingsEnabled = walkingPeriodicRecordingsEnabled;
+//    }
 
 
     private String getString(String key) {
@@ -230,6 +234,18 @@ class Prefs {
         return getString(DEVICE_NAME_KEY);
     }
 
+    String getMode() {
+        String mode = getString(MODE_KEY);
+        if (mode == null){
+            mode = "off";
+        }
+        return mode;
+    }
+
+    void setMode(String mode) {
+            setString(MODE_KEY, mode);
+    }
+
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
@@ -286,18 +302,26 @@ class Prefs {
         setDouble(RECORDING_DURATION_SECONDS_KEY, RECORDING_DURATION_SECONDS);
     }
 
-    double getTimeBetweenRecordingsSeconds() {
+    double getAdjustedTimeBetweenRecordingsSeconds() {
         if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)){
             return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
         }else  if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
                 return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
         }else{
-            return getDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+            return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
         }
     }
 
-    void setTimeBetweenRecordingsSeconds() {
-        setDouble(TIME_BETWEEN_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_RECORDINGS_SECONDS);
+
+    double getNormalTimeBetweenRecordingsSeconds() {
+           return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+    }
+
+    double getTimeBetweenFrequentRecordingsSeconds() {
+        return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+    }
+    void setNormalTimeBetweenRecordingsSeconds() {
+        setDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY, NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS);
     }
 
 
@@ -389,6 +413,10 @@ class Prefs {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
+    boolean getAlwaysUpdateGPS() {
+        return getBoolean(ALWAYS_UPDATE_GPS_KEY);
+    }
+
     boolean getUseTestServer() {
         return getBoolean(USE_TEST_SERVER_KEY);
     }
@@ -421,6 +449,10 @@ class Prefs {
 
     void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
+    }
+
+    void setAlwaysUpdateGPS(boolean alwaysUpdateGPS) {
+        setBoolean(ALWAYS_UPDATE_GPS_KEY, alwaysUpdateGPS);
     }
 
     void setUseTestServer(boolean useTestServer) {
