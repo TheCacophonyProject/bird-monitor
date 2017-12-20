@@ -89,6 +89,9 @@ static String doRecord(Context context, String typeOfRecording) {
         case "normal":
             playWarningBeeps = false;
             break;
+        case "normalOnline":
+            playWarningBeeps = false;
+            break;
         case "walking":
             playWarningBeeps = true;
             break;

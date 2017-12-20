@@ -40,6 +40,8 @@
 
     <string name="off">Off - Will not override any settings.</string>
     <string name="normal_mode">Normal Mode.</string>
+
+    <string name="normal_mode_online">Normal Mode (But keep internet connection on).</string>
     <string name="walking_mode">Walking Mode (warning beeps, updates location, offline, records more often, ignores low battery).</string>
 
     <string name="set_test_server_title">Use Test Server (Experts Only)</string>
@@ -69,11 +71,14 @@
     <string name="testing_title">Settings for testing</string>
 
     <string name="offline_mode_title">Offline Mode</string>
+    <string name="online_mode_title">Online Mode (keep internet connection alive)</string>
     <string name="warning_sound_title">Warning Sound</string>
     <string name="ignore_low_battery_title">Ignore Low Battery</string>
     <string name="frequent_recordings_title">Frequent Recordings</string>
     <string name="short_recordings_message">The following settings are for testing various aspects of the app.</string>
     <string name="offline_mode_message">If you know that you will not have a network connection, use this so you do not have to register with the server.  It will also save power.  You may want to use a micro SD card to make it easier to retrieve the recordings</string>
+    <string name="online_mode_message">If you are using remote access software, select this to prevent \'airplane mode\' activating.</string>
+
     <string name="warning_sound_message">Play a short waning sound before a recording is made (useful for when out walking with the phone)</string>
     <string name="ignore_low_battery_message">Normally the app will not record when the battery is getting low.  But, you can ignore a low battery when out walking.</string>
     <string name="use_frequent_recordings_message">Use this to increase the frequency of recordings (Useful when out walking)</string>
@@ -86,6 +91,7 @@
     <string name="ignore_low_battery_cb_message">Keep recording when battery is low.</string>
     <string name="frequent_recordings_cb_message">Record more often.</string>
     <string name="offline_mode_cb_message">Offline (no network connection) mode</string>
+    <string name="online_mode_cb_message">Keep internet connection always on.</string>
     <string name="warning_sound_cb_message">Play a warning sound before and after recording.</string>
 
     <string name="registered_true">Registered: ✔</string>

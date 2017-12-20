@@ -107,6 +107,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             case "normal":
                 // Don't update location
                 break;
+            case "normalOnline":
+                // Don't update location
+                break;
+
             case "walking":
                 // Not going to do dawn/dusk alarms if in walking mode
                 if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")){
@@ -179,6 +183,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             case "normal":
                 // has no affect on decision
                 break;
+            case "normalOnline":
+                // has no affect on decision
+                break;
+
             case "walking":
                 return true;  // ignore battery level when in walking mode
 

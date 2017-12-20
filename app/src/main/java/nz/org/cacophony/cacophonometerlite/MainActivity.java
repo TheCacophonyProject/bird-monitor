@@ -182,6 +182,10 @@ private static final String TAG = MainActivity.class.getName();
                 final RadioButton  normalModeRadioButton  = (RadioButton ) findViewById(R.id.normalMode);
                 normalModeRadioButton.setChecked(true);
                 break;
+            case "normalOnline":
+                final RadioButton  normalModeOnlineRadioButton  = (RadioButton ) findViewById(R.id.normalModeOnline);
+                normalModeOnlineRadioButton.setChecked(true);
+                break;
             case "walking":
                 final RadioButton  walkingModeRadioButton  = (RadioButton ) findViewById(R.id.walkingMode);
                 walkingModeRadioButton.setChecked(true);
@@ -509,18 +513,28 @@ private static final String TAG = MainActivity.class.getName();
         // Check which radio button was clicked
         switch(v.getId()) {
             case R.id.offMode:
-                if (checked)
-                   prefs.setMode("off");
+                if (checked) {
+                    prefs.setMode("off");
+                }
                     break;
             case R.id.normalMode:
-                if (checked)
+                if (checked) {
                     prefs.setMode("normal");
+                }
                     break;
+            case R.id.normalModeOnline:
+                if (checked) {
+                    prefs.setMode("normalOnline");
+                }
+                break;
             case R.id.walkingMode:
-                if (checked)
+                if (checked) {
                     prefs.setMode("walking");
+                }
                     break;
         }
+        // need to reset alarms as their frequency may have changed.
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
 
     }
 

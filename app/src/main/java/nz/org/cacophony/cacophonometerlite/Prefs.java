@@ -93,6 +93,7 @@ class Prefs {
 
     private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
     private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
+    private static final String ONLINE_MODE_KEY = "ONLINE_MODE";
     private static final String PLAY_WARNING_SOUND_KEY = "PLAY_WARNING_SOUND";
 
     private static final String BATTERY_LEVEL_KEY = "BATTERY_LEVEL";
@@ -441,6 +442,10 @@ class Prefs {
         return getBoolean(OFFLINE_MODE_KEY);
     }
 
+    boolean getOnLineMode() {
+        return getBoolean(ONLINE_MODE_KEY);
+    }
+
     boolean getPlayWarningSound() {
         return getBoolean(PLAY_WARNING_SOUND_KEY);
     }
@@ -477,8 +482,12 @@ class Prefs {
 
 
 
-    void setOffLineMode(boolean OffLineMode) {
-        setBoolean(OFFLINE_MODE_KEY, OffLineMode);
+    void setOffLineMode(boolean offLineMode) {
+        setBoolean(OFFLINE_MODE_KEY, offLineMode);
+    }
+
+    void setOnLineMode(boolean onLineMode) {
+        setBoolean(ONLINE_MODE_KEY, onLineMode);
     }
 
     void setPlayWarningSound(boolean playWarningSound) {

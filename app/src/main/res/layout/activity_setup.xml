@@ -246,13 +246,51 @@
                 android:onClick="onCheckboxOffLineModeClicked"
                 android:text="@string/offline_mode_cb_message" />
 
-
             <View
                 android:id="@+id/SplitLine_hor6"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
                 android:layout_below="@id/cbOffLineMode"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/setupOnlineModeTitle"
+                android:text="@string/online_mode_title"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/SplitLine_hor6"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/onLineModeMessage"
+                android:text="@string/online_mode_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupOnlineModeTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <CheckBox
+                android:id="@+id/cbOnLineMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/onLineModeMessage"
+                android:checked="false"
+                android:onClick="onCheckboxOnLineModeClicked"
+                android:text="@string/online_mode_cb_message" />
+
+
+            <View
+                android:id="@+id/SplitLine_hor7"
+                android:layout_width="match_parent"
+                android:layout_height= "2dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_below="@id/cbOnLineMode"
                 android:layout_marginTop="5dp" />
             <TextView
                 android:id="@+id/setupWarningSoundTitle"
@@ -262,7 +300,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor6"
+                android:layout_below="@id/SplitLine_hor7"
                 android:layout_marginTop="5dp" />
 
             <TextView
@@ -285,7 +323,7 @@
                 android:text="@string/warning_sound_cb_message" />
 
             <View
-                android:id="@+id/SplitLine_hor7"
+                android:id="@+id/SplitLine_hor8"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
@@ -299,7 +337,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor7"
+                android:layout_below="@id/SplitLine_hor8"
                 android:layout_marginTop="5dp" />
 
             <TextView
@@ -322,7 +360,7 @@
                 android:text="@string/ignore_low_battery_cb_message" />
 
             <View
-                android:id="@+id/SplitLine_hor8"
+                android:id="@+id/SplitLine_hor9"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
@@ -336,7 +374,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor8"
+                android:layout_below="@id/SplitLine_hor9"
                 android:layout_marginTop="5dp" />
 
             <TextView
@@ -361,7 +399,7 @@
 
 
             <View
-                android:id="@+id/SplitLine_hor9"
+                android:id="@+id/SplitLine_hor10"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
@@ -376,7 +414,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/SplitLine_hor9"
+                android:layout_below="@id/SplitLine_hor10"
                 android:layout_marginTop="5dp" />
 
             <TextView

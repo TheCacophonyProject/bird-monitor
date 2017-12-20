@@ -227,6 +227,10 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxNoNetwork.setChecked(false);
         }
 
+        boolean onLineMode = prefs.getOnLineMode();
+        final CheckBox checkBoxOnLineMode = (CheckBox) findViewById(R.id.cbOnLineMode);
+        checkBoxOnLineMode.setChecked(onLineMode);
+
         boolean playWarningSound = prefs.getPlayWarningSound();
         final CheckBox checkBoxPlayWarningSound = (CheckBox) findViewById(R.id.cbPlayWarningSound);
         if (playWarningSound) {
@@ -584,6 +588,13 @@ public class SetupActivity extends AppCompatActivity {
         }else{
             prefs.setOffLineMode(false);
         }
+    }
+
+    public void onCheckboxOnLineModeClicked(View v) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        // Is the view now checked?
+        boolean checked = ((CheckBox) v).isChecked();
+        prefs.setOnLineMode(checked);
     }
 
     public void onCheckboxWarningSoundClicked(View v) {

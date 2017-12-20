@@ -722,14 +722,38 @@ class Util {
 
 
     static void enableFlightMode(Context context) {
-//        Log.d(TAG, "enableFlightMode 1");
+        Prefs prefs = new Prefs(context);
+
+        boolean onlineMode = prefs.getOnLineMode();
+        String mode = prefs.getMode();
+
+        switch(mode) { // mode determined earlier
+            case "off":
+                // don't change offline mode
+                break;
+            case "normal":
+                // don't change offline mode
+                break;
+
+            case "normalOnline":
+                onlineMode = true;
+                break;
+
+            case "walking":
+                // don't change offline mode
+                break;
+        }
+
+        if (onlineMode){
+            return; // don't try to enable airplane mode
+        }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
 //            Log.d(TAG, "enableFlightMode 2");
             // API 17 onwards.
 
             // Must be a rooted device
-            Prefs prefs = new Prefs(context);
+//            Prefs prefs = new Prefs(context);
             if (!prefs.getHasRootAccess()) {
 //                Log.d(TAG, "enableFlightMode 3");
                 Log.e(TAG, "Do NOT have required ROOT access");
@@ -1157,6 +1181,10 @@ public static void createAlarms(Context context, String type, String timeUriPara
         case "normal":
             timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
             break;
+        case "normalOnline":
+            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+            break;
+
         case "walking":
             timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
             break;
