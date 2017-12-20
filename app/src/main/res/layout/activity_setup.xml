@@ -169,22 +169,13 @@
                 android:layout_alignParentLeft="true"
                 android:onClick="updateGPSLocationButton" />
 
-            <Button
-                android:id="@+id/disableGPSButton"
-                android:text="@string/disable_gps_to_save_power"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/setupUpdateGPSLocationButton"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:onClick="disableGPSButton" />
 
             <View
                 android:id="@+id/SplitLine_hor3"
                 android:layout_width="match_parent"
                 android:layout_height= "2dp"
                 android:background="@color/colorPrimaryDark"
-                android:layout_below="@id/disableGPSButton"
+                android:layout_below="@id/setupUpdateGPSLocationButton"
                 android:layout_marginTop="5dp" />
 
 

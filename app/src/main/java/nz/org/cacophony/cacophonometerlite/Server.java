@@ -60,6 +60,8 @@ class Server {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         } finally {
+
+            Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
             Util.broadcastAMessage(context, "enable_vitals_button");
 //            Util.broadcastAMessage(context, "enable_test_recording_button");
 //            Util.broadcastAMessage(context, "enable_setup_button");

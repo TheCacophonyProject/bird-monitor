@@ -50,7 +50,7 @@
     <string name="gps_location_title">GPS Location</string>
     <string name="choose_mode">Choose Mode</string>
     <string name="introduction">To test your device, first choose Settings from the menu (top right). Once that is done you can choose the mode below and you are ready to go.</string>
-    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (the phone settings will open if GPS needs to be turned on, press the button again).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates for each recording (will use more power).</string>
+    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates for each recording (will use more power).</string>
     <string name="choose_mode_message">Select a mode to override the options selected in settings (uses most appropriate values).</string>
     <string name="location_not_set">GPS Location not set.</string>
     <string name="update_gps_location">Update GPS Location</string>

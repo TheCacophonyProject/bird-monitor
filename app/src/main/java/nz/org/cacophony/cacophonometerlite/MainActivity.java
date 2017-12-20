@@ -577,6 +577,8 @@ private static final String TAG = MainActivity.class.getName();
                         // Will need enable Record Now button
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
                         Util.getToast(getApplicationContext(),"Could not do a recording as another recording is already in progress", true ).show();
+                    }else if (message.equalsIgnoreCase("error_do_not_have_root")){
+                        Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
                     }
                 }
 

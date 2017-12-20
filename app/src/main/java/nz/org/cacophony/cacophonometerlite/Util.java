@@ -671,10 +671,10 @@ class Util {
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
                // executeCommandWithoutWait("-c", command);
-                executeCommandTim( command);
+                executeCommandTim(context, command);
                 command = COMMAND_FLIGHT_MODE_2 + " " + "false";
               //  executeCommandWithoutWait("-c", command);
-                executeCommandTim( command);
+                executeCommandTim(context, command);
 
             } else {
                 // API 16 and earlier.
@@ -747,10 +747,10 @@ class Util {
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
          //   executeCommandWithoutWait("-c", command);
-            executeCommandTim( command);
+            executeCommandTim(context, command);
             command = COMMAND_FLIGHT_MODE_2 + " " + "true";
         //    executeCommandWithoutWait("-c", command);
-            executeCommandTim( command);
+            executeCommandTim(context, command);
 
         } else {
 //            Log.d(TAG, "enableFlightMode 5");
@@ -773,13 +773,14 @@ class Util {
 //
 //    }
 
-private static void executeCommandTim(String command){
+private static void executeCommandTim(Context context, String command){
     try {
         ExecuteAsRootBaseTim executeAsRootBaseTim = new ExecuteAsRootBaseTim();
         executeAsRootBaseTim.addCommand(command);
-        executeAsRootBaseTim.execute();
+        executeAsRootBaseTim.execute(context);
     }catch (Exception ex){
         Log.e(TAG, ex.getLocalizedMessage());
+        Util.broadcastAMessage(context, "error_do_not_have_root");
     }
 }
 
@@ -1180,9 +1181,20 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            context.startActivity(intent);
+            Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
+            return;
+
+            // take here - trying to take user to OS GPS location screen crashes app if phone not rooted (at least on OS 5.1 (22)
+            // According to
+
+
+//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+////            context.startActivity(intent);
+//            context.getApplicationContext().startActivity(intent);
+
+
         }
+
 
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {

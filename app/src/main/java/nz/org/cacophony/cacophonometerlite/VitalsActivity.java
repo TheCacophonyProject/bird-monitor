@@ -6,12 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,15 +19,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -374,22 +368,47 @@ public class VitalsActivity extends AppCompatActivity {
         }
 
         // GPS text.
+        updateGpsDisplay(prefs);
 
-        try {
-            double lat = prefs.getLatitude();
-            double lon = prefs.getLongitude();
-
-            if (lat != 0 && lon != 0) {
-                TextView gpsText = (TextView) findViewById(R.id.gpsText);
-                gpsText.setText(getString(R.string.gps_text) + " " + "Latitude: "+lat+", Longitude: "+lon);
-            }
-
-        } catch (Exception e) {
-
-//            logger.error("Device ID not available");
-            Log.e(TAG, "Device ID not available");
-        }
     }
+
+    void updateGpsDisplay(Prefs prefs){
+
+try {
+    double lat = prefs.getLatitude();
+    double lon = prefs.getLongitude();
+
+    if (lat != 0 && lon != 0) {
+        //http://www.coderzheaven.com/2012/10/14/numberformat-class-android-rounding-number-android-formatting-decimal-values-android/
+        NumberFormat numberFormat  = new DecimalFormat("#.000000");
+        String latStr = numberFormat.format(lat);
+        String lonStr = numberFormat.format(lon);
+        TextView locationStatus = (TextView) findViewById(R.id.gpsText);
+        //  locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
+        locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+        //  locationStatus.setText("tim was here");
+    }
+}catch (Exception ex){
+    Log.e(TAG, ex.getLocalizedMessage());
+}
+    }
+
+//    private void updateGPSDisplay(Prefs prefs){
+//        try {
+//            double lat = prefs.getLatitude();
+//            double lon = prefs.getLongitude();
+//
+//            if (lat != 0 && lon != 0) {
+//                TextView gpsText = (TextView) findViewById(R.id.gpsText);
+//                gpsText.setText(getString(R.string.gps_text) + " " + "Latitude: "+lat+", Longitude: "+lon);
+//            }
+//
+//        } catch (Exception e) {
+//
+////            logger.error("Device ID not available");
+//            Log.e(TAG, "Device ID not available");
+//        }
+//    }
 
     private BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
@@ -420,6 +439,9 @@ public class VitalsActivity extends AppCompatActivity {
                         if (messageView != null){
                             messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
                         }
+                    }else if(message.equalsIgnoreCase("refresh_gps_coordinates")){
+                        Prefs prefs = new Prefs(context);
+                        updateGpsDisplay(prefs);
                     }
 
 //                    else if (message.equalsIgnoreCase("recordNowButton_finished")) {

@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.DataInputStream;
@@ -67,7 +68,7 @@ public abstract class ExecuteAsRootBase
         return retval;
     }
 
-    public final boolean execute()
+    public final boolean execute(Context context)
     {
         boolean retval = false;
 
@@ -107,20 +108,24 @@ public abstract class ExecuteAsRootBase
                 catch (Exception ex)
                 {
                     Log.e("ROOT", "Error executing root action", ex);
+                    Util.broadcastAMessage(context, "error_do_not_have_root");
                 }
             }
         }
         catch (IOException ex)
         {
             Log.w("ROOT", "Can't get root access", ex);
+            Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (SecurityException ex)
         {
             Log.w("ROOT", "Can't get root access", ex);
+            Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (Exception ex)
         {
             Log.w("ROOT", "Error executing internal operation", ex);
+            Util.broadcastAMessage(context, "error_do_not_have_root");
         }
 
         return retval;

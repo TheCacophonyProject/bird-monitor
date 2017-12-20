@@ -25,6 +25,9 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
@@ -80,6 +83,10 @@ public class SetupActivity extends AppCompatActivity {
                 if (message != null) {
                     if (message.equalsIgnoreCase("refresh_gps_coordinates")) {
                         updateGpsDisplay(context);
+                    }else if(message.equalsIgnoreCase("turn_on_gps_and_try_again")){
+                        Util.getToast(context, "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.", true).show();
+                    }else if (message.equalsIgnoreCase("error_do_not_have_root")){
+                        Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
                     }
 
                 }
@@ -414,25 +421,52 @@ public class SetupActivity extends AppCompatActivity {
 
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
         Util.updateGPSLocation(getApplicationContext());
+//        updateGPSLocation(getApplicationContext());
     }
 
 
-    public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
+//    public static void updateGPSLocation(Context context){
+//        ////        Log.i(LOG_TAG, "Update location button");
+////     //   logger.debug("Update location button");
+//        Util.getToast(context,"Getting new Location...", false ).show();
+//        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+//
+//        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+//        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+////            context.startActivity(intent);
+//            context.getApplicationContext().startActivity(intent);
+//        }
+//
+//
+//        GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
+//        try {
+//            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
+//        } catch (SecurityException e) {
+//            Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
+////            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
+//            //   logger.error("Unable to get GPS location. Don't have required permissions.");
+//        }
+//
+//    }
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }else{
-
-            Util.getToast(getApplicationContext(),"GPS is already off", true ).show();
-        }
-
-
-
-    }
+//    public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
+//
+//        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//
+//        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+//        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            startActivity(intent);
+//        }else{
+//
+//            Util.getToast(getApplicationContext(),"GPS is already off", true ).show();
+//        }
+//
+//
+//
+//    }
 
 
     public void onCheckboxRootedClicked(View v) {
@@ -615,16 +649,26 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    void updateGpsDisplay(Context context){
-        Prefs prefs = new Prefs(context);
+    void updateGpsDisplay(Context context) {
+        try {
 
-        double lat = prefs.getLatitude();
-        double lon = prefs.getLongitude();
+            Prefs prefs = new Prefs(context);
 
-        if (lat != 0 && lon != 0) {
-            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
-            locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
+            double lat = prefs.getLatitude();
+            double lon = prefs.getLongitude();
+
+            if (lat != 0 && lon != 0) {
+                //http://www.coderzheaven.com/2012/10/14/numberformat-class-android-rounding-number-android-formatting-decimal-values-android/
+                NumberFormat numberFormat  = new DecimalFormat("#.000000");
+                String latStr = numberFormat.format(lat);
+                String lonStr = numberFormat.format(lon);
+                TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
+                //  locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
+                locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+                //  locationStatus.setText("tim was here");
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
         }
     }
-
 }
