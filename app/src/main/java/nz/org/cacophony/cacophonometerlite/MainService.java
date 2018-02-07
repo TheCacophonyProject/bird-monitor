@@ -40,9 +40,7 @@ public class MainService extends IntentService {
               String alarmIntentType = bundle.getString("type");
               if (alarmIntentType == null){
                   alarmIntentType = "unknown";
-//                  Log.w(LOG_TAG, "alarmIntentType = unknown");
-//                  Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "alarmIntentType = unknown");
-//                  logger.warn("alarmIntentType = unknown");
+
                   Log.w(TAG, "alarmIntentType = unknown");
               }
 
@@ -50,28 +48,16 @@ public class MainService extends IntentService {
 
 
 
-//              if (alarmIntentType.equalsIgnoreCase("walkModeRepeating")){
-//                  Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
-//                  ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//                  toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,10000);
-//                  try{
-//                      Thread.sleep(10000);
-//                  }catch (Exception ex){
-//                      Log.e(TAG, ex.getLocalizedMessage());
-//                  }
-//              }
-//                  RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType, null);
+
               RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
 
           }else{
               Log.e(TAG, "MainService error");
-//              Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "MainService error");
-//              logger.warn("MainService error");
+
           }
 
       }catch (Exception ex){
-//          Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, ex.getLocalizedMessage());
-//          logger.error(ex.getLocalizedMessage());
+
           Log.e(TAG,ex.getLocalizedMessage() );
       }finally {
           Util.enableFlightMode(getApplicationContext());

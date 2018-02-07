@@ -31,6 +31,19 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        // First thing to do is to create the next repeating alarm as to avoid batching of alarms I now to to just creat the next one (can't create repeating)
+
+//        Bundle b = intent.getExtras();
+//        String j =(String) b.get("callingCode");
+//        if (j!= null){
+//            Log.e(TAG,j );
+//        }else{
+//            Log.e(TAG,intent.getDataString() );
+//        }
+
+//        Util.createAlarms(context, "repeating", "normal", "StartRecordingReceiverOnReceive");
+        Util.createAlarms(context, "repeating", "normal");
+        DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
         this.context = context;
 //        logger = Util.getAndConfigureLogger(context, LOG_TAG);

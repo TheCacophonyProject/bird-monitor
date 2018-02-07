@@ -94,8 +94,8 @@ private static final String TAG = MainActivity.class.getName();
         disableFlightMode(); // force app to ask for root permission as early as possible
 
      //   Util.createAlarms(getApplicationContext());
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
-        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), false);
+//        Util.createAlarms(getApplicationContext(), "repeating", "normal", "mainActivityOnCreate");
+//        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), false);
 
 
         // Get a support ActionBar corresponding to this toolbar
@@ -498,6 +498,7 @@ private static final String TAG = MainActivity.class.getName();
         ((Button) findViewById(R.id.recordNowButton)).setEnabled(false);
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
+        myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
         try {
             myIntent.putExtra("type", "recordNowButton");
             sendBroadcast(myIntent);
@@ -534,8 +535,8 @@ private static final String TAG = MainActivity.class.getName();
                     break;
         }
         // need to reset alarms as their frequency may have changed.
+       // Util.createAlarms(getApplicationContext(), "repeating", "normal", "mainActivityonModeRadioButtonClicked");
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
-
     }
 
 

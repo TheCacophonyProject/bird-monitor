@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
@@ -1153,8 +1154,10 @@ private static void executeCommandTim(Context context, String command){
 
 //    public static void createAlarms(Context context){
 public static void createAlarms(Context context, String type, String timeUriParameter){
+//    public static void createAlarms(Context context, String type, String timeUriParameter, String callingMethod){ // added extra parameter to debug what was calling the createalams method
         Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+    myIntent.putExtra("callingCode", "tim"); // for debugging
 
         try {
             myIntent.putExtra("type","repeating");
@@ -1190,16 +1193,26 @@ public static void createAlarms(Context context, String type, String timeUriPara
             break;
     }
 
-
-
-
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
+
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+         // https://developer.android.com/reference/android/app/AlarmManager.html
+//        long windowInMilliseconds = delay  /10 ;
+         long windowInMilliseconds = 1000 * 20; // 20 seconds
+        long currentElapsedRealTime = SystemClock.elapsedRealtime();
+         long startWindowTime = currentElapsedRealTime + delay;
+        alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, windowInMilliseconds, pendingIntent );
+    }else{
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() ,
                 delay, pendingIntent);
+    }
 
     }
+
+
+
 
     public static void updateGPSLocation(Context context){
         ////        Log.i(LOG_TAG, "Update location button");

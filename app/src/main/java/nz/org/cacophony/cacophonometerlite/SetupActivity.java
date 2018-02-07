@@ -516,16 +516,16 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    public void onCheckboxUseFrequentRecordingsClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setUseVeryFrequentRecordings(true);
-        }else{
-            prefs.setUseVeryFrequentRecordings(false);
-        }
-    }
+//    public void onCheckboxUseFrequentRecordingsClicked(View v) {
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        // Is the view now checked?
+//        boolean checked = ((CheckBox) v).isChecked();
+//        if (checked){
+//            prefs.setUseVeryFrequentRecordings(true);
+//        }else{
+//            prefs.setUseVeryFrequentRecordings(false);
+//        }
+//    }
 
     public void onCheckboxUseFrequentUploadsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -561,6 +561,7 @@ public class SetupActivity extends AppCompatActivity {
 //            Util.createAlarms(getApplicationContext());
 //        }
         prefs.setUseFrequentRecordings(checked);
+     //   Util.createAlarms(getApplicationContext(), "repeating", "normal", "SetupActivityonCheckboxFrequentRecordingsClicked");
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
     public void onCheckboxVeryFrequentRecordingsClicked(View v) {
@@ -575,6 +576,7 @@ public class SetupActivity extends AppCompatActivity {
 //            Util.createAlarms(getApplicationContext());
 //        }
         prefs.setUseVeryFrequentRecordings(checked);
+       // Util.createAlarms(getApplicationContext(), "repeating", "normal", "SetupActivityonCheckboxVeryFrequentRecordingsClicked");
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
 

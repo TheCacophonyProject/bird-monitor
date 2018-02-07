@@ -180,9 +180,9 @@ if (isRecording){
         }
     }
     //    boolean repeatingRecording = false;
-    if (typeOfRecording.equalsIgnoreCase("repeating")) {
-        DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-    }
+//    if (typeOfRecording.equalsIgnoreCase("repeating")) {
+//        DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
+//    }
 
             return returnValue;
     }
@@ -362,7 +362,8 @@ try {
 
                 int numberOfFilesUploaded = 0;  // put a limit on the number of file uploads as if there are too many I think it may be timing out
                 for (File aFile : recordingFiles) {
-                    if (numberOfFilesUploaded > 9){
+//                    if (numberOfFilesUploaded > 9){
+                    if (numberOfFilesUploaded > 19){ // increased as 10 may not be enough for longer intervals between uploads
                         break;
                     }
 
