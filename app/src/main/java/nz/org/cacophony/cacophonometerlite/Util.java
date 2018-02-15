@@ -696,30 +696,7 @@ class Util {
         return null;
     }
 
-//    static String disableFlightModeTestSU(Context context) {
-//        try {
-//
-//
-//
-//
-//                // Set Airplane / Flight mode using su commands.
-//                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-////                executeCommandWithoutWait("-c", command);
-//            executeCommandTim( command);
-//                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-////                executeCommandWithoutWait("-c", command);
-//            executeCommandTim( command);
-//
-//
-//
-//
-//        }catch (Exception ex){
-////            logger.error(ex.getLocalizedMessage());
-//            Log.e(TAG, ex.getLocalizedMessage());
-//
-//        }
-//        return null;
-//    }
+
 
 
     static void enableFlightMode(Context context) {
@@ -754,20 +731,14 @@ class Util {
             // API 17 onwards.
 
             // Must be a rooted device
-//            Prefs prefs = new Prefs(context);
+
             if (!prefs.getHasRootAccess()) {
-//                Log.d(TAG, "enableFlightMode 3");
+
                 Log.e(TAG, "Do NOT have required ROOT access");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Do NOT have required ROOT access");
-
-//                logger.error("Do NOT have required ROOT access");
-
-           //     Util.getToast(context,"Root access required to change airplane mode", true ).show();
-//                Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
 
                 return;
             }
-//            Log.d(TAG, "enableFlightMode 4");
+
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
@@ -778,10 +749,7 @@ class Util {
             executeCommandTim(context, command);
 
         } else {
-//            Log.d(TAG, "enableFlightMode 5");
-            // API 16 and earlier.
-          //  Log.d(LOG_TAG, "API 16 and earlier.");
-            //    boolean enabled = isFlightModeEnabled(context);
+
             //noinspection deprecation
             Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
             Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
@@ -790,13 +758,7 @@ class Util {
         }
     }
 
-//    static void enableFlightModeTestSU(Context context) {
-//        String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-//        executeCommandTim( command);
-//        command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-//        executeCommandTim( command);
-//
-//    }
+
 
 private static void executeCommandTim(Context context, String command){
     try {
@@ -811,7 +773,7 @@ private static void executeCommandTim(Context context, String command){
 
 
     private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
-//        Log.d(TAG, "executeCommandWithoutWait 1");
+
         // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
         // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
         boolean success = false;
@@ -907,109 +869,7 @@ private static void executeCommandTim(Context context, String command){
         return toast;
     }
 
-//    static boolean configureLogbackDirectly(Context context, boolean includeCodeLineNumber) {
-//        // reset the default context (which may already have been initialized)
-//        // since we want to reconfigure it
-//        LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();
-//        lc.reset();
-//
-//        // setupButtonClick FileAppender
-//        PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
-//        encoder1.setContext(lc);
-//        //https://stackoverflow.com/questions/23123934/logback-show-logs-with-line-number
-//        if (includeCodeLineNumber){
-//            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\\(%line\\) - %msg%n");
-//        }else{
-//            encoder1.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
-//        }
-//
-//        encoder1.start();
-//
-//        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
-//        fileAppender.setContext(lc);
-//        String logFileStr = Util.getLocalLogStr(context);
-//        if (logFileStr == null){
-//            Util.getToast(context, "Could not create required folder - try inserting a memory card into your phone", true).show();
-//            return false;
-//        }
-//
-//        //   fileAppender.setFile(this.getFileStreamPath("app.log").getAbsolutePath());
-//        fileAppender.setFile(logFileStr);
-//        fileAppender.setEncoder(encoder1);
-//        fileAppender.start();
-//
-//        // setupButtonClick LogcatAppender
-//        PatternLayoutEncoder encoder2 = new PatternLayoutEncoder();
-//        encoder2.setContext(lc);
-//        encoder2.setPattern("[%thread] %msg%n");
-//        encoder2.start();
-//
-//        LogcatAppender logcatAppender = new LogcatAppender();
-//        logcatAppender.setContext(lc);
-//        logcatAppender.setEncoder(encoder2);
-//        logcatAppender.start();
-//
-//        // add the newly created appenders to the root logger;
-//        // qualify Logger to disambiguate from org.slf4j.Logger
-//        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-//        root.addAppender(fileAppender);
-//        root.addAppender(logcatAppender);
-//        return true;
-//    }
 
-//    static String readLocalLog(Context context, File logFileToRead)  {
-//        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
-//
-//        StringBuilder sb = new StringBuilder();
-//     //   sb.append(logFileToRead.getName());
-//        Scanner input = null;
-//        try {
-//            input = new Scanner(logFileToRead);
-//            while (input.hasNext()){
-//                String aLine = input.next();
-//                sb.append(aLine);
-//                sb.append(" ");
-//            }
-//
-//        }catch (Exception ex){
-////            Log.e(LOG_TAG, ex.getLocalizedMessage());
-//            logger.error(ex.getLocalizedMessage());
-//        }finally{
-//            input.close();
-//            logFileToRead.delete();  // delete and recreate this file to remove the logs that have now been sent to server
-//            try {
-//                logFileToRead.createNewFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//
-//        return sb.toString();
-//    }
-
-//    static String getAllLocalLogEntries(Context context){
-//        StringBuilder sb = new StringBuilder();
-//        File localLogsFolder = Util.getLogFolder(context);
-//        if (localLogsFolder == null){
-////            Log.d(LOG_TAG, "Error getting recordings folder");
-//            logger.error("Error getting recordings folder");
-//            return null;
-//        }
-//        File logFiles[] = localLogsFolder.listFiles();
-//
-//        if (logFiles != null){
-//            for (int i=0;i<logFiles.length;i++){
-//                sb.append(readLocalLog( context,  logFiles[i]));
-//                // logFiles[i].delete();
-//            }
-//        }
-//        return sb.toString();
-//    }
-
-//    public static void setLogbackConfigured(boolean logbackConfigured) {
-//        Util.logbackConfigured = logbackConfigured;
-//    }
 
     static void broadcastAMessage(Context context, String message){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
@@ -1021,50 +881,7 @@ private static void executeCommandTim(Context context, String command){
 
     }
 
-//    public static Logger getLogger() {
-//        if (logger == null){
-//
-//        }
-//        return logger;
-//    }
 
-//    public static void setLogger(Logger logger) {
-//        Util.logger = logger;
-//    }
-
-    /**
-     * Returns all available external SD-Card roots in the system.
-     *
-     * @return paths to all available external SD-Card roots in the system.
-     */
-
-//    //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
-//    public static String[] getStorageDirectories(Context context) {
-//        String [] storageDirectories;
-//        String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            List<String> results = new ArrayList<String>();
-//            File[] externalDirs = context.getExternalFilesDirs(null);
-//            for (File file : externalDirs) {
-//                String path = file.getPath().split("/Android")[0];
-//                if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Environment.isExternalStorageRemovable(file))
-//                        || rawSecondaryStoragesStr != null && rawSecondaryStoragesStr.contains(path)){
-//                    results.add(path);
-//                }
-//            }
-//            storageDirectories = results.toArray(new String[0]);
-//        }else{
-//            final Set<String> rv = new HashSet<String>();
-//
-//            if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
-//                final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
-//                Collections.addAll(rv, rawSecondaryStorages);
-//            }
-//            storageDirectories = rv.toArray(new String[rv.size()]);
-//        }
-//        return storageDirectories;
-//    }
 
 //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
    static  public String isRemovableSDCardAvailable(Context context) {
@@ -1152,6 +969,29 @@ private static void executeCommandTim(Context context, String command){
        }
     }
 
+    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely of a previous alarm)
+       // Prefs prefs = new Prefs(context);
+        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+        try {
+            myIntent.putExtra("type","repeating");
+            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            timeUri = Uri.parse("createCreateAlarms"); // cf dawn dusk offsets created in DawnDuskAlarms
+            myIntent.setData(timeUri);
+
+        }catch (Exception e){
+            Log.e(TAG, e.getLocalizedMessage());
+
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+
+
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY,pendingIntent);
+
+    }
+
 //    public static void createAlarms(Context context){
 public static void createAlarms(Context context, String type, String timeUriParameter){
 //    public static void createAlarms(Context context, String type, String timeUriParameter, String callingMethod){ // added extra parameter to debug what was calling the createalams method
@@ -1195,20 +1035,27 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
+    long currentElapsedRealTime = SystemClock.elapsedRealtime();
+    long startWindowTime = currentElapsedRealTime + delay;
 
-     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // KitKat is 19
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
          // https://developer.android.com/reference/android/app/AlarmManager.html
 //        long windowInMilliseconds = delay  /10 ;
-         long windowInMilliseconds = 1000 * 20; // 20 seconds
-        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-         long startWindowTime = currentElapsedRealTime + delay;
-        alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, windowInMilliseconds, pendingIntent );
+     //    long windowInMilliseconds = 1000 * 20; // 20 seconds
+//        long currentElapsedRealTime = SystemClock.elapsedRealtime();
+//         long startWindowTime = currentElapsedRealTime + delay;
+        //alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, windowInMilliseconds, pendingIntent ); // this still allowed batching of alarms
+//         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
     }else{
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() ,
-                delay, pendingIntent);
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                SystemClock.elapsedRealtime() ,
+//                delay, pendingIntent);
+//         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
     }
-
+//    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
     }
 
 

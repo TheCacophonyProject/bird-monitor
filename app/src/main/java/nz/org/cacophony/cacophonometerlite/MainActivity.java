@@ -96,7 +96,7 @@ private static final String TAG = MainActivity.class.getName();
      //   Util.createAlarms(getApplicationContext());
 //        Util.createAlarms(getApplicationContext(), "repeating", "normal", "mainActivityOnCreate");
 //        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), false);
-
+     //   Util.createCreateAlarms(getApplicationContext());
 
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
@@ -507,6 +507,7 @@ private static final String TAG = MainActivity.class.getName();
             Log.e(TAG, ex.getLocalizedMessage());
         }
   //      DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);// use for testing, should remove
+        Util.createCreateAlarms(getApplicationContext());
     }
     public void onModeRadioButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
         Prefs prefs = new Prefs(getApplicationContext());

@@ -64,10 +64,9 @@ public class SetupActivity extends AppCompatActivity {
             ab.setDisplayUseLogoEnabled(true);
             ab.setLogo(R.mipmap.ic_launcher);
         }else{
-//            Log.w(LOG_TAG, "ActionBar ab is null");
+
             Log.w(TAG, "ActionBar ab is null");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "ActionBar ab is null");
-//            logger.warn("ActionBar ab is null");
+
         }
 
 
@@ -90,8 +89,6 @@ public class SetupActivity extends AppCompatActivity {
                     }
 
                 }
-
-
 
 
             }catch (Exception ex){
@@ -146,20 +143,14 @@ public class SetupActivity extends AppCompatActivity {
         }catch (Exception ex){
             Log.e(TAG, "Error calling super.onResume");
         }
-//        Log.d(TAG, "onResume 2");
+
         TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
 
-//        double lat = prefs.getLatitude();
-//        double lon = prefs.getLongitude();
-//
-//        if (lat != 0 && lon != 0) {
-//            TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
-//            locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
-//        }
+
 
         updateGpsDisplay(getApplicationContext());
-//        Log.d(TAG, "onResume 3");
+
         String group = prefs.getGroupName();
         if (group != null) {
             String str = "Registered in group: " + group;
@@ -167,7 +158,7 @@ public class SetupActivity extends AppCompatActivity {
         } else
             registerStatus.setText(R.string.not_registered);
 
-//        Log.d(TAG, "onResume 4");
+
         boolean hasRootAccess = prefs.getHasRootAccess();
         final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
         if (hasRootAccess) {
@@ -243,16 +234,6 @@ public class SetupActivity extends AppCompatActivity {
         final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbAlwaysUpdateGPS);
         checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
-//        super.onResume();
-
-//        boolean useFullLogging = prefs.getUseFullLogging();
-//        final CheckBox checkBoxUseFullLogging = (CheckBox) findViewById(R.id.cbUseFullLogging);
-//        if (useFullLogging) {
-//            checkBoxUseFullLogging.setChecked(true);
-//        } else
-//            checkBoxUseFullLogging.setChecked(false);
-//        super.onResume();
-
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
@@ -270,7 +251,7 @@ public class SetupActivity extends AppCompatActivity {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
                     }catch (Exception ex){
                         Log.e(TAG, ex.getLocalizedMessage());
-//                        logger.error(ex.getLocalizedMessage());
+
                     }
 
                     Util.getToast(getApplicationContext(),"Success - Device has been registered with the server :-)", false ).show();
@@ -318,8 +299,6 @@ public class SetupActivity extends AppCompatActivity {
             return;
         }else if (group.length() < 4) {
             Log.i(TAG, "Invalid group name: "+group);
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Invalid group name: "+group);
-//            logger.info("Invalid group name: "+group);
 
             Util.getToast(getApplicationContext(),group + " is not a valid group name. Please use at least 4 characters (no spaces)", true ).show();
             return;
@@ -358,7 +337,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private void unregister(boolean displayUnregisterdMessage){
         try {
-        //    Log.d(LOG_TAG, "Un-register device.");
+
             Prefs prefs = new Prefs(getApplicationContext());
             prefs.setGroupName(null);
             prefs.setPassword(null);
@@ -372,8 +351,7 @@ public class SetupActivity extends AppCompatActivity {
             Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
         }catch(Exception ex){
             Log.e(TAG, "Error Un-registering device.");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Error Un-registering device.");
-//            logger.error("Error Un-registering device.");
+
         }
         onResume();
         ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
@@ -399,8 +377,7 @@ public class SetupActivity extends AppCompatActivity {
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
             Log.e(TAG, "Failed to disable airplane mode");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Failed to disable airplane mode");
-//            logger.error("Failed to disable airplane mode");
+
             return ;
         }
 
@@ -425,52 +402,8 @@ public class SetupActivity extends AppCompatActivity {
 
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
         Util.updateGPSLocation(getApplicationContext());
-//        updateGPSLocation(getApplicationContext());
+
     }
-
-
-//    public static void updateGPSLocation(Context context){
-//        ////        Log.i(LOG_TAG, "Update location button");
-////     //   logger.debug("Update location button");
-//        Util.getToast(context,"Getting new Location...", false ).show();
-//        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//
-//        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-//        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-////            context.startActivity(intent);
-//            context.getApplicationContext().startActivity(intent);
-//        }
-//
-//
-//        GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
-//        try {
-//            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
-//        } catch (SecurityException e) {
-//            Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
-////            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
-//            //   logger.error("Unable to get GPS location. Don't have required permissions.");
-//        }
-//
-//    }
-
-
-//    public void disableGPSButton(@SuppressWarnings("UnusedParameters") View v) {
-//
-//        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-//
-//        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
-//        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//            startActivity(intent);
-//        }else{
-//
-//            Util.getToast(getApplicationContext(),"GPS is already off", true ).show();
-//        }
-//
-//
-//
-//    }
 
 
     public void onCheckboxRootedClicked(View v) {
@@ -516,16 +449,7 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-//    public void onCheckboxUseFrequentRecordingsClicked(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setUseVeryFrequentRecordings(true);
-//        }else{
-//            prefs.setUseVeryFrequentRecordings(false);
-//        }
-//    }
+
 
     public void onCheckboxUseFrequentUploadsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -553,31 +477,18 @@ public class SetupActivity extends AppCompatActivity {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setUseFrequentRecordings(true);
-//           Util.createAlarms(getApplicationContext());
-//        }else{
-//            prefs.setUseFrequentRecordings(false);
-//            Util.createAlarms(getApplicationContext());
-//        }
         prefs.setUseFrequentRecordings(checked);
-     //   Util.createAlarms(getApplicationContext(), "repeating", "normal", "SetupActivityonCheckboxFrequentRecordingsClicked");
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+
+//        Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
     public void onCheckboxVeryFrequentRecordingsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setUseVeryFrequentRecordings(true);
-//            Util.createAlarms(getApplicationContext());
-//        }else{
-//            prefs.setUseVeryFrequentRecordings(false);
-//            Util.createAlarms(getApplicationContext());
-//        }
+
         prefs.setUseVeryFrequentRecordings(checked);
        // Util.createAlarms(getApplicationContext(), "repeating", "normal", "SetupActivityonCheckboxVeryFrequentRecordingsClicked");
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+//        Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
 
 
@@ -585,11 +496,12 @@ public class SetupActivity extends AppCompatActivity {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setOffLineMode(true);
-        }else{
-            prefs.setOffLineMode(false);
-        }
+        prefs.setOffLineMode(checked);
+//        if (checked){
+//            prefs.setOffLineMode(true);
+//        }else{
+//            prefs.setOffLineMode(false);
+//        }
     }
 
     public void onCheckboxOnLineModeClicked(View v) {
@@ -603,37 +515,15 @@ public class SetupActivity extends AppCompatActivity {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setPlayWarningSound(true);
-        }else{
-            prefs.setPlayWarningSound(false);
-        }
+        prefs.setPlayWarningSound(checked);
+//        if (checked){
+//            prefs.setPlayWarningSound(true);
+//        }else{
+//            prefs.setPlayWarningSound(false);
+//        }
     }
 
-//    public void onCheckboxUseFullLogginClicked(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setUseFullLogging(true);
-//        }else{
-//            prefs.setUseFullLogging(false);
-//        }
-//        Util.setLogbackConfigured(false);
-//    }
 
-//    public void onCheckboxUseTestServerClicked(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((CheckBox) v).isChecked();
-//        if (checked){
-//            prefs.setUseTestServer(true);
-//
-//        }else{
-//            prefs.setUseTestServer(false);
-//        }
-//        unregister(false);// false means don't display unregistered message
-//    }
 
     public void disableFlightMode(){
         try {
@@ -656,7 +546,7 @@ public class SetupActivity extends AppCompatActivity {
 
 
         }catch (Exception ex){
-//            logger.error(ex.getLocalizedMessage());
+
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
@@ -683,5 +573,13 @@ public class SetupActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Util.createCreateAlarms(getApplicationContext());
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
 }

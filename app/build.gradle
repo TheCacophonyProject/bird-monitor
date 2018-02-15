@@ -22,10 +22,13 @@ android {
         applicationId "nz.org.cacophonoy.cacophonometerlite"
 //        minSdkVersion 8
         minSdkVersion 9
-        targetSdkVersion 25
+        // 15/2/18 Was using
+        targetSdkVersion 25 // targetSdkVersion 25 but I can't stop alarms batching (even using alarmManager.setExact)
+        //noinspection OldTargetApi
+//        targetSdkVersion 18 // hoping this will stop the alarms batching https://developer.android.com/about/versions/android-4.4.html
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.988"
+        versionName "0.989b"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

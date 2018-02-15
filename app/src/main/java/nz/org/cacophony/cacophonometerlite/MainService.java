@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 //import android.util.Log;
@@ -32,8 +33,17 @@ public class MainService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+//        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+//        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MainServiceWakelockTag");
+        wakeLock.acquire();
 
       try {
+
+
 //          logger = Util.getAndConfigureLogger(getApplicationContext(),LOG_TAG);
           Bundle bundle = intent != null ? intent.getExtras() : null;
           if (bundle != null){
@@ -61,6 +71,9 @@ public class MainService extends IntentService {
           Log.e(TAG,ex.getLocalizedMessage() );
       }finally {
           Util.enableFlightMode(getApplicationContext());
+//           toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+//          toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 5000);
+          wakeLock.release();
       }
 
     }

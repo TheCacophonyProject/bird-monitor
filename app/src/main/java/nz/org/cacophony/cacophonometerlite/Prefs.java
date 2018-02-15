@@ -13,8 +13,8 @@ import android.util.Log;
 
 class Prefs {
 
-    private static boolean testing = true;
-    private static boolean walkingPeriodicRecordingsEnabled = false;
+   // private static boolean testing = true;
+   // private static boolean walkingPeriodicRecordingsEnabled = false;
 
     private static final String TAG = Prefs.class.getName();
     private static Context context = null;
@@ -22,10 +22,10 @@ class Prefs {
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
-    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // HTTPS Server URL
+    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Production Server URL
    // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
 
-    private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Server URL
+    private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Test Server URL
 
     //private static final String SERVER_URL_KEY = "SERVER_URL";
     private static final String PASSWORD_KEY = "PASSWORD";
@@ -67,7 +67,7 @@ class Prefs {
     private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
 
     private static final String TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS";
-    private static final double TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS = 1;  // for testing battery
+    private static final double TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS = 1;  // So happens with every recording
 
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
@@ -115,14 +115,6 @@ class Prefs {
     public static long getTokenTimeoutSeconds() {
         return TOKEN_TIMEOUT_SECONDS;
     }
-
-//    public static boolean isWalkingPeriodicRecordingsEnabled() {
-//        return walkingPeriodicRecordingsEnabled;
-//    }
-//
-//    public static void setWalkingPeriodicRecordingsEnabled(boolean walkingPeriodicRecordingsEnabled) {
-//        Prefs.walkingPeriodicRecordingsEnabled = walkingPeriodicRecordingsEnabled;
-//    }
 
 
     private String getString(String key) {
@@ -218,9 +210,9 @@ class Prefs {
             }
      }
 
-    String getTestServerUrl() {
-            return TEST_SERVER_URL;
-    }
+//    String getTestServerUrl() {
+//            return TEST_SERVER_URL;
+//    }
 
 
     String getPassword() {

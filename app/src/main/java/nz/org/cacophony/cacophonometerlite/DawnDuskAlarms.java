@@ -41,7 +41,7 @@ class DawnDuskAlarms {
         Prefs prefs = new Prefs(context);
         long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
       //  long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 6 * 235; // 23.5 hours - seemed like a good period to wait.
-        long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 12; // 12 hours - seemed like a good period to wait.
+        long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 12; // 12 hours - seemed like a good period to wait. Must happen within 24 hours (and shift in sun) since they were last set
         long now = new Date().getTime();
         if (((now - dateTimeLastCalculatedDawnDusk) > timeIntervalBetweenDawnDuskTimeCalculation) || ignoreTimeConstraints) {
             if ((DawnDuskAlarms.isOutsideDawnDuskRecordings(context, prefs)) || ignoreTimeConstraints) {
@@ -101,9 +101,9 @@ class DawnDuskAlarms {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
                 }else{
-                  //  alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
 //                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis() - windowInMilliseconds,dawnTomorrowCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
+                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
 
                 }
 
@@ -118,37 +118,7 @@ class DawnDuskAlarms {
 
 
 
-    static boolean isOutsideDawnDuskRecordings(Context context, Prefs prefs){
-        // Trying to fix bug of not all 13 dawn or dusk recordings happening - maybe it is because
-        // the recalculation of alarms interferes.  So don't do the recalculation within the time range of dawn dusk readings (plus a margin)
 
-        int dawnDuskOffsetMinutes = (int)prefs.getDawnDuskOffsetMinutes();
-        dawnDuskOffsetMinutes += 60; // extra margin
-        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
-
-        Calendar dawnRecordingsStart = Util.getDawn(context, nowToday);
-        dawnRecordingsStart.add(Calendar.MINUTE, -dawnDuskOffsetMinutes);
-
-        Calendar dawnRecordingsFinish = Util.getDawn(context, nowToday);
-        dawnRecordingsFinish.add(Calendar.MINUTE, dawnDuskOffsetMinutes);
-
-        if ((dawnRecordingsStart.getTimeInMillis() < nowToday.getTimeInMillis() && (nowToday.getTimeInMillis() < dawnRecordingsFinish.getTimeInMillis()))){
-            return false;
-        }
-
-        Calendar duskRecordingsStart = Util.getDawn(context, nowToday);
-        duskRecordingsStart.add(Calendar.MINUTE, -dawnDuskOffsetMinutes);
-
-        Calendar duskRecordingsFinish = Util.getDawn(context, nowToday);
-        duskRecordingsFinish.add(Calendar.MINUTE, dawnDuskOffsetMinutes);
-
-        if ((duskRecordingsStart.getTimeInMillis() < nowToday.getTimeInMillis() && (nowToday.getTimeInMillis() < duskRecordingsFinish.getTimeInMillis()))){
-            return false;
-        }
-
-        // If it gets here then current time is outside of the dawn or dusk readings time period (typically from 1 hour before to 1 hour after, dawn or dusk)
-return true;
-    }
 
     static void configureDuskAlarmsUsingLoop(Context context) {
         Prefs prefs = new Prefs(context);
@@ -184,9 +154,9 @@ return true;
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
                 }else{
-                   // alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
                    // alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis() - windowInMilliseconds,duskTodayCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
+                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
 
                 }
 
@@ -195,9 +165,9 @@ return true;
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
                 }else{
-                  //  alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
                   //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis() - windowInMilliseconds,duskTomorrowCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
+                 //   alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
 
                 }
 
@@ -212,7 +182,37 @@ return true;
     }
 
 
+    static boolean isOutsideDawnDuskRecordings(Context context, Prefs prefs){
+        // Trying to fix bug of not all 13 dawn or dusk recordings happening - maybe it is because
+        // the recalculation of alarms interferes.  So don't do the recalculation within the time range of dawn dusk readings (plus a margin)
 
+        int dawnDuskOffsetMinutes = (int)prefs.getDawnDuskOffsetMinutes();
+        dawnDuskOffsetMinutes += 60; // extra margin
+        Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+
+        Calendar dawnRecordingsStart = Util.getDawn(context, nowToday);
+        dawnRecordingsStart.add(Calendar.MINUTE, -dawnDuskOffsetMinutes);
+
+        Calendar dawnRecordingsFinish = Util.getDawn(context, nowToday);
+        dawnRecordingsFinish.add(Calendar.MINUTE, dawnDuskOffsetMinutes);
+
+        if ((dawnRecordingsStart.getTimeInMillis() < nowToday.getTimeInMillis() && (nowToday.getTimeInMillis() < dawnRecordingsFinish.getTimeInMillis()))){
+            return false;
+        }
+
+        Calendar duskRecordingsStart = Util.getDawn(context, nowToday);
+        duskRecordingsStart.add(Calendar.MINUTE, -dawnDuskOffsetMinutes);
+
+        Calendar duskRecordingsFinish = Util.getDawn(context, nowToday);
+        duskRecordingsFinish.add(Calendar.MINUTE, dawnDuskOffsetMinutes);
+
+        if ((duskRecordingsStart.getTimeInMillis() < nowToday.getTimeInMillis() && (nowToday.getTimeInMillis() < duskRecordingsFinish.getTimeInMillis()))){
+            return false;
+        }
+
+        // If it gets here then current time is outside of the dawn or dusk readings time period (typically from 1 hour before to 1 hour after, dawn or dusk)
+        return true;
+    }
 
 
 }
