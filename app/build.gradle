@@ -28,7 +28,7 @@ android {
 //        targetSdkVersion 18 // hoping this will stop the alarms batching https://developer.android.com/about/versions/android-4.4.html
 //        targetSdkVersion 24
         versionCode 1
-        versionName "0.989b"
+        versionName "0.989c"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

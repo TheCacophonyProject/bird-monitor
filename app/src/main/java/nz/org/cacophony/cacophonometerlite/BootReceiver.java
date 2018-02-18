@@ -36,21 +36,12 @@ public class BootReceiver extends BroadcastReceiver {
     // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
    // private static final String TAG = "BootReceiver";
     private static final String TAG = BootReceiver.class.getName();
-  //  private static Logger logger = null;
-//    static {
-//        BasicLogcatConfigurator.configureDefaultContext();
-//    }
 
     @Override
     public void onReceive(final Context context, Intent intent)
     {
         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//        toneGen1.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000);
-//        try {
-//            Thread.sleep(1000);
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
+
 
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
 
@@ -60,8 +51,6 @@ public class BootReceiver extends BroadcastReceiver {
         wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creaation
 try {
 
-
-    //   Util.createAlarms(context, "repeating", "normal", "BootReceiver");
     Util.createAlarms(context, "repeating", "normal");
     DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
     Util.createCreateAlarms(context);
@@ -72,7 +61,7 @@ try {
     Util.enableFlightMode(context);
 
 }catch (Exception ex){
-    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 3000);
+    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 5000);
     try {
         Thread.sleep(3000);
     } catch (Exception e) {

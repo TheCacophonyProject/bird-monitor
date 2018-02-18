@@ -582,7 +582,8 @@ private static final String TAG = MainActivity.class.getName();
                     }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
                         Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
                     }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
-                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
+//                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", true ).show(); // this only very occasionaly displayed
+                        Util.getToast(context,"Recording finished but uploading failed", true ).show(); // this didn't fix the problem - stuck :-(
                     }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
                         Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){

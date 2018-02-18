@@ -318,6 +318,7 @@ try {
     }
 
     private static boolean uploadFiles(Context context){
+
         Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
         try {

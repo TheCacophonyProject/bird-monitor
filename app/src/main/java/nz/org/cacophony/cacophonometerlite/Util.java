@@ -658,16 +658,25 @@ class Util {
                 // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
                 // Must be a rooted device
                 Prefs prefs = new Prefs(context);
-                if (!prefs.getHasRootAccess() && !prefs.getOffLineMode()) {
 
-//                    logger.info("Do NOT have required ROOT access");
-                    Log.w(TAG, "Do NOT have required ROOT access");
-                 //   Util.getToast(context, "Root access required to change airplane mode", true).show();
-                //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
-                        Util.broadcastAMessage(context,  "can_not_toggle_airplane_mode");
-                        return null;
 
+              //  if (!prefs.getHasRootAccess() && !prefs.getOffLineMode()) {
+                if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
+                    return null;
                 }
+
+                if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+                    return null;
+                }
+
+////                    logger.info("Do NOT have required ROOT access");
+//                    Log.w(TAG, "Do NOT have required ROOT access");
+//                 //   Util.getToast(context, "Root access required to change airplane mode", true).show();
+//                //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
+//                        Util.broadcastAMessage(context,  "can_not_toggle_airplane_mode");
+//                        return null;
+
+            //    }
 
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
@@ -726,7 +735,7 @@ class Util {
             return; // don't try to enable airplane mode
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
 //            Log.d(TAG, "enableFlightMode 2");
             // API 17 onwards.
 
@@ -772,40 +781,40 @@ private static void executeCommandTim(Context context, String command){
 }
 
 
-    private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
-
-        // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
-        // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
-        boolean success = false;
-        String su = "su";
-        for (int i = 0; i < 3; i++) {
-//            Log.d(TAG, "executeCommandWithoutWait 2");
-            // "su" command executed successfully.
-            if (success) {
-                // Stop executing alternative su commands below.
-//                Log.d(TAG, "executeCommandWithoutWait 3");
-                break;
-            }
-            if (i == 1) {
-//                Log.d(TAG, "executeCommandWithoutWait 4");
-                su = "/system/xbin/su";
-            } else if (i == 2) {
-//                Log.d(TAG, "executeCommandWithoutWait 5");
-                su = "/system/bin/su";
-            }
-            try {
-//                Log.d(TAG, "executeCommandWithoutWait 6");
-                // execute command
-                Runtime.getRuntime().exec(new String[]{su, option, command});
-                success = true;
-
-            } catch (IOException e) {
-//                Log.d(TAG, "executeCommandWithoutWait 7");
-
-                success = false;
-            }
-        }
-    }
+//    private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
+//
+//        // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
+//        // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
+//        boolean success = false;
+//        String su = "su";
+//        for (int i = 0; i < 3; i++) {
+////            Log.d(TAG, "executeCommandWithoutWait 2");
+//            // "su" command executed successfully.
+//            if (success) {
+//                // Stop executing alternative su commands below.
+////                Log.d(TAG, "executeCommandWithoutWait 3");
+//                break;
+//            }
+//            if (i == 1) {
+////                Log.d(TAG, "executeCommandWithoutWait 4");
+//                su = "/system/xbin/su";
+//            } else if (i == 2) {
+////                Log.d(TAG, "executeCommandWithoutWait 5");
+//                su = "/system/bin/su";
+//            }
+//            try {
+////                Log.d(TAG, "executeCommandWithoutWait 6");
+//                // execute command
+//                Runtime.getRuntime().exec(new String[]{su, option, command});
+//                success = true;
+//
+//            } catch (IOException e) {
+////                Log.d(TAG, "executeCommandWithoutWait 7");
+//
+//                success = false;
+//            }
+//        }
+//    }
 
     static String getSimStateAsString(int simState) {
         String simStateStr;
@@ -1095,16 +1104,16 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
     }
 
-    public static void playWarningBeeps(Context context, int durationInSeconds){
-
-            Util.getToast(context,"Prepare to start recording", false ).show();
-            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,durationInSeconds * 1000);
-            try{
-                Thread.sleep(durationInSeconds * 1000);
-            }catch (Exception ex){
-                Log.e(TAG, ex.getLocalizedMessage());
-            }
-        }
+//    public static void playWarningBeeps(Context context, int durationInSeconds){
+//
+//            Util.getToast(context,"Prepare to start recording", false ).show();
+//            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+//            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,durationInSeconds * 1000);
+//            try{
+//                Thread.sleep(durationInSeconds * 1000);
+//            }catch (Exception ex){
+//                Log.e(TAG, ex.getLocalizedMessage());
+//            }
+//        }
 
 }
