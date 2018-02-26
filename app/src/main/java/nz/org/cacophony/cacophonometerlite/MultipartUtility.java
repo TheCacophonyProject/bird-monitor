@@ -14,14 +14,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import info.guardianproject.netcipher.NetCipher;
 
 //import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
@@ -34,58 +29,31 @@ import info.guardianproject.netcipher.NetCipher;
 public class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
-    //private HttpURLConnection httpConn;
-    private HttpsURLConnection httpConn;
+    private HttpURLConnection httpConn;
     private String charset;
     private OutputStream outputStream;
     private PrintWriter writer;
 
-
-
     /**
      * This constructor initializes a new HTTP POST request with content type
      * is set to multipart/form-data
-     * @param requestURL
-     * @param charset
-     * @throws IOException
      */
-    public MultipartUtility(String requestURL, String charset, String token)
-            throws IOException {
-        this.charset = charset;
-
+    public MultipartUtility(HttpURLConnection conn, String charset, String token) throws IOException {
         // creates a unique boundary based on time stamp
         boundary = "---" + System.currentTimeMillis() + "---";
 
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type",
+                "multipart/form-data; boundary=" + boundary);
+        conn.setRequestProperty("User-Agent", "CodeJava Agent");
+        conn.setRequestProperty("Authorization", token);
+        httpConn = conn;
 
-        URL cacophonyRegisterEndpoint = null;
-       // HttpsURLConnection httpConn = null;
-        try {
-            cacophonyRegisterEndpoint = new URL(requestURL);
-            // Create connection
+        this.charset = charset;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&  Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
-                httpConn = NetCipher.getHttpsURLConnection(cacophonyRegisterEndpoint);
-            }else{
-                httpConn = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
-            }
-
-            httpConn.setRequestMethod("POST");
-            httpConn.setUseCaches(false);
-            httpConn.setDoOutput(true); // indicates POST method
-            httpConn.setDoInput(true);
-            httpConn.setRequestProperty("Content-Type",
-                    "multipart/form-data; boundary=" + boundary);
-            httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
-//            httpConn.setRequestProperty("Authorization", getToken());
-            httpConn.setRequestProperty("Authorization", token);
-            outputStream = httpConn.getOutputStream();
-            writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
+        outputStream = conn.getOutputStream();
+        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
                     true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
