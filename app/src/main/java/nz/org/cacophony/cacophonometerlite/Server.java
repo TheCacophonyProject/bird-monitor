@@ -15,10 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
 
 import info.guardianproject.netcipher.NetCipher;
 
@@ -103,7 +103,7 @@ class Server {
             jsonParam.put("devicename", devicename);
             jsonParam.put("password", password);
 
-            HttpsURLConnection myConnection = getHttpsURLConnection(serverUrl);
+            HttpURLConnection myConnection = openURL(serverUrl);
 
             DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
             os.writeBytes(jsonParam.toString());
@@ -166,33 +166,42 @@ class Server {
        // return loggedIn;
     }
 
-
-    private static HttpsURLConnection getHttpsURLConnection(String serverUrl) {
-        URL cacophonyRegisterEndpoint = null;
-        HttpsURLConnection myConnection = null;
+    private static HttpURLConnection openURL(String serverUrl) {
+        HttpURLConnection conn = null;
         try {
-            cacophonyRegisterEndpoint = new URL(serverUrl);
-            // Create connection
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
-                myConnection = NetCipher.getHttpsURLConnection(cacophonyRegisterEndpoint);
-            } else {
-                myConnection = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
+            URL url = new URL(serverUrl);
+            switch (url.getProtocol()) {
+                case "http":
+                    conn = (HttpURLConnection) url.openConnection();
+                    break;
+                case "https":
+                    conn = openHttpsURL(url);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported protocol");
             }
 
-            myConnection.setRequestMethod("POST");
-            myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            myConnection.setRequestProperty("Accept", "application/json");
-            myConnection.setDoOutput(true);
-            myConnection.setDoInput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-        return myConnection;
+
+        return conn;
     }
 
+    private static HttpURLConnection openHttpsURL(URL url) throws IOException {
+        // Create connection
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
+            return NetCipher.getHttpsURLConnection(url);
+        }
+        return (HttpURLConnection) url.openConnection();
+    }
 
     /**
      * Does a synchronous http request to register the device. Can't be run on main/UI thread.
@@ -216,14 +225,7 @@ class Server {
         String registerUrl = prefs.getServerUrl() + REGISTER_URL;
         URL cacophonyRegisterEndpoint = null;
         try {
-            HttpsURLConnection myConnection = getHttpsURLConnection(registerUrl);
-
-
-            myConnection.setRequestMethod("POST");
-            myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            myConnection.setRequestProperty("Accept", "application/json");
-            myConnection.setDoOutput(true);
-            myConnection.setDoInput(true);
+            HttpURLConnection myConnection = openURL(registerUrl);
 
             final String devicename = RandomStringUtils.random(20, true, true);
             final String password = RandomStringUtils.random(20, true, true);
@@ -310,15 +312,14 @@ class Server {
         Prefs prefs = new Prefs(context);
         String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
-            MultipartUtility multipart = new MultipartUtility(uploadUrl, charset, prefs.getToken());
+            HttpURLConnection conn = openURL(uploadUrl);
 
+            MultipartUtility multipart = new MultipartUtility(conn, charset, prefs.getToken());
 
             multipart.addFormField("data", data.toString());
             multipart.addFilePart("file", audioFile);
 
-
             List<String> responseString = multipart.finish();
-
 
             Log.i(TAG, "SERVER REPLIED:");
             try {
