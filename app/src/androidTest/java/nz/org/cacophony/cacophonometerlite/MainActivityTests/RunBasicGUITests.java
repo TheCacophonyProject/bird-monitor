@@ -1,4 +1,4 @@
-package nz.org.cacophony.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite.MainActivityTests;
 
 
 
@@ -8,8 +8,10 @@ import org.junit.runners.Suite;
 // Runs all unit tests.
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        MainActivityGUIExists1.class,
+        MainActivityBasicGUI.class,
         MainActivityPressRadioButtons.class,
+        OffModeRadioButton.class,
+        MainActivityActionBar.class,
         OffModeRadioButton.class
 
 })

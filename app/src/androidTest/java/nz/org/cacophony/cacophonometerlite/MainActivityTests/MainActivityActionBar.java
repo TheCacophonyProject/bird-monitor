@@ -1,7 +1,8 @@
-package nz.org.cacophony.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite.MainActivityTests;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -16,51 +17,63 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import nz.org.cacophony.cacophonometerlite.MainActivity;
+import nz.org.cacophony.cacophonometerlite.R;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class OffModeRadioButton {
+public class MainActivityActionBar {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void offModeExists() {
-        ViewInteraction radioButton = onView(
-                allOf(withId(R.id.offMode),
-                        childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
-                                0),
+    public void mainActivityActionBarLogo() {
+        ViewInteraction imageView = onView(
+                allOf(childAtPosition(
+                        allOf(ViewMatchers.withId(R.id.my_toolbar),
+                                childAtPosition(
+                                        withId(R.id.top_relative_layout),
+                                        0)),
+                        0),
                         isDisplayed()));
-        radioButton.check(matches(isDisplayed()));
-
+        imageView.check(matches(isDisplayed()));
+    }
+    @Test
+    public void mainActivityActionBarTitle() {
+        ViewInteraction textView = onView(
+                allOf(withText("Cacophonometer"),
+                        childAtPosition(
+                                allOf(withId(R.id.my_toolbar),
+                                        childAtPosition(
+                                                withId(R.id.top_relative_layout),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        textView.check(matches(withText("Cacophonometer")));
     }
 
     @Test
-    public void offModeSelected() {
-        ViewInteraction radioButton = onView(
-                allOf(withId(R.id.offMode),
+    public void mainActivityActionBarMenu() {
+        ViewInteraction imageView2 = onView(
+                allOf(withContentDescription("More options"),
                         childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
+                                childAtPosition(
+                                        withId(R.id.my_toolbar),
+                                        2),
                                 0),
                         isDisplayed()));
-
-        radioButton.check(matches(isChecked()));
-//        radioButton.check(matches(isNotChecked()));
+        imageView2.check(matches(isDisplayed()));
     }
+
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {

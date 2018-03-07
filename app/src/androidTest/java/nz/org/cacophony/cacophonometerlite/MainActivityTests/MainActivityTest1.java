@@ -1,8 +1,9 @@
-package nz.org.cacophony.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite.MainActivityTests;
 
 
 import android.os.SystemClock;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -17,6 +18,9 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import nz.org.cacophony.cacophonometerlite.MainActivity;
+import nz.org.cacophony.cacophonometerlite.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -48,7 +52,7 @@ public class MainActivityTest1 {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
         ViewInteraction appCompatTextView = onView(
-                allOf(withId(R.id.title), withText("Settings"),
+                allOf(ViewMatchers.withId(R.id.title), withText("Settings"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.support.v7.view.menu.ListMenuItemView")),

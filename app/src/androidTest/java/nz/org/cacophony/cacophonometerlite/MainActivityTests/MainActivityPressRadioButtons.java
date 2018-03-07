@@ -1,7 +1,8 @@
-package nz.org.cacophony.cacophonometerlite;
+package nz.org.cacophony.cacophonometerlite.MainActivityTests;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -15,6 +16,9 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import nz.org.cacophony.cacophonometerlite.MainActivity;
+import nz.org.cacophony.cacophonometerlite.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -35,7 +39,7 @@ public class MainActivityPressRadioButtons {
     @Test
     public void mainActivityPressRadioButtons() {
         ViewInteraction radioButton = onView(
-                allOf(withId(R.id.offMode),
+                allOf(ViewMatchers.withId(R.id.offMode),
                         childAtPosition(
                                 allOf(withId(R.id.chooseModeRadioButtons),
                                         childAtPosition(
