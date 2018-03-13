@@ -25,13 +25,15 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityPressRadioButtons {
+public class MainActivityCheckButtons {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -88,6 +90,14 @@ public class MainActivityPressRadioButtons {
                                                 5)),
                                 0)));
         appCompatRadioButton4.perform(scrollTo(), click());
+
+    }
+
+    @Test
+    public void mainActivityCheckRecordNowButton() {
+        onView(withId(R.id.recordNowButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
+        onView(withId(R.id.recordNowButton)).perform(click()).check(matches(not(isEnabled())));
 
     }
 

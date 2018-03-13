@@ -1,7 +1,7 @@
-package nz.org.cacophony.cacophonometerlite.MainActivityTests;
+package nz.org.cacophony.cacophonometerlite.SettingsActivityTests;
 
 
-import android.os.SystemClock;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -14,7 +14,6 @@ import android.view.ViewParent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,22 +32,21 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest1 {
+public class SetupAndVitals1 {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityTest1() {
+    public void setupAndVitals1() {
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
         ViewInteraction appCompatTextView = onView(
@@ -60,16 +58,6 @@ public class MainActivityTest1 {
                                 0),
                         isDisplayed()));
         appCompatTextView.perform(click());
-
-        ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.cbUseTestServer), withText("Use the Test Server (You will need to register device)."),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                40)));
-        appCompatCheckBox.perform(scrollTo(), click());
 
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.setupGroupNameInput),
@@ -101,63 +89,84 @@ public class MainActivityTest1 {
                                 4)));
         appCompatButton.perform(scrollTo(), click());
 
-        ViewInteraction appCompatEditText3 = onView(
-                allOf(withId(R.id.setupGroupNameInput), withText("tim1"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                3)));
-        appCompatEditText3.perform(pressImeActionButton());
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.setupRegisterButton), withText("Register"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                4)));
-        appCompatButton2.perform(scrollTo(), click());
-
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-
-        ViewInteraction appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Vitals"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.v7.view.menu.ListMenuItemView")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        ViewInteraction appCompatButton3 = onView(
-                allOf(withId(R.id.refreshVitals), withText("Refresh"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.ScrollView")),
-                                                0)),
-                                2)));
-        appCompatButton3.perform(scrollTo(), click());
-
         ViewInteraction textView = onView(
-//                allOf(withId(R.id.deviceIDText), withText("Device ID: Test Server 275"),
-                allOf(withId(R.id.deviceIDText), withId(R.id.deviceIDText),
+                allOf(withId(R.id.setupRegisterStatus), withText("Registered in group: tim1"),
                         childAtPosition(
                                 allOf(withId(R.id.relative_layout2),
                                         childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+                                                withId(R.id.mainScrollView),
                                                 0)),
-                                6),
+                                2),
                         isDisplayed()));
-//        textView.check(matches(withText("Device ID: Test Server 275")));
-    //    SystemClock.sleep(10000);
+        textView.check(matches(withText("Registered in group: tim1")));
 
-       // textView.check(matches(withContentDescription(containsString("Test Server"))));
-        textView.check(matches(withContentDescription(containsString("Device"))));
+//        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+//
+//        ViewInteraction appCompatTextView2 = onView(
+//                allOf(withId(R.id.title), withText("Vitals"),
+//                        childAtPosition(
+//                                childAtPosition(
+//                                        withClassName(is("android.support.v7.view.menu.ListMenuItemView")),
+//                                        0),
+//                                0),
+//                        isDisplayed()));
+//        appCompatTextView2.perform(click());
+//
+//        ViewInteraction textView2 = onView(
+//                allOf(withId(R.id.appVitalsText), withText("App Vitals"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                1),
+//                        isDisplayed()));
+//        textView2.check(matches(withText("App Vitals")));
+
+//        ViewInteraction textView3 = onView(
+//                allOf(withId(R.id.appPermissionText), withText("Required Permissions: ✔"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                2),
+//                        isDisplayed()));
+//        textView3.check(matches(withText("Required Permissions: ✔")));
+//
+//        ViewInteraction textView3 = onView(
+//                allOf(withId(R.id.mainRegisteredStatus), withText("Registered: ✔"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                3),
+//                        isDisplayed()));
+//        textView3.check(matches(withText("Registered: ✔")));
+//
+//        ViewInteraction textView4 = onView(
+//                allOf(withId(R.id.loggedInText), withText("Logged in to server: ✔"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                5),
+//                        isDisplayed()));
+//        textView4.check(matches(withText("Logged in to server: ✔")));
+//
+//        ViewInteraction textView5 = onView(
+//                allOf(withId(R.id.deviceIDText), withText("Device ID: 280"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                6),
+//                        isDisplayed()));
+//        textView5.check(matches(withText("Device ID: 280")));
+
     }
 
     private static Matcher<View> childAtPosition(

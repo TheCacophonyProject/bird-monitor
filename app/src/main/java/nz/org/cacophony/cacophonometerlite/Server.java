@@ -22,14 +22,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 import info.guardianproject.netcipher.NetCipher;
 
-import static android.R.attr.password;
-
-
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
  */
 
 class Server {
+
+
     private static final String TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
@@ -202,6 +201,7 @@ class Server {
      * @return If the device successfully registered.
      */
     static boolean register(final String group, final Context context) {
+
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {

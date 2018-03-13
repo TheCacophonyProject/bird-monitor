@@ -5,10 +5,12 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.Toolbar;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.TextView;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -22,9 +24,11 @@ import nz.org.cacophony.cacophonometerlite.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
@@ -49,17 +53,20 @@ public class MainActivityActionBar {
     }
     @Test
     public void mainActivityActionBarTitle() {
-        ViewInteraction textView = onView(
-                allOf(withText("Cacophonometer"),
-                        childAtPosition(
-                                allOf(withId(R.id.my_toolbar),
-                                        childAtPosition(
-                                                withId(R.id.top_relative_layout),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        textView.check(matches(withText("Cacophonometer")));
+        onView(withText("Cacophonometer")).check(matches(isDisplayed()));
+
     }
+
+    @Test
+    public void mainActivityActionBarTitle2() {
+        onView(allOf(
+                isAssignableFrom(TextView.class),
+                withParent(isAssignableFrom(Toolbar.class))))
+                .check(matches(withText("Cacophonometer")));
+
+    }
+
+
 
     @Test
     public void mainActivityActionBarMenu() {
@@ -93,4 +100,8 @@ public class MainActivityActionBar {
             }
         };
     }
+
+
+
+
 }

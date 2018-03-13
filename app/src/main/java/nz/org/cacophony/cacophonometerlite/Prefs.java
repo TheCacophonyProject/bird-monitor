@@ -11,7 +11,7 @@ import android.util.Log;
  * Expanded to keep all settings in one place
  */
 
-class Prefs {
+public class Prefs {
 
    // private static boolean testing = true;
    // private static boolean walkingPeriodicRecordingsEnabled = false;
@@ -107,7 +107,7 @@ class Prefs {
     private static final String  MODE_KEY = "MODE";
 //    private static Logger logger = null;
 
-    Prefs(Context context) {
+    public Prefs(Context context) {
         this.context = context;
 
     }
@@ -223,7 +223,7 @@ class Prefs {
         setString(PASSWORD_KEY, password);
     }
 
-    String getDeviceName() {
+    public String getDeviceName() {
         return getString(DEVICE_NAME_KEY);
     }
 

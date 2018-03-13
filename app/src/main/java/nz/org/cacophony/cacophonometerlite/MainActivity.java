@@ -1,22 +1,15 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-//import android.util.Log;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,21 +18,13 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.StringUtils;
+//import android.util.Log;
 //import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
 //import org.slf4j.Logger;
 
 
-import static android.widget.Toast.makeText;
 
-
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 
 private static final String TAG = MainActivity.class.getName();
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
@@ -371,5 +356,8 @@ private static final String TAG = MainActivity.class.getName();
         }
     };
 
+    public CountingIdlingResource getIdlingResource() {
+        return idlingResource;
+    }
 
 }

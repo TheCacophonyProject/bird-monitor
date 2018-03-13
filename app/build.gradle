@@ -57,6 +57,8 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.apache.commons:commons-lang3:3.4'
 
+    compile'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
+
 
 
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection

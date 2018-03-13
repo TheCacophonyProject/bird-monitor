@@ -8,13 +8,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-//import android.util.Log;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +29,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VitalsActivity extends AppCompatActivity {
+//import android.util.Log;
+
+public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = VitalsActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
 
@@ -479,7 +481,9 @@ try {
             }
         }
     };
-
+    public CountingIdlingResource getIdlingResource() {
+        return idlingResource;
+    }
 }
 
 

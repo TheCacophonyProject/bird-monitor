@@ -4,17 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-//import android.util.Log;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +26,17 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+//import android.util.Log;
+
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 
 //public class SetupActivity extends Activity {
-public class SetupActivity extends AppCompatActivity {
+public class SetupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
     private static final String TAG = SetupActivity.class.getName();
+
+//    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
+//    private CountingIdlingResource idlingResource = new CountingIdlingResource("SERVER_CONNECTION");
 
     // Handler status indicators
     private static final int REGISTER_SUCCESS = 1;
@@ -245,10 +248,12 @@ public class SetupActivity extends AppCompatActivity {
             switch (inputMessage.what) {
                 case REGISTER_SUCCESS:
                     onResume();
+                    idlingResource.decrement();
                     ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
                     mainScrollView.fullScroll(ScrollView.FOCUS_UP);
                     try {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
+
                     }catch (Exception ex){
                         Log.e(TAG, ex.getLocalizedMessage());
 
@@ -258,6 +263,7 @@ public class SetupActivity extends AppCompatActivity {
                     break;
                 case REGISTER_FAIL:
                     onResume();
+                    idlingResource.decrement();
                     Context context = SetupActivity.this;
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
@@ -275,6 +281,7 @@ public class SetupActivity extends AppCompatActivity {
     };
 
     public void registerButton(View v) {
+        idlingResource.increment();
 
         Prefs prefs = new Prefs(getApplicationContext());
 
@@ -318,7 +325,28 @@ public class SetupActivity extends AppCompatActivity {
             Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
             return;
         }
+
         register(group, getApplicationContext());
+//new Thread(new Runnable(){
+//    @Override
+//    public void run(){
+//        try{
+//            Thread.sleep(5000);
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
+//
+//        runOnUiThread(new Runnable(){
+//            @Override
+//            public void run(){
+//                TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
+//                registerStatus.setText("tim was here");
+//                idlingResource.decrement();
+//            }
+//        });
+//    }
+//}).start();
+
     }
 
     /**
@@ -381,7 +409,7 @@ public class SetupActivity extends AppCompatActivity {
             return ;
         }
 
-
+//        idlingResource.increment();
         Thread registerThread = new Thread() {
             @Override
             public void run() {
@@ -393,6 +421,7 @@ public class SetupActivity extends AppCompatActivity {
                     message.what = REGISTER_FAIL;
                 }
                 message.sendToTarget();
+//                idlingResource.decrement();
             }
         };
         registerThread.start();
@@ -581,5 +610,10 @@ public class SetupActivity extends AppCompatActivity {
         super.onPause();
         Util.createCreateAlarms(getApplicationContext());
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
+    }
+
+
+    public CountingIdlingResource getIdlingResource() {
+        return idlingResource;
     }
 }
