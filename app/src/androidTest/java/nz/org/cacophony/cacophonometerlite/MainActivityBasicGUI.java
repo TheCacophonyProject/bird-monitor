@@ -1,4 +1,4 @@
-package nz.org.cacophony.cacophonometerlite.MainActivityTests;
+package nz.org.cacophony.cacophonometerlite;
 
 
 import android.support.test.espresso.ViewInteraction;
@@ -13,35 +13,43 @@ import android.view.ViewParent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import nz.org.cacophony.cacophonometerlite.MainActivity;
-import nz.org.cacophony.cacophonometerlite.R;
-
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.not;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityCheckButtons {
+public class MainActivityBasicGUI {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityPressRadioButtons() {
+    public void birdLogoExists() {
+        ViewInteraction imageView = onView(
+                allOf(childAtPosition(
+                        allOf(ViewMatchers.withId(R.id.my_toolbar),
+                                childAtPosition(
+                                        withId(R.id.top_relative_layout),
+                                        0)),
+                        0),
+                        isDisplayed()));
+        imageView.check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void offModeExists() {
         ViewInteraction radioButton = onView(
-                allOf(ViewMatchers.withId(R.id.offMode),
+                allOf(withId(R.id.offMode),
                         childAtPosition(
                                 allOf(withId(R.id.chooseModeRadioButtons),
                                         childAtPosition(
@@ -51,53 +59,79 @@ public class MainActivityCheckButtons {
                         isDisplayed()));
         radioButton.check(matches(isDisplayed()));
 
-        ViewInteraction appCompatRadioButton = onView(
-                allOf(withId(R.id.normalMode), withText("Normal Mode."),
-                        childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
-                                1)));
-        appCompatRadioButton.perform(scrollTo(), click());
-
-        ViewInteraction appCompatRadioButton2 = onView(
-                allOf(withId(R.id.normalModeOnline), withText("Normal Mode (But keep internet connection on)."),
-                        childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
-                                2)));
-        appCompatRadioButton2.perform(scrollTo(), click());
-
-        ViewInteraction appCompatRadioButton3 = onView(
-                allOf(withId(R.id.walkingMode), withText("Walking Mode (warning beeps, updates location, offline, records more often, ignores low battery)."),
-                        childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
-                                3)));
-        appCompatRadioButton3.perform(scrollTo(), click());
-
-        ViewInteraction appCompatRadioButton4 = onView(
-                allOf(withId(R.id.offMode), withText("Off - Will not override any settings."),
-                        childAtPosition(
-                                allOf(withId(R.id.chooseModeRadioButtons),
-                                        childAtPosition(
-                                                withId(R.id.relative_layout2),
-                                                5)),
-                                0)));
-        appCompatRadioButton4.perform(scrollTo(), click());
-
     }
 
     @Test
-    public void mainActivityCheckRecordNowButton() {
-        onView(withId(R.id.recordNowButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
-        onView(withId(R.id.recordNowButton)).perform(click()).check(matches(not(isEnabled())));
+    public void offModeSelected() {
+        ViewInteraction radioButton = onView(
+                allOf(withId(R.id.offMode),
+                        childAtPosition(
+                                allOf(withId(R.id.chooseModeRadioButtons),
+                                        childAtPosition(
+                                                withId(R.id.relative_layout2),
+                                                5)),
+                                0),
+                        isDisplayed()));
+
+        radioButton.check(matches(isChecked()));
+    }
+
+    @Test
+    public void mainActivityGUIExists1() {
+        ViewInteraction radioButton = onView(
+                allOf(withId(R.id.offMode),
+                        childAtPosition(
+                                allOf(withId(R.id.chooseModeRadioButtons),
+                                        childAtPosition(
+                                                withId(R.id.relative_layout2),
+                                                5)),
+                                0),
+                        isDisplayed()));
+        radioButton.check(matches(isDisplayed()));
+
+        ViewInteraction radioButton2 = onView(
+                allOf(withId(R.id.normalMode),
+                        childAtPosition(
+                                allOf(withId(R.id.chooseModeRadioButtons),
+                                        childAtPosition(
+                                                withId(R.id.relative_layout2),
+                                                5)),
+                                1),
+                        isDisplayed()));
+        radioButton2.check(matches(isDisplayed()));
+
+        ViewInteraction radioButton3 = onView(
+                allOf(withId(R.id.normalModeOnline),
+                        childAtPosition(
+                                allOf(withId(R.id.chooseModeRadioButtons),
+                                        childAtPosition(
+                                                withId(R.id.relative_layout2),
+                                                5)),
+                                2),
+                        isDisplayed()));
+        radioButton3.check(matches(isDisplayed()));
+
+        ViewInteraction radioButton4 = onView(
+                allOf(withId(R.id.walkingMode),
+                        childAtPosition(
+                                allOf(withId(R.id.chooseModeRadioButtons),
+                                        childAtPosition(
+                                                withId(R.id.relative_layout2),
+                                                5)),
+                                3),
+                        isDisplayed()));
+        radioButton4.check(matches(isDisplayed()));
+
+        ViewInteraction button = onView(
+                allOf(withId(R.id.recordNowButton),
+                        childAtPosition(
+                                allOf(withId(R.id.relative_layout2),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+                                                0)),
+                                7),
+                        isDisplayed()));
+        button.check(matches(isDisplayed()));
 
     }
 

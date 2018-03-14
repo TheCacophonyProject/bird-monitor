@@ -1,4 +1,4 @@
-package nz.org.cacophony.cacophonometerlite.SettingsActivityTests;
+package nz.org.cacophony.cacophonometerlite;
 
 import android.os.IBinder;
 import android.support.test.espresso.Root;

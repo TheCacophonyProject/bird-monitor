@@ -1,26 +1,21 @@
-package nz.org.cacophony.cacophonometerlite.SettingsActivityTests;
-
+package nz.org.cacophony.cacophonometerlite;
 
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.UiController;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.Checkable;
 import android.widget.TextView;
 
+import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import nz.org.cacophony.cacophonometerlite.MainActivity;
-import nz.org.cacophony.cacophonometerlite.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -37,23 +32,24 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
 
-@LargeTest
-@RunWith(AndroidJUnit4.class)
-public class SetupRegister1 {
+/**
+ * Created by Tim Hunt on 14-Mar-18.
+ */
+
+public class RegisterWithServer {
+
+//    @Rule
+//    public static ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
 
-    @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-
-
-
-    @Test
-    public void setupRegister1() {
-
-      // Register with idling couunter
+    public static void registerWithServer( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer){
+//        this.testServer = testServer;
+        // Register with idling couunter
         // https://developer.android.com/training/testing/espresso/idling-resource.html
-        https://stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface
+
+//stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface
 
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
@@ -68,27 +64,30 @@ public class SetupRegister1 {
                         isDisplayed()));
         appCompatTextView.perform(click());
 
-       // Unregister device (it may or may not be currently registered)
+        // Unregister device (it may or may not be currently registered)
         onView(withId(R.id.setupUnregister)).perform(scrollTo(), click());
-
 
 
         // check it has un registered
         onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Device not registered.")));
 
-// Checking for Toasts was problimatic as they seem to get in the way of each other and the test code can't wait as a toast is outside of the app
-        // Look at using the 'new' way of doing toasts (but may not work with old phones)
 
-//        // don't check for toast just yet
-//
-//        // Un register again, should get a 'Not currenlty registered....' message
-//        unRegisterButton.perform(scrollTo(), click());
-//
-//        // Now look for the Toast message
-//        onView(withText("Not currently registered - so can not unregister :-(")).inRoot(new ToastMatcher())
-//                .check(matches(isDisplayed()));
-//
 
+
+        onView(withId(R.id.cbUseTestServer)).perform(scrollTo(), setChecked(!testServer)); // setChecked does not fire the onCheckboxUserTestServerClicked code, so check it then click it on next line
+
+        onView(withId(R.id.cbUseTestServer)).perform(scrollTo()).perform(click());
+
+//        onView(withId(R.id.cbUseTestServer))
+//                .perform(scrollTo())
+//                .check(matches(not(testServer)))
+//                .perform(click())
+//                .check(matches(isChecked()));
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // now register
         onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
@@ -115,57 +114,8 @@ public class SetupRegister1 {
 //
 //        textViewRegisteredMessage.check(matches(withText("Device not registered.")));
 
-        // Go into Vitals screen to check it shows that device has registered
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-//        onView(withId(R.id.action_vitals)).perform(click());
-        onView(withText("Vitals")).perform(click()); // withId(R.id.action_vitals) did not work for some unknown reason
-
-
-
-//        ViewInteraction textViewAppVitals = onView(
-//                allOf(withId(R.id.appVitalsText), withText("App Vitals"),
-//                        childAtPosition(
-//                                allOf(withId(R.id.relative_layout2),
-//                                        childAtPosition(
-//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
-//                                                0)),
-//                                1),
-//                        isDisplayed()));
-//        textViewAppVitals.check(matches(withText("App Vitals")));
-
-        onView(withId(R.id.appPermissionText)).check(matches(withText(R.string.required_permissions_true)));
-
-        onView(withId(R.id.mainRegisteredStatus)).check(matches(withText(R.string.registered_true)));
-
-        onView(withId(R.id.loggedInText)).check(matches(withText(R.string.logged_in_to_server_true)));
-
-        // would like to check that Device ID is something sensible ie an integer greater than 0
-       // onView(withId(R.id.deviceIDText)).check(matches(withText("Device ID: " + "\\d{3}" )));
-        onView(withId(R.id.deviceIDText)).check(matches(isDeviceIdOK()));
-
-
-
-        // give time to look at screen
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        ViewInteraction textViewRequiredPermissions = onView(
-//                allOf(withId(R.id.appPermissionText), withText(R.string.required_permissions_true),
-//                        childAtPosition(
-//                                allOf(withId(R.id.relative_layout2),
-//                                        childAtPosition(
-//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
-//                                                0)),
-//                                2),
-//                        isDisplayed()));
-//       // textViewRequiredPermissions.check(matches(withText("Required Permissions: ✔")));
-//        textViewRequiredPermissions.check(matches(withText(R.string.required_permissions_true)));
 
     }
-
-
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -207,5 +157,36 @@ public class SetupRegister1 {
         };
     }
 
+    public static ViewAction setChecked(final boolean checked) {
+        // https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
+        return new ViewAction() {
+            @Override
+            public BaseMatcher<View> getConstraints() {
+                return new BaseMatcher<View>() {
+                    @Override
+                    public boolean matches(Object item) {
+                        return isA(Checkable.class).matches(item);
+                    }
+
+                    @Override
+                    public void describeMismatch(Object item, Description mismatchDescription) {}
+
+                    @Override
+                    public void describeTo(Description description) {}
+                };
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                Checkable checkableView = (Checkable) view;
+                checkableView.setChecked(checked);
+            }
+        };
+    }
 
 }
