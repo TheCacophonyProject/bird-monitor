@@ -14,6 +14,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
         RunBasicGUITests.class,
+        RunRegisterDeviceOnProductionServerTests.class,
         RunRegisterDeviceOnTestServerTests.class
 
 

@@ -18,15 +18,14 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-//import android.util.Log;
-//import org.slf4j.LoggerFactory;
-//import org.slf4j.Logger;
-
-
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+    // Register with idling couunter
+// https://developer.android.com/training/testing/espresso/idling-resource.html
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
-private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
 

@@ -26,17 +26,16 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-//import android.util.Log;
 
-//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-
-
-//public class SetupActivity extends Activity {
 public class SetupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+    // Register with idling couunter
+// https://developer.android.com/training/testing/espresso/idling-resource.html
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
+
     private static final String TAG = SetupActivity.class.getName();
 
-//    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
-//    private CountingIdlingResource idlingResource = new CountingIdlingResource("SERVER_CONNECTION");
+
 
     // Handler status indicators
     private static final int REGISTER_SUCCESS = 1;

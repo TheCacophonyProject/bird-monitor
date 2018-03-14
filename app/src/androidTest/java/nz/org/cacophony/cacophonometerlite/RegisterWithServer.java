@@ -1,18 +1,14 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.Checkable;
 import android.widget.TextView;
 
-import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -32,7 +28,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
 
 /**
  * Created by Tim Hunt on 14-Mar-18.
@@ -40,18 +35,15 @@ import static org.hamcrest.Matchers.isA;
 
 public class RegisterWithServer {
 
-//    @Rule
-//    public static ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-
-
     public static void registerWithServer( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer){
-//        this.testServer = testServer;
+
         // Register with idling couunter
         // https://developer.android.com/training/testing/espresso/idling-resource.html
-
-//stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface
+        // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+        // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
+
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 
         ViewInteraction appCompatTextView = onView(
@@ -73,23 +65,16 @@ public class RegisterWithServer {
 
 
 
-
-        onView(withId(R.id.cbUseTestServer)).perform(scrollTo(), setChecked(!testServer)); // setChecked does not fire the onCheckboxUserTestServerClicked code, so check it then click it on next line
-
+        // Next either check or uncheck the 'Use the Test Server...' check box depending on the value of testServer
+        // This is going to be a two step process as the method setChecked that I found does not cause the onCheckboxUserTestServerClicked
+        // code in the app to fire (hence check box value not saved in prefs).  So I will first set the check box to the opposite of
+        // what it needs to be and then click the check box which will change it's checked status to what it should be as well
+        // as causing the onCheckboxUserTestServerClicked code to fire.
+        onView(withId(R.id.cbUseTestServer)).perform(scrollTo(), HelperCode.setChecked(!testServer));
         onView(withId(R.id.cbUseTestServer)).perform(scrollTo()).perform(click());
 
-//        onView(withId(R.id.cbUseTestServer))
-//                .perform(scrollTo())
-//                .check(matches(not(testServer)))
-//                .perform(click())
-//                .check(matches(isChecked()));
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        // now register
+         // now register
         onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
         onView(withId(R.id.setupGroupNameInput)).perform(pressImeActionButton());
         onView(withId(R.id.setupRegisterButton)).perform(scrollTo(), click());
@@ -157,36 +142,6 @@ public class RegisterWithServer {
         };
     }
 
-    public static ViewAction setChecked(final boolean checked) {
-        // https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
-        return new ViewAction() {
-            @Override
-            public BaseMatcher<View> getConstraints() {
-                return new BaseMatcher<View>() {
-                    @Override
-                    public boolean matches(Object item) {
-                        return isA(Checkable.class).matches(item);
-                    }
 
-                    @Override
-                    public void describeMismatch(Object item, Description mismatchDescription) {}
-
-                    @Override
-                    public void describeTo(Description description) {}
-                };
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                Checkable checkableView = (Checkable) view;
-                checkableView.setChecked(checked);
-            }
-        };
-    }
 
 }
