@@ -10,11 +10,11 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.TextView;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,29 +68,16 @@ public class SetupRegister1 {
                         isDisplayed()));
         appCompatTextView.perform(click());
 
-       // Unregister device (in may or may not be currently registerd)
-        ViewInteraction unRegisterButton = onView(
-                allOf(withId(R.id.setupUnregister), withText("unregister"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                5)));
-        unRegisterButton.perform(scrollTo(), click());
+       // Unregister device (it may or may not be currently registered)
+        onView(withId(R.id.setupUnregister)).perform(scrollTo(), click());
 
-        // check it has un registerd
-        ViewInteraction textViewRegisteredMessage = onView(
-                allOf(withId(R.id.setupRegisterStatus), withText("Device not registered."),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                2),
-                        isDisplayed()));
 
-        textViewRegisteredMessage.check(matches(withText("Device not registered.")));
+
+        // check it has un registered
+        onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Device not registered.")));
+
+// Checking for Toasts was problimatic as they seem to get in the way of each other and the test code can't wait as a toast is outside of the app
+        // Look at using the 'new' way of doing toasts (but may not work with old phones)
 
 //        // don't check for toast just yet
 //
@@ -104,48 +91,14 @@ public class SetupRegister1 {
 
 
         // now register
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.setupGroupNameInput),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                3)));
-        appCompatEditText.perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
+        onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
+        onView(withId(R.id.setupGroupNameInput)).perform(pressImeActionButton());
+        onView(withId(R.id.setupRegisterButton)).perform(scrollTo(), click());
 
-        ViewInteraction appCompatEditText2 = onView(
-                allOf(withId(R.id.setupGroupNameInput), withText("tim1"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                3)));
-        appCompatEditText2.perform(pressImeActionButton());
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.setupRegisterButton), withText("Register"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                4)));
-        appCompatButton2.perform(scrollTo(), click());
 
         // check it has registerd
-         textViewRegisteredMessage = onView(
-                allOf(withId(R.id.setupRegisterStatus), withText("Registered in group: tim1"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                withId(R.id.mainScrollView),
-                                                0)),
-                                2),
-                        isDisplayed()));
+        onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Registered in group: tim1")));
 
-        textViewRegisteredMessage.check(matches(withText("Registered in group: tim1")));
 
         try {
             Thread.sleep(5000);
@@ -162,30 +115,35 @@ public class SetupRegister1 {
 //
 //        textViewRegisteredMessage.check(matches(withText("Device not registered.")));
 
+        // Go into Vitals screen to check it shows that device has registered
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+//        onView(withId(R.id.action_vitals)).perform(click());
+        onView(withText("Vitals")).perform(click()); // withId(R.id.action_vitals) did not work for some unknown reason
 
-        ViewInteraction appCompatTextView3 = onView(
-                allOf(withId(R.id.title), withText("Vitals"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.v7.view.menu.ListMenuItemView")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView3.perform(click());
 
-        ViewInteraction textViewAppVitals = onView(
-                allOf(withId(R.id.appVitalsText), withText("App Vitals"),
-                        childAtPosition(
-                                allOf(withId(R.id.relative_layout2),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        textViewAppVitals.check(matches(withText("App Vitals")));
+
+//        ViewInteraction textViewAppVitals = onView(
+//                allOf(withId(R.id.appVitalsText), withText("App Vitals"),
+//                        childAtPosition(
+//                                allOf(withId(R.id.relative_layout2),
+//                                        childAtPosition(
+//                                                IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class),
+//                                                0)),
+//                                1),
+//                        isDisplayed()));
+//        textViewAppVitals.check(matches(withText("App Vitals")));
 
         onView(withId(R.id.appPermissionText)).check(matches(withText(R.string.required_permissions_true)));
+
+        onView(withId(R.id.mainRegisteredStatus)).check(matches(withText(R.string.registered_true)));
+
+        onView(withId(R.id.loggedInText)).check(matches(withText(R.string.logged_in_to_server_true)));
+
+        // would like to check that Device ID is something sensible ie an integer greater than 0
+       // onView(withId(R.id.deviceIDText)).check(matches(withText("Device ID: " + "\\d{3}" )));
+        onView(withId(R.id.deviceIDText)).check(matches(isDeviceIdOK()));
+
+
 
         // give time to look at screen
         try {
@@ -227,4 +185,27 @@ public class SetupRegister1 {
             }
         };
     }
+
+
+
+    private static Matcher<View> isDeviceIdOK() {
+        // https://www.programcreek.com/java-api-examples/?code=kevalpatel2106/smart-lens/smart-lens-master/app/src/androidTest/java/com/kevalpatel2106/smartlens/testUtils/CustomMatchers.java
+        // http://blog.sqisland.com/2016/06/advanced-espresso-at-io16.html
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is Device Id OK ");
+
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                return view instanceof TextView && ((TextView)view).getText().length() > 11;  // if > 11 characters it means there is a device id displayed
+
+            }
+        };
+    }
+
+
 }

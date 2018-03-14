@@ -100,7 +100,7 @@
     <string name="connected_to_server_false">Connected to server: ✘</string>
     <string name="logged_in_to_server_true">Logged in to server: ✔</string>
     <string name="logged_in_to_server_false">Logged in to server: ✘</string>
-    <string name="required_permissions_true">Required Permissions: Yes</string>
+    <string name="required_permissions_true">Required Permissions: ✔</string>
     <string name="required_permissions_false">Required Permissions: ✘</string>
     <string name="not_registered">Device not registered.</string>
 
