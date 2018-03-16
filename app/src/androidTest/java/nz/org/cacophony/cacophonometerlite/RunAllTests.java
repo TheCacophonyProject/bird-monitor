@@ -15,7 +15,10 @@ import org.junit.runners.Suite;
 
         RunBasicGUITests.class,
         RunRegisterDeviceOnProductionServerTests.class,
-        RunRegisterDeviceOnTestServerTests.class
+        RunRegisterDeviceOnTestServerTests.class,
+        RunSettingsOptions.class
+
+
 
 
 })

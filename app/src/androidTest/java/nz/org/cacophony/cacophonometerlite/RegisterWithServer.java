@@ -84,11 +84,11 @@ public class RegisterWithServer {
         onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Registered in group: tim1")));
 
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 //        // now un register and check for toast and text box message
 //        unRegisterButton.perform(scrollTo(), click());

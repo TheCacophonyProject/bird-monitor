@@ -39,11 +39,11 @@ public class CheckVitals {
         // Check that Device ID message is appropriate ie has a device ID and says Test Server (or no if production server)
         onView(withId(R.id.deviceIDText)).check(matches(isDeviceIdOK(testServer)));
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
