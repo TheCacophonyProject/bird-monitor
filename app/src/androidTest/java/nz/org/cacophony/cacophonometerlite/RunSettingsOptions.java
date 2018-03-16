@@ -28,7 +28,7 @@ public class RunSettingsOptions {
 
 
     @Test
-    public void registerDeviceWithTestServer() {
+    public void settingsOptions() {
         SettingsOptions.settingsOptions(mActivityTestRule);
     }
 

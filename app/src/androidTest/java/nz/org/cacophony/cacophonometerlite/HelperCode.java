@@ -81,4 +81,5 @@ public class HelperCode {
         onView(withId(checkBoxId)).perform(scrollTo(), click());
         onView(allOf(withId(checkBoxId))).check(matches(isNotChecked()));
     }
+
 }
