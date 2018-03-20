@@ -24,7 +24,8 @@ public class CheckVitals {
     public static void checkVitals( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer) {
 
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+
 
         // Go into Vitals screen to check it shows that device has registered
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());

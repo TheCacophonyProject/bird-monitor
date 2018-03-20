@@ -486,9 +486,15 @@ try {
             }
         }
     };
-    public CountingIdlingResource getIdlingResource() {
-        return idlingResource;
+    public CountingIdlingResource getRegisterIdlingResource() {
+        return registerIdlingResource;
     }
+
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
+    }
+
+
 }
 
 

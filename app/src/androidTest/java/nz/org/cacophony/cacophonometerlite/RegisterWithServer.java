@@ -42,7 +42,7 @@ public class RegisterWithServer {
         // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
         // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
 

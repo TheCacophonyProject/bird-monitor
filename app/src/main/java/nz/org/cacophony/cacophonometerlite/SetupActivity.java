@@ -247,7 +247,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             switch (inputMessage.what) {
                 case REGISTER_SUCCESS:
                     onResume();
-                    idlingResource.decrement();
+                    registerIdlingResource.decrement();
                     ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
                     mainScrollView.fullScroll(ScrollView.FOCUS_UP);
                     try {
@@ -262,7 +262,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     break;
                 case REGISTER_FAIL:
                     onResume();
-                    idlingResource.decrement();
+                    registerIdlingResource.decrement();
                     Context context = SetupActivity.this;
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
@@ -280,7 +280,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
     };
 
     public void registerButton(View v) {
-        idlingResource.increment();
+        registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getApplicationContext());
 
@@ -326,25 +326,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
 
         register(group, getApplicationContext());
-//new Thread(new Runnable(){
-//    @Override
-//    public void run(){
-//        try{
-//            Thread.sleep(5000);
-//        }catch (Exception ex){
-//            ex.printStackTrace();
-//        }
-//
-//        runOnUiThread(new Runnable(){
-//            @Override
-//            public void run(){
-//                TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
-//                registerStatus.setText("tim was here");
-//                idlingResource.decrement();
-//            }
-//        });
-//    }
-//}).start();
+
 
     }
 
@@ -408,7 +390,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             return ;
         }
 
-//        idlingResource.increment();
+//        registerIdlingResource.increment();
         Thread registerThread = new Thread() {
             @Override
             public void run() {
@@ -420,7 +402,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     message.what = REGISTER_FAIL;
                 }
                 message.sendToTarget();
-//                idlingResource.decrement();
+//                registerIdlingResource.decrement();
             }
         };
         registerThread.start();
@@ -613,6 +595,12 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
 
     public CountingIdlingResource getIdlingResource() {
-        return idlingResource;
+        return registerIdlingResource;
     }
+
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
+    }
+
+
 }

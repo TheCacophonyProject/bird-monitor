@@ -41,16 +41,16 @@ public class ChooseModeTestsCode {
         // Check still in Walking mode and then put back to Off mode
         modeTest(mActivityTestRule, R.id.walkingMode, "walking", R.id.offMode, "off");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     private static void modeTest(ActivityTestRule<MainActivity> mActivityTestRule, int idOfFirstGuiRadioButton, String expectedModeStringFromPrefsInitialRadioButton, int idOfSecondGuiRadioButton, String expectedModeStringFromPrefsSecondRadioButton){
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
         Prefs prefs = new Prefs(getInstrumentation().getTargetContext());
 
         onView(withId(idOfFirstGuiRadioButton)).check(matches(isChecked()));

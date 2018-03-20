@@ -26,7 +26,7 @@ public class SettingsOptions {
 
     public static void settingsOptions(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getIdlingResource()));
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());

@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+        recordNowIdlingResource.increment();
 
      //   disableFlightMode();
 //        Util.updateGPSLocation(getApplicationContext());
@@ -313,7 +314,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
                     }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
+                        recordNowIdlingResource.decrement();
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+
                     }else if (message.equalsIgnoreCase("recording_started")){
                         Util.getToast(getApplicationContext(),"Recording started", false ).show();
                     }else if (message.equalsIgnoreCase("recording_finished")){
@@ -341,7 +344,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
                     }else if (message.equalsIgnoreCase("is_already_recording")){
                         // Will need enable Record Now button
+                        recordNowIdlingResource.decrement();
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+
                         Util.getToast(getApplicationContext(),"Could not do a recording as another recording is already in progress", true ).show();
                     }else if (message.equalsIgnoreCase("error_do_not_have_root")){
                         Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
@@ -355,8 +360,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     };
 
-    public CountingIdlingResource getIdlingResource() {
-        return idlingResource;
+    public CountingIdlingResource getRegisterIdlingResource() {
+        return registerIdlingResource;
+    }
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
     }
 
-}
+
+
+    }

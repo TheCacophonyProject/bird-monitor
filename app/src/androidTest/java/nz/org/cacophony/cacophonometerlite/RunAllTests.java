@@ -14,10 +14,10 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
         RunBasicGUITests.class,
-        RunRegisterDeviceOnProductionServerTests.class,
-        RunRegisterDeviceOnTestServerTests.class,
         RunSettingsOptions.class,
-        RunModeTestsInSpecifiedOrder.class
+        RunModeTestsInSpecifiedOrder.class,
+        RunRegisterDeviceOnProductionServerTests.class,
+        RunRegisterDeviceOnTestServerTests.class
 })
 public class RunAllTests {
 

@@ -7,5 +7,6 @@ import android.support.test.espresso.idling.CountingIdlingResource;
  */
 
 public interface IdlingResourceForEspressoTesting {
-  public   CountingIdlingResource idlingResource = new CountingIdlingResource("SERVER_CONNECTION");
+  public   CountingIdlingResource registerIdlingResource = new CountingIdlingResource("REGISTER");
+  public   CountingIdlingResource recordNowIdlingResource = new CountingIdlingResource("RECORD_NOW");
 }
