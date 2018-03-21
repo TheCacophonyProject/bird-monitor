@@ -14,21 +14,19 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import info.guardianproject.netcipher.NetCipher;
+
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
  */
 
 class Server {
-
-
     private static final String TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
@@ -37,8 +35,8 @@ class Server {
     private static final String REGISTER_URL = "/api/v1/devices";
 
     static boolean serverConnection = false;
-  //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
-  //  private static String token = null;
+    //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
+    //  private static String token = null;
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -48,7 +46,7 @@ class Server {
 
         try {
             Util.disableFlightMode(context);
-         //   Util.disableFlightModeTestSU(context);
+            //   Util.disableFlightModeTestSU(context);
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
@@ -72,7 +70,7 @@ class Server {
         final Prefs prefs = new Prefs(context);
         try {
             Util.disableFlightMode(context);
-        //    Util.disableFlightModeTestSU(context);
+            //    Util.disableFlightModeTestSU(context);
 
 
             // Now wait for network connection as setFlightMode takes a while
@@ -91,7 +89,7 @@ class Server {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
-             //   loggedIn = false;
+                //   loggedIn = false;
 //                return loggedIn;
                 return false;
             }
@@ -102,7 +100,7 @@ class Server {
             jsonParam.put("devicename", devicename);
             jsonParam.put("password", password);
 
-            HttpsURLConnection myConnection = getHttpsURLConnection(serverUrl);
+            HttpURLConnection myConnection = openURL(serverUrl);
 
             DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
             os.writeBytes(jsonParam.toString());
@@ -132,24 +130,24 @@ class Server {
 
                     Log.i(TAG, "Successful login.");
 //                        logger.info("Login", "Successful login.");
-               //     loggedIn = true;
-                  //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
+                    //     loggedIn = true;
+                    //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
                     prefs.setToken(joRes.getString("token"));
                     Log.d(TAG, "Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
 
                 } else { // not success
-                //    loggedIn = false;
+                    //    loggedIn = false;
                     //setToken(null);
                     prefs.setToken(null);
                     Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
-            //    loggedIn = false;
+                //    loggedIn = false;
                 Log.e(TAG, "Invalid devicename or password for login.");
-               // setToken(null);
+                // setToken(null);
                 prefs.setToken(null);
             }
 
@@ -162,36 +160,45 @@ class Server {
         }else {
             return true;
         }
-       // return loggedIn;
+        // return loggedIn;
     }
 
-
-    private static HttpsURLConnection getHttpsURLConnection(String serverUrl) {
-        URL cacophonyRegisterEndpoint = null;
-        HttpsURLConnection myConnection = null;
+    private static HttpURLConnection openURL(String serverUrl) {
+        HttpURLConnection conn = null;
         try {
-            cacophonyRegisterEndpoint = new URL(serverUrl);
-            // Create connection
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
-                myConnection = NetCipher.getHttpsURLConnection(cacophonyRegisterEndpoint);
-            } else {
-                myConnection = (HttpsURLConnection) cacophonyRegisterEndpoint.openConnection();
+            URL url = new URL(serverUrl);
+            switch (url.getProtocol()) {
+                case "http":
+                    conn = (HttpURLConnection) url.openConnection();
+                    break;
+                case "https":
+                    conn = openHttpsURL(url);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported protocol");
             }
 
-            myConnection.setRequestMethod("POST");
-            myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            myConnection.setRequestProperty("Accept", "application/json");
-            myConnection.setDoOutput(true);
-            myConnection.setDoInput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-        return myConnection;
+
+        return conn;
     }
 
+    private static HttpURLConnection openHttpsURL(URL url) throws IOException {
+        // Create connection
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
+            return NetCipher.getHttpsURLConnection(url);
+        }
+        return (HttpURLConnection) url.openConnection();
+    }
 
     /**
      * Does a synchronous http request to register the device. Can't be run on main/UI thread.
@@ -201,7 +208,6 @@ class Server {
      * @return If the device successfully registered.
      */
     static boolean register(final String group, final Context context) {
-
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
@@ -216,14 +222,7 @@ class Server {
         String registerUrl = prefs.getServerUrl() + REGISTER_URL;
         URL cacophonyRegisterEndpoint = null;
         try {
-            HttpsURLConnection myConnection = getHttpsURLConnection(registerUrl);
-
-
-            myConnection.setRequestMethod("POST");
-            myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            myConnection.setRequestProperty("Accept", "application/json");
-            myConnection.setDoOutput(true);
-            myConnection.setDoInput(true);
+            HttpURLConnection myConnection = openURL(registerUrl);
 
             final String devicename = RandomStringUtils.random(20, true, true);
             final String password = RandomStringUtils.random(20, true, true);
@@ -258,7 +257,7 @@ class Server {
                 JSONObject joRes = new JSONObject(responseString);
                 if (joRes.getBoolean("success")) {
                     registered = true;
-                  //  setToken(joRes.getString("token"));
+                    //  setToken(joRes.getString("token"));
                     prefs.setToken(joRes.getString("token"));
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
@@ -294,6 +293,19 @@ class Server {
         return registered;
     }
 
+    static boolean obtainTokenForRetrievingAudioRecording(final Context context){
+        // https://api.cacophony.org.nz/
+        final Prefs prefs = new Prefs(context);
+        String deviceId = prefs.getDeviceId();
+        String obtainTokenUrl = prefs.getServerUrl() + REGISTER_URL;
+        URL cacophonyRegisterEndpoint = null;
+        String registerUrl = prefs.getServerUrl() + REGISTER_URL + deviceId;
+
+
+        return true;
+
+    }
+
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
@@ -310,15 +322,14 @@ class Server {
         Prefs prefs = new Prefs(context);
         String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
-            MultipartUtility multipart = new MultipartUtility(uploadUrl, charset, prefs.getToken());
+            HttpURLConnection conn = openURL(uploadUrl);
 
+            MultipartUtility multipart = new MultipartUtility(conn, charset, prefs.getToken());
 
             multipart.addFormField("data", data.toString());
             multipart.addFilePart("file", audioFile);
 
-
             List<String> responseString = multipart.finish();
-
 
             Log.i(TAG, "SERVER REPLIED:");
             try {
@@ -342,7 +353,7 @@ class Server {
         }finally {
             uploading = false;
         }
-       // uploading = false;
+        // uploading = false;
         return uploadSuccess;
     }
 

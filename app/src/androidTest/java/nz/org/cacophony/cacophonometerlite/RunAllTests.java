@@ -17,7 +17,8 @@ import org.junit.runners.Suite;
         RunSettingsOptions.class,
         RunModeTestsInSpecifiedOrder.class,
         RunRegisterDeviceOnProductionServerTests.class,
-        RunRegisterDeviceOnTestServerTests.class
+        RunRegisterDeviceOnTestServerTests.class,
+        RunRecordNowTests.class
 })
 public class RunAllTests {
 

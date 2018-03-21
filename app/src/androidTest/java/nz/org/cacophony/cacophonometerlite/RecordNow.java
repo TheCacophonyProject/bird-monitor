@@ -73,11 +73,28 @@ public class RecordNow {
 
 
 
+        // Open settings and turn off 'Offline Mode'
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
+
+        // Delete all of the recordings (but always leaves the recording just made - timing issue I suppose)
+        File recordingFiles[] = recordingsFolder.listFiles();
+        for (File file : recordingFiles){
+            file.delete();
+        }
+
                 try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void test2(ActivityTestRule<MainActivity> mActivityTestRule) {
+        // Send recording to server and test it gets there
+
     }
 
     private static Matcher<View> childAtPosition(

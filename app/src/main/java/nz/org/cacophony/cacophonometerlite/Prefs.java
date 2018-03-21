@@ -287,6 +287,10 @@ public class Prefs {
         setString(DEVICE_ID, deviceID);
     }
 
+    String getDeviceId(){
+        return getString(DEVICE_ID);
+    }
+
     double getRecordingDuration() {
         return getDouble(RECORDING_DURATION_SECONDS_KEY);
     }
