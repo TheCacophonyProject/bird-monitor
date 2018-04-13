@@ -10,7 +10,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
         RegisterWithTestServer.class,
-        RecordNowTest1.class
+        RecordNowTest1.class,
+        RecordNowTest2.class
 
 
 })

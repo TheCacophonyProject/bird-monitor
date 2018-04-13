@@ -25,6 +25,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -32,32 +33,26 @@ import static org.junit.Assert.assertEquals;
 
 public class RecordNow {
 
+    static Context targetContext;
+    static Prefs prefs;
+    static File recordingsFolder;
+   static File recordingFiles[];
+   static int numberOfRecordingsBeforePressingRecord;
+
+
     public static void test1(ActivityTestRule<MainActivity> mActivityTestRule) {
+        // This test presses the Record Now button and checks that a recording has been saved on the phone
+
         // Set settings to do a short recording and DO not upload to server - can then see if a new recording file is saved on phone
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
-        Context targetContext = getInstrumentation().getTargetContext();
-        Prefs prefs = new Prefs(targetContext);
-
-       // Open settings
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
-
-        // select Use short recordings
-        onView(withId(R.id.cbShortRecordings)).perform(scrollTo(), HelperCode.setChecked(false));
-        onView(withId(R.id.cbShortRecordings)).perform(scrollTo(), click());
+        setUpTest1(mActivityTestRule);
 
         // select Use Offline mode
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(false));
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
 
-
         // Go back to main screen
         onView(withContentDescription("Navigate up")).perform(click());
-
-        // Count the number of recording files before the recording, so can see if an extra one appears
-        File recordingsFolder = Util.getRecordingsFolder(targetContext);
-        int numberOfRecordingsBeforePressingRecord = recordingsFolder.listFiles().length;
 
         // Check record now is enabled and press it, then check it goes to disabled
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
@@ -71,31 +66,84 @@ public class RecordNow {
         int numberOfRecordingsAfterPressingRecord = recordingsFolder.listFiles().length;
        assertEquals(numberOfRecordingsBeforePressingRecord + 1, numberOfRecordingsAfterPressingRecord);
 
-
-
         // Open settings and turn off 'Offline Mode'
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
 
-        // Delete all of the recordings (but always leaves the recording just made - timing issue I suppose)
-        File recordingFiles[] = recordingsFolder.listFiles();
-        for (File file : recordingFiles){
-            file.delete();
-        }
 
-                try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void test2(ActivityTestRule<MainActivity> mActivityTestRule) {
-        // Send recording to server and test it gets there
+        // This test presses the Record Now button and checks that a recording has been saved on the SERVER (or at least the server returns an ID of the recording)
+        setUpTest2(mActivityTestRule);
+
+        // Check record now is enabled and press it, then check it goes to disabled
+        onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
+        onView(withId(R.id.recordNowButton)).perform(click()); // the record button also increments the uploadingIdlingResource
+
+        onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
+
+        long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
+        assertTrue(lastRecordingIdFromServer >-1);
+
+//                try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
+
+
+
+    public static void setUpTest1(ActivityTestRule<MainActivity> mActivityTestRule){
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
+        targetContext = getInstrumentation().getTargetContext();
+        prefs = new Prefs(targetContext);
+        // Count the number of recording files before the recording, so can see if an extra one appears
+        recordingsFolder = Util.getRecordingsFolder(targetContext);
+        recordingFiles = recordingsFolder.listFiles();
+        for (File file : recordingFiles){
+            file.delete();
+        }
+        numberOfRecordingsBeforePressingRecord = recordingsFolder.listFiles().length; // should be zero
+
+        // Open settings
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
+
+        // select Use short recordings
+        onView(withId(R.id.cbShortRecordings)).perform(scrollTo(), HelperCode.setChecked(false));
+        onView(withId(R.id.cbShortRecordings)).perform(scrollTo(), click());
+    }
+
+    public static void setUpTest2(ActivityTestRule<MainActivity> mActivityTestRule){
+
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
+        targetContext = getInstrumentation().getTargetContext();
+        prefs = new Prefs(targetContext);
+
+        recordingsFolder = Util.getRecordingsFolder(targetContext);
+        recordingFiles = recordingsFolder.listFiles();
+        for (File file : recordingFiles){
+            file.delete();
+        }
+        // Open settings
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
+
+        // Make sure Offline mode is NOT selected
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
+
+        prefs.setLastRecordIdReturnedFromServer(-1);
+
+        // Go back to main screen
+        onView(withContentDescription("Navigate up")).perform(click());
+    }
+
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {

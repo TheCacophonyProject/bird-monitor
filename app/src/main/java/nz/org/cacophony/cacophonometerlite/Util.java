@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -20,40 +18,39 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
-//import android.util.Log;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
-import static android.content.Context.ALARM_SERVICE;
 
 import org.json.JSONObject;
-
-//import ch.qos.logback.classic.Level;
-//import ch.qos.logback.classic.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-//import java.lang.reflect.Field;
-//import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-//import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+
+import static android.content.Context.ALARM_SERVICE;
+
+//import android.util.Log;
+//import ch.qos.logback.classic.Level;
+//import ch.qos.logback.classic.Logger;
+//import java.lang.reflect.Field;
+//import java.lang.reflect.Method;
+//import ch.qos.logback.classic.Logger;
 
 
 class Util {
@@ -669,14 +666,7 @@ class Util {
                     return null;
                 }
 
-////                    logger.info("Do NOT have required ROOT access");
-//                    Log.w(TAG, "Do NOT have required ROOT access");
-//                 //   Util.getToast(context, "Root access required to change airplane mode", true).show();
-//                //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
-//                        Util.broadcastAMessage(context,  "can_not_toggle_airplane_mode");
-//                        return null;
 
-            //    }
 
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";

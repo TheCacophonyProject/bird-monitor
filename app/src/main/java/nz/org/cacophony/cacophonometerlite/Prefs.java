@@ -101,6 +101,7 @@ public class Prefs {
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD";
     private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
     private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
+    private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
 
     private static final String  ALWAYS_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
 
@@ -525,6 +526,12 @@ public class Prefs {
     void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
     }
+void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer){
+    setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
+}
 
+    long getLastRecordIdReturnedFromServer() {
+        return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
+    }
 
 }

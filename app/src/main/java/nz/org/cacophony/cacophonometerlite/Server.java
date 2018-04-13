@@ -27,12 +27,15 @@ import info.guardianproject.netcipher.NetCipher;
  */
 
 class Server {
+
     private static final String TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
     //private static final String PING_URL = "/ping";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
+    private static final String OBTAIN_TOKEN_FOR_RETRIEVING_AUDIO_RECORDING_URL = "/api/v1/audiorecordings/:";
+    private static final String AUTHENTICATE_USER_URL = "/authenticate_user/";
 
     static boolean serverConnection = false;
     //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
@@ -293,18 +296,112 @@ class Server {
         return registered;
     }
 
-    static boolean obtainTokenForRetrievingAudioRecording(final Context context){
-        // https://api.cacophony.org.nz/
-        final Prefs prefs = new Prefs(context);
-        String deviceId = prefs.getDeviceId();
-        String obtainTokenUrl = prefs.getServerUrl() + REGISTER_URL;
-        URL cacophonyRegisterEndpoint = null;
-        String registerUrl = prefs.getServerUrl() + REGISTER_URL + deviceId;
+//    static boolean obtainTokenForRetrievingAudioRecording(final Context context){
+//        // https://api.cacophony.org.nz/
+//        final Prefs prefs = new Prefs(context);
+//        String deviceId = prefs.getDeviceId();
+//        String obtainTokenUrl = prefs.getServerUrl() + OBTAIN_TOKEN_FOR_RETRIEVING_AUDIO_RECORDING_URL + deviceId;
+//        URL cacophonyRegisterEndpoint = null;
+//
+//
+//
+//        String signedUserWebToken =
+//
+//        HttpURLConnection myConnection = openObtainTokenForRetrievingAudioRecordingURL(obtainTokenUrl);
+//
+//
+//        return true;
+//
+//    }
+
+//    static String authenticateAUser(final Context context){
+//        final Prefs prefs = new Prefs(context);
+//        String authenticateUserUrl = prefs.getServerUrl() + AUTHENTICATE_USER_URL;
+//        HttpURLConnection conn = getConnForAuthenticateUser(authenticateUserUrl);
+//        try {
+//            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+//
+//           // writer.write(urlParameters);
+//            writer.flush();
+//            Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+//            String jwtTokenString;
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//            while ((jwtTokenString = reader.readLine()) != null) {
+//                System.out.println(jwtTokenString);
+//            }
+//            writer.close();
+//            reader.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
+
+//    private static HttpURLConnection getConnForAuthenticateUser(String serverUrl) {
+//        HttpURLConnection conn = null;
+//        try {
+//            URL url = new URL(serverUrl);
+//            switch (url.getProtocol()) {
+//                case "http":
+//                    conn = (HttpURLConnection) url.openConnection();
+//                    break;
+//                case "https":
+//                    conn = openHttpsURL(url);
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unsupported protocol");
+//            }
+//
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+//            conn.setRequestProperty("Accept", "application/json");
+//               conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//
+//            conn.setRequestProperty("username", "timhot");
+//            conn.setRequestProperty("password", "Pppother1");
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//
+//        return conn;
+//    }
 
 
-        return true;
 
-    }
+//    private static HttpURLConnection openObtainTokenForRetrievingAudioRecordingURL(String serverUrl) {
+//        HttpURLConnection conn = null;
+//        try {
+//            URL url = new URL(serverUrl);
+//            switch (url.getProtocol()) {
+//                case "http":
+//                    conn = (HttpURLConnection) url.openConnection();
+//                    break;
+//                case "https":
+//                    conn = openHttpsURL(url);
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unsupported protocol");
+//            }
+//
+//            conn.setRequestMethod("GET");
+////            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+////            conn.setRequestProperty("Accept", "application/json");
+//         //   conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//
+//            conn.setRequestProperty("authorization", authHeader);
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//
+//        return conn;
+//    }
 
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
@@ -336,6 +433,14 @@ class Server {
                 uploadSuccess = false;
                 for (String line : responseString) {
                     JSONObject joRes = new JSONObject(line);
+                    long recordingId = joRes.getLong("recordingId");
+
+                    prefs.setLastRecordIdReturnedFromServer(recordingId);
+                  long check =  prefs.getLastRecordIdReturnedFromServer();
+                  if (recordingId != check) {
+                        Log.e(TAG, "Error with recording id");
+                    }
+
 
                     if (joRes.getBoolean("success")) {
                         uploadSuccess = true;

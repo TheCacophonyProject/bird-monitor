@@ -9,4 +9,5 @@ import android.support.test.espresso.idling.CountingIdlingResource;
 public interface IdlingResourceForEspressoTesting {
   public   CountingIdlingResource registerIdlingResource = new CountingIdlingResource("REGISTER");
   public   CountingIdlingResource recordNowIdlingResource = new CountingIdlingResource("RECORD_NOW");
+  public   CountingIdlingResource uploadingIdlingResource = new CountingIdlingResource("UPLOADING");
 }

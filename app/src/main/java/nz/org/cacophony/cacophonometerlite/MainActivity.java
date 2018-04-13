@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
         recordNowIdlingResource.increment();
+        uploadingIdlingResource.increment();
 
      //   disableFlightMode();
 //        Util.updateGPSLocation(getApplicationContext());
@@ -324,25 +325,32 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     }else if (message.equalsIgnoreCase("about_to_upload_files")){
                         Util.getToast(getApplicationContext(),"About to upload files", false ).show();
                     }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
+                        uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
                     }else if (message.equalsIgnoreCase("already_uploading")){
+                        uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
                     }else if (message.equalsIgnoreCase("no_permission_to_record")){
                         Util.getToast(getApplicationContext(),"No permission to record", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){
                         Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
                     }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
+                      //  uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
                     }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
+                        uploadingIdlingResource.decrement();
 //                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", true ).show(); // this only very occasionaly displayed
                         Util.getToast(context,"Recording finished but uploading failed", true ).show(); // this didn't fix the problem - stuck :-(
                     }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
+                        uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){
                         Util.getToast(getApplicationContext(),"Recording failed", true ).show();
                     }else if (message.equalsIgnoreCase("not_logged_in")){
+                        uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
                     }else if (message.equalsIgnoreCase("is_already_recording")){
+                        uploadingIdlingResource.decrement();
                         // Will need enable Record Now button
                         recordNowIdlingResource.decrement();
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
@@ -367,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         return recordNowIdlingResource;
     }
 
-
+    public CountingIdlingResource getUploadingIdlingResource() {
+        return uploadingIdlingResource;
+    }
 
     }

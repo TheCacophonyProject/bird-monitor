@@ -56,7 +56,13 @@ public class RegisterWithServer {
                         isDisplayed()));
         appCompatTextView.perform(click());
 
+        // Make sure 'Offline mode' is not checked
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
+        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(),click());
+
+
         // Unregister device (it may or may not be currently registered)
+       // onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
         onView(withId(R.id.setupUnregister)).perform(scrollTo(), click());
 
 
@@ -84,20 +90,7 @@ public class RegisterWithServer {
         onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Registered in group: tim1")));
 
 
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
-//        // now un register and check for toast and text box message
-//        unRegisterButton.perform(scrollTo(), click());
-//
-//        // testing for the following toast failed - I think as the toast was queued behing other toasts
-////        onView(withText("Success - Device is no longer registered")).inRoot(new ToastMatcher())
-////                .check(matches(isDisplayed()));
-//
-//        textViewRegisteredMessage.check(matches(withText("Device not registered.")));
 
 
     }
