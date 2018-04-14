@@ -379,4 +379,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         return uploadingIdlingResource;
     }
 
+    public CountingIdlingResource getToggleAirplaneModeIdlingResource() {
+        return toggleAirplaneModeIdlingResource;
+    }
+
     }

@@ -632,10 +632,6 @@ class Util {
 
 
     static boolean isNetworkConnected(Context context) {
-//        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        boolean isConnected = activeNetwork != null &&
-//                activeNetwork.isConnectedOrConnecting();
-//        return cm.getActiveNetworkInfo() != null;
 
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -771,40 +767,6 @@ private static void executeCommandTim(Context context, String command){
 }
 
 
-//    private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
-//
-//        // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
-//        // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
-//        boolean success = false;
-//        String su = "su";
-//        for (int i = 0; i < 3; i++) {
-////            Log.d(TAG, "executeCommandWithoutWait 2");
-//            // "su" command executed successfully.
-//            if (success) {
-//                // Stop executing alternative su commands below.
-////                Log.d(TAG, "executeCommandWithoutWait 3");
-//                break;
-//            }
-//            if (i == 1) {
-////                Log.d(TAG, "executeCommandWithoutWait 4");
-//                su = "/system/xbin/su";
-//            } else if (i == 2) {
-////                Log.d(TAG, "executeCommandWithoutWait 5");
-//                su = "/system/bin/su";
-//            }
-//            try {
-////                Log.d(TAG, "executeCommandWithoutWait 6");
-//                // execute command
-//                Runtime.getRuntime().exec(new String[]{su, option, command});
-//                success = true;
-//
-//            } catch (IOException e) {
-////                Log.d(TAG, "executeCommandWithoutWait 7");
-//
-//                success = false;
-//            }
-//        }
-//    }
 
     static String getSimStateAsString(int simState) {
         String simStateStr;

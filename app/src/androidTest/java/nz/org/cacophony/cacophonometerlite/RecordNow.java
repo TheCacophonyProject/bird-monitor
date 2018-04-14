@@ -83,16 +83,16 @@ public class RecordNow {
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
         onView(withId(R.id.recordNowButton)).perform(click()); // the record button also increments the uploadingIdlingResource
 
-        onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
+    //    onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
 
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
         assertTrue(lastRecordingIdFromServer >-1);
 
-//                try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+                try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

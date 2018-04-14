@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class ChooseModeTestsCode {
 
     public static void modeTest1(ActivityTestRule<MainActivity> mActivityTestRule) {
-        // Put into Off mode (not method modeTest was written to 'move' from one button to another but test1 just needs to stay on one button so the same button is sent twice
+        // Put into Off mode (not method modeTest was written to 'move' from one button to another but testAirplaneModeTogglingOnRootedAndGreaterThanJellyBean just needs to stay on one button so the same button is sent twice
         modeTest(mActivityTestRule, R.id.offMode, "off", R.id.offMode, "off");
            }
 
