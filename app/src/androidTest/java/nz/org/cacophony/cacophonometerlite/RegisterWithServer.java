@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.content.Context;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -43,8 +44,10 @@ public class RegisterWithServer {
         // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+        HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
 
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        Context targetContext = getInstrumentation().getTargetContext();
+        openActionBarOverflowOrOptionsMenu(targetContext);
 
         ViewInteraction appCompatTextView = onView(
                 allOf(ViewMatchers.withId(R.id.title), withText("Settings"),
@@ -59,6 +62,8 @@ public class RegisterWithServer {
         // Make sure 'Offline mode' is not checked
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(),click());
+
+
 
 
         // Unregister device (it may or may not be currently registered)
@@ -81,14 +86,22 @@ public class RegisterWithServer {
 
 
          // now register
+
+
         onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
         onView(withId(R.id.setupGroupNameInput)).perform(pressImeActionButton());
+
+        // Check still online
+        if (!Util.isNetworkConnected(targetContext)){
+            Util.disableFlightMode(targetContext);
+            HelperCode.hasNetworkConnection(targetContext);
+        }
         onView(withId(R.id.setupRegisterButton)).perform(scrollTo(), click());
 
 
         // check it has registerd
-        onView(withId(R.id.setupRegisterStatus)).check(matches(withText("Registered in group: tim1")));
-
+//        onView(withId(R.id.setupRegisterStatus)).perform(scrollTo()).check(matches(withText("Registered in group: tim1")));
+        onView(allOf(withId(R.id.setupRegisterStatus))).check(matches(withText("Registered in group: tim1")));
 
 
 

@@ -36,19 +36,19 @@ public class ToggleAirplaneModeTest1 {
         }
     }
 
-    @Test
-    public void test3() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN && isRootAvailable()) { // Jelly bean is 4.1
-
-        }
-    }
-
-    @Test
-    public void test4() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN && !isRootAvailable()) { // Jelly bean is 4.1
-
-        }
-    }
+//    @Test
+//    public void test3() {
+//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN && isRootAvailable()) { // Jelly bean is 4.1
+//
+//        }
+//    }
+//
+//    @Test
+//    public void test4() {
+//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN && !isRootAvailable()) { // Jelly bean is 4.1
+//
+//        }
+//    }
 
     public static boolean isRootAvailable(){
         // https://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device

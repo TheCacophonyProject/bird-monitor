@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RunRecordNowTest2 {
+public class RunRecordNowButtonAndSaveOnServer {
 
 
     @Rule
@@ -23,8 +23,8 @@ public class RunRecordNowTest2 {
 
 
     @Test
-    public void pressRecordNow() {
-        RecordNow.test2(mActivityTestRule);
+    public void recordNowButtonAndSaveOnServer() {
+        RecordNow.recordNowButtonAndSaveOnServer(mActivityTestRule);
     }
 
 

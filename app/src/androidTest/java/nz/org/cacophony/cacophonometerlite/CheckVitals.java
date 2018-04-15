@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.widget.TextView;
@@ -9,10 +8,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -24,16 +21,19 @@ public class CheckVitals {
     public static void checkVitals( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer) {
 
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+       // Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+     //   HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
 
 
         // Go into Vitals screen to check it shows that device has registered
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(withText("Vitals")).perform(click()); // withId(R.id.action_vitals) did not work for some unknown reason
+//        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+//        onView(withText("Vitals")).perform(click()); // withId(R.id.action_vitals) did not work for some unknown reason
+
+        HelperCode.openVitalsActivity();
 
         onView(withId(R.id.appPermissionText)).check(matches(withText(R.string.required_permissions_true)));
 
-        onView(withId(R.id.mainRegisteredStatus)).check(matches(withText(R.string.registered_true)));
+        onView(withId(R.id.mainRegisteredStatus)).perform(scrollTo()).check(matches(withText(R.string.registered_true)));
 
         onView(withId(R.id.loggedInText)).check(matches(withText(R.string.logged_in_to_server_true)));
 

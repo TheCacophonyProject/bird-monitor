@@ -23,6 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static nz.org.cacophony.cacophonometerlite.HelperCode.uncheckOfflineMode;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +41,7 @@ public class RecordNow {
    static int numberOfRecordingsBeforePressingRecord;
 
 
-    public static void test1(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void recordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
         // This test presses the Record Now button and checks that a recording has been saved on the phone
 
         // Set settings to do a short recording and DO not upload to server - can then see if a new recording file is saved on phone
@@ -56,7 +57,7 @@ public class RecordNow {
 
         // Check record now is enabled and press it, then check it goes to disabled
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
-        onView(withId(R.id.recordNowButton)).perform(click()); // the record button also increments the recordNowIdlingResource
+        onView(withId(R.id.recordNowButton)).perform(scrollTo()).perform(click()); // the record button also increments the recordNowIdlingResource
 
        // onView(withId(R.id.recordNowButton)).check(matches(not(isEnabled()))); // this didn't work.  I decremented recordNowIdlingResource before enabling button but it seems setEnable button happens too quick (could put in a delay on the main code but that would it would surely be wrong to slow down the app for testing purposes????!!!!
 
@@ -75,15 +76,15 @@ public class RecordNow {
 
     }
 
-    public static void test2(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void recordNowButtonAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
         // This test presses the Record Now button and checks that a recording has been saved on the SERVER (or at least the server returns an ID of the recording)
-        setUpTest2(mActivityTestRule);
+        setUpForRecordNowButtonAndSaveOnServerTest(mActivityTestRule);
 
         // Check record now is enabled and press it, then check it goes to disabled
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
-        onView(withId(R.id.recordNowButton)).perform(click()); // the record button also increments the uploadingIdlingResource
+        onView(withId(R.id.recordNowButton)).perform(scrollTo()).perform(click()); // the record button also increments the uploadingIdlingResource
 
-    //    onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
+        onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
 
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
         assertTrue(lastRecordingIdFromServer >-1);
@@ -101,6 +102,8 @@ public class RecordNow {
     public static void setUpTest1(ActivityTestRule<MainActivity> mActivityTestRule){
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
         targetContext = getInstrumentation().getTargetContext();
+//        Util.disableFlightMode(targetContext);
+        HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
         prefs = new Prefs(targetContext);
         // Count the number of recording files before the recording, so can see if an extra one appears
         recordingsFolder = Util.getRecordingsFolder(targetContext);
@@ -119,10 +122,17 @@ public class RecordNow {
         onView(withId(R.id.cbShortRecordings)).perform(scrollTo(), click());
     }
 
-    public static void setUpTest2(ActivityTestRule<MainActivity> mActivityTestRule){
+    public static void setUpForRecordNowButtonAndSaveOnServerTest(ActivityTestRule<MainActivity> mActivityTestRule){
 
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
         targetContext = getInstrumentation().getTargetContext();
+        //Make sure 'Offline Mode' in Settings is not checked
+        uncheckOfflineMode(targetContext);
+//        Util.disableFlightMode(targetContext);
+////        HelperCode.hasNetworkConnection(targetContext)
+////        assertTrue(HelperCode.hasNetworkConnection(targetContext));
+//        Util.waitForNetworkConnection(targetContext, true);
+//        assertTrue(Util.isNetworkConnected(targetContext));
         prefs = new Prefs(targetContext);
 
         recordingsFolder = Util.getRecordingsFolder(targetContext);
@@ -134,14 +144,14 @@ public class RecordNow {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
 
-        // Make sure Offline mode is NOT selected
-        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
-        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
-
-        prefs.setLastRecordIdReturnedFromServer(-1);
-
-        // Go back to main screen
-        onView(withContentDescription("Navigate up")).perform(click());
+//        // Make sure Offline mode is NOT selected
+//        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
+//        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
+//
+//        prefs.setLastRecordIdReturnedFromServer(-1);
+//
+//        // Go back to main screen
+//        onView(withContentDescription("Navigate up")).perform(click());
     }
 
 

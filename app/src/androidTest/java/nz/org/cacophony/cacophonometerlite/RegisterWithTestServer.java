@@ -24,6 +24,7 @@ public class RegisterWithTestServer {
 
     @Test
     public void registerDeviceWithTestServer() {
+
         RegisterWithServer.registerWithServer(mActivityTestRule, true);
     }
 

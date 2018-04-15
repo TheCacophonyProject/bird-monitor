@@ -13,12 +13,14 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
+        RunAirplaneFlightModeToggleTests.class,
         RunBasicGUITests.class,
         RunSettingsOptions.class,
         RunModeTestsInSpecifiedOrder.class,
       //  RunRegisterDeviceOnProductionServerTests.class,
         RunRegisterDeviceOnTestServerTests.class,
-        RunRecordNowTests.class
+        RunRecordNowTests.class,
+
 })
 public class RunAllTests {
 

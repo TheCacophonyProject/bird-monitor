@@ -7,12 +7,9 @@ import android.util.Log;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,27 +24,28 @@ public class AirplaneModeToggleTest {
         setup(mActivityTestRule);
 
         //Check all works with RootAccess Check box Checked
-        openSettingsActivity();
+        HelperCode.openSettingsActivity();
 
         checkRootAccessCheckBox();
         disableAirplaneMode();
-        assertTrue(hasNetworkConnection());
+        assertTrue(HelperCode.hasNetworkConnection(targetContext));
         enableAirplaneMode();
-        assertTrue(!hasNetworkConnection());
+        assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));
         disableAirplaneMode();
-        assertTrue(hasNetworkConnection());
+        assertTrue(HelperCode.hasNetworkConnection(targetContext));
 
         //Check all works as expected with RootAccess Check box ***NOT*** Checked
         // Have assumed that there is still a network connection (from code above)
         unCheckRootAccessCheckBox();
         enableAirplaneMode();
-        assertTrue(hasNetworkConnection());
+        assertTrue(HelperCode.hasNetworkConnection(targetContext));
         checkRootAccessCheckBox();
         enableAirplaneMode();
-        assertTrue(!hasNetworkConnection());
+       // Util.waitForNetworkConnection(targetContext, false);
+        assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));
         unCheckRootAccessCheckBox();
         disableAirplaneMode();
-        assertTrue(!hasNetworkConnection());
+        assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));
     }
 
     public static void testAirplaneModeTogglingOnNonRootedAndGreaterThanJellyBean(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -57,9 +55,9 @@ public class AirplaneModeToggleTest {
         setup(mActivityTestRule);
 
 
-        openSettingsActivity();
+        HelperCode.openSettingsActivity();
 
-        boolean connectedToInternet = hasNetworkConnection();
+        boolean connectedToInternet = HelperCode.hasNetworkConnection(targetContext);
 
         if (connectedToInternet){
             Log.e("testAirplaneModeTogglingOnNonRootedAndGreaterThanJellyBean", "connectedToInternet");
@@ -94,19 +92,19 @@ public class AirplaneModeToggleTest {
     static void doConnectedToInternetTests(){
         checkRootAccessCheckBox();
         enableAirplaneMode();
-        assertTrue(hasNetworkConnection());
+        assertTrue(HelperCode.hasNetworkConnection(targetContext));
         unCheckRootAccessCheckBox();
         enableAirplaneMode();
-        assertTrue(hasNetworkConnection());
+        assertTrue(HelperCode.hasNetworkConnection(targetContext));
     }
 
     static void doNotConnectedToInternetTests(){
         checkRootAccessCheckBox();
         disableAirplaneMode();
-        assertTrue(!hasNetworkConnection());
+        assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));
         unCheckRootAccessCheckBox();
         disableAirplaneMode();
-        assertTrue(!hasNetworkConnection());
+        assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));// check this one?
     }
 
 
@@ -116,11 +114,11 @@ public class AirplaneModeToggleTest {
         prefs = new Prefs(targetContext);
     }
 
-    public static void openSettingsActivity(){
-        // Open settings
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
-    }
+//    public static void openSettingsActivity(){
+//        // Open settings
+//        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+//        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
+//    }
 
     public static void checkRootAccessCheckBox(){
         onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(false));
@@ -136,9 +134,15 @@ public class AirplaneModeToggleTest {
         Util.disableFlightMode(targetContext);
     }
 
-    public static boolean hasNetworkConnection(){
-        return Util.waitForNetworkConnection(targetContext, true);
-    }
+//    public static boolean hasNetworkConnection(){
+//         Util.waitForNetworkConnection(targetContext, true);
+//        return Util.isNetworkConnected(targetContext);
+//    }
+//
+//    public static boolean doesNOTHaveNetworkConnection(){
+//        Util.waitForNetworkConnection(targetContext, false);
+//        return !Util.isNetworkConnected(targetContext);
+//    }
 
     public static void enableAirplaneMode(){
         Util.enableFlightMode(targetContext);

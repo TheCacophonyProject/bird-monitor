@@ -91,8 +91,8 @@ public class MainActivityCheckButtons {
 
     @Test
     public void mainActivityCheckRecordNowButton() {
-        onView(withId(R.id.recordNowButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
+        onView(withId(R.id.recordNowButton)).perform(scrollTo()).check(matches(isDisplayed()));
+        onView(withId(R.id.recordNowButton)).perform(scrollTo()).check(matches(isEnabled()));
 //        onView(withId(R.id.recordNowButton)).perform(click()).check(matches(not(isEnabled()))); // Won't click it as it may affect later record now test - ie getting an extra recording file that confuses my count
 
     }
