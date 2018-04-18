@@ -46,7 +46,7 @@ public class RecordNow {
 
         // Set settings to do a short recording and DO not upload to server - can then see if a new recording file is saved on phone
 
-        setUpTest1(mActivityTestRule);
+        setUpForRecordNowButtonAndSaveOnPhone(mActivityTestRule);
 
         // select Use Offline mode
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(false));
@@ -63,9 +63,9 @@ public class RecordNow {
 
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // still worth checking that the button is re-enabled.
 
-        // So now check if there is a extra recording
-        int numberOfRecordingsAfterPressingRecord = recordingsFolder.listFiles().length;
-       assertEquals(numberOfRecordingsBeforePressingRecord + 1, numberOfRecordingsAfterPressingRecord);
+//        // So now check if there is a extra recording
+//        int numberOfRecordingsAfterPressingRecord = recordingsFolder.listFiles().length;
+//       assertEquals(numberOfRecordingsBeforePressingRecord + 1, numberOfRecordingsAfterPressingRecord);
 
         // Open settings and turn off 'Offline Mode'
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
@@ -73,6 +73,9 @@ public class RecordNow {
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
 
+        // So now check if there is a extra recording
+        int numberOfRecordingsAfterPressingRecord = recordingsFolder.listFiles().length;
+        assertEquals(numberOfRecordingsBeforePressingRecord + 1, numberOfRecordingsAfterPressingRecord);
 
     }
 
@@ -80,8 +83,8 @@ public class RecordNow {
         // This test presses the Record Now button and checks that a recording has been saved on the SERVER (or at least the server returns an ID of the recording)
         setUpForRecordNowButtonAndSaveOnServerTest(mActivityTestRule);
 
-        // Check record now is enabled and press it, then check it goes to disabled
-        onView(withId(R.id.recordNowButton)).check(matches(isEnabled()));
+        // Check record now is enabled and press it.
+        onView(withId(R.id.recordNowButton)).perform(scrollTo()).check(matches(isEnabled()));
         onView(withId(R.id.recordNowButton)).perform(scrollTo()).perform(click()); // the record button also increments the uploadingIdlingResource
 
         onView(withId(R.id.recordNowButton)).check(matches(isEnabled())); // This test code needs to wait for recording to upload.  The IdlingResource check only works if this test code tries to access GUI component
@@ -99,7 +102,8 @@ public class RecordNow {
 
 
 
-    public static void setUpTest1(ActivityTestRule<MainActivity> mActivityTestRule){
+    public static void setUpForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
         targetContext = getInstrumentation().getTargetContext();
 //        Util.disableFlightMode(targetContext);
@@ -125,6 +129,7 @@ public class RecordNow {
     public static void setUpForRecordNowButtonAndSaveOnServerTest(ActivityTestRule<MainActivity> mActivityTestRule){
 
         Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
+        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
         targetContext = getInstrumentation().getTargetContext();
         //Make sure 'Offline Mode' in Settings is not checked
         uncheckOfflineMode(targetContext);
@@ -140,9 +145,9 @@ public class RecordNow {
         for (File file : recordingFiles){
             file.delete();
         }
-        // Open settings
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
+//        // Open settings
+//        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+//        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
 
 //        // Make sure Offline mode is NOT selected
 //        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));

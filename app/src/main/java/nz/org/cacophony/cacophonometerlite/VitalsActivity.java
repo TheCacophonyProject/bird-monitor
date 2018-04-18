@@ -451,33 +451,7 @@ try {
                         updateGpsDisplay(prefs);
                     }
 
-//                    else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-//                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("recording_started")){
-//                        Util.getToast(getApplicationContext(),"Recording started", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_finished")){
-//                        Util.getToast(getApplicationContext(),"Recording finished", false ).show();
-//                    }else if (message.equalsIgnoreCase("about_to_upload_files")){
-//                        Util.getToast(getApplicationContext(),"About to upload files", false ).show();
-//                    }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
-//                        Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
-//                    }else if (message.equalsIgnoreCase("already_uploading")){
-//                        Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
-//                    }else if (message.equalsIgnoreCase("no_permission_to_record")){
-//                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_failed")){
-//                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
-//                        Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
-//                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
-//                    }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
-//                        Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_failed")){
-//                        Util.getToast(getApplicationContext(),"Recording failed", true ).show();
-//                    }else if (message.equalsIgnoreCase("not_logged_in")){
-//                        Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
-//                    }
+
                 }
 
             }catch (Exception ex){

@@ -891,6 +891,7 @@ private static void executeCommandTim(Context context, String command){
 
 
     static public String canCreateFile(String directory) {
+        // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location
         final String FILE_DIR = directory + File.separator + "hoang.txt";
         File tempFlie = null;
         try {
