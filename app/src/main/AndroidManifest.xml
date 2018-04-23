@@ -43,6 +43,13 @@
         </receiver>
         <receiver android:name=".StartRecordingReceiver" />
 
+
+    <receiver android:name=".LocationReceiver"
+        android:enabled="true"
+        android:exported="true">
+    </receiver>
+
+
         <service android:name=".MainService" />
 
         <activity

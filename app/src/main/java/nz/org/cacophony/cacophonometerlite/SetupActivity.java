@@ -232,7 +232,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             checkBoxPlayWarningSound.setChecked(false);
         }
 
-        boolean alwaysUpdateGPS = prefs.getAlwaysUpdateGPS();
+        boolean alwaysUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbAlwaysUpdateGPS);
         checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
@@ -428,11 +428,11 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
     }
 
 
-    public void onCheckboxAlwaysUpdateLocationClicked(View v) {
+    public void onCheckboxPeriodicallyUpdateLocationClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-            prefs.setAlwaysUpdateGPS(checked);
+            prefs.setPeriodicallyUpdateGPS(checked);
     }
 
 
@@ -591,6 +591,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         super.onPause();
         Util.createCreateAlarms(getApplicationContext());
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 
 

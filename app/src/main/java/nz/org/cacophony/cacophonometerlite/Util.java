@@ -931,7 +931,7 @@ private static void executeCommandTim(Context context, String command){
        }
     }
 
-    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely of a previous alarm)
+    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely on a previous alarm)
        // Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
@@ -947,6 +947,7 @@ private static void executeCommandTim(Context context, String command){
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
 
+
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
 
@@ -961,6 +962,7 @@ public static void createAlarms(Context context, String type, String timeUriPara
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
 
+
         try {
             myIntent.putExtra("type","repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
@@ -973,6 +975,9 @@ public static void createAlarms(Context context, String type, String timeUriPara
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
+
+
+
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
@@ -992,6 +997,8 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         case "walking":
             timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
+
+
             break;
     }
 
@@ -1000,26 +1007,92 @@ public static void createAlarms(Context context, String type, String timeUriPara
     long currentElapsedRealTime = SystemClock.elapsedRealtime();
     long startWindowTime = currentElapsedRealTime + delay;
 
+
 //     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // KitKat is 19
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
          // https://developer.android.com/reference/android/app/AlarmManager.html
-//        long windowInMilliseconds = delay  /10 ;
-     //    long windowInMilliseconds = 1000 * 20; // 20 seconds
-//        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-//         long startWindowTime = currentElapsedRealTime + delay;
-        //alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, windowInMilliseconds, pendingIntent ); // this still allowed batching of alarms
-//         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
     }else{
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() ,
-//                delay, pendingIntent);
-//         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
     }
-//    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
     }
 
+    public static void setUpLocationUpdateAlarm(Context context){
+    Prefs prefs = new Prefs(context);
+    String mode = prefs.getMode();
+
+        switch(mode) {
+            case "off":
+                if (prefs.getPeriodicallyUpdateGPS()){
+                    createLocationUpdateAlarm(context);
+                }else{
+                    deleteLocationUpdateAlarm(context);
+                }
+                break;
+            case "normal":
+                deleteLocationUpdateAlarm(context);
+                break;
+            case "normalOnline":
+                deleteLocationUpdateAlarm(context);
+                break;
+
+            case "walking":
+                   createLocationUpdateAlarm(context);
+                break;
+        }
+
+
+
+    }
+
+    public static void createLocationUpdateAlarm(Context context){
+
+
+        // When in walking mode, also set up alarm for periodically updating location
+        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
+       // locationUpdateIntent.putExtra("callingCode", "tim"); // for debugging
+
+
+//        try {
+//            locationUpdateIntent.putExtra("type","gps");
+//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+//            locationUpdateIntent.setData(timeUri);
+//
+//        }catch (Exception e){
+//            Log.e(TAG, e.getLocalizedMessage());
+//
+//        }
+
+
+        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+
+        Prefs prefs = new Prefs(context);
+        long timeBetweenVeryFrequentRecordingsSeconds = (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+
+        long delayBetweenLocationUpdates = 1000 * timeBetweenVeryFrequentRecordingsSeconds;
+        long currentElapsedRealTime = SystemClock.elapsedRealtime();
+        long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
+            // https://developer.android.com/reference/android/app/AlarmManager.html
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+                   }else{
+                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+               }
+    }
+
+    public static void deleteLocationUpdateAlarm(Context context){
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
+        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
+        alarmManager.cancel(pendingLocationUpdateIntent);
+    }
 
 
 

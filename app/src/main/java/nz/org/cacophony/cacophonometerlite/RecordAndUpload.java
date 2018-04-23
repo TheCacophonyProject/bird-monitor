@@ -273,10 +273,10 @@ try {
     //Prefs prefs = new Prefs(context);
     if (playWarningBeeps) {
 
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 5000);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -317,13 +317,13 @@ try {
 
 
     if (playWarningBeeps) {
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
     }
 
     // Give time for file to be saved. (and play beeps)
     try {
-        Thread.sleep(5 * 1000);
+        Thread.sleep(1 * 1000);
     } catch (InterruptedException ex) {
 //            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());

@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setNormalTimeBetweenRecordingsSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
         prefs.setTimeBetweenVeryFrequentRecordingsSeconds();
+        prefs.setTimeBetweenGPSLocationUpdatesSeconds();
         prefs.setDawnDuskOffsetMinutes();
         prefs.setDawnDuskIncrementMinutes();
         prefs.setLengthOfTwilightSeconds();
@@ -85,7 +86,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Log.w(TAG, "ActionBar ab is null");
         }
 
+        Util.createAlarms(getApplicationContext(), "repeating", "normal");
 
+        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
+        Util.createCreateAlarms(getApplicationContext());
+        Util.setUpLocationUpdateAlarm(getApplicationContext());
 
     } //end onCreate
 
@@ -190,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 
-      //  disableFlightMode();
+
     }
 
 
@@ -289,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         // need to reset alarms as their frequency may have changed.
        // Util.createAlarms(getApplicationContext(), "repeating", "normal", "mainActivityonModeRadioButtonClicked");
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 
 

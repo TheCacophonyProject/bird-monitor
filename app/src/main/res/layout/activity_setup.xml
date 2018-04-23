@@ -156,8 +156,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupGPSLocationStatus"
                 android:checked="false"
-                android:onClick="onCheckboxAlwaysUpdateLocationClicked"
-                android:text="@string/always_try_to_update_location" />
+                android:onClick="onCheckboxPeriodicallyUpdateLocationClicked"
+                android:text="@string/periodically_update_location" />
 
             <Button
                 android:id="@+id/setupUpdateGPSLocationButton"
