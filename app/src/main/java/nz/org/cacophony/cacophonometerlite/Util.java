@@ -1050,23 +1050,8 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
     public static void createLocationUpdateAlarm(Context context){
 
-
         // When in walking mode, also set up alarm for periodically updating location
         Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
-       // locationUpdateIntent.putExtra("callingCode", "tim"); // for debugging
-
-
-//        try {
-//            locationUpdateIntent.putExtra("type","gps");
-//            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-//            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
-//            locationUpdateIntent.setData(timeUri);
-//
-//        }catch (Exception e){
-//            Log.e(TAG, e.getLocalizedMessage());
-//
-//        }
-
 
         PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
 
@@ -1097,8 +1082,7 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
 
     public static void updateGPSLocation(Context context){
-        ////        Log.i(LOG_TAG, "Update location button");
-//     //   logger.debug("Update location button");
+
         Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
@@ -1106,40 +1090,14 @@ public static void createAlarms(Context context, String type, String timeUriPara
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
             return;
-
-            // take here - trying to take user to OS GPS location screen crashes app if phone not rooted (at least on OS 5.1 (22)
-            // According to
-
-
-//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-////            context.startActivity(intent);
-//            context.getApplicationContext().startActivity(intent);
-
-
         }
-
 
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
-         //   logger.error("Unable to get GPS location. Don't have required permissions.");
         }
-
     }
-
-//    public static void playWarningBeeps(Context context, int durationInSeconds){
-//
-//            Util.getToast(context,"Prepare to start recording", false ).show();
-//            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,durationInSeconds * 1000);
-//            try{
-//                Thread.sleep(durationInSeconds * 1000);
-//            }catch (Exception ex){
-//                Log.e(TAG, ex.getLocalizedMessage());
-//            }
-//        }
 
 }
