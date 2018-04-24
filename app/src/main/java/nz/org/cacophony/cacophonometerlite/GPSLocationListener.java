@@ -5,46 +5,32 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-//import android.util.Log;
-//import android.widget.Toast;
 
-import org.slf4j.Logger;
 
-import static android.content.ContentValues.TAG;
-//import org.slf4j.LoggerFactory;
 
 class GPSLocationListener implements LocationListener {
     private static final String TAG = GPSLocationListener.class.getName();
 
     private Context context = null;
-//    private static Logger logger = null;
- //   private Handler handler = null;
+
 
     GPSLocationListener(Context context) {
         this.context = context;
 
-//        logger = Util.getAndConfigureLogger(context, LOG_TAG);
-//        logger.debug("End of GPSLocationListener");
     }
 
-//    GPSLocationListener(Context context, Handler handler) {
-//        this.context = context;
-//        this.handler = handler;
-////        logger = Util.getAndConfigureLogger(context, LOG_TAG);
-////        logger.debug("End of GPSLocationListener");
-//    }
+
 
     public void onLocationChanged(Location location) {
-//        logger.debug("onLocationChanged method entered");
+
        try {
            Log.d(TAG, "onLocationChanged 1");
            double lat = location.getLatitude();
+           lat = Math.round(lat*1000000.0)/1000000.0;
            double lon = location.getLongitude();
-           // Log.i(LOG_TAG, "Latitude: "+lat+", Longitude: "+lon);
-//           logger.info("Latitude: " + lat + ", Longitude: " + lon);
+           lon = Math.round(lon*1000000.0)/1000000.0;
+
            Prefs prefs = new Prefs(context);
            prefs.setLatitude(lat);
            prefs.setLongitude(lon);

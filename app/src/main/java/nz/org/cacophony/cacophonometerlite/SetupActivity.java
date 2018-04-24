@@ -4,17 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-//import android.util.Log;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +26,16 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
+public class SetupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+    // Register with idling couunter
+// https://developer.android.com/training/testing/espresso/idling-resource.html
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
-//public class SetupActivity extends Activity {
-public class SetupActivity extends AppCompatActivity {
     private static final String TAG = SetupActivity.class.getName();
+
+
 
     // Handler status indicators
     private static final int REGISTER_SUCCESS = 1;
@@ -230,7 +232,7 @@ public class SetupActivity extends AppCompatActivity {
             checkBoxPlayWarningSound.setChecked(false);
         }
 
-        boolean alwaysUpdateGPS = prefs.getAlwaysUpdateGPS();
+        boolean alwaysUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbAlwaysUpdateGPS);
         checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
@@ -245,10 +247,12 @@ public class SetupActivity extends AppCompatActivity {
             switch (inputMessage.what) {
                 case REGISTER_SUCCESS:
                     onResume();
+                    registerIdlingResource.decrement();
                     ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
                     mainScrollView.fullScroll(ScrollView.FOCUS_UP);
                     try {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
+
                     }catch (Exception ex){
                         Log.e(TAG, ex.getLocalizedMessage());
 
@@ -258,6 +262,7 @@ public class SetupActivity extends AppCompatActivity {
                     break;
                 case REGISTER_FAIL:
                     onResume();
+                    registerIdlingResource.decrement();
                     Context context = SetupActivity.this;
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
@@ -275,6 +280,7 @@ public class SetupActivity extends AppCompatActivity {
     };
 
     public void registerButton(View v) {
+        registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getApplicationContext());
 
@@ -318,7 +324,10 @@ public class SetupActivity extends AppCompatActivity {
             Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
             return;
         }
+
         register(group, getApplicationContext());
+
+
     }
 
     /**
@@ -381,7 +390,7 @@ public class SetupActivity extends AppCompatActivity {
             return ;
         }
 
-
+//        registerIdlingResource.increment();
         Thread registerThread = new Thread() {
             @Override
             public void run() {
@@ -393,6 +402,7 @@ public class SetupActivity extends AppCompatActivity {
                     message.what = REGISTER_FAIL;
                 }
                 message.sendToTarget();
+//                registerIdlingResource.decrement();
             }
         };
         registerThread.start();
@@ -418,11 +428,11 @@ public class SetupActivity extends AppCompatActivity {
     }
 
 
-    public void onCheckboxAlwaysUpdateLocationClicked(View v) {
+    public void onCheckboxPeriodicallyUpdateLocationClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-            prefs.setAlwaysUpdateGPS(checked);
+            prefs.setPeriodicallyUpdateGPS(checked);
     }
 
 
@@ -581,5 +591,17 @@ public class SetupActivity extends AppCompatActivity {
         super.onPause();
         Util.createCreateAlarms(getApplicationContext());
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
+
+
+    public CountingIdlingResource getIdlingResource() {
+        return registerIdlingResource;
+    }
+
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
+    }
+
+
 }

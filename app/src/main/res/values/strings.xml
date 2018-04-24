@@ -23,7 +23,7 @@
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
     <string name="select_the_following_box_if_the_phone_is_rooted_and_the_app_is_a_system_app">Select the following box if the phone is rooted and the app has been given root permission.</string>
     <string name="phone_is_rooted_and_app_installed_as_system_app">Phone is rooted and app installed has root permission.</string>
-    <string name="always_try_to_update_location">Always try to update the location when a recording is made.</string>
+    <string name="periodically_update_location">Periodically update the location.</string>
 
     <string name="device_not_registered">Device Not Registered</string>
     <string name="to_register_title">To register this device</string>
@@ -52,7 +52,7 @@
     <string name="gps_location_title">GPS Location</string>
     <string name="choose_mode">Choose Mode</string>
     <string name="introduction">To test your device, first choose Settings from the menu (top right). Once that is done you can choose the mode below and you are ready to go.</string>
-    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates for each recording (will use more power).</string>
+    <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates every five minutes (will use more power).</string>
     <string name="choose_mode_message">Select a mode to override the options selected in settings (uses most appropriate values).</string>
     <string name="location_not_set">GPS Location not set.</string>
     <string name="update_gps_location">Update GPS Location</string>

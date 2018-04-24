@@ -4,18 +4,14 @@ package nz.org.cacophony.cacophonometerlite;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
-//import android.util.Log;
 
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
+
+//import android.util.Log;
 
 public class StartRecordingReceiver extends BroadcastReceiver{
 
@@ -91,8 +87,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             String mode = prefs.getMode();
             switch (mode) {
                 case "off":
-                    if (prefs.getAlwaysUpdateGPS()) {
-                        Util.updateGPSLocation(context);
+                    if (prefs.getPeriodicallyUpdateGPS()) {
+                      //  Util.updateGPSLocation(context);
                     }
 
                     break;
@@ -109,7 +105,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                         return; // exit onReceive method
                     }
 
-                    Util.updateGPSLocation(context);
+//                    Util.updateGPSLocation(context);
 
                     break;
             }

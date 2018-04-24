@@ -14,15 +14,12 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-
 import info.guardianproject.netcipher.NetCipher;
-
-import static android.R.attr.password;
 
 
 /**
@@ -30,16 +27,19 @@ import static android.R.attr.password;
  */
 
 class Server {
+
     private static final String TAG = Server.class.getName();
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
     //private static final String PING_URL = "/ping";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
+    private static final String OBTAIN_TOKEN_FOR_RETRIEVING_AUDIO_RECORDING_URL = "/api/v1/audiorecordings/:";
+    private static final String AUTHENTICATE_USER_URL = "/authenticate_user/";
 
     static boolean serverConnection = false;
-  //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
-  //  private static String token = null;
+    //  static boolean loggedIn = false;  // going to use the presence of an uptodate webtoken instead
+    //  private static String token = null;
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -49,7 +49,7 @@ class Server {
 
         try {
             Util.disableFlightMode(context);
-         //   Util.disableFlightModeTestSU(context);
+            //   Util.disableFlightModeTestSU(context);
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
@@ -73,7 +73,7 @@ class Server {
         final Prefs prefs = new Prefs(context);
         try {
             Util.disableFlightMode(context);
-        //    Util.disableFlightModeTestSU(context);
+            //    Util.disableFlightModeTestSU(context);
 
 
             // Now wait for network connection as setFlightMode takes a while
@@ -92,7 +92,7 @@ class Server {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
-             //   loggedIn = false;
+                //   loggedIn = false;
 //                return loggedIn;
                 return false;
             }
@@ -133,24 +133,24 @@ class Server {
 
                     Log.i(TAG, "Successful login.");
 //                        logger.info("Login", "Successful login.");
-               //     loggedIn = true;
-                  //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
+                    //     loggedIn = true;
+                    //  setToken(joRes.getString("token"));  // Save JWT (JSON Web Token) // 8/12/17  Store token in prefs instead, as Server.token is not kept
                     prefs.setToken(joRes.getString("token"));
                     Log.d(TAG, "Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
 
                 } else { // not success
-                //    loggedIn = false;
+                    //    loggedIn = false;
                     //setToken(null);
                     prefs.setToken(null);
                     Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
-            //    loggedIn = false;
+                //    loggedIn = false;
                 Log.e(TAG, "Invalid devicename or password for login.");
-               // setToken(null);
+                // setToken(null);
                 prefs.setToken(null);
             }
 
@@ -163,7 +163,7 @@ class Server {
         }else {
             return true;
         }
-       // return loggedIn;
+        // return loggedIn;
     }
 
     private static HttpURLConnection openURL(String serverUrl) {
@@ -260,7 +260,7 @@ class Server {
                 JSONObject joRes = new JSONObject(responseString);
                 if (joRes.getBoolean("success")) {
                     registered = true;
-                  //  setToken(joRes.getString("token"));
+                    //  setToken(joRes.getString("token"));
                     prefs.setToken(joRes.getString("token"));
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
@@ -296,6 +296,113 @@ class Server {
         return registered;
     }
 
+//    static boolean obtainTokenForRetrievingAudioRecording(final Context context){
+//        // https://api.cacophony.org.nz/
+//        final Prefs prefs = new Prefs(context);
+//        String deviceId = prefs.getDeviceId();
+//        String obtainTokenUrl = prefs.getServerUrl() + OBTAIN_TOKEN_FOR_RETRIEVING_AUDIO_RECORDING_URL + deviceId;
+//        URL cacophonyRegisterEndpoint = null;
+//
+//
+//
+//        String signedUserWebToken =
+//
+//        HttpURLConnection myConnection = openObtainTokenForRetrievingAudioRecordingURL(obtainTokenUrl);
+//
+//
+//        return true;
+//
+//    }
+
+//    static String authenticateAUser(final Context context){
+//        final Prefs prefs = new Prefs(context);
+//        String authenticateUserUrl = prefs.getServerUrl() + AUTHENTICATE_USER_URL;
+//        HttpURLConnection conn = getConnForAuthenticateUser(authenticateUserUrl);
+//        try {
+//            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+//
+//           // writer.write(urlParameters);
+//            writer.flush();
+//            Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+//            String jwtTokenString;
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//
+//            while ((jwtTokenString = reader.readLine()) != null) {
+//                System.out.println(jwtTokenString);
+//            }
+//            writer.close();
+//            reader.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
+
+//    private static HttpURLConnection getConnForAuthenticateUser(String serverUrl) {
+//        HttpURLConnection conn = null;
+//        try {
+//            URL url = new URL(serverUrl);
+//            switch (url.getProtocol()) {
+//                case "http":
+//                    conn = (HttpURLConnection) url.openConnection();
+//                    break;
+//                case "https":
+//                    conn = openHttpsURL(url);
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unsupported protocol");
+//            }
+//
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+//            conn.setRequestProperty("Accept", "application/json");
+//               conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//
+//            conn.setRequestProperty("username", "timhot");
+//            conn.setRequestProperty("password", "Pppother1");
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//
+//        return conn;
+//    }
+
+
+
+//    private static HttpURLConnection openObtainTokenForRetrievingAudioRecordingURL(String serverUrl) {
+//        HttpURLConnection conn = null;
+//        try {
+//            URL url = new URL(serverUrl);
+//            switch (url.getProtocol()) {
+//                case "http":
+//                    conn = (HttpURLConnection) url.openConnection();
+//                    break;
+//                case "https":
+//                    conn = openHttpsURL(url);
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unsupported protocol");
+//            }
+//
+//            conn.setRequestMethod("GET");
+////            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+////            conn.setRequestProperty("Accept", "application/json");
+//         //   conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//
+//            conn.setRequestProperty("authorization", authHeader);
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//
+//        return conn;
+//    }
+
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
@@ -326,6 +433,14 @@ class Server {
                 uploadSuccess = false;
                 for (String line : responseString) {
                     JSONObject joRes = new JSONObject(line);
+                    long recordingId = joRes.getLong("recordingId");
+
+                    prefs.setLastRecordIdReturnedFromServer(recordingId);
+                  long check =  prefs.getLastRecordIdReturnedFromServer();
+                  if (recordingId != check) {
+                        Log.e(TAG, "Error with recording id");
+                    }
+
 
                     if (joRes.getBoolean("success")) {
                         uploadSuccess = true;
@@ -343,7 +458,7 @@ class Server {
         }finally {
             uploading = false;
         }
-       // uploading = false;
+        // uploading = false;
         return uploadSuccess;
     }
 

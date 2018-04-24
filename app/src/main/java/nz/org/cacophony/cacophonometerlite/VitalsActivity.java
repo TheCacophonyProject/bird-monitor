@@ -8,13 +8,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-//import android.util.Log;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +29,14 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VitalsActivity extends AppCompatActivity {
+
+
+public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
+    // Register with idling couunter
+// https://developer.android.com/training/testing/espresso/idling-resource.html
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+    // https://www.youtube.com/watch?v=uCtzH0Rz5XU
+
     private static final String TAG = VitalsActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
 
@@ -444,33 +451,7 @@ try {
                         updateGpsDisplay(prefs);
                     }
 
-//                    else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-//                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("recording_started")){
-//                        Util.getToast(getApplicationContext(),"Recording started", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_finished")){
-//                        Util.getToast(getApplicationContext(),"Recording finished", false ).show();
-//                    }else if (message.equalsIgnoreCase("about_to_upload_files")){
-//                        Util.getToast(getApplicationContext(),"About to upload files", false ).show();
-//                    }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
-//                        Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
-//                    }else if (message.equalsIgnoreCase("already_uploading")){
-//                        Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
-//                    }else if (message.equalsIgnoreCase("no_permission_to_record")){
-//                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_failed")){
-//                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
-//                        Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
-//                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", false ).show();
-//                    }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
-//                        Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
-//                    }else if (message.equalsIgnoreCase("recording_failed")){
-//                        Util.getToast(getApplicationContext(),"Recording failed", true ).show();
-//                    }else if (message.equalsIgnoreCase("not_logged_in")){
-//                        Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
-//                    }
+
                 }
 
             }catch (Exception ex){
@@ -479,6 +460,14 @@ try {
             }
         }
     };
+    public CountingIdlingResource getRegisterIdlingResource() {
+        return registerIdlingResource;
+    }
+
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
+    }
+
 
 }
 

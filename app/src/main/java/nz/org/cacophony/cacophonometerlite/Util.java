@@ -632,10 +632,6 @@ class Util {
 
 
     static boolean isNetworkConnected(Context context) {
-//        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        boolean isConnected = activeNetwork != null &&
-//                activeNetwork.isConnectedOrConnecting();
-//        return cm.getActiveNetworkInfo() != null;
 
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -666,14 +662,7 @@ class Util {
                     return null;
                 }
 
-////                    logger.info("Do NOT have required ROOT access");
-//                    Log.w(TAG, "Do NOT have required ROOT access");
-//                 //   Util.getToast(context, "Root access required to change airplane mode", true).show();
-//                //    Util.getToast(context, "To save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – or see the website for more details. ", false).show();
-//                        Util.broadcastAMessage(context,  "can_not_toggle_airplane_mode");
-//                        return null;
 
-            //    }
 
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
@@ -778,40 +767,6 @@ private static void executeCommandTim(Context context, String command){
 }
 
 
-//    private static void executeCommandWithoutWait(@SuppressWarnings("SameParameterValue") String option, String command) {
-//
-//        // http://muzso.hu/2014/04/02/how-to-programmatically-enable-and-disable-airplane-flight-mode-on-android-4.2
-//        // http://stackoverflow.com/questions/23537467/enable-airplane-mode-on-all-api-levels-programmatically-android
-//        boolean success = false;
-//        String su = "su";
-//        for (int i = 0; i < 3; i++) {
-////            Log.d(TAG, "executeCommandWithoutWait 2");
-//            // "su" command executed successfully.
-//            if (success) {
-//                // Stop executing alternative su commands below.
-////                Log.d(TAG, "executeCommandWithoutWait 3");
-//                break;
-//            }
-//            if (i == 1) {
-////                Log.d(TAG, "executeCommandWithoutWait 4");
-//                su = "/system/xbin/su";
-//            } else if (i == 2) {
-////                Log.d(TAG, "executeCommandWithoutWait 5");
-//                su = "/system/bin/su";
-//            }
-//            try {
-////                Log.d(TAG, "executeCommandWithoutWait 6");
-//                // execute command
-//                Runtime.getRuntime().exec(new String[]{su, option, command});
-//                success = true;
-//
-//            } catch (IOException e) {
-////                Log.d(TAG, "executeCommandWithoutWait 7");
-//
-//                success = false;
-//            }
-//        }
-//    }
 
     static String getSimStateAsString(int simState) {
         String simStateStr;
@@ -936,6 +891,7 @@ private static void executeCommandTim(Context context, String command){
 
 
     static public String canCreateFile(String directory) {
+        // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location
         final String FILE_DIR = directory + File.separator + "hoang.txt";
         File tempFlie = null;
         try {
@@ -975,7 +931,7 @@ private static void executeCommandTim(Context context, String command){
        }
     }
 
-    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely of a previous alarm)
+    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely on a previous alarm)
        // Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
@@ -991,6 +947,7 @@ private static void executeCommandTim(Context context, String command){
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
 
+
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
 
@@ -1005,6 +962,7 @@ public static void createAlarms(Context context, String type, String timeUriPara
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
 
+
         try {
             myIntent.putExtra("type","repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
@@ -1017,6 +975,9 @@ public static void createAlarms(Context context, String type, String timeUriPara
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
+
+
+
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
@@ -1036,6 +997,8 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         case "walking":
             timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
+
+
             break;
     }
 
@@ -1044,32 +1007,82 @@ public static void createAlarms(Context context, String type, String timeUriPara
     long currentElapsedRealTime = SystemClock.elapsedRealtime();
     long startWindowTime = currentElapsedRealTime + delay;
 
+
 //     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // KitKat is 19
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
          // https://developer.android.com/reference/android/app/AlarmManager.html
-//        long windowInMilliseconds = delay  /10 ;
-     //    long windowInMilliseconds = 1000 * 20; // 20 seconds
-//        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-//         long startWindowTime = currentElapsedRealTime + delay;
-        //alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, windowInMilliseconds, pendingIntent ); // this still allowed batching of alarms
-//         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
     }else{
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() ,
-//                delay, pendingIntent);
-//         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
     }
-//    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
     }
 
+    public static void setUpLocationUpdateAlarm(Context context){
+    Prefs prefs = new Prefs(context);
+    String mode = prefs.getMode();
+
+        switch(mode) {
+            case "off":
+                if (prefs.getPeriodicallyUpdateGPS()){
+                    createLocationUpdateAlarm(context);
+                }else{
+                    deleteLocationUpdateAlarm(context);
+                }
+                break;
+            case "normal":
+                deleteLocationUpdateAlarm(context);
+                break;
+            case "normalOnline":
+                deleteLocationUpdateAlarm(context);
+                break;
+
+            case "walking":
+                   createLocationUpdateAlarm(context);
+                break;
+        }
+
+
+
+    }
+
+    public static void createLocationUpdateAlarm(Context context){
+
+        // When in walking mode, also set up alarm for periodically updating location
+        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
+
+        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+
+        Prefs prefs = new Prefs(context);
+        long timeBetweenVeryFrequentRecordingsSeconds = (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+
+        long delayBetweenLocationUpdates = 1000 * timeBetweenVeryFrequentRecordingsSeconds;
+        long currentElapsedRealTime = SystemClock.elapsedRealtime();
+        long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
+            // https://developer.android.com/reference/android/app/AlarmManager.html
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+                   }else{
+                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+               }
+    }
+
+    public static void deleteLocationUpdateAlarm(Context context){
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
+        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
+        alarmManager.cancel(pendingLocationUpdateIntent);
+    }
 
 
 
     public static void updateGPSLocation(Context context){
-        ////        Log.i(LOG_TAG, "Update location button");
-//     //   logger.debug("Update location button");
+
         Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
@@ -1077,40 +1090,14 @@ public static void createAlarms(Context context, String type, String timeUriPara
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
             return;
-
-            // take here - trying to take user to OS GPS location screen crashes app if phone not rooted (at least on OS 5.1 (22)
-            // According to
-
-
-//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-////            context.startActivity(intent);
-//            context.getApplicationContext().startActivity(intent);
-
-
         }
-
 
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Unable to get GPS location. Don't have required permissions.");
-         //   logger.error("Unable to get GPS location. Don't have required permissions.");
         }
-
     }
-
-//    public static void playWarningBeeps(Context context, int durationInSeconds){
-//
-//            Util.getToast(context,"Prepare to start recording", false ).show();
-//            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY,durationInSeconds * 1000);
-//            try{
-//                Thread.sleep(durationInSeconds * 1000);
-//            }catch (Exception ex){
-//                Log.e(TAG, ex.getLocalizedMessage());
-//            }
-//        }
 
 }

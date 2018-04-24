@@ -2,29 +2,18 @@ package nz.org.cacophony.cacophonometerlite;
 
 
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import android.media.AudioManager;
 import android.media.ToneGenerator;
-import android.net.Uri;
-
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.util.Log;
-//import android.util.Log;
 
-
-//import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-
-import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.POWER_SERVICE;
+
+//import android.util.Log;
+//import org.slf4j.Logger;
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 //import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
@@ -41,6 +30,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent)
     {
         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
 
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
@@ -52,11 +42,13 @@ public class BootReceiver extends BroadcastReceiver {
 try {
 
     Util.createAlarms(context, "repeating", "normal");
+
     DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
     Util.createCreateAlarms(context);
+    Util.setUpLocationUpdateAlarm(context);
 
     // make a sound to show that alarms have been created.
-    toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
+    //toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
     Util.enableFlightMode(context);
 

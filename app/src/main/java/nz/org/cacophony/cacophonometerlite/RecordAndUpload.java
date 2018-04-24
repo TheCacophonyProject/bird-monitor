@@ -1,34 +1,31 @@
 package nz.org.cacophony.cacophonometerlite;
-import android.Manifest;
+
 import android.app.Service;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.RadioButton;
-//import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-//import ch.qos.logback.classic.Logger;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
+//import android.util.Log;
+//import ch.qos.logback.classic.Logger;
 
 //import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
@@ -37,7 +34,7 @@ import java.util.TimeZone;
  * This is where the action is - however the code starts, it gets here to do a recording and then send recording to server
  */
 
-class RecordAndUpload {
+class RecordAndUpload implements IdlingResourceForEspressoTesting{
     private static final String TAG = RecordAndUpload.class.getName();
 //    private static Logger logger = null;
     public static boolean isRecording = false;
@@ -166,7 +163,9 @@ if (isRecording){
 
 //            if (!prefs.getOffLineMode()) { // don't upload if in offline mode
      if (!offlineMode) { // don't upload if in offline mode
+         uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
+         uploadingIdlingResource.decrement();
                 if (uploadedFilesSuccessfully) {
                     returnValue = "recorded and uploaded successfully";
                     prefs.setDateTimeLastUpload(now);
@@ -190,6 +189,7 @@ if (isRecording){
     public static boolean makeRecording(Context context,  long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
 try {
+    Prefs prefs = new Prefs(context);
     // Get recording file.
     Date date = new Date(System.currentTimeMillis());
     // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
@@ -209,22 +209,42 @@ try {
     String fileName = fileFormat.format(date);
 
     if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
-        fileName += " relativeToDawn " + relativeToDawn;
+        fileName += " rToDawn " + relativeToDawn;
     } else {
-        fileName += " relativeToDusk " + relativeToDusk;
+        fileName += " rToDusk " + relativeToDusk;
     }
 
     if (Util.isAirplaneModeOn(context)) {
-        fileName += " airplaneModeOn";
+        fileName += " apModeOn";
     } else {
-        fileName += " airplaneModeOff";
+        fileName += " apModeOff";
     }
+
+//    if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
+//        fileName += " relativeToDawn " + relativeToDawn;
+//    } else {
+//        fileName += " relativeToDusk " + relativeToDusk;
+//    }
+//
+//    if (Util.isAirplaneModeOn(context)) {
+//        fileName += " airplaneModeOn";
+//    } else {
+//        fileName += " airplaneModeOff";
+//    }
 
     String batteryStatus = Util.getBatteryStatus(context);
     fileName += " " + batteryStatus;
     double batteryLevel = Util.getBatteryLevel(context);
     fileName += " " + batteryLevel;
     fileName += " " + recordTimeSeconds;
+
+    NumberFormat numberFormat  = new DecimalFormat("#.000000");
+    double lat = prefs.getLatitude();
+    double lon = prefs.getLongitude();
+    String latStr = numberFormat.format(lat);
+    String lonStr = numberFormat.format(lon);
+    fileName += " " + latStr;
+    fileName += " " + lonStr;
     fileName += ".3gp";
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
@@ -253,10 +273,10 @@ try {
     //Prefs prefs = new Prefs(context);
     if (playWarningBeeps) {
 
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 5000);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -297,13 +317,13 @@ try {
 
 
     if (playWarningBeeps) {
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
     }
 
     // Give time for file to be saved. (and play beeps)
     try {
-        Thread.sleep(5 * 1000);
+        Thread.sleep(1 * 1000);
     } catch (InterruptedException ex) {
 //            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
@@ -431,7 +451,8 @@ try {
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
 
-        if (fileNameParts.length != 14) {
+     //   if (fileNameParts.length != 14) {
+        if (fileNameParts.length != 18) {
           if (aFile.delete()){
 //              Log.i(LOG_TAG, "deleted file: " + fileName);
 //              logger.error("deleted file: " + fileName);
@@ -454,8 +475,11 @@ try {
         batteryLevel += ".";
         batteryLevel += fileNameParts[11];
         String recordTimeSeconds = fileNameParts[12];
+        String latStr = fileNameParts[13] + "." + fileNameParts[14];
+        String lonStr = fileNameParts[15] + "." + fileNameParts[16];
         boolean airplaneModeOn = false;
-        if (airplaneMode.equalsIgnoreCase("airplaneModeOn")) {
+//        if (airplaneMode.equalsIgnoreCase("airplaneModeOn")) {
+        if (airplaneMode.equalsIgnoreCase("apModeOn")) {
             airplaneModeOn = true;
         }
 
@@ -481,8 +505,13 @@ try {
         try {
 
             JSONArray location = new JSONArray();
-            location.put(prefs.getLatitude());
-            location.put(prefs.getLongitude());
+//            location.put(prefs.getLatitude());
+//            location.put(prefs.getLongitude());
+            location.put(Double.parseDouble(latStr));
+            location.put(Double.parseDouble(lonStr));
+
+
+
             audioRecording.put("location", location);
             audioRecording.put("duration", recordTimeSeconds);
             audioRecording.put("localFilePath", localFilePath);
@@ -493,24 +522,26 @@ try {
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
 
-            if (relativeTo.equalsIgnoreCase("relativeToDawn")) {
+            if (relativeTo.equalsIgnoreCase("rToDawn")) {
                 audioRecording.put("relativeToDawn", relativeToOffset);
             }
-            if (relativeTo.equalsIgnoreCase("relativeToDusk")) {
+            if (relativeTo.equalsIgnoreCase("rToDusk")) {
                 audioRecording.put("relativeToDusk", relativeToOffset);
             }
+
+//            if (relativeTo.equalsIgnoreCase("relativeToDawn")) {
+//                audioRecording.put("relativeToDawn", relativeToOffset);
+//            }
+//            if (relativeTo.equalsIgnoreCase("relativeToDusk")) {
+//                audioRecording.put("relativeToDusk", relativeToOffset);
+//            }
             String versionName = BuildConfig.VERSION_NAME;
             audioRecording.put("version", versionName);
 
 
             JSONObject additionalMetadata = new JSONObject();
 
-//            String localLog = Util.getAllLocalLogEntries(context);
-//
-//            additionalMetadata.put("Local Log ", localLog);
-//
-//            String logLevel = ((ch.qos.logback.classic.Logger)logger).getLevel().levelStr;
-//            additionalMetadata.put("Log level is ", logLevel);
+
 
             additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);
             additionalMetadata.put("App has root access", prefs.getHasRootAccess());

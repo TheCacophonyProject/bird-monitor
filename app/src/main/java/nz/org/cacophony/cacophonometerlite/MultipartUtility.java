@@ -1,11 +1,7 @@
 package nz.org.cacophony.cacophonometerlite;
 // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
 
-import android.content.Context;
-import android.os.Build;
-
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -53,7 +49,7 @@ public class MultipartUtility {
 
         outputStream = conn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
-                    true);
+                true);
     }
 
     /**

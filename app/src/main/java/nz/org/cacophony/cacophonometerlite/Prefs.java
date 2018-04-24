@@ -11,7 +11,7 @@ import android.util.Log;
  * Expanded to keep all settings in one place
  */
 
-class Prefs {
+public class Prefs {
 
    // private static boolean testing = true;
    // private static boolean walkingPeriodicRecordingsEnabled = false;
@@ -40,15 +40,20 @@ class Prefs {
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
    private static final double RECORDING_DURATION_SECONDS = 60;
+//private static final double RECORDING_DURATION_SECONDS = 1; // for testing Walking mode
 
     private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
-
+//private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 60*3;  // 2 minutes for testing walking mode
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
+
+    private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
+    private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
+  //  private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 60; // 1 minute for testing
 
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
@@ -101,13 +106,14 @@ class Prefs {
     private static final String DATE_TIME_LAST_UPLOAD_KEY = "DATE_TIME_LAST_UPLOAD";
     private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
     private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
+    private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
 
-    private static final String  ALWAYS_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
+    private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
 
     private static final String  MODE_KEY = "MODE";
 //    private static Logger logger = null;
 
-    Prefs(Context context) {
+    public Prefs(Context context) {
         this.context = context;
 
     }
@@ -223,7 +229,7 @@ class Prefs {
         setString(PASSWORD_KEY, password);
     }
 
-    String getDeviceName() {
+    public String getDeviceName() {
         return getString(DEVICE_NAME_KEY);
     }
 
@@ -287,6 +293,10 @@ class Prefs {
         setString(DEVICE_ID, deviceID);
     }
 
+    String getDeviceId(){
+        return getString(DEVICE_ID);
+    }
+
     double getRecordingDuration() {
         return getDouble(RECORDING_DURATION_SECONDS_KEY);
     }
@@ -320,6 +330,14 @@ class Prefs {
 
     void setTimeBetweenVeryFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS);
+    }
+
+    double getTimeBetweenVeryFrequentRecordingsSeconds() {
+        return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
+    }
+
+    void setTimeBetweenGPSLocationUpdatesSeconds() {
+        setDouble(TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY, TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS);
     }
 
     void setTimeBetweenFrequentRecordingsSeconds() {
@@ -406,8 +424,8 @@ class Prefs {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
-    boolean getAlwaysUpdateGPS() {
-        return getBoolean(ALWAYS_UPDATE_GPS_KEY);
+    boolean getPeriodicallyUpdateGPS() {
+        return getBoolean(PERIODICALLY_UPDATE_GPS_KEY);
     }
 
     boolean getUseTestServer() {
@@ -448,8 +466,8 @@ class Prefs {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
 
-    void setAlwaysUpdateGPS(boolean alwaysUpdateGPS) {
-        setBoolean(ALWAYS_UPDATE_GPS_KEY, alwaysUpdateGPS);
+    void setPeriodicallyUpdateGPS(boolean PeriodicallyUpdateGPS) {
+        setBoolean(PERIODICALLY_UPDATE_GPS_KEY, PeriodicallyUpdateGPS);
     }
 
     void setUseTestServer(boolean useTestServer) {
@@ -521,6 +539,12 @@ class Prefs {
     void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
     }
+void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer){
+    setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
+}
 
+    long getLastRecordIdReturnedFromServer() {
+        return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
+    }
 
 }
