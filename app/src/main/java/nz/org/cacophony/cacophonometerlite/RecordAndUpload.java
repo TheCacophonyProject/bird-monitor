@@ -1,7 +1,9 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
@@ -189,6 +191,8 @@ if (isRecording){
     public static boolean makeRecording(Context context,  long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
 try {
+
+
     Prefs prefs = new Prefs(context);
     // Get recording file.
     Date date = new Date(System.currentTimeMillis());

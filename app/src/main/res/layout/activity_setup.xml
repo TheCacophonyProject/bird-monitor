@@ -151,7 +151,7 @@
                 android:layout_marginTop="5dp" />
 
             <CheckBox
-                android:id="@+id/cbAlwaysUpdateGPS"
+                android:id="@+id/cbPeriodicallyUpdateGPS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/setupGPSLocationStatus"
@@ -164,7 +164,7 @@
                 android:text="@string/update_gps_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/cbAlwaysUpdateGPS"
+                android:layout_below="@id/cbPeriodicallyUpdateGPS"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:onClick="updateGPSLocationButton" />

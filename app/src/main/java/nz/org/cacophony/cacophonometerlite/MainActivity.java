@@ -1,11 +1,16 @@
 package nz.org.cacophony.cacophonometerlite;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.test.espresso.idling.CountingIdlingResource;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +22,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+//import android.support.design.widget.Snackbar;
 
 
-public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting, ActivityCompat.OnRequestPermissionsResultCallback {
     // Register with idling couunter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
 // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
@@ -28,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     private static final String TAG = MainActivity.class.getName();
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
-
+    private static final int PERMISSION_REQUEST_MIC = 0;
 
     @Override
     protected void onStart() {
@@ -92,8 +98,50 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
+        // From Android 6.0 need to ask for permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkRecordPermission();
+        }
+
     } //end onCreate
 
+private  void checkRecordPermission(){
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
+        requestRecordPermission();
+    }
+}
+
+    private void requestRecordPermission() {
+        // Permission has not been granted and must be requested.
+
+           // Snackbar.make(mLayout, R.string.camera_unavailable, Snackbar.LENGTH_SHORT).show();
+            // Request the permission. The result will be received in onRequestPermissionResult().
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_MIC);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == PERMISSION_REQUEST_MIC) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start camera preview Activity.
+//                Snackbar.make(mLayout, R.string.camera_permission_granted,
+//                        Snackbar.LENGTH_SHORT)
+//                        .show();
+               // startCamera();
+            } else {
+                // Permission request was denied.
+//                Snackbar.make(mLayout, R.string.camera_permission_denied,
+//                        Snackbar.LENGTH_SHORT)
+//                        .show();
+            }
+        }
+        // END_INCLUDE(onRequestPermissionsResult)
+    }
 
 
     @Override

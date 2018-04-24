@@ -233,7 +233,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
 
         boolean alwaysUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbAlwaysUpdateGPS);
+        final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbPeriodicallyUpdateGPS);
         checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
         IntentFilter iff = new IntentFilter("event");
