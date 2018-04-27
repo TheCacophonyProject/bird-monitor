@@ -8,13 +8,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Calendar;
 import java.util.TimeZone;
+
 import static android.content.Context.ALARM_SERVICE;
+
 //import ch.qos.logback.classic.Logger;
-import org.slf4j.Logger;
 
 /**
  * Created by User on 07-Mar-17.
@@ -89,35 +90,24 @@ class DawnDuskAlarms {
             if (nowToday.getTimeInMillis() < dawnTodayCalendar.getTimeInMillis()) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
-                }else {
-                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis() - windowInMilliseconds,dawnTodayCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
-
-                 //   alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
+//                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis() , pendingIntent );
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis() , pendingIntent );
                 }
-             //   alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTodayCalendar.getTimeInMillis(), pendingIntent);
-
             } else {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
-                }else{
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
-//                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis() - windowInMilliseconds,dawnTomorrowCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
-
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);;
                 }
-
-                // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
             }
-//            Log.d(TAG, "Dawn alarm set with offset of " + currentOffsetSeconds + " seconds");
-
             currentOffsetSeconds +=  (dawnDuskIncrementMinutes * 60);
         }
-
     }
-
-
-
 
 
     static void configureDuskAlarmsUsingLoop(Context context) {
@@ -153,25 +143,19 @@ class DawnDuskAlarms {
             if (nowToday.getTimeInMillis() < duskTodayCalendar.getTimeInMillis()) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
-                }else{
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
-                   // alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis() - windowInMilliseconds,duskTodayCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
-
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, duskTodayCalendar.getTimeInMillis(), pendingIntent);
                 }
-
-                //  System.out.println("today dawnMinus40Minutes " + dawnTodayCalendar.getTime());
             } else {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
-                }else{
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
-                  //  alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis() - windowInMilliseconds,duskTomorrowCalendar.getTimeInMillis() + windowInMilliseconds, pendingIntent );
-                 //   alarmManager.setWindow(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis() , windowInMilliseconds, pendingIntent );
-
+                }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, duskTomorrowCalendar.getTimeInMillis(), pendingIntent);
                 }
-
-                // System.out.println("tomorrow dawnMinus40Minutes " + dawnTomorrowCalendar.getTime());
             }
             Log.d(TAG, "Dusk alarm set with offset of " + currentOffsetSeconds + " seconds");
 

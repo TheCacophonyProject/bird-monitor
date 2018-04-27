@@ -83,11 +83,15 @@ class Util {
             }else{
                 boolean storagePermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
                 boolean microphonePermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
                 boolean locationPermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
                 permissionForRecording = (storagePermission && microphonePermission && locationPermission);
+
+
             }
 
         }catch (Exception ex){
@@ -1008,14 +1012,25 @@ public static void createAlarms(Context context, String type, String timeUriPara
     long startWindowTime = currentElapsedRealTime + delay;
 
 
-//     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { // KitKat is 19
+//   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
+//         // https://developer.android.com/reference/android/app/AlarmManager.html
+//
+//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+//
+//    }else{
+//        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+//    }
+
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-         // https://developer.android.com/reference/android/app/AlarmManager.html
+        // https://developer.android.com/reference/android/app/AlarmManager.html
 
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
-    }else{
+    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+        alarmManager.setExactAndAllowWhileIdle (AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+
     }
 
     }
@@ -1064,12 +1079,21 @@ public static void createAlarms(Context context, String type, String timeUriPara
         long currentElapsedRealTime = SystemClock.elapsedRealtime();
         long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
 
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
+//            // https://developer.android.com/reference/android/app/AlarmManager.html
+//                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+//                   }else{
+//                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+//               }
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
             // https://developer.android.com/reference/android/app/AlarmManager.html
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-                   }else{
-                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-               }
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
+        }
     }
 
     public static void deleteLocationUpdateAlarm(Context context){

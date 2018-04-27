@@ -1,14 +1,10 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -35,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
     private static final int PERMISSION_REQUEST_MIC = 0;
+    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 0;
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
 
     @Override
     protected void onStart() {
@@ -98,50 +96,69 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
-        // From Android 6.0 need to ask for permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkRecordPermission();
-        }
+//// From Android 6.0 need to ask for permission
+//        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//        checkAndroidPermissions();
+//    }
 
     } //end onCreate
 
-private  void checkRecordPermission(){
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
-        requestRecordPermission();
-    }
-}
+//private  void checkAndroidPermissions(){
+//
+//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+//        requestWriteExternalStoragePermission();
+//    }
+//
+//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
+//        requestRecordPermission();
+//    }
+//
+//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+//        requestAccessFineLocationPermission();
+//    }
+//
+//
+//}
 
-    private void requestRecordPermission() {
-        // Permission has not been granted and must be requested.
+//   private void requestRecordPermission() {
+//            // Permission has not been granted and must be requested.
+//            // Request the permission. The result will be received in onRequestPermissionResult().
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_MIC);
+//    }
+//
+//    private void requestAccessFineLocationPermission() {
+//        // Permission has not been granted and must be requested.
+//        // Request the permission. The result will be received in onRequestPermissionResult().
+//        ActivityCompat.requestPermissions(this,
+//                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+//    }
+//
+//    private void requestWriteExternalStoragePermission() {
+//        // Permission has not been granted and must be requested.
+//        // Request the permission. The result will be received in onRequestPermissionResult().
+//        ActivityCompat.requestPermissions(this,
+//                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
+//    }
 
-           // Snackbar.make(mLayout, R.string.camera_unavailable, Snackbar.LENGTH_SHORT).show();
-            // Request the permission. The result will be received in onRequestPermissionResult().
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_MIC);
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_REQUEST_MIC) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start camera preview Activity.
-//                Snackbar.make(mLayout, R.string.camera_permission_granted,
-//                        Snackbar.LENGTH_SHORT)
-//                        .show();
-               // startCamera();
-            } else {
-                // Permission request was denied.
-//                Snackbar.make(mLayout, R.string.camera_permission_denied,
-//                        Snackbar.LENGTH_SHORT)
-//                        .show();
-            }
-        }
-        // END_INCLUDE(onRequestPermissionsResult)
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+//                                           @NonNull int[] grantResults) {
+//    // not going to give user feedback, but left code here from example in case I change my mind
+//
+//        // BEGIN_INCLUDE(onRequestPermissionsResult)
+//        if (requestCode == PERMISSION_REQUEST_MIC) {
+//            // Request for camera permission.
+//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission has been granted. Start camera preview Activity.
+//
+//            } else {
+//                // Permission request was denied.
+//
+//            }
+//        }
+//        // END_INCLUDE(onRequestPermissionsResult)
+//    }
 
 
     @Override
@@ -293,10 +310,10 @@ private  void checkRecordPermission(){
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
         recordNowIdlingResource.increment();
-//        uploadingIdlingResource.increment();
-
-     //   disableFlightMode();
-//        Util.updateGPSLocation(getApplicationContext());
+//// From Android 6.0 need to ask for permission
+//        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            checkAndroidPermissions();
+//        }
         Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
 
         ((Button) findViewById(R.id.recordNowButton)).setEnabled(false);
@@ -369,7 +386,6 @@ private  void checkRecordPermission(){
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
                     }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
                         recordNowIdlingResource.decrement();
 
@@ -386,9 +402,11 @@ private  void checkRecordPermission(){
                       //  uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
                     }else if (message.equalsIgnoreCase("no_permission_to_record")){
-                        Util.getToast(getApplicationContext(),"No permission to record", false ).show();
-                    }else if (message.equalsIgnoreCase("recording_failed")){
-                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
+                        Util.getToast(getApplicationContext(),"Can not record.  Please go to Android settings and enable all required permissions for this app", true ).show();
+                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        recordNowIdlingResource.decrement();
+//                    }else if (message.equalsIgnoreCase("recording_failed")){
+//                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
                     }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
                       //  uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
@@ -401,6 +419,7 @@ private  void checkRecordPermission(){
                         Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){
                         Util.getToast(getApplicationContext(),"Recording failed", true ).show();
+                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
                     }else if (message.equalsIgnoreCase("not_logged_in")){
                    //     uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
@@ -410,6 +429,8 @@ private  void checkRecordPermission(){
                         recordNowIdlingResource.decrement();
 
                         Util.getToast(getApplicationContext(),"Could not do a recording as another recording is already in progress", true ).show();
+                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        recordNowIdlingResource.decrement();
                     }else if (message.equalsIgnoreCase("error_do_not_have_root")){
                         Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
                     }

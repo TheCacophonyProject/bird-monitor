@@ -33,12 +33,17 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             this.context = context;
 
+
+
             if (!Util.checkPermissionsForRecording(context)) {
 
-                Util.getToast(context, "Do not have proper permissions to record", true).show();
+             //   Util.getToast(context, "Do not have proper permissions", true).show();
 
 
                 Log.e(TAG, "Don't have proper permissions to record");
+
+                // Need to enable record button
+                Util.broadcastAMessage(context, "no_permission_to_record");
 
                 return;
             }
