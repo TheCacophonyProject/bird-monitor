@@ -1,9 +1,7 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
@@ -224,17 +222,6 @@ try {
         fileName += " apModeOff";
     }
 
-//    if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
-//        fileName += " relativeToDawn " + relativeToDawn;
-//    } else {
-//        fileName += " relativeToDusk " + relativeToDusk;
-//    }
-//
-//    if (Util.isAirplaneModeOn(context)) {
-//        fileName += " airplaneModeOn";
-//    } else {
-//        fileName += " airplaneModeOff";
-//    }
 
     String batteryStatus = Util.getBatteryStatus(context);
     fileName += " " + batteryStatus;
@@ -260,9 +247,11 @@ try {
     // Try to prepare recording.
     try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(filePath);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
         mRecorder.prepare();
 
     } catch (Exception ex) {

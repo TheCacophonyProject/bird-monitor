@@ -76,7 +76,15 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setDateTimeLastRepeatingAlarmFired(0);
         prefs.setDateTimeLastUpload(0);
 
-        disableFlightMode(); // force app to ask for root permission as early as possible
+        if (prefs.getIsFirstTime()){
+            // Set Keep Online to be the default
+            prefs.setOnLineMode(true);
+            prefs.setIsFirstTime(false);
+        }else{
+            disableFlightMode(); // force app to ask for root permission as early as possible
+        }
+
+
 
 
         // Get a support ActionBar corresponding to this toolbar
