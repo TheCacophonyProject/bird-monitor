@@ -24,12 +24,14 @@ android {
         minSdkVersion 9
        // minSdkVersion 18 // 5/3/18 UI Automator needs Android 4.3 (API level 18) or higher https://developer.android.com/training/testing/ui-automator.html
         // 15/2/18 Was using
-        targetSdkVersion 25 // targetSdkVersion 25 but I can't stop alarms batching (even using alarmManager.setExact)
+
         //noinspection OldTargetApi
 //        targetSdkVersion 18 // hoping this will stop the alarms batching https://developer.android.com/about/versions/android-4.4.html
 //        targetSdkVersion 24
+     //   targetSdkVersion 25 // targetSdkVersion 25 but I can't stop alarms batching (even using alarmManager.setExact)
+        targetSdkVersion 22  // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 1
-        versionName "0.989c"
+        versionName "0.990"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

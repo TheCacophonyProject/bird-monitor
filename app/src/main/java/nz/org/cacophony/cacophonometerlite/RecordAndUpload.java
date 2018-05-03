@@ -189,6 +189,8 @@ if (isRecording){
     public static boolean makeRecording(Context context,  long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
 try {
+
+
     Prefs prefs = new Prefs(context);
     // Get recording file.
     Date date = new Date(System.currentTimeMillis());
@@ -220,17 +222,6 @@ try {
         fileName += " apModeOff";
     }
 
-//    if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
-//        fileName += " relativeToDawn " + relativeToDawn;
-//    } else {
-//        fileName += " relativeToDusk " + relativeToDusk;
-//    }
-//
-//    if (Util.isAirplaneModeOn(context)) {
-//        fileName += " airplaneModeOn";
-//    } else {
-//        fileName += " airplaneModeOff";
-//    }
 
     String batteryStatus = Util.getBatteryStatus(context);
     fileName += " " + batteryStatus;
@@ -256,11 +247,14 @@ try {
     // Try to prepare recording.
     try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+
+
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mRecorder.setOutputFile(filePath);
         mRecorder.setAudioEncodingBitRate(256000);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
         mRecorder.setAudioSamplingRate(44100);
+
         mRecorder.prepare();
 
     } catch (Exception ex) {

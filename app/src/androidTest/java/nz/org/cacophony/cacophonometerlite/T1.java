@@ -52,7 +52,7 @@ public class T1 {
         appCompatTextView.perform(click());
 
         ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.cbAlwaysUpdateGPS), withText("Always try to update the location when a recording is made."),
+                allOf(withId(R.id.cbPeriodicallyUpdateGPS), withText("Always try to update the location when a recording is made."),
                         childAtPosition(
                                 allOf(withId(R.id.relative_layout2),
                                         childAtPosition(

@@ -35,7 +35,7 @@ public class SettingsOptions {
     // Will check/uncheck each option box in turn and make sure that it has kept the correct value after the app is restarted.
     // Will do each check box separately in case the background code checks/save to the wrong prefs setting/parameter
 
-        HelperCode.testCheckBox(R.id.cbAlwaysUpdateGPS);
+        HelperCode.testCheckBox(R.id.cbPeriodicallyUpdateGPS);
         HelperCode.testCheckBox(R.id.cbHasRootAccess);
         HelperCode.testCheckBox(R.id.cbOffLineMode);
         HelperCode.testCheckBox(R.id.cbOnLineMode);

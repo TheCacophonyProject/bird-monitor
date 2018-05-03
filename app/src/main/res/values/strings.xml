@@ -29,7 +29,7 @@
     <string name="to_register_title">To register this device</string>
     <string name="walk_screen_title">Setup Walk Recording</string>
 
-    <string name="to_register_intructions">(Press the ? icon for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
+    <string name="to_register_intructions">(Choose Help from the menu for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registerd in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
     <string name="walk_screen_intructions">Use this screen to control recording when out walking.  A short warning sound will be played before each periodic recording.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
