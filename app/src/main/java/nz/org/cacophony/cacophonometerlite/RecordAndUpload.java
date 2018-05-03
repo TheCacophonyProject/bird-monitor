@@ -236,7 +236,7 @@ try {
     String lonStr = numberFormat.format(lon);
     fileName += " " + latStr;
     fileName += " " + lonStr;
-    fileName += ".3gp";
+    fileName += ".mp3";
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
     String filePath = file.getAbsolutePath();
@@ -247,11 +247,14 @@ try {
     // Try to prepare recording.
     try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+
+
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mRecorder.setOutputFile(filePath);
-//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
+        mRecorder.setAudioEncodingBitRate(256000);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+        mRecorder.setAudioSamplingRate(44100);
+
         mRecorder.prepare();
 
     } catch (Exception ex) {
