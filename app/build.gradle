@@ -31,7 +31,7 @@ android {
      //   targetSdkVersion 25 // targetSdkVersion 25 but I can't stop alarms batching (even using alarmManager.setExact)
         targetSdkVersion 22  // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 1
-        versionName "0.991"
+        versionName "0.991d"
 
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

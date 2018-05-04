@@ -236,7 +236,7 @@ try {
     String lonStr = numberFormat.format(lon);
     fileName += " " + latStr;
     fileName += " " + lonStr;
-    fileName += ".mp3";
+    fileName += ".m4a";
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
     String filePath = file.getAbsolutePath();
@@ -250,10 +250,14 @@ try {
 
 
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+
         mRecorder.setOutputFile(filePath);
-        mRecorder.setAudioEncodingBitRate(256000);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
-        mRecorder.setAudioSamplingRate(44100);
+       // mRecorder.setAudioEncodingBitRate(256000);
+        mRecorder.setAudioEncodingBitRate(130000);
+//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mRecorder.setAudioSamplingRate(16000);
+
 
         mRecorder.prepare();
 
