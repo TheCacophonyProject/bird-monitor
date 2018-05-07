@@ -236,7 +236,14 @@ try {
     String lonStr = numberFormat.format(lon);
     fileName += " " + latStr;
     fileName += " " + lonStr;
-    fileName += ".m4a";
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ){ // LOLLIPOP / Android version 5 / API 21
+        fileName += ".m4a";
+    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
+        fileName += ".m4a";
+    }else {
+        fileName += ".m4a";
+    }
+
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
     String filePath = file.getAbsolutePath();
@@ -247,16 +254,23 @@ try {
     // Try to prepare recording.
     try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-
-
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-
         mRecorder.setOutputFile(filePath);
-       // mRecorder.setAudioEncodingBitRate(256000);
-        mRecorder.setAudioEncodingBitRate(130000);
-//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mRecorder.setAudioSamplingRate(16000);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ){ // LOLLIPOP / Android version 5 / API 21
+//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.WEBM); // WEBM added in API level 21
+//            mRecorder.setAudioEncodingBitRate(130000);
+//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.VORBIS); // VORBIS added in API 21
+//            mRecorder.setAudioSamplingRate(16000);
+//        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
+            mRecorder.setAudioEncodingBitRate(130000);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+            mRecorder.setAudioSamplingRate(16000);
+        } else {
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
+        }
 
 
         mRecorder.prepare();
