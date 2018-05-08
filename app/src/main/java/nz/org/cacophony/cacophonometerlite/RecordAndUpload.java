@@ -264,9 +264,12 @@ try {
 //        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
-            mRecorder.setAudioEncodingBitRate(130000);
+            mRecorder.setAudioEncodingBitRate(256000);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+            mRecorder.setAudioEncodingBitRate(16);
+            mRecorder.setAudioChannels(1);
             mRecorder.setAudioSamplingRate(16000);
+
         } else {
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
