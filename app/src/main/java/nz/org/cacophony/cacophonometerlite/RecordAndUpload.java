@@ -53,10 +53,7 @@ static String doRecord(Context context, String typeOfRecording) {
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
     String returnValue = null;
-//        if (logger == null){
-//            logger = Util.getAndConfigureLogger(context, LOG_TAG);
-//            logger.info("Starting doRecord method");
-//        }
+
 
 
     if (typeOfRecording == null) {
@@ -174,6 +171,7 @@ if (isRecording){
                 }
             }
         }
+
     }
 
 
@@ -251,11 +249,17 @@ try {
 
 //
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
-            mRecorder.setAudioEncodingBitRate(256000);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+
+
+            // Sampling configuration
             mRecorder.setAudioChannels(1);
             mRecorder.setAudioSamplingRate(16000);
+
+            // Encoding configuration
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+            mRecorder.setAudioEncodingBitRate(256000);
+            //mRecorder.setAudioEncodingBitRate(131072);
 
         } else {
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
