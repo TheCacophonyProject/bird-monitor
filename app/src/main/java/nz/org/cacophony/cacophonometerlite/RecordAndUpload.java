@@ -161,7 +161,6 @@ if (isRecording){
 
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads) { // don't upload if not enough time has passed
 
-//            if (!prefs.getOffLineMode()) { // don't upload if in offline mode
      if (!offlineMode) { // don't upload if in offline mode
          uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
@@ -174,14 +173,9 @@ if (isRecording){
                     Log.e(TAG, "Files failed to upload");
                 }
             }
-
-
         }
     }
-    //    boolean repeatingRecording = false;
-//    if (typeOfRecording.equalsIgnoreCase("repeating")) {
-//        DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-//    }
+
 
             return returnValue;
     }
@@ -236,11 +230,10 @@ try {
     String lonStr = numberFormat.format(lon);
     fileName += " " + latStr;
     fileName += " " + lonStr;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ){ // LOLLIPOP / Android version 5 / API 21
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { // HONEYCOMB / Android version 3 / API 11
         fileName += ".m4a";
-    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
-        fileName += ".m4a";
-    }else {
+    }else{
         fileName += ".m4a";
     }
 
@@ -256,17 +249,11 @@ try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFile(filePath);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ){ // LOLLIPOP / Android version 5 / API 21
-//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.WEBM); // WEBM added in API level 21
-//            mRecorder.setAudioEncodingBitRate(130000);
-//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.VORBIS); // VORBIS added in API 21
-//            mRecorder.setAudioSamplingRate(16000);
-//        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
+//
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
             mRecorder.setAudioEncodingBitRate(256000);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
-            mRecorder.setAudioEncodingBitRate(16);
             mRecorder.setAudioChannels(1);
             mRecorder.setAudioSamplingRate(16000);
 
