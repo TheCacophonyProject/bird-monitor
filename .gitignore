@@ -7,5 +7,6 @@
 /build
 /captures
 .externalNativeBuild
-keystore.properties
-tim.tim
+/keystore.properties
+/tim.tim
+/tim2
