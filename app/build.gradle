@@ -4,20 +4,28 @@ repositories {
     mavenCentral()
 }
 
+
+// Load keystore
+//https://stackoverflow.com/questions/20562189/sign-apk-without-putting-keystore-info-in-build-gradle
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     signingConfigs {
         config {
-            keyAlias 'myKey'
-            keyPassword 'Pppother1'
-            storeFile file('E:/GoogleDrive/Work/Cacophonoy/keystores/android.jks')
-            storePassword 'Pppother1'
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
     }
 
     compileSdkVersion 25
 
     defaultConfig {
-        applicationId "nz.org.cacophonoy.cacophonometerlite"
+//        applicationId "nz.org.cacophonoy.cacophonometerlite"
+        applicationId "nz.org.cacophonoy.cacophonometer"
 
         minSdkVersion 10 // 10 is the version that AMR_WB in MediaRecorder.AudioEncoder.AMR_WB was added which gives a lower limit on quality of recordings
 
