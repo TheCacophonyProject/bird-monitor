@@ -26,13 +26,7 @@ public class LocationReceiver extends BroadcastReceiver {
         wakeLock.acquire(timeout);
         try {
             Util.createLocationUpdateAlarm(context);
-//            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//            toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
-//            try {
-//                Thread.sleep(2000);
-//            } catch (Exception ex) {
-//                Log.e(TAG, ex.getLocalizedMessage());
-//            }
+
             Util.updateGPSLocation(context);
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());

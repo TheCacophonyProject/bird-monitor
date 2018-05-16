@@ -7,7 +7,6 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-//import android.util.Log;
 
 /**
  * Created by User on 29-Mar-17.
@@ -16,9 +15,8 @@ import android.util.Log;
 
 public class MainService extends IntentService {
     private static final String TAG = MainService.class.getName();
-//    private static Logger logger = null;
 
-    // --Commented out by Inspection (12-Jun-17 1:56 PM):private static final String LOG_TAG = MainService.class.getName();
+
 
     public MainService(){
         super("MainService");

@@ -45,12 +45,6 @@ import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
 import static android.content.Context.ALARM_SERVICE;
 
-//import android.util.Log;
-//import ch.qos.logback.classic.Level;
-//import ch.qos.logback.classic.Logger;
-//import java.lang.reflect.Field;
-//import java.lang.reflect.Method;
-//import ch.qos.logback.classic.Logger;
 
 
 class Util {
@@ -59,8 +53,7 @@ class Util {
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_LOGS_FOLDER = "logs";
 
-    private static boolean logbackConfigured = false;
-//    private static Logger logger = null;
+   // private static boolean logbackConfigured = false;
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -79,7 +72,7 @@ class Util {
         try{
             if (context == null) {
                 Log.e(TAG, "Context was null when checking permissions");
-//                logger.error("Context was null when checking permissions");
+
             }else{
                 boolean storagePermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -96,25 +89,18 @@ class Util {
 
         }catch (Exception ex){
             Log.e(TAG, "Error with checkPermissionsForRecording");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with checkPermissionsForRecording");
-//            logger.error("Error with checkPermissionsForRecording");
         }
       return permissionForRecording;
 
     }
 
     private static File getAppDataFolder(Context context) {
-    //    logger.info("getAppDataFolder method called");
+
         // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
         // This is because if sdcard is 'dodgy' can get inconsistent results.
         // Need context to get internal storage location, so need to pass this around the code.
         // If I could be sure the homeFile was set before any of the other directories are needed then I
         // wouldn't need to pass context around to the other methods :-(
-
-//        String[] storageDirectories = getStorageDirectories(context);
-//        for (String storageDirectory : storageDirectories) {
-//            Log.e(TAG, storageDirectory);
-//        }
 
         File appDataFolder = null;
         String sDCardAvailable = isRemovableSDCardAvailable( context);
@@ -124,17 +110,14 @@ class Util {
             Log.i(TAG, "sd card IS detected");
         }
 
-
         String canCreateFile = null;
         if (sDCardAvailable != null){
             canCreateFile = canCreateFile(sDCardAvailable);
         }
 
 
-
-
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
-        //File appDataFolder = null;
+
         try {
             String appName = context.getResources().getString(R.string.main_activity_name);
 
@@ -149,43 +132,26 @@ class Util {
                 appDataFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + appName);
             }else{
                 appDataFolder = context.getFilesDir();
-
             }
 
-
             if (appDataFolder == null) {
-//                Log.e(LOG_TAG, "HomeFile location problem");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
+
 
             } else {
                 if (!appDataFolder.exists()){
                  boolean appDataFolderCreated =   appDataFolder.mkdirs();
                     if (!appDataFolderCreated){
-                 //       logger.error("Could not create AppDataFolder");
-
                         return null;
                     }
                     // check it got created
                     if (!appDataFolder.exists()){
-
-                 //       logger.error("Could not create AppDataFolder");
                         return null;
                     }
                 }
 
-
-
-//                if (!homeFile.exists() && !homeFile.isDirectory() && !homeFile.mkdirs()) {
-////                    Log.e(LOG_TAG, "HomeFile location problem");
-////                    Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
-//                    logger.error("HomeFile location problem");
-//                }
             }
         } catch (Exception ex) {
-//            Log.e(LOG_TAG, "HomeFile location problem");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "HomeFile location problem");
-          //  logger.error(ex.getLocalizedMessage());
-          //  logger.error("AppDataFolder problem");
+
         }
         return appDataFolder;
     }
@@ -195,9 +161,9 @@ class Util {
         return getLocalFolder(context, DEFAULT_RECORDINGS_FOLDER);
     }
 
-    static File getLogFolder(Context context){
-        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
-    }
+//    static File getLogFolder(Context context){
+//        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
+//    }
 
     static File getLocalFolder(Context context, String localFolderStr) {
 
@@ -206,35 +172,25 @@ class Util {
 
             File appDataFolder = getAppDataFolder(context);
             if (appDataFolder == null){
-            //    logger.error("appDataFolder is null");
+
                 return null;
             }
-          //  localFolderFile = new File(getAppDataFolder(context), localFolderStr);
+
             localFolderFile = new File(appDataFolder, localFolderStr);
             if (localFolderFile == null) {
-//                Log.e(LOG_TAG, "Folder location is null");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location is null");
-            //    logger.error("Folder location is null");
+
             } else {
                     if (!localFolderFile.exists()){
                         localFolderFile.mkdirs();
 
                         // now check it exists
                          if (!localFolderFile.exists()){
-                   //         logger.error("Folder location problem");
                             localFolderFile = null;
                         }
                     }
 
                     // now check it is there
 
-
-                   // !localFolderFile.exists() && !localFolderFile.isDirectory() && !localFolderFile.mkdirs())
-              //  {
-//                Log.e(LOG_TAG, "Folder location problem");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Folder location problem");
-
-              //  }
             }
             if (localFolderFile == null){
                 Log.e(TAG, "There is a problem writing to the memory - please fix");
@@ -244,126 +200,10 @@ class Util {
             return localFolderFile;
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-        //    logger.error(ex.getLocalizedMessage());
             getToast(context, "There is a problem writing to the memory - please fix", true).show();
             return null;
         }
     }
-
-
-
-//    static String getLocalLogStr(Context context){
-////        Date date = new Date(); // your date
-////        Calendar cal = Calendar.getInstance();
-////        cal.setTime(date);
-////        int year = cal.get(Calendar.YEAR);
-////        int month = cal.get(Calendar.MONTH);
-////        int day = cal.get(Calendar.DAY_OF_MONTH);
-////        String todaysLogFileNameStr = Integer.toString(year) + "_" + Integer.toString(month + 1)+ "_" + Integer.toString(day);
-//        try {
-//            return getLogFolder(context).getAbsolutePath() + "/" + "log" + ".txt";
-//        }catch (Exception ex){
-//            return null;
-//        }
-//
-//    }
-
-//static Logger getAndConfigureLogger(Context context, String callingLogTag){
-////    if (!logbackConfigured){
-////        Util.configureLogbackDirectly(context);
-////        logbackConfigured = true;
-////        // And log that this happened!
-////        //getAndConfigureLogger(context, LOG_TAG);
-////        LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-////    }
-//
-//    Logger logger = (Logger)LoggerFactory.getLogger(callingLogTag);
-//
-//    Prefs prefs = new Prefs(context, logger); // needed this constructor to fix loop of Prefs calling Util calling Prefs
-//    // https://stackoverflow.com/questions/3837801/how-to-change-root-logging-level-programmatically
-//    if (prefs.getUseFullLogging()){
-//        if (!logbackConfigured){
-//           if (!Util.configureLogbackDirectly(context, true)){
-//               return null;
-//           }
-//            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-//            logbackConfigured = true;
-//        }
-//        logger.setLevel(Level.DEBUG);
-//    }else {
-//        if (!logbackConfigured){
-//           if( !Util.configureLogbackDirectly(context, false)){
-//               return null;
-//           }
-//            LoggerFactory.getLogger(LOG_TAG).info("Configured Logger");
-//            logbackConfigured = true;
-//        }
-//        logger.setLevel(Level.ERROR);
-//    }
-//    setLogger(logger);
-//    return logger;
-//
-//}
-
-//    static void writeLocalLogEntryUsingLogback(Context context, Logger callingLogger, String message){
-//        if (logger == null){
-//            if (!logbackConfigured){
-//                if (context != null){ // can only configure if context not null
-//                    Util.configureLogbackDirectly(context);
-//                    logbackConfigured = true;
-//                    logger = LoggerFactory.getLogger(LOG_TAG);
-//                    logger.info("Configured Logback");
-//                }
-//            }
-//
-//        }else{
-//            logger.info(message);
-//        }
-//
-//
-//
-//
-//        if (context != null){
-//            if (!logbackConfigured){
-//                Util.configureLogbackDirectly(context);
-//                logbackConfigured = true;
-//
-//
-//            }
-//        }else{
-//            logger = LoggerFactory.getLogger(callingLogTag);
-//        }
-//
-//
-//
-//
-//    }
-
-//    static void writeLocalLogEntryUsingLogback(Context context, String LOG_TAG, String message){
-//        Prefs prefs = new Prefs(context);
-//        if (!prefs.isLocalLog()){
-//            return;
-//        }
-//        // https://stackoverflow.com/questions/8210616/printwriter-append-method-not-appending
-//        String todaysLocalLogStr = getLocalLogStr(context);
-//        PrintWriter out = null;
-//        try {
-//            out = new PrintWriter(new BufferedWriter(new FileWriter(todaysLocalLogStr, true)));
-//            out.println(LOG_TAG);
-//            out.println(" ");
-//            out.println(message);
-//            out.println(" ");
-//        }catch (IOException e) {
-////            Log.e(LOG_TAG, e.getLocalizedMessage());
-//            logger.error(e.getLocalizedMessage());
-//        }finally{
-//            if(out != null){
-//                out.close();
-//            }
-//        }
-//    }
-
 
 
     static String getDeviceID(Context context, String webToken) throws Exception {
@@ -381,14 +221,10 @@ class Util {
         String webTokenBody = null;
         try {
             String[] split = JWTEncoded.split("\\.");
-          //  Log.d("JWT_DECODED", "Header: " + getJson(split[0]));
-
-            // Log.d("JWT_DECODED", "Body: " + getJson(split[1]));
             webTokenBody = getJson(split[1]);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Error decoding JWT");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error decoding JWT");
-//            logger.error("Error decoding JWT");
+
         }
         return webTokenBody;
     }
@@ -421,11 +257,9 @@ class Util {
                 batteryLevelStr = getStringFromFile(voltFilePathName);
             } catch (Exception ex) {
                 ex.printStackTrace();
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-//                logger.error( ex.getLocalizedMessage());
+
                 Log.e(TAG, ex.getLocalizedMessage());
             }
-
         }
 
         if (batteryLevelStr != null) {
@@ -433,8 +267,6 @@ class Util {
                 batteryLevel = Double.parseDouble(batteryLevelStr);
             } catch (Exception ex) {
                 Log.e(TAG, "converting double");
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "converting double");
-//                logger.error("converting double");
             }
         }
         return batteryLevel;
@@ -452,11 +284,8 @@ class Util {
             return batteryLevel;
         } catch (Exception ex) {
             Log.e(TAG, "Error with getBatteryLevelByIntent");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "Error with getBatteryLevelByIntent");
-//            logger.error("Error with getBatteryLevelByIntent");
             return -1;
         }
-
     }
 
     private static String getStringFromFile(String filePath) throws Exception {
@@ -471,9 +300,7 @@ class Util {
 
     private static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        //  StringBuilder sb = new StringBuilder();
         String line;
-
         line = reader.readLine();
         reader.close();
         return line;
@@ -512,8 +339,6 @@ class Util {
             return batteryStatusToReturn;
         } catch (Exception ex) {
             Log.e(TAG, "getBatteryStatus");
-//            Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, "getBatteryStatus");
-//            logger.error("getBatteryStatus");
             return "Error";
         }
 
@@ -548,7 +373,6 @@ class Util {
 
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-        //Log.d("DEBUG: ", "Sunrise time is: " + officialSunrise);
         return calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
     }
 
@@ -571,8 +395,6 @@ class Util {
 
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
-
-        // Log.d("DEBUG: ", "Sunset time is: " + officialSunset);
         return calculator.getOfficialSunsetCalendarForDate(todayOrTomorrow);
     }
 
@@ -600,7 +422,6 @@ class Util {
             lon = Double.toString(prefs.getLongitude());
         }
 
-
         return new Location(lat, lon);
     }
 
@@ -614,16 +435,12 @@ class Util {
             try {
                 Thread.sleep(1000); // give time for airplane mode to turn off
             } catch (InterruptedException ex) {
-//                ex.printStackTrace();
-//                Util.writeLocalLogEntryUsingLogback(context, LOG_TAG, ex.getLocalizedMessage());
-//                logger.error( ex.getLocalizedMessage());
                 Log.e(TAG,ex.getLocalizedMessage() );
             }
 
             numberOfLoops += 1;
             if (numberOfLoops > 60) {
                 Log.e(TAG, "Number of loops > 60");
-//                logger.error("Number of loops > 60");
                 break;
             }
         }
@@ -652,12 +469,8 @@ class Util {
         try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 // API 17 onwards.
-                // Log.d(LOG_TAG, "Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN");
                 // Must be a rooted device
                 Prefs prefs = new Prefs(context);
-
-
-              //  if (!prefs.getHasRootAccess() && !prefs.getOffLineMode()) {
                 if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
                     return null;
                 }
@@ -666,20 +479,15 @@ class Util {
                     return null;
                 }
 
-
-
                 // Set Airplane / Flight mode using su commands.
                 String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-               // executeCommandWithoutWait("-c", command);
                 executeCommandTim(context, command);
                 command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-              //  executeCommandWithoutWait("-c", command);
                 executeCommandTim(context, command);
 
             } else {
                 // API 16 and earlier.
-                // Log.d(LOG_TAG, "API 16 and earlier.");
-                //  boolean enabled = isFlightModeEnabled(context);
+
                 //noinspection deprecation
                 Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
                 Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
@@ -688,15 +496,10 @@ class Util {
             }
 
         }catch (Exception ex){
-//            logger.error(ex.getLocalizedMessage());
             Log.e(TAG, ex.getLocalizedMessage());
-
         }
         return null;
     }
-
-
-
 
     static void enableFlightMode(Context context) {
         Prefs prefs = new Prefs(context);
@@ -726,25 +529,20 @@ class Util {
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
-//            Log.d(TAG, "enableFlightMode 2");
-            // API 17 onwards.
 
+            // API 17 onwards.
             // Must be a rooted device
 
             if (!prefs.getHasRootAccess()) {
-
                 Log.e(TAG, "Do NOT have required ROOT access");
-
                 return;
             }
 
 
             // Set Airplane / Flight mode using su commands.
             String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-         //   executeCommandWithoutWait("-c", command);
             executeCommandTim(context, command);
             command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-        //    executeCommandWithoutWait("-c", command);
             executeCommandTim(context, command);
 
         } else {
@@ -880,13 +678,12 @@ private static void executeCommandTim(Context context, String command){
             if (directory != null && directory.length() != 0) {
                 if (i == size - 1) {
                     if (directory.contains(FLAG)) {
-//                        Log.i(TAG, "SD Card's directory: " + directory);
                         return directory;
                     } else {
                         return null;
                     }
                 }
-//                Log.i(TAG, "SD Card's directory: " + directory);
+
                 return directory;
             }
         }
@@ -904,13 +701,13 @@ private static void executeCommandTim(Context context, String command){
             fos.write(new byte[1024]);
             fos.flush();
             fos.close();
-//            Log.i(TAG, "Can write file on this directory: " + FILE_DIR);
+
         } catch (Exception e) {
-//            Log.i(TAG, "Write file error: " + e.getMessage());
+
             return null;
         } finally {
             if (tempFlie != null && tempFlie.exists() && tempFlie.isFile()) {
-                // tempFlie.delete();
+
                 tempFlie = null;
             }
         }
@@ -936,8 +733,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
     public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely on a previous alarm)
-       // Prefs prefs = new Prefs(context);
-        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+             Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
@@ -959,10 +755,9 @@ private static void executeCommandTim(Context context, String command){
 
     }
 
-//    public static void createAlarms(Context context){
+
 public static void createAlarms(Context context, String type, String timeUriParameter){
-//    public static void createAlarms(Context context, String type, String timeUriParameter, String callingMethod){ // added extra parameter to debug what was calling the createalams method
-        Prefs prefs = new Prefs(context);
+Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
 
@@ -975,16 +770,10 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         }catch (Exception e){
             Log.e(TAG, e.getLocalizedMessage());
-
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
-
-
-
-
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
 
     String mode = prefs.getMode();
@@ -1001,8 +790,6 @@ public static void createAlarms(Context context, String type, String timeUriPara
 
         case "walking":
             timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
-
-
             break;
     }
 
@@ -1011,15 +798,6 @@ public static void createAlarms(Context context, String type, String timeUriPara
     long currentElapsedRealTime = SystemClock.elapsedRealtime();
     long startWindowTime = currentElapsedRealTime + delay;
 
-
-//   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-//         // https://developer.android.com/reference/android/app/AlarmManager.html
-//
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-//
-//    }else{
-//        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-//    }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
         // https://developer.android.com/reference/android/app/AlarmManager.html
@@ -1059,8 +837,6 @@ public static void createAlarms(Context context, String type, String timeUriPara
                 break;
         }
 
-
-
     }
 
     public static void createLocationUpdateAlarm(Context context){
@@ -1079,13 +855,6 @@ public static void createAlarms(Context context, String type, String timeUriPara
         long currentElapsedRealTime = SystemClock.elapsedRealtime();
         long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
 
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-//            // https://developer.android.com/reference/android/app/AlarmManager.html
-//                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-//                   }else{
-//                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-//               }
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
             // https://developer.android.com/reference/android/app/AlarmManager.html
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
@@ -1102,8 +871,6 @@ public static void createAlarms(Context context, String type, String timeUriPara
         PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
         alarmManager.cancel(pendingLocationUpdateIntent);
     }
-
-
 
     public static void updateGPSLocation(Context context){
 

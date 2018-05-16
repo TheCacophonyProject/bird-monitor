@@ -9,25 +9,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.slf4j.Logger;
-
-import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-
 /**
  * Created by User on 24-Mar-17.
  * Code for the user help screen
  */
 
 public class HelpActivity extends AppCompatActivity {
-//    private static Logger logger = null;
+
 private static final String TAG = HelpActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
-//        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
-//        logger.info("HelpActivity onCreate" );
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -40,9 +35,7 @@ private static final String TAG = HelpActivity.class.getName();
            ab.setDisplayUseLogoEnabled(true);
            ab.setLogo(R.mipmap.ic_launcher);
        }else{
-//           Log.w(LOG_TAG, "ActionBar ab is null");
-//           Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "ActionBar ab is null");
-//           logger.info("ActionBar ab is null");
+
        }
 
     }
@@ -106,7 +99,7 @@ private static final String TAG = HelpActivity.class.getName();
                         public void run()
                         {
                             Util.disableFlightMode(getApplicationContext());
-                            //  Util.disableFlightModeTestSU(getApplicationContext());
+
                         }
                     });
                 }
@@ -115,7 +108,7 @@ private static final String TAG = HelpActivity.class.getName();
 
 
         }catch (Exception ex){
-//            logger.error(ex.getLocalizedMessage());
+
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }

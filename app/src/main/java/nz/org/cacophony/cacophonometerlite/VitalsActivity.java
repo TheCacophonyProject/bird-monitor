@@ -213,7 +213,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
 
-//        logger.warn(missingPermissionMessage );
         Log.w(TAG, missingPermissionMessage);
 
     }
@@ -260,8 +259,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         }
 
-
-
         return allPermissionsAlreadyGranted;
     }
 
@@ -278,9 +275,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
      */
     private void refreshVitals() {
         ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
-        // ((Button) findViewById(R.id.testRecording)).setEnabled(false);
-
-
 
         Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
         try {
@@ -290,9 +284,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 public void run() {
                     Looper.prepare();
                     Server.updateServerConnectionStatus(getApplicationContext());
-//                    Message message = handler.obtainMessage();
-//                    message.what = RESUME_AND_DISPLAY_REFRESH_MESSAGE;
-//                    message.sendToTarget();
                     Looper.loop();
                 }
             };
@@ -302,7 +293,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
             Log.e(TAG, ex.getLocalizedMessage());
             ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-            //  ((Button) findViewById(R.id.testRecording)).setEnabled(true);
 
         }
     }
@@ -391,31 +381,13 @@ try {
         String latStr = numberFormat.format(lat);
         String lonStr = numberFormat.format(lon);
         TextView locationStatus = (TextView) findViewById(R.id.gpsText);
-        //  locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
         locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
-        //  locationStatus.setText("tim was here");
-    }
+         }
 }catch (Exception ex){
     Log.e(TAG, ex.getLocalizedMessage());
 }
     }
 
-//    private void updateGPSDisplay(Prefs prefs){
-//        try {
-//            double lat = prefs.getLatitude();
-//            double lon = prefs.getLongitude();
-//
-//            if (lat != 0 && lon != 0) {
-//                TextView gpsText = (TextView) findViewById(R.id.gpsText);
-//                gpsText.setText(getString(R.string.gps_text) + " " + "Latitude: "+lat+", Longitude: "+lon);
-//            }
-//
-//        } catch (Exception e) {
-//
-////            logger.error("Device ID not available");
-//            Log.e(TAG, "Device ID not available");
-//        }
-//    }
 
     private BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
@@ -426,13 +398,10 @@ try {
             try {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-//                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
-//                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
+
                     if (message.equalsIgnoreCase("enable_vitals_button")) {
                         ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
-//                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
+
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
@@ -451,11 +420,9 @@ try {
                         updateGpsDisplay(prefs);
                     }
 
-
                 }
 
             }catch (Exception ex){
-//                logger.error(ex.getLocalizedMessage());
                 Log.e(TAG,ex.getLocalizedMessage());
             }
         }

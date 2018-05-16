@@ -12,10 +12,7 @@ import android.util.Log;
 
 import static android.content.Context.POWER_SERVICE;
 
-//import android.util.Log;
-//import org.slf4j.Logger;
-//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
-//import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
+
 
 
 public class BootReceiver extends BroadcastReceiver {
@@ -23,7 +20,7 @@ public class BootReceiver extends BroadcastReceiver {
     // This means the recordings will be made without having to reopen the application
     // Note: If you need to change any settings, then you will need to open the application which will save those settings
     // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
-   // private static final String TAG = "BootReceiver";
+
     private static final String TAG = BootReceiver.class.getName();
 
     @Override
@@ -31,7 +28,6 @@ public class BootReceiver extends BroadcastReceiver {
     {
         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
-
 
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
 
@@ -46,9 +42,6 @@ try {
     DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
     Util.createCreateAlarms(context);
     Util.setUpLocationUpdateAlarm(context);
-
-    // make a sound to show that alarms have been created.
-    //toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
     Util.enableFlightMode(context);
 

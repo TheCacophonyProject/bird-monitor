@@ -27,24 +27,15 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 "StartRecordingReceiverWakelockTag");
         wakeLock.acquire();
         try {
-
             Util.createAlarms(context, "repeating", "normal");
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-
             this.context = context;
 
-
-
             if (!Util.checkPermissionsForRecording(context)) {
-
-             //   Util.getToast(context, "Do not have proper permissions", true).show();
-
-
                 Log.e(TAG, "Don't have proper permissions to record");
 
                 // Need to enable record button
                 Util.broadcastAMessage(context, "no_permission_to_record");
-
                 return;
             }
             Prefs prefs = new Prefs(context);
@@ -58,7 +49,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 Log.e(TAG, "Intent does not have a type");
             }
 
-
             // First check to see if battery level is sufficient to continue.
 
             double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
@@ -70,14 +60,12 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                     prefs.setMaximumBatteryLevel(batteryLevel);
                 }
 
-
                 double batteryRatioLevel = batteryLevel / prefs.getMaximumBatteryLevel();
                 double batteryPercent = batteryRatioLevel * 100;
                 if (!enoughBatteryToContinue(batteryPercent, alarmIntentType, prefs)) {
                     Log.w(TAG, "Battery level too low to do a recording");
                     return;
                 }
-
 
             } else { // will need to get battery level using intent method
                 double batteryPercentLevel = getBatteryLevelByIntent(context);
@@ -88,12 +76,11 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 }
             }
 
-
             String mode = prefs.getMode();
             switch (mode) {
                 case "off":
                     if (prefs.getPeriodicallyUpdateGPS()) {
-                      //  Util.updateGPSLocation(context);
+
                     }
 
                     break;
@@ -110,11 +97,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                         return; // exit onReceive method
                     }
 
-//                    Util.updateGPSLocation(context);
-
                     break;
             }
-
 
             // need to determine the source of the intent ie Main UI or boot receiver
 

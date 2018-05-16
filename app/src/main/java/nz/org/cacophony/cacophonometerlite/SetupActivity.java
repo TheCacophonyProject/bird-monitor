@@ -35,14 +35,10 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
     private static final String TAG = SetupActivity.class.getName();
 
-
-
     // Handler status indicators
     private static final int REGISTER_SUCCESS = 1;
     private static final int REGISTER_FAIL = 2;
     static final int RESUME = 3;
-//    private static Logger logger = null;
-
 
 
     @Override
@@ -50,9 +46,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
-//        logger = Util.getAndConfigureLogger(getApplicationContext(), LOG_TAG);
-//        logger.info("SetupActivity onCreate" );
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -66,11 +59,8 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             ab.setDisplayUseLogoEnabled(true);
             ab.setLogo(R.mipmap.ic_launcher);
         }else{
-
             Log.w(TAG, "ActionBar ab is null");
-
         }
-
 
     }
 
@@ -89,12 +79,10 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     }else if (message.equalsIgnoreCase("error_do_not_have_root")){
                         Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
                     }
-
                 }
 
 
             }catch (Exception ex){
-//                logger.error(ex.getLocalizedMessage());
                 Log.e(TAG,ex.getLocalizedMessage());
             }
         }
@@ -255,7 +243,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
                     }catch (Exception ex){
                         Log.e(TAG, ex.getLocalizedMessage());
-
                     }
 
                     Util.getToast(getApplicationContext(),"Success - Device has been registered with the server :-)", false ).show();
@@ -310,8 +297,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             return;
         }
 
-
-
         Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -320,13 +305,11 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-
             Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
             return;
         }
 
         register(group, getApplicationContext());
-
 
     }
 
@@ -351,7 +334,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             prefs.setGroupName(null);
             prefs.setPassword(null);
             prefs.setDeviceName(null);
-           // Server.loggedIn = false;
             prefs.setToken(null);
             if (displayUnregisterdMessage){
                 Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
@@ -360,7 +342,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
         }catch(Exception ex){
             Log.e(TAG, "Error Un-registering device.");
-
         }
         onResume();
         ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
@@ -376,8 +357,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         if (group == null || group.length() < 4) {
 
             Log.e(TAG, "Invalid group name - this should have already been picked up");
-//            Util.writeLocalLogEntryUsingLogback(getApplicationContext(), LOG_TAG, "Invalid group name - this should have already been picked up");
-//            logger.error("Invalid group name - this should have already been picked up");
             return;
         }
 
@@ -386,11 +365,9 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
             Log.e(TAG, "Failed to disable airplane mode");
-
             return ;
         }
 
-//        registerIdlingResource.increment();
         Thread registerThread = new Thread() {
             @Override
             public void run() {
@@ -402,17 +379,14 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     message.what = REGISTER_FAIL;
                 }
                 message.sendToTarget();
-//                registerIdlingResource.decrement();
+
             }
         };
         registerThread.start();
     }
 
-
-
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
         Util.updateGPSLocation(getApplicationContext());
-
     }
 
 
@@ -427,15 +401,12 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
     }
 
-
     public void onCheckboxPeriodicallyUpdateLocationClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
             prefs.setPeriodicallyUpdateGPS(checked);
     }
-
-
 
     public void onCheckboxShortRecordingsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -458,8 +429,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             prefs.setUseTestServer(false);
         }
     }
-
-
 
     public void onCheckboxUseFrequentUploadsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -488,8 +457,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
         prefs.setUseFrequentRecordings(checked);
-
-//        Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
     public void onCheckboxVeryFrequentRecordingsClicked(View v) {
         Prefs prefs = new Prefs(getApplicationContext());
@@ -497,8 +464,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         boolean checked = ((CheckBox) v).isChecked();
 
         prefs.setUseVeryFrequentRecordings(checked);
-       // Util.createAlarms(getApplicationContext(), "repeating", "normal", "SetupActivityonCheckboxVeryFrequentRecordingsClicked");
-//        Util.createAlarms(getApplicationContext(), "repeating", "normal");
     }
 
 
@@ -507,11 +472,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
         prefs.setOffLineMode(checked);
-//        if (checked){
-//            prefs.setOffLineMode(true);
-//        }else{
-//            prefs.setOffLineMode(false);
-//        }
+
     }
 
     public void onCheckboxOnLineModeClicked(View v) {
@@ -526,14 +487,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
         prefs.setPlayWarningSound(checked);
-//        if (checked){
-//            prefs.setPlayWarningSound(true);
-//        }else{
-//            prefs.setPlayWarningSound(false);
-//        }
     }
-
-
 
     public void disableFlightMode(){
         try {
@@ -547,7 +501,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                         public void run()
                         {
                             Util.disableFlightMode(getApplicationContext());
-                          //  Util.disableFlightModeTestSU(getApplicationContext());
+
                         }
                     });
                 }
@@ -556,7 +510,6 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
 
         }catch (Exception ex){
-
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
@@ -576,9 +529,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                 String latStr = numberFormat.format(lat);
                 String lonStr = numberFormat.format(lon);
                 TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
-                //  locationStatus.setText("Latitude: "+lat+", Longitude: "+lon);
                 locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
-                //  locationStatus.setText("tim was here");
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

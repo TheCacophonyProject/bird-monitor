@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             disableFlightMode(); // force app to ask for root permission as early as possible
         }
 
-
-
-
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
         if (ab != null){
@@ -104,69 +101,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
-//// From Android 6.0 need to ask for permission
-//        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//        checkAndroidPermissions();
-//    }
+
 
     } //end onCreate
 
-//private  void checkAndroidPermissions(){
-//
-//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-//        requestWriteExternalStoragePermission();
-//    }
-//
-//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED){
-//        requestRecordPermission();
-//    }
-//
-//    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
-//        requestAccessFineLocationPermission();
-//    }
-//
-//
-//}
 
-//   private void requestRecordPermission() {
-//            // Permission has not been granted and must be requested.
-//            // Request the permission. The result will be received in onRequestPermissionResult().
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUEST_MIC);
-//    }
-//
-//    private void requestAccessFineLocationPermission() {
-//        // Permission has not been granted and must be requested.
-//        // Request the permission. The result will be received in onRequestPermissionResult().
-//        ActivityCompat.requestPermissions(this,
-//                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
-//    }
-//
-//    private void requestWriteExternalStoragePermission() {
-//        // Permission has not been granted and must be requested.
-//        // Request the permission. The result will be received in onRequestPermissionResult().
-//        ActivityCompat.requestPermissions(this,
-//                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//    // not going to give user feedback, but left code here from example in case I change my mind
-//
-//        // BEGIN_INCLUDE(onRequestPermissionsResult)
-//        if (requestCode == PERMISSION_REQUEST_MIC) {
-//            // Request for camera permission.
-//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Permission has been granted. Start camera preview Activity.
-//
-//            } else {
-//                // Permission request was denied.
-//
-//            }
-//        }
-//        // END_INCLUDE(onRequestPermissionsResult)
-//    }
 
 
     @Override
@@ -246,36 +185,16 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 break;
         }
 
-
-
-//        disableFlightMode();
-//        checkPermissions();
-
-       // Prefs prefs = new Prefs(getApplicationContext());
-
-//    refreshVitalsDisplayedText();
-
-
-//        // Application name text  appNameVersionText
-//        // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
-//        String versionName = BuildConfig.VERSION_NAME;
-//        TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
-//        versionNameText.setText(getString(R.string.version) + " " + versionName);
-
-      //  super.onResume();
-
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
-
-
     }
 
 
 
     private void openSettings() {
         try{
-//           disableFlightMode();
+
             Intent intent = new Intent(this, SetupActivity.class);
             startActivity(intent);
         }catch (Exception ex){
@@ -297,12 +216,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     public void run()
                     {
                         Util.disableFlightMode(getApplicationContext());
-//                      String message = Util.disableFlightMode(getApplicationContext());
-
-//                        if (message != null){
-//                            ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
-//                        }
-
                     }
                 });
             }
@@ -318,10 +231,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
         recordNowIdlingResource.increment();
-//// From Android 6.0 need to ask for permission
-//        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            checkAndroidPermissions();
-//        }
+
         Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
 
         ((Button) findViewById(R.id.recordNowButton)).setEnabled(false);
@@ -335,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-  //      DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);// use for testing, should remove
+
         Util.createCreateAlarms(getApplicationContext());
     }
     public void onModeRadioButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
@@ -365,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     break;
         }
         // need to reset alarms as their frequency may have changed.
-       // Util.createAlarms(getApplicationContext(), "repeating", "normal", "mainActivityonModeRadioButtonClicked");
         Util.createAlarms(getApplicationContext(), "repeating", "normal");
         Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
@@ -380,13 +289,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             try {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-//                    if (message.equalsIgnoreCase("enable_test_recording_button")) {
-//                        ((Button) findViewById(R.id.testRecording)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_vitals_button")) {
+
                     if (message.equalsIgnoreCase("enable_vitals_button")) {
                         ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
-//                    }else if (message.equalsIgnoreCase("enable_disable_flight_mode_button")) {
-//                        ((Button) findViewById(R.id.disableFlightMode)).setEnabled(true);
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
                         TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
@@ -404,32 +309,26 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     }else if (message.equalsIgnoreCase("about_to_upload_files")){
                         Util.getToast(getApplicationContext(),"About to upload files", false ).show();
                     }else if (message.equalsIgnoreCase("files_successfully_uploaded")){
-                   //      uploadingIdlingResource.decrement();
                          Util.getToast(getApplicationContext(),"Files successfully uploaded", false ).show();
                     }else if (message.equalsIgnoreCase("already_uploading")){
-                      //  uploadingIdlingResource.decrement();
                         Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
                     }else if (message.equalsIgnoreCase("no_permission_to_record")){
                         Util.getToast(getApplicationContext(),"Can not record.  Please go to Android settings and enable all required permissions for this app", true ).show();
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
                         recordNowIdlingResource.decrement();
-//                    }else if (message.equalsIgnoreCase("recording_failed")){
-//                        Util.getToast(getApplicationContext(),"Failed to make recording", false ).show();
                     }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
-                      //  uploadingIdlingResource.decrement();
+
                         Util.getToast(getApplicationContext(),"Recording and uploading finished", false ).show();
                     }else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")){
-                  //      uploadingIdlingResource.decrement();
-//                        Util.getToast(getApplicationContext(),"Recording finished but uploading failed", true ).show(); // this only very occasionaly displayed
-                        Util.getToast(context,"Recording finished but uploading failed", true ).show(); // this didn't fix the problem - stuck :-(
+                  Util.getToast(context,"Recording finished but uploading failed", true ).show(); // this didn't fix the problem - stuck :-(
                     }else if (message.equalsIgnoreCase("recorded_successfully_no_network")){
-                 //       uploadingIdlingResource.decrement();
+
                         Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){
                         Util.getToast(getApplicationContext(),"Recording failed", true ).show();
                         ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
                     }else if (message.equalsIgnoreCase("not_logged_in")){
-                   //     uploadingIdlingResource.decrement();
+
                         Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
                     }else if (message.equalsIgnoreCase("is_already_recording")){                  //      uploadingIdlingResource.decrement();
                         // Will need enable Record Now button
@@ -445,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 }
 
             }catch (Exception ex){
-//                logger.error(ex.getLocalizedMessage());
+
                 Log.e(TAG,ex.getLocalizedMessage());
             }
         }

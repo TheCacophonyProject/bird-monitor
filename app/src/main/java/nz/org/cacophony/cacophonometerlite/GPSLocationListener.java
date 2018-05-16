@@ -38,22 +38,16 @@ class GPSLocationListener implements LocationListener {
            // Tell SetupActivity to resume.
            Util.getToast(context, "New Location saved", false).show();
 
-           // Trying to find reason for crashing - seems to be connected with getting GPS - so will try commenting out the next
-           // few lines that are telling the SetupActivity to resume
-//           Message message = handler.obtainMessage();
-//           message.what = SetupActivity.RESUME;
-//           message.sendToTarget();
-
            // send a broadcast for SetupActivity to update gps location text
-         //  Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
+
            Util.broadcastAMessage(context, "refresh_gps_coordinates");
 
            Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){
-//           logger.error(ex.getLocalizedMessage());
+
            Log.e(TAG, ex.getLocalizedMessage());
        }
-//        logger.debug("onLocationChanged method finished");
+
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}

@@ -10,9 +10,7 @@ public class ExecuteAsRootBaseTim extends ExecuteAsRootBase {
     ArrayList<String> commands = new ArrayList<String>();
     @Override
     protected ArrayList<String> getCommandsToExecute() {
-//        ArrayList<String> commands = new ArrayList<String>();
-//      //  commands.add("ls");
-//        commands.add("ls");
+
         return commands;
     }
 
