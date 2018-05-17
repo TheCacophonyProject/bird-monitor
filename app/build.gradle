@@ -7,7 +7,7 @@ repositories {
 
 // Load keystore
 //https://stackoverflow.com/questions/20562189/sign-apk-without-putting-keystore-info-in-build-gradle
-def keystorePropertiesFile = rootProject.file("keystore3.properties");
+def keystorePropertiesFile = rootProject.file("keystore.properties");
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
