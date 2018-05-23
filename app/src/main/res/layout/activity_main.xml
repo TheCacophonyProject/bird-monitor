@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nz.org.cacophony.cacophonometerlite.MainActivity">
 
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -18,7 +19,8 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        tools:targetApi="lollipop" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -95,7 +97,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_below="@id/chooseModeMessage">>
+                android:layout_below="@id/chooseModeMessage">
                 <RadioButton android:id="@+id/offMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
