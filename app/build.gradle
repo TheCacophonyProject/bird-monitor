@@ -9,26 +9,21 @@ repositories {
 
 android {
     signingConfigs {
-        config {
+        //https://stackoverflow.com/questions/25585434/android-studio-0-8-6-change-default-build-variant/25628789#25628789
+        // https://github.com/shaohui10086/android-best-practices-1#gradle-configuration
+        release {
             try {
-                storeFile file("E:/GoogleDrive/Work/Cacophonoy/keystores/android.jks")
+                storeFile file(STORE_FILE)
                 storePassword KEYSTORE_PASSWORD
-                keyAlias "myKey"
+                keyAlias KEY_ALIAS
                 keyPassword KEY_PASSWORD
             }
             catch (ex) {
-                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS and STORE_FILE in gradle.properties in your gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC");
             }
         }
     }
-//    signingConfigs {
-//        debug {
-//            keyAlias 'myKey'
-//            keyPassword 'Pppother1'
-//            storeFile file('E:/GoogleDrive/Work/Cacophonoy/keystores/android.jks')
-//            storePassword 'Pppother1'
-//        }
-//    }
+
     compileSdkVersion 27
     defaultConfig {
         applicationId "nz.org.cacophonoy.cacophonometer"
@@ -41,18 +36,21 @@ android {
         versionName "0.994"
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        //signingConfig signingConfigs.debug
+
     }
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
         }
         debug {
-            //signingConfig signingConfigs.config
-            signingConfig signingConfigs.config
+            applicationIdSuffix '.dev'
+            debuggable true
+
         }
+
     }
     productFlavors {
     }
