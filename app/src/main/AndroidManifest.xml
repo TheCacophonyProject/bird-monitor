@@ -31,7 +31,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">  <!-- Fixes an issue with Menu back button, creating a new MainActivity when returning from Settings Activity https://stackoverflow.com/questions/3484643/comments-in-android-layout-xml -->
             <intent-filter>
@@ -51,7 +52,8 @@
 
     <receiver android:name=".LocationReceiver"
         android:enabled="true"
-        android:exported="true">
+        android:exported="false">
+
     </receiver>
 
 

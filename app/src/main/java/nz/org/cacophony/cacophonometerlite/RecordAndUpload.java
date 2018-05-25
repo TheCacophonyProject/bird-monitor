@@ -84,7 +84,7 @@ static String doRecord(Context context, String typeOfRecording) {
     } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         recordTimeSeconds += 1; // help to recognise recordNowButton recordings
 
-        prefs.setDateTimeLastRepeatingAlarmFired(0); // Helped when testing, but probably don't need when app is running normally
+        prefs.setDateTimeLastRepeatingAlarmFiredToZero(); // Helped when testing, but probably don't need when app is running normally
 
     }
 
@@ -144,7 +144,7 @@ if (isRecording){
             return returnValue;
     }
 
-    public static boolean makeRecording(Context context,  long recordTimeSeconds, boolean playWarningBeeps){
+    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
 try {
 
@@ -195,12 +195,12 @@ try {
     fileName += " " + latStr;
     fileName += " " + lonStr;
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { // HONEYCOMB / Android version 3 / API 11
-        fileName += ".m4a";
-    }else{
-        fileName += ".3gp";
-    }
-
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { // HONEYCOMB / Android version 3 / API 11
+//        fileName += ".m4a";
+//    }else{
+//        fileName += ".3gp";
+//    }
+    fileName += ".m4a";
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
     String filePath = file.getAbsolutePath();
@@ -214,7 +214,7 @@ try {
         mRecorder.setOutputFile(filePath);
 
 //
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
+      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
 
 
             // Sampling configuration
@@ -227,10 +227,10 @@ try {
             mRecorder.setAudioEncodingBitRate(256000);
             //mRecorder.setAudioEncodingBitRate(131072);
 
-        } else {
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
-        }
+//        } else {
+//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
+//        }
 
         mRecorder.prepare();
 
@@ -239,7 +239,7 @@ try {
         Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
         Log.e(TAG, ex.getLocalizedMessage());
 
-        return false;
+        return;
     }
 
        if (playWarningBeeps) {
@@ -260,7 +260,7 @@ try {
     } catch (Exception e) {
 
         Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
-        return false;
+        return;
     }
 
 
@@ -271,7 +271,7 @@ try {
 
     } catch (InterruptedException e) {
         Log.e(TAG, "Failed sleeping in recording thread.");
-        return false;
+        return;
     }
 
     // Stop recording.
@@ -302,7 +302,6 @@ try {
     isRecording = false;
 }
 
-        return true;
     }
 
     private static boolean uploadFiles(Context context){
@@ -389,8 +388,6 @@ try {
 
             Log.e(TAG, ex.getLocalizedMessage());
             return false;
-        }finally {
-
         }
 
     }
@@ -447,7 +444,8 @@ try {
         TimeZone tz = TimeZone.getDefault();
         Calendar cal = GregorianCalendar.getInstance(tz);
         int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-        String offset = String.format("%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60));
+//        String offset = String.format("%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60));
+        String offset = String.format(Locale.ENGLISH,"%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60)); // added in Locale.ENGLISH to stop Lint warning
         offset = (offsetInMillis >= 0 ? "+" : "-") + offset;
 
         String recordingDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second+offset;

@@ -30,10 +30,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     private static final String TAG = MainActivity.class.getName();
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
-    private static final int PERMISSION_REQUEST_MIC = 0;
-    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 0;
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -73,13 +69,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
-        prefs.setDateTimeLastRepeatingAlarmFired(0);
+        prefs.setDateTimeLastRepeatingAlarmFiredToZero();
         prefs.setDateTimeLastUpload(0);
 
         if (prefs.getIsFirstTime()){
             // Set Keep Online to be the default
             prefs.setOnLineMode(true);
-            prefs.setIsFirstTime(false);
+            prefs.setIsFirstTime();
         }else{
             disableFlightMode(); // force app to ask for root permission as early as possible
         }
@@ -95,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Log.w(TAG, "ActionBar ab is null");
         }
 
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.createAlarms(getApplicationContext());
 
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());
@@ -204,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
 
-     public void disableFlightMode(){
+     private void disableFlightMode(){
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
         new Thread()
@@ -275,12 +271,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     break;
         }
         // need to reset alarms as their frequency may have changed.
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.createAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 
 
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         // broadcast notification coming from ??
@@ -350,17 +346,21 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     };
 
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getRegisterIdlingResource() {
         return registerIdlingResource;
     }
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getRecordNowIdlingResource() {
         return recordNowIdlingResource;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getUploadingIdlingResource() {
         return uploadingIdlingResource;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getToggleAirplaneModeIdlingResource() {
         return toggleAirplaneModeIdlingResource;
     }

@@ -2,6 +2,7 @@ package nz.org.cacophony.cacophonometerlite;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -51,9 +52,8 @@ class Util {
     private static final String TAG = Util.class.getName();
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
-    private static final String DEFAULT_LOGS_FOLDER = "logs";
 
-   // private static boolean logbackConfigured = false;
+    // private static boolean logbackConfigured = false;
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -151,21 +151,21 @@ class Util {
 
             }
         } catch (Exception ex) {
-
+            Log.e(TAG, ex.getLocalizedMessage());
         }
         return appDataFolder;
     }
 
 
     static File getRecordingsFolder(Context context){
-        return getLocalFolder(context, DEFAULT_RECORDINGS_FOLDER);
+        return getLocalFolder(context);
     }
 
 //    static File getLogFolder(Context context){
 //        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
 //    }
 
-    static File getLocalFolder(Context context, String localFolderStr) {
+    private static File getLocalFolder(Context context) {
 
         File localFolderFile = null;
         try {
@@ -176,7 +176,7 @@ class Util {
                 return null;
             }
 
-            localFolderFile = new File(appDataFolder, localFolderStr);
+            localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
             if (localFolderFile == null) {
 
             } else {
@@ -211,12 +211,12 @@ class Util {
             return "";
         }
 
-        String webTokenBody = Util.decoded(context, webToken);
+        String webTokenBody = Util.decoded(webToken);
         JSONObject jObject = new JSONObject(webTokenBody);
         return jObject.getString("id");
     }
 
-    private static String decoded(Context context, String JWTEncoded) {
+    private static String decoded(String JWTEncoded) {
         // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
         String webTokenBody = null;
         try {
@@ -236,7 +236,7 @@ class Util {
 
     static double getBatteryLevel(Context context) {
         double batteryLevel;
-        batteryLevel = getBatteryLevelUsingSystemFile(context);
+        batteryLevel = getBatteryLevelUsingSystemFile();
         if (batteryLevel == -1) {
             batteryLevel = getBatteryLevelByIntent(context);
 
@@ -244,7 +244,7 @@ class Util {
         return batteryLevel;
     }
 
-    static double getBatteryLevelUsingSystemFile(Context context) {
+    static double getBatteryLevelUsingSystemFile() {
 
         // https://longtrieuquang.wordpress.com/2013/04/08/android-battery-information-from-file-system/
         // found the file volt that stores battery voltage
@@ -458,25 +458,25 @@ class Util {
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
+        @SuppressWarnings("UnnecessaryLocalVariable") boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
 
 
 
-    static String disableFlightMode(Context context) {
+    static void disableFlightMode(Context context) {
         try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 // API 17 onwards.
                 // Must be a rooted device
                 Prefs prefs = new Prefs(context);
                 if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
-                    return null;
+                    return ;
                 }
 
                 if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
-                    return null;
+                    return ;
                 }
 
                 // Set Airplane / Flight mode using su commands.
@@ -498,7 +498,6 @@ class Util {
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
         }
-        return null;
     }
 
     static void enableFlightMode(Context context) {
@@ -622,7 +621,7 @@ private static void executeCommandTim(Context context, String command){
 
     static Toast getToast(Context context, String message, boolean standOut){
 
-        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         if (standOut){
             toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
         }else{
@@ -647,7 +646,7 @@ private static void executeCommandTim(Context context, String command){
 
 
 //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
-   static  public String isRemovableSDCardAvailable(Context context) {
+   private static String isRemovableSDCardAvailable(Context context) {
         final String FLAG = "mnt";
         final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
         final String EXTERNAL_STORAGE_DOCOMO = System.getenv("EXTERNAL_STORAGE_DOCOMO");
@@ -655,7 +654,7 @@ private static void executeCommandTim(Context context, String command){
         final String EXTERNAL_SD_STORAGE = System.getenv("EXTERNAL_SD_STORAGE");
         final String EXTERNAL_STORAGE = System.getenv("EXTERNAL_STORAGE");
 
-        Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<Integer, String>();
+        @SuppressLint("UseSparseArrays") Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<Integer, String>();
         listEnvironmentVariableStoreSDCardRootDirectory.put(0, SECONDARY_STORAGE);
         listEnvironmentVariableStoreSDCardRootDirectory.put(1, EXTERNAL_STORAGE_DOCOMO);
         listEnvironmentVariableStoreSDCardRootDirectory.put(2, EXTERNAL_SDCARD_STORAGE);
@@ -691,7 +690,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
 
-    static public String canCreateFile(String directory) {
+    private static String canCreateFile(String directory) {
         // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location
         final String FILE_DIR = directory + File.separator + "hoang.txt";
         File tempFlie = null;
@@ -756,7 +755,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
 
-public static void createAlarms(Context context, String type, String timeUriParameter){
+public static void createAlarms(Context context){
 Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
@@ -865,7 +864,7 @@ Prefs prefs = new Prefs(context);
         }
     }
 
-    public static void deleteLocationUpdateAlarm(Context context){
+    private static void deleteLocationUpdateAlarm(Context context){
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
         PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);

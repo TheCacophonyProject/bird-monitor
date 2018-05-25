@@ -56,7 +56,7 @@ class DawnDuskAlarms {
 
     }
 
-    static void configureDawnAlarmsUsingLoop(Context context) {
+    private static void configureDawnAlarmsUsingLoop(Context context) {
 
         Prefs prefs = new Prefs(context);
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
@@ -74,7 +74,7 @@ class DawnDuskAlarms {
         int dawnDuskIncrementMinutes = (int)prefs.getDawnDuskIncrementMinutes();
 
         int currentOffsetSeconds = dawnDuskOffsetMinutes * 60 * -1;
-        long windowInMilliseconds = 1 * 60 * 1000; // 1 minute
+       // long windowInMilliseconds = 1 * 60 * 1000; // 1 minute
 
         while (currentOffsetSeconds <= (dawnDuskOffsetMinutes * 60) ){ // we are going to keep adding alarms until currentOffsetSeconds reaches dawn + minutesBeforeAfterDawnToDoExtraRecordings
             Calendar dawnTodayCalendar = Util.getDawn(context, nowToday);
@@ -102,7 +102,7 @@ class DawnDuskAlarms {
                 }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
                 }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);;
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dawnTomorrowCalendar.getTimeInMillis(), pendingIntent);
                 }
             }
             currentOffsetSeconds +=  (dawnDuskIncrementMinutes * 60);
@@ -110,7 +110,7 @@ class DawnDuskAlarms {
     }
 
 
-    static void configureDuskAlarmsUsingLoop(Context context) {
+    private static void configureDuskAlarmsUsingLoop(Context context) {
         Prefs prefs = new Prefs(context);
         Calendar nowToday =  new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
         Calendar nowTomorrow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
@@ -127,7 +127,7 @@ class DawnDuskAlarms {
         int dawnDuskIncrementMinutes = (int)prefs.getDawnDuskIncrementMinutes();
 
         int currentOffsetSeconds = dawnDuskOffsetMinutes * 60 * -1;
-        long windowInMilliseconds = 1 * 60 * 1000; // 1 minute
+       // long windowInMilliseconds = 1 * 60 * 1000; // 1 minute
 
         while (currentOffsetSeconds <= (dawnDuskOffsetMinutes * 60) ){ // we are going to keep adding alarms until currentOffsetSeconds reaches dawn + minutesBeforeAfterDawnToDoExtraRecordings
             Calendar duskTodayCalendar = Util.getDusk(context, nowToday);
@@ -166,7 +166,8 @@ class DawnDuskAlarms {
     }
 
 
-    static boolean isOutsideDawnDuskRecordings(Context context, Prefs prefs){
+    @SuppressWarnings("RedundantIfStatement")
+    private static boolean isOutsideDawnDuskRecordings(Context context, Prefs prefs){
         // Trying to fix bug of not all 13 dawn or dusk recordings happening - maybe it is because
         // the recalculation of alarms interferes.  So don't do the recalculation within the time range of dawn dusk readings (plus a margin)
 
@@ -190,6 +191,7 @@ class DawnDuskAlarms {
         Calendar duskRecordingsFinish = Util.getDawn(context, nowToday);
         duskRecordingsFinish.add(Calendar.MINUTE, dawnDuskOffsetMinutes);
 
+        //noinspection RedundantIfStatement
         if ((duskRecordingsStart.getTimeInMillis() < nowToday.getTimeInMillis() && (nowToday.getTimeInMillis() < duskRecordingsFinish.getTimeInMillis()))){
             return false;
         }

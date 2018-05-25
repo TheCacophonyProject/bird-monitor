@@ -19,6 +19,7 @@ android {
                 keyPassword KEY_PASSWORD
             }
             catch (ex) {
+
                 throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS and STORE_FILE in gradle.properties in your gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC");
             }
         }
@@ -30,10 +31,10 @@ android {
         // minSdkVersion 10 // 10 is the version that AMR_WB in MediaRecorder.AudioEncoder.AMR_WB was added which gives a lower limit on quality of recordings
         minSdkVersion 14
         // Increased to 14 to allow use of com.android.support:appcompat-v7:27.1.1 which was recommended by ?
-        targetSdkVersion 22
+        targetSdkVersion 27
         // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 1
-        versionName "0.994"
+        versionName "0.995a"
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -57,18 +58,18 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //    implementation 'com.android.support:appcompat-v7:25.3.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
+    implementation 'org.apache.commons:commons-lang3:3.5'
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
     implementation 'info.guardianproject.netcipher:netcipher:1.2'
-    androidTestImplementation 'com.android.support:support-annotations:24.0.0'
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test:rules:0.5'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     // Optional -- Hamcrest library
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     // Optional -- UI testing with Espresso

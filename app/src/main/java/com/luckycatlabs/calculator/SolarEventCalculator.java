@@ -16,14 +16,14 @@
 
 package com.luckycatlabs.calculator;
 
+import com.luckycatlabs.Zenith;
+import com.luckycatlabs.dto.Location;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import com.luckycatlabs.Zenith;
-import com.luckycatlabs.dto.Location;
 
 //import com.luckycatlabs.sunrisesunset.Zenith;
 //import com.luckycatlabs.sunrisesunset.dto.Location;
@@ -129,8 +129,7 @@ public class SolarEventCalculator {
 
         BigDecimal sunLocalHour = getSunLocalHour(cosineSunLocalHour, isSunrise);
         BigDecimal localMeanTime = getLocalMeanTime(sunTrueLong, longitudeHour, sunLocalHour);
-        BigDecimal localTime = getLocalTime(localMeanTime, date);
-        return localTime;
+        return getLocalTime(localMeanTime, date);
     }
 
     /**
@@ -328,7 +327,7 @@ public class SolarEventCalculator {
      *            <code>BigDecimal</code> representation of the local rise/set time.
      * @return <code>Calendar</code> representation of the local time as a calendar, or null for none.
      */
-    protected Calendar getLocalTimeAsCalendar(BigDecimal localTimeParam, Calendar date) {
+    private Calendar getLocalTimeAsCalendar(BigDecimal localTimeParam, Calendar date) {
         if (localTimeParam == null) {
             return null;
         }
@@ -372,7 +371,7 @@ public class SolarEventCalculator {
 
     private BigDecimal getUTCOffSet(Calendar date) {
         BigDecimal offSetInMillis = new BigDecimal(date.get(Calendar.ZONE_OFFSET));
-        BigDecimal offSet = offSetInMillis.divide(new BigDecimal(3600000), new MathContext(2));
+        @SuppressWarnings("UnnecessaryLocalVariable") BigDecimal offSet = offSetInMillis.divide(new BigDecimal(3600000), new MathContext(2));
         return offSet;
     }
 

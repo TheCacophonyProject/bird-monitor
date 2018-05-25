@@ -124,7 +124,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         }
     }
 
-    public void disableFlightMode(){
+    private void disableFlightMode(){
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
             new Thread()
@@ -135,11 +135,12 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                     {
                         public void run()
                         {
-                            String message = Util.disableFlightMode(getApplicationContext());
-
-                            if (message != null){
-                                ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
-                            }
+//                            String message = Util.disableFlightMode(getApplicationContext());
+//
+//                            if (message != null){
+//                                ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
+//                            }
+                            Util.disableFlightMode(getApplicationContext());
 
                         }
                     });
@@ -172,7 +173,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
-        versionNameText.setText(getString(R.string.version) + " " + versionName);
+        String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
+       // versionNameText.setText(getString(R.string.version) + " " + versionName);
+        versionNameText.setText(versionNameTextToDisplay);
 
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
@@ -217,7 +220,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
     }
 
-    boolean requestPermissions(){
+    private boolean requestPermissions(){
         // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
 //        https://developer.android.com/training/permissions/requesting.html
 
@@ -327,7 +330,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // END_INCLUDE(onRequestPermissionsResult)
     }
 
-    void refreshVitalsDisplayedText(){
+    private void refreshVitalsDisplayedText(){
         Prefs prefs = new Prefs(getApplicationContext());
         // Device registered text
         TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
@@ -356,8 +359,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             if (prefs.getUseTestServer()){
                 textServerPrefix = "Test Server" + " ";
             }
-
-            deviceIDText.setText(getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken()));
+String deviceIDToDisplay = getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken());
+       //     deviceIDText.setText(getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken()));
+            deviceIDText.setText(deviceIDToDisplay);
         } catch (Exception e) {
 
 //            logger.error("Device ID not available");
@@ -369,7 +373,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
     }
 
-    void updateGpsDisplay(Prefs prefs){
+    private void updateGpsDisplay(Prefs prefs){
 
 try {
     double lat = prefs.getLatitude();
@@ -381,7 +385,11 @@ try {
         String latStr = numberFormat.format(lat);
         String lonStr = numberFormat.format(lon);
         TextView locationStatus = (TextView) findViewById(R.id.gpsText);
-        locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+        String latitude = getString(R.string.latitude);
+        String longitude = getString(R.string.longitude);
+        String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
+//        locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+        locationStatus.setText(locationStatusToDisplay);
          }
 }catch (Exception ex){
     Log.e(TAG, ex.getLocalizedMessage());
@@ -389,7 +397,7 @@ try {
     }
 
 
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         // broadcast notification coming from ??
@@ -427,13 +435,6 @@ try {
             }
         }
     };
-    public CountingIdlingResource getRegisterIdlingResource() {
-        return registerIdlingResource;
-    }
-
-    public CountingIdlingResource getRecordNowIdlingResource() {
-        return recordNowIdlingResource;
-    }
 
 
 }

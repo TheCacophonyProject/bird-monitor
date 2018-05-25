@@ -33,10 +33,8 @@ class Server {
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
-    private static final String OBTAIN_TOKEN_FOR_RETRIEVING_AUDIO_RECORDING_URL = "/api/v1/audiorecordings/:";
-    private static final String AUTHENTICATE_USER_URL = "/authenticate_user/";
 
-   // static boolean serverConnection = false;
+    // static boolean serverConnection = false;
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -136,11 +134,14 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
+        //noinspection RedundantIfStatement
         if (prefs.getToken() == null){
             return false;
         }else {
             return true;
         }
+
+
 
     }
 
@@ -174,7 +175,8 @@ class Server {
 
     private static HttpURLConnection openHttpsURL(URL url) throws IOException {
         // Create connection
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        if ( Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
             return NetCipher.getHttpsURLConnection(url);
         }

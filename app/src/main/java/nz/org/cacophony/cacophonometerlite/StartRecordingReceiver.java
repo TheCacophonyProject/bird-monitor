@@ -16,7 +16,6 @@ import static nz.org.cacophony.cacophonometerlite.Util.getBatteryLevelByIntent;
 public class StartRecordingReceiver extends BroadcastReceiver{
 
     private static final String TAG = StartRecordingReceiver.class.getName();
-    private Context context = null;
 
 
     @Override
@@ -25,11 +24,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "StartRecordingReceiverWakelockTag");
-        wakeLock.acquire();
+        wakeLock.acquire(10*60*1000L /*10 minutes*/);
         try {
-            Util.createAlarms(context, "repeating", "normal");
+            Util.createAlarms(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-            this.context = context;
 
             if (!Util.checkPermissionsForRecording(context)) {
                 Log.e(TAG, "Don't have proper permissions to record");
@@ -51,7 +49,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             // First check to see if battery level is sufficient to continue.
 
-            double batteryLevel = Util.getBatteryLevelUsingSystemFile(context);
+            double batteryLevel = Util.getBatteryLevelUsingSystemFile();
             if (batteryLevel != -1) { // looks like getting battery level using system file worked
                 String batteryStatus = Util.getBatteryStatus(context);
                 prefs.setBatteryLevel(batteryLevel); // had to put it into prefs as I could not ready battery level from UploadFiles class (looper error)
@@ -135,6 +133,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             }
 
         }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
 
         }finally{
             wakeLock.release();

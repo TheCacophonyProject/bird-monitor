@@ -3,12 +3,14 @@ package nz.org.cacophony.cacophonometerlite;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public abstract class ExecuteAsRootBase
+@SuppressWarnings({"UnusedReturnValue", "unused"})
+abstract class ExecuteAsRootBase
 {
     public static boolean canRunRootCommands()
     {
@@ -20,7 +22,10 @@ public abstract class ExecuteAsRootBase
             suProcess = Runtime.getRuntime().exec("su");
 
             DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
-            DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
+
+            // https://developer.android.com/reference/java/io/DataInputStream
+           // DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
+            BufferedReader osRes = new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
 
             if (null != os && null != osRes)
             {
@@ -36,7 +41,7 @@ public abstract class ExecuteAsRootBase
                     exitSu = false;
                     Log.d("ROOT", "Can't get root access or denied by user");
                 }
-                else if (true == currUid.contains("uid=0"))
+                else if (currUid.contains("uid=0"))
                 {
                     retval = true;
                     exitSu = true;
@@ -94,6 +99,7 @@ public abstract class ExecuteAsRootBase
                 try
                 {
                     int suProcessRetval = suProcess.waitFor();
+                    //noinspection RedundantIfStatement
                     if (255 != suProcessRetval)
                     {
                         // Root access granted

@@ -82,12 +82,7 @@ private static final String TAG = HelpActivity.class.getName();
         startActivity(intent);
     }
 
-    private void openHelp() {
-        Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    public void disableFlightMode(){
+    private void disableFlightMode(){
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
             new Thread()

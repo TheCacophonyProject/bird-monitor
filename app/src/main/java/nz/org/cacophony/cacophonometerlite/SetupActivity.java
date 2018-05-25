@@ -38,7 +38,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
     // Handler status indicators
     private static final int REGISTER_SUCCESS = 1;
     private static final int REGISTER_FAIL = 2;
-    static final int RESUME = 3;
+    private static final int RESUME = 3;
 
 
     @Override
@@ -64,7 +64,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
     }
 
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         @Override
@@ -323,11 +323,11 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
             return;
         }
-        unregister(true);
+        unregister();
 
     }
 
-    private void unregister(boolean displayUnregisterdMessage){
+    private void unregister(){
         try {
 
             Prefs prefs = new Prefs(getApplicationContext());
@@ -335,9 +335,9 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             prefs.setPassword(null);
             prefs.setDeviceName(null);
             prefs.setToken(null);
-            if (displayUnregisterdMessage){
+           // if (true){
                 Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
-            }
+           // }
 
             Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
         }catch(Exception ex){
@@ -489,7 +489,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         prefs.setPlayWarningSound(checked);
     }
 
-    public void disableFlightMode(){
+    private void disableFlightMode(){
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
             new Thread()
@@ -515,7 +515,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
     }
 
-    void updateGpsDisplay(Context context) {
+    private void updateGpsDisplay(Context context) {
         try {
 
             Prefs prefs = new Prefs(context);
@@ -529,7 +529,12 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                 String latStr = numberFormat.format(lat);
                 String lonStr = numberFormat.format(lon);
                 TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
-                locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+
+                String latitude = getString(R.string.latitude);
+                String longitude = getString(R.string.longitude);
+                String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
+//                locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
+                locationStatus.setText(locationStatusToDisplay);
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -541,15 +546,17 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
     public void onPause() {
         super.onPause();
         Util.createCreateAlarms(getApplicationContext());
-        Util.createAlarms(getApplicationContext(), "repeating", "normal");
+        Util.createAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 
 
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getIdlingResource() {
         return registerIdlingResource;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public CountingIdlingResource getRecordNowIdlingResource() {
         return recordNowIdlingResource;
     }

@@ -26,6 +26,13 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent)
     {
+        if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            return;
+        }
+        String intentAction = intent.getAction();
+        Util.getToast(context,intentAction, true );
+        Log.e(TAG,intentAction);
+
         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
@@ -37,7 +44,7 @@ public class BootReceiver extends BroadcastReceiver {
         wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creaation
 try {
 
-    Util.createAlarms(context, "repeating", "normal");
+    Util.createAlarms(context);
 
     DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
     Util.createCreateAlarms(context);

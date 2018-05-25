@@ -12,7 +12,8 @@ import android.util.Log;
 public class Prefs {
 
     private static final String TAG = Prefs.class.getName();
-    private static Context context = null;
+//    private static Context context = null;
+private  Context context = null;
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
@@ -52,13 +53,11 @@ public class Prefs {
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
 
     private static final String IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
-    private static final double IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 0; // for testing battery
 
     private static final String BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 50;
 
     private static final String IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
-    private static final double IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 0; // for testing battery
 
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
     private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
@@ -173,13 +172,13 @@ public class Prefs {
         return preferences.getBoolean(key, false);
     }
 
-    private boolean getBooleanDefaultTrue(String key) {  // used to determine first time app runs after install
+    private boolean getBooleanDefaultTrue() {  // used to determine first time app runs after install
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return false;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return preferences.getBoolean(key, true);
+        return preferences.getBoolean(Prefs.FIRST_TIME_KEY, true);
     }
 
     private void setBoolean(String key, boolean val) {
@@ -500,12 +499,8 @@ public class Prefs {
         setLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY, dateTimeLastCalculatedDawnDusk);
     }
 
-    long getDateTimeLastRepeatingAlarmFired() {
-        return getLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY);
-    }
-
-    void setDateTimeLastRepeatingAlarmFired(long dateTimeLastRepeatingAlarmFired) {
-        setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, dateTimeLastRepeatingAlarmFired);
+    void setDateTimeLastRepeatingAlarmFiredToZero() {
+        setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, (long) 0);
     }
 void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer){
     setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
@@ -514,12 +509,12 @@ void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer){
     long getLastRecordIdReturnedFromServer() {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
-    void setIsFirstTime(boolean firstTime){
-        setBoolean(FIRST_TIME_KEY, firstTime);
+    void setIsFirstTime(){
+        setBoolean(FIRST_TIME_KEY, false);
     }
 
     boolean getIsFirstTime(){
-        return getBooleanDefaultTrue(FIRST_TIME_KEY);
+        return getBooleanDefaultTrue();
     }
 
 }

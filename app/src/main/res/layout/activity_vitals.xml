@@ -99,7 +99,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/mainRegisteredStatus"
-                android:text="Logged in to server" />
+                android:text="@string/logged_in_to_server"  />
 
 
             <TextView

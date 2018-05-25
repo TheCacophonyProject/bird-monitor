@@ -22,7 +22,7 @@ import java.util.List;
  * @author www.codejava.net
  *
  */
-public class MultipartUtility {
+class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
     private HttpURLConnection httpConn;
@@ -108,6 +108,7 @@ public class MultipartUtility {
      * @param name - name of the header field
      * @param value - value of the header field
      */
+    @SuppressWarnings("unused")
     public void addHeaderField(String name, String value) {
         writer.append(name + ": " + value).append(LINE_FEED);
         writer.flush();

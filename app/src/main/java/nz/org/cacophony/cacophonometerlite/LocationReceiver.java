@@ -14,7 +14,6 @@ import static android.content.Context.POWER_SERVICE;
 
 public class LocationReceiver extends BroadcastReceiver {
     private static final String TAG = LocationReceiver.class.getName();
-    private Context context = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
