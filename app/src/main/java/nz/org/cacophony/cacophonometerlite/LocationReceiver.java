@@ -18,9 +18,14 @@ public class LocationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        if (powerManager == null){
+            Log.e(TAG, "PowerManger is null");
+            return;
+        }
 
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "LocationReceiverWakelockTag");
+
         long timeout = 1000 * 60 * 2;
         wakeLock.acquire(timeout);
         try {

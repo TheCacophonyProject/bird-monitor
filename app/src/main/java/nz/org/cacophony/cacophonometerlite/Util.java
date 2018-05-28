@@ -134,12 +134,9 @@ class Util {
                 appDataFolder = context.getFilesDir();
             }
 
-            if (appDataFolder == null) {
-
-
-            } else {
+            if (appDataFolder != null) {
                 if (!appDataFolder.exists()){
-                 boolean appDataFolderCreated =   appDataFolder.mkdirs();
+                    boolean appDataFolderCreated =   appDataFolder.mkdirs();
                     if (!appDataFolderCreated){
                         return null;
                     }
@@ -165,9 +162,10 @@ class Util {
 //        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
 //    }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static File getLocalFolder(Context context) {
 
-        File localFolderFile = null;
+        File localFolderFile;
         try {
 
             File appDataFolder = getAppDataFolder(context);
@@ -177,9 +175,7 @@ class Util {
             }
 
             localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
-            if (localFolderFile == null) {
 
-            } else {
                     if (!localFolderFile.exists()){
                         localFolderFile.mkdirs();
 
@@ -191,7 +187,7 @@ class Util {
 
                     // now check it is there
 
-            }
+
             if (localFolderFile == null){
                 Log.e(TAG, "There is a problem writing to the memory - please fix");
                 getToast(context, "There is a problem writing to the memory - please fix", true).show();
@@ -206,7 +202,7 @@ class Util {
     }
 
 
-    static String getDeviceID(Context context, String webToken) throws Exception {
+    static String getDeviceID(String webToken) throws Exception {
         if (webToken == null){
             return "";
         }
@@ -456,6 +452,10 @@ class Util {
 
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null){
+            Log.e(TAG, "cm is null");
+            return false; // false may not be correct
+        }
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         @SuppressWarnings("UnnecessaryLocalVariable") boolean isConnected = activeNetwork != null &&
@@ -654,7 +654,7 @@ private static void executeCommandTim(Context context, String command){
         final String EXTERNAL_SD_STORAGE = System.getenv("EXTERNAL_SD_STORAGE");
         final String EXTERNAL_STORAGE = System.getenv("EXTERNAL_STORAGE");
 
-        @SuppressLint("UseSparseArrays") Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<Integer, String>();
+        @SuppressLint("UseSparseArrays") Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<>();
         listEnvironmentVariableStoreSDCardRootDirectory.put(0, SECONDARY_STORAGE);
         listEnvironmentVariableStoreSDCardRootDirectory.put(1, EXTERNAL_STORAGE_DOCOMO);
         listEnvironmentVariableStoreSDCardRootDirectory.put(2, EXTERNAL_SDCARD_STORAGE);
@@ -665,7 +665,7 @@ private static void executeCommandTim(Context context, String command){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             externalStorageList = context.getExternalFilesDirs(null);
         }
-        String directory = null;
+        String directory;
         int size = listEnvironmentVariableStoreSDCardRootDirectory.size();
         for (int i = 0; i < size; i++) {
             if (externalStorageList != null && externalStorageList.length > 1 && externalStorageList[1] != null)
@@ -693,10 +693,10 @@ private static void executeCommandTim(Context context, String command){
     private static String canCreateFile(String directory) {
         // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location
         final String FILE_DIR = directory + File.separator + "hoang.txt";
-        File tempFlie = null;
+        File tempFile = null;
         try {
-            tempFlie = new File(FILE_DIR);
-            FileOutputStream fos = new FileOutputStream(tempFlie);
+            tempFile = new File(FILE_DIR);
+            FileOutputStream fos = new FileOutputStream(tempFile);
             fos.write(new byte[1024]);
             fos.flush();
             fos.close();
@@ -705,9 +705,10 @@ private static void executeCommandTim(Context context, String command){
 
             return null;
         } finally {
-            if (tempFlie != null && tempFlie.exists() && tempFlie.isFile()) {
+            if (tempFile != null && tempFile.exists() && tempFile.isFile()) {
 
-                tempFlie = null;
+                //noinspection UnusedAssignment
+                tempFile = null;
             }
         }
         return directory;
@@ -731,7 +732,7 @@ private static void executeCommandTim(Context context, String command){
        }
     }
 
-    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this failsafe to get them going again (it doesn't rely on a previous alarm)
+    public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
              Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
@@ -748,6 +749,10 @@ private static void executeCommandTim(Context context, String command){
 
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        if (alarmManager == null){
+            Log.e(TAG, "alarmManager is null");
+            return;
+        }
 
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY,pendingIntent);
@@ -773,6 +778,10 @@ Prefs prefs = new Prefs(context);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+    if (alarmManager == null){
+        Log.e(TAG, "alarmManager is null");
+        return;
+    }
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
 
     String mode = prefs.getMode();
@@ -803,9 +812,10 @@ Prefs prefs = new Prefs(context);
 
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
-    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
+    }else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+//    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+    }else  {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
         alarmManager.setExactAndAllowWhileIdle (AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
     }
@@ -846,6 +856,10 @@ Prefs prefs = new Prefs(context);
         PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        if (alarmManager == null){
+            Log.e(TAG, "alarmManager is null");
+            return;
+        }
 
         Prefs prefs = new Prefs(context);
         long timeBetweenVeryFrequentRecordingsSeconds = (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
@@ -857,17 +871,22 @@ Prefs prefs = new Prefs(context);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
             // https://developer.android.com/reference/android/app/AlarmManager.html
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
+        }else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
             alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+        }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
         }
     }
 
     private static void deleteLocationUpdateAlarm(Context context){
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        if (alarmManager == null){
+            Log.e(TAG, "alarmManager is null");
+            return;
+        }
         Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
         PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
+
         alarmManager.cancel(pendingLocationUpdateIntent);
     }
 
@@ -875,6 +894,10 @@ Prefs prefs = new Prefs(context);
 
         Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager == null){
+            Log.e(TAG, "locationManager is null");
+            return;
+        }
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){

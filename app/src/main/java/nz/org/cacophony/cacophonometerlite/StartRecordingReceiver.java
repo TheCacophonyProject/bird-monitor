@@ -18,9 +18,14 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     private static final String TAG = StartRecordingReceiver.class.getName();
 
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void onReceive(final Context context, Intent intent) {
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        if (powerManager == null){
+            Log.e(TAG, "PowerManger is null");
+            return;
+        }
 
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "StartRecordingReceiverWakelockTag");
@@ -40,11 +45,15 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
+            if (bundle == null){
+                Log.e(TAG, "bundle is null");
+                return;
+            }
             final String alarmIntentType = bundle.getString("type");
-
 
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
+                return;
             }
 
             // First check to see if battery level is sufficient to continue.
@@ -78,7 +87,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             switch (mode) {
                 case "off":
                     if (prefs.getPeriodicallyUpdateGPS()) {
-
+// Don't do anything
                     }
 
                     break;

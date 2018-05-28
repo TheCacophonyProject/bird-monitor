@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 /**
  * Simple VO class to store latitude/longitude information.
  */
+@SuppressWarnings("ALL")
 public class Location {
     private BigDecimal latitude;
     private BigDecimal longitude;
@@ -40,7 +41,7 @@ public class Location {
 
     /**
      * Creates a new instance of <code>Location</code> with the given parameters.
-     * 
+     *
      * @param latitude
      *            the latitude, in degrees, of this location. North latitude is positive, south negative.
      * @param longitude

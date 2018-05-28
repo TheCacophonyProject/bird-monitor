@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 /**
  * Defines the solar declination used in computing the sunrise/sunset.
  */
+@SuppressWarnings("unused")
 public class Zenith {
     /** Astronomical sunrise/set is when the sun is 18 degrees below the horizon. */
     public static final Zenith ASTRONOMICAL = new Zenith(108);
@@ -36,6 +37,7 @@ public class Zenith {
 
     private final BigDecimal degrees;
 
+    @SuppressWarnings("WeakerAccess")
     public Zenith(double degrees) {
         this.degrees = BigDecimal.valueOf(degrees);
     }

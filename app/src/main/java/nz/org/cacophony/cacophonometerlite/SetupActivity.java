@@ -27,10 +27,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 
+@SuppressWarnings("unused")
 public class SetupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
-    // Register with idling couunter
+    // Register with idling counter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
-// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = SetupActivity.class.getName();
@@ -47,7 +48,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         // Get a support ActionBar corresponding to this toolbar
@@ -134,7 +135,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             Log.e(TAG, "Error calling super.onResume");
         }
 
-        TextView registerStatus = (TextView) findViewById(R.id.setupRegisterStatus);
+        TextView registerStatus = findViewById(R.id.setupRegisterStatus);
         Prefs prefs = new Prefs(getApplicationContext());
 
 
@@ -150,7 +151,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
 
         boolean hasRootAccess = prefs.getHasRootAccess();
-        final CheckBox checkBoxRootAccess = (CheckBox) findViewById(R.id.cbHasRootAccess);
+        final CheckBox checkBoxRootAccess = findViewById(R.id.cbHasRootAccess);
         if (hasRootAccess) {
             checkBoxRootAccess.setChecked(true);
         } else
@@ -159,49 +160,49 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
 
 
         boolean useShortRecordings = prefs.getUseShortRecordings();
-        final CheckBox checkBoxUseUseShortRecordings = (CheckBox) findViewById(R.id.cbShortRecordings);
+        final CheckBox checkBoxUseUseShortRecordings = findViewById(R.id.cbShortRecordings);
         if (useShortRecordings) {
             checkBoxUseUseShortRecordings.setChecked(true);
         } else
             checkBoxUseUseShortRecordings.setChecked(false);
 
         boolean useTestServer = prefs.getUseTestServer();
-        final CheckBox checkBoxUseTestServer = (CheckBox) findViewById(R.id.cbUseTestServer);
+        final CheckBox checkBoxUseTestServer = findViewById(R.id.cbUseTestServer);
         if (useTestServer) {
             checkBoxUseTestServer.setChecked(true);
         } else
             checkBoxUseTestServer.setChecked(false);
 
         boolean useFrequentRecordings = prefs.getUseFrequentRecordings();
-        final CheckBox checkBoxUseFrequentRecordings = (CheckBox) findViewById(R.id.cbUseFrequentRecordings);
+        final CheckBox checkBoxUseFrequentRecordings = findViewById(R.id.cbUseFrequentRecordings);
         if (useFrequentRecordings) {
             checkBoxUseFrequentRecordings.setChecked(true);
         } else
             checkBoxUseFrequentRecordings.setChecked(false);
 
         boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
-        final CheckBox checkBoxUseVeryFrequentRecordings = (CheckBox) findViewById(R.id.cbUseVeryFrequentRecordings);
+        final CheckBox checkBoxUseVeryFrequentRecordings = findViewById(R.id.cbUseVeryFrequentRecordings);
         if (useVeryFrequentRecordings) {
             checkBoxUseVeryFrequentRecordings.setChecked(true);
         } else
             checkBoxUseVeryFrequentRecordings.setChecked(false);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        final CheckBox checkBoxUseFrequentUploads = (CheckBox) findViewById(R.id.cbUseFrequentUploads);
+        final CheckBox checkBoxUseFrequentUploads = findViewById(R.id.cbUseFrequentUploads);
         if (useFrequentUploads) {
             checkBoxUseFrequentUploads.setChecked(true);
         } else
             checkBoxUseFrequentUploads.setChecked(false);
 
         boolean ignoreLowBattery = prefs.getIgnoreLowBattery();
-        final CheckBox checkBoxIgnoreLowBattery = (CheckBox) findViewById(R.id.cbIgnoreLowBattery);
+        final CheckBox checkBoxIgnoreLowBattery = findViewById(R.id.cbIgnoreLowBattery);
         if (ignoreLowBattery) {
             checkBoxIgnoreLowBattery.setChecked(true);
         } else
             checkBoxIgnoreLowBattery.setChecked(false);
 
         boolean noNetwork = prefs.getOffLineMode();
-        final CheckBox checkBoxNoNetwork = (CheckBox) findViewById(R.id.cbOffLineMode);
+        final CheckBox checkBoxNoNetwork = findViewById(R.id.cbOffLineMode);
         if (noNetwork) {
             checkBoxNoNetwork.setChecked(true);
         } else {
@@ -209,11 +210,11 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
 
         boolean onLineMode = prefs.getOnLineMode();
-        final CheckBox checkBoxOnLineMode = (CheckBox) findViewById(R.id.cbOnLineMode);
+        final CheckBox checkBoxOnLineMode = findViewById(R.id.cbOnLineMode);
         checkBoxOnLineMode.setChecked(onLineMode);
 
         boolean playWarningSound = prefs.getPlayWarningSound();
-        final CheckBox checkBoxPlayWarningSound = (CheckBox) findViewById(R.id.cbPlayWarningSound);
+        final CheckBox checkBoxPlayWarningSound = findViewById(R.id.cbPlayWarningSound);
         if (playWarningSound) {
             checkBoxPlayWarningSound.setChecked(true);
         } else {
@@ -221,7 +222,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
 
         boolean alwaysUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        final CheckBox checkBoxAlwaysUpdateGPS = (CheckBox) findViewById(R.id.cbPeriodicallyUpdateGPS);
+        final CheckBox checkBoxAlwaysUpdateGPS = findViewById(R.id.cbPeriodicallyUpdateGPS);
         checkBoxAlwaysUpdateGPS.setChecked(alwaysUpdateGPS);
 
         IntentFilter iff = new IntentFilter("event");
@@ -236,7 +237,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                 case REGISTER_SUCCESS:
                     onResume();
                     registerIdlingResource.decrement();
-                    ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
+                    ScrollView mainScrollView = findViewById(R.id.mainScrollView);
                     mainScrollView.fullScroll(ScrollView.FOCUS_UP);
                     try {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
@@ -250,7 +251,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                 case REGISTER_FAIL:
                     onResume();
                     registerIdlingResource.decrement();
-                    Context context = SetupActivity.this;
+//                    Context context = SetupActivity.this;
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
                         errorMessage = Server.getErrorMessage();
@@ -287,7 +288,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         }
         // Check that the group name is valid, at least 4 characters.
         String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
-        if (group == null || group.length() < 1){
+        if (group.length() < 1){
             Util.getToast(getApplicationContext(),"Please enter a group name of at least 4 characters (no spaces)", true ).show();
             return;
         }else if (group.length() < 4) {
@@ -300,6 +301,11 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null){
+            Log.e(TAG, "imm is null");
+            return;
+        }
+
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
         String groupName = prefs.getGroupName();
@@ -344,7 +350,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             Log.e(TAG, "Error Un-registering device.");
         }
         onResume();
-        ScrollView mainScrollView = (ScrollView)findViewById(R.id.mainScrollView);
+        ScrollView mainScrollView = findViewById(R.id.mainScrollView);
         mainScrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 
@@ -528,7 +534,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                 NumberFormat numberFormat  = new DecimalFormat("#.000000");
                 String latStr = numberFormat.format(lat);
                 String lonStr = numberFormat.format(lon);
-                TextView locationStatus = (TextView) findViewById(R.id.setupGPSLocationStatus);
+                TextView locationStatus = findViewById(R.id.setupGPSLocationStatus);
 
                 String latitude = getString(R.string.latitude);
                 String longitude = getString(R.string.longitude);

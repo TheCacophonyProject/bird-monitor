@@ -190,6 +190,7 @@ class Server {
      * @param context App context.
      * @return If the device successfully registered.
      */
+    @SuppressWarnings("RedundantStringConstructorCall")
     static boolean register(final String group, final Context context) {
 
         // Check that the group name is valid, at least 4 characters.
@@ -243,7 +244,7 @@ class Server {
 
                     // look at web token
 
-                    String deviceID = Util.getDeviceID(context, prefs.getToken());
+                    String deviceID = Util.getDeviceID(prefs.getToken());
                     prefs.setDeviceId(deviceID);
 
                     prefs.setDeviceName(devicename);

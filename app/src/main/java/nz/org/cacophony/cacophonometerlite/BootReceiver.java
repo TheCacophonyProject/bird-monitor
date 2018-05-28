@@ -26,6 +26,10 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent)
     {
+        if (intent.getAction() == null){
+            Log.e(TAG, "intent.getAction() is null");
+            return;
+        }
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             return;
         }
@@ -37,11 +41,15 @@ public class BootReceiver extends BroadcastReceiver {
         toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        if (powerManager == null){
+            Log.e(TAG, "powerManager is null");
+            return;
+        }
 
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "BootReceiverWakelockTag");
         long timeout = 1000 * 60 * 2;  // give the boot stuff two minutes to run - but the enable flight mode does not seem to be working (however long I wait).
-        wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creaation
+        wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creation
 try {
 
     Util.createAlarms(context);

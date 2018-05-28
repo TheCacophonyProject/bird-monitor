@@ -26,9 +26,8 @@ import java.util.Calendar;
 /**
  * Public interface for getting the various types of sunrise/sunset.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable", "unused"})
 public class SunriseSunsetCalculator {
-
-    private final Location location;
 
     private final SolarEventCalculator calculator;
 
@@ -44,7 +43,7 @@ public class SunriseSunsetCalculator {
      *            time zones.
      */
     public SunriseSunsetCalculator(Location location, String timeZoneIdentifier) {
-        this.location = location;
+        Location location1 = location;
         this.calculator = new SolarEventCalculator(location, timeZoneIdentifier);
     }
 

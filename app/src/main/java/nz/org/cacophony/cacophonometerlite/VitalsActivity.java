@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,10 +29,11 @@ import java.util.List;
 
 
 
+@SuppressWarnings("NullableProblems")
 public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
-    // Register with idling couunter
+    // Register with idling counter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
-// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = VitalsActivity.class.getName();
@@ -65,7 +64,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         setContentView(R.layout.activity_vitals);
 
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         // Get a support ActionBar corresponding to this toolbar
@@ -172,7 +171,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Application name text  appNameVersionText
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
-        TextView versionNameText = (TextView) findViewById(R.id.appNameVersionText);
+        TextView versionNameText = findViewById(R.id.appNameVersionText);
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
        // versionNameText.setText(getString(R.string.version) + " " + versionName);
         versionNameText.setText(versionNameTextToDisplay);
@@ -198,7 +197,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         boolean locationPermission =
                 ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        TextView permissionText = (TextView) findViewById(R.id.appPermissionText);
+        TextView permissionText = findViewById(R.id.appPermissionText);
         if (storagePermission && microphonePermission && locationPermission) {
             permissionText.setText(getString(R.string.required_permissions_true));
 
@@ -277,7 +276,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
      * Check the vitals again and update the UI.
      */
     private void refreshVitals() {
-        ((Button) findViewById(R.id.refreshVitals)).setEnabled(false);
+        findViewById(R.id.refreshVitals).setEnabled(false);
 
         Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
         try {
@@ -295,7 +294,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
 
             Log.e(TAG, ex.getLocalizedMessage());
-            ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
+            findViewById(R.id.refreshVitals).setEnabled(true);
 
         }
     }
@@ -333,7 +332,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     private void refreshVitalsDisplayedText(){
         Prefs prefs = new Prefs(getApplicationContext());
         // Device registered text
-        TextView registered = (TextView) findViewById(R.id.mainRegisteredStatus);
+        TextView registered = findViewById(R.id.mainRegisteredStatus);
         if (prefs.getGroupName() != null)
             registered.setText(getString(R.string.registered_true));
         else
@@ -341,7 +340,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
 
         // Logged In text.
-        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+        TextView loggedInText = findViewById(R.id.loggedInText);
 
 // Check the age of the webToken
         boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
@@ -353,13 +352,13 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             loggedInText.setText(getString(R.string.logged_in_to_server_false));
 
         // Device ID text.
-        TextView deviceIDText = (TextView) findViewById(R.id.deviceIDText);
+        TextView deviceIDText = findViewById(R.id.deviceIDText);
         try {
             String textServerPrefix = "";
             if (prefs.getUseTestServer()){
                 textServerPrefix = "Test Server" + " ";
             }
-String deviceIDToDisplay = getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken());
+String deviceIDToDisplay = getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(prefs.getToken());
        //     deviceIDText.setText(getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken()));
             deviceIDText.setText(deviceIDToDisplay);
         } catch (Exception e) {
@@ -384,7 +383,7 @@ try {
         NumberFormat numberFormat  = new DecimalFormat("#.000000");
         String latStr = numberFormat.format(lat);
         String lonStr = numberFormat.format(lon);
-        TextView locationStatus = (TextView) findViewById(R.id.gpsText);
+        TextView locationStatus = findViewById(R.id.gpsText);
         String latitude = getString(R.string.latitude);
         String longitude = getString(R.string.longitude);
         String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
@@ -408,18 +407,18 @@ try {
                 if (message != null) {
 
                     if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
+                        findViewById(R.id.refreshVitals).setEnabled(true);
 
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
                     }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
                     }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
                         refreshVitalsDisplayedText();
                     }else if (message.equalsIgnoreCase("can_not_toggle_airplane_mode")){
-                        TextView messageView = (TextView)findViewById(R.id.messageText);
+                        TextView messageView = findViewById(R.id.messageText);
                         if (messageView != null){
                             messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
                         }

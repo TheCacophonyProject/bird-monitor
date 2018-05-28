@@ -40,7 +40,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting{
 static String doRecord(Context context, String typeOfRecording) {
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
-    String returnValue = null;
+    String returnValue;
 
     if (typeOfRecording == null) {
         Log.e(TAG, "typeOfRecording is null");
@@ -107,6 +107,7 @@ if (isRecording){
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
         long now = new Date().getTime();
         long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
+        //noinspection UnusedAssignment
         boolean uploadedFilesSuccessfully = false;
 
       boolean offlineMode = prefs.getOffLineMode();
@@ -281,8 +282,6 @@ try {
     mRecorder.reset();
     mRecorder.release();
 
-    mRecorder = null; // attempting to fix error media recorder went away with unhandled events
-
 
     if (playWarningBeeps) {
         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
@@ -291,7 +290,7 @@ try {
 
     // Give time for file to be saved. (and play beeps)
     try {
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
     } catch (InterruptedException ex) {
 //            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
@@ -371,7 +370,7 @@ try {
                             break;
                         }
                     } else {
-                        returnValue = false;
+                       // returnValue = false;
 
                         Log.e(TAG, "Failed to upload file to server");
                         return false;
@@ -483,6 +482,10 @@ try {
 
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
+            if (mTelephonyManager == null){
+                Log.e(TAG, "mTelephonyManager is null");
+                return false;
+            }
 
             additionalMetadata.put("SIM state",Util.getSimStateAsString( mTelephonyManager.getSimState()));
             if (mTelephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {

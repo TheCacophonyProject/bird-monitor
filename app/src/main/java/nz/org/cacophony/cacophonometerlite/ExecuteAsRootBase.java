@@ -14,7 +14,7 @@ abstract class ExecuteAsRootBase
 {
     public static boolean canRunRootCommands()
     {
-        boolean retval = false;
+        boolean returnValue = false;
         Process suProcess;
 
         try
@@ -27,29 +27,30 @@ abstract class ExecuteAsRootBase
            // DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
             BufferedReader osRes = new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
 
-            if (null != os && null != osRes)
+            //noinspection ConstantConditions
+            if (null != osRes)
             {
                 // Getting the id of the current user to check if this is root
                 os.writeBytes("id\n");
                 os.flush();
 
                 String currUid = osRes.readLine();
-                boolean exitSu = false;
+                @SuppressWarnings("UnusedAssignment") boolean exitSu = false;
                 if (null == currUid)
                 {
-                    retval = false;
+                    returnValue = false;
                     exitSu = false;
                     Log.d("ROOT", "Can't get root access or denied by user");
                 }
                 else if (currUid.contains("uid=0"))
                 {
-                    retval = true;
+                    returnValue = true;
                     exitSu = true;
                     Log.d("ROOT", "Root access granted");
                 }
                 else
                 {
-                    retval = false;
+                    returnValue = false;
                     exitSu = true;
                     Log.d("ROOT", "Root access rejected: " + currUid);
                 }
@@ -66,16 +67,16 @@ abstract class ExecuteAsRootBase
             // Can't get root !
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
-            retval = false;
+            returnValue = false;
             Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
         }
 
-        return retval;
+        return returnValue;
     }
 
     public final boolean execute(Context context)
     {
-        boolean retval = false;
+        boolean returnValue = false;
 
         try
         {
@@ -103,12 +104,12 @@ abstract class ExecuteAsRootBase
                     if (255 != suProcessRetval)
                     {
                         // Root access granted
-                        retval = true;
+                        returnValue = true;
                     }
                     else
                     {
                         // Root access denied
-                        retval = false;
+                        returnValue = false;
                     }
                 }
                 catch (Exception ex)
@@ -134,7 +135,7 @@ abstract class ExecuteAsRootBase
             Util.broadcastAMessage(context, "error_do_not_have_root");
         }
 
-        return retval;
+        return returnValue;
     }
     protected abstract ArrayList<String> getCommandsToExecute();
 }

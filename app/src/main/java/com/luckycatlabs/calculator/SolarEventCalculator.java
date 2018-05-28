@@ -31,6 +31,7 @@ import java.util.TimeZone;
 /**
  * Parent class of the Sunrise and Sunset calculator classes.
  */
+@SuppressWarnings({"ALL", "BigDecimalMethodWithoutRoundingCalled"})
 public class SolarEventCalculator {
     final private Location location;
     final private TimeZone timeZone;
@@ -57,6 +58,7 @@ public class SolarEventCalculator {
      * @param timeZone
      *            timezone of the location parameter.
      */
+    @SuppressWarnings("unused")
     public SolarEventCalculator(Location location, TimeZone timeZone) {
         this.location = location;
         this.timeZone = timeZone;

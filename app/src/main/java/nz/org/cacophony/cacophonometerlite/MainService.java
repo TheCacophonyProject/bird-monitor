@@ -26,6 +26,10 @@ public class MainService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        if (powerManager == null){
+            Log.e(TAG, "PowerManger is null");
+            return;
+        }
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MainServiceWakelockTag");
         wakeLock.acquire(10*60*1000L /*10 minutes*/);

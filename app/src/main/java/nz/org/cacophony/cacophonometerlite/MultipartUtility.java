@@ -22,6 +22,7 @@ import java.util.List;
  * @author www.codejava.net
  *
  */
+@SuppressWarnings({"Convert2Diamond", "JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
 class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";

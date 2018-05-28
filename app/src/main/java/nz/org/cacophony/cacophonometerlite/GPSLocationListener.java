@@ -12,7 +12,7 @@ import android.util.Log;
 class GPSLocationListener implements LocationListener {
     private static final String TAG = GPSLocationListener.class.getName();
 
-    private Context context = null;
+    private final Context context;
 
 
     GPSLocationListener(Context context) {

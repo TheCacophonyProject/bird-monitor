@@ -16,9 +16,9 @@ class MainThread implements Runnable {
     private static final String TAG = MainThread.class.getName();
 
 
-    private Context context = null;
+    private final Context context;
 
-    private String alarmIntentType = null;
+    private final String alarmIntentType;
 
 
     MainThread(Context context, String alarmIntentType) {
@@ -46,7 +46,7 @@ class MainThread implements Runnable {
         }
 
 
-        String recordAndUploadedSuccessfully = null;
+        String recordAndUploadedSuccessfully;
         try {
 
             recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, alarmIntentType );

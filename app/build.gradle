@@ -18,9 +18,9 @@ android {
                 keyAlias KEY_ALIAS
                 keyPassword KEY_PASSWORD
             }
-            catch (ex) {
+            catch (ignored) {
 
-                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS and STORE_FILE in gradle.properties in your gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC");
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS and STORE_FILE in gradle.properties in your gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC")
             }
         }
     }

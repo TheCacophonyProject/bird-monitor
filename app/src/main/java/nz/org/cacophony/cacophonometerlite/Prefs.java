@@ -13,7 +13,7 @@ public class Prefs {
 
     private static final String TAG = Prefs.class.getName();
 //    private static Context context = null;
-private  Context context = null;
+private final Context context;
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 

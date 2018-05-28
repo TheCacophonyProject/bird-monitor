@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * Created by Student on 10/20/2017.
  */
 
+@SuppressWarnings("Convert2Diamond")
 public class ExecuteAsRootBaseTim extends ExecuteAsRootBase {
     private final ArrayList<String> commands = new ArrayList<String>();
     @Override

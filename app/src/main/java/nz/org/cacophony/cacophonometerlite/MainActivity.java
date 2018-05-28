@@ -15,16 +15,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-//import android.support.design.widget.Snackbar;
+
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting, ActivityCompat.OnRequestPermissionsResultCallback {
-    // Register with idling couunter
+    // Register with idling counter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
-// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
+// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         Prefs prefs = new Prefs(this.getApplicationContext());
@@ -158,25 +157,25 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Log.e(TAG, "Error calling super.onResume");
         }
         if (!RecordAndUpload.isRecording){
-            ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+            findViewById(R.id.recordNowButton).setEnabled(true);
         }
         Prefs prefs = new Prefs(getApplicationContext());
         String mode = prefs.getMode();
         switch(mode) {
             case "off":
-                final RadioButton  offModeRadioButton  = (RadioButton ) findViewById(R.id.offMode);
+                final RadioButton  offModeRadioButton  = findViewById(R.id.offMode);
                 offModeRadioButton.setChecked(true);
                 break;
             case "normal":
-                final RadioButton  normalModeRadioButton  = (RadioButton ) findViewById(R.id.normalMode);
+                final RadioButton  normalModeRadioButton  = findViewById(R.id.normalMode);
                 normalModeRadioButton.setChecked(true);
                 break;
             case "normalOnline":
-                final RadioButton  normalModeOnlineRadioButton  = (RadioButton ) findViewById(R.id.normalModeOnline);
+                final RadioButton  normalModeOnlineRadioButton  = findViewById(R.id.normalModeOnline);
                 normalModeOnlineRadioButton.setChecked(true);
                 break;
             case "walking":
-                final RadioButton  walkingModeRadioButton  = (RadioButton ) findViewById(R.id.walkingMode);
+                final RadioButton  walkingModeRadioButton  = findViewById(R.id.walkingMode);
                 walkingModeRadioButton.setChecked(true);
                 break;
         }
@@ -230,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
 
-        ((Button) findViewById(R.id.recordNowButton)).setEnabled(false);
+        findViewById(R.id.recordNowButton).setEnabled(false);
 
         Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
@@ -287,15 +286,15 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 if (message != null) {
 
                     if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        ((Button) findViewById(R.id.refreshVitals)).setEnabled(true);
+                        findViewById(R.id.refreshVitals).setEnabled(true);
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
                     }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
-                        TextView loggedInText = (TextView) findViewById(R.id.loggedInText);
+                        TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
                     }else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        findViewById(R.id.recordNowButton).setEnabled(true);
                         recordNowIdlingResource.decrement();
 
                     }else if (message.equalsIgnoreCase("recording_started")){
@@ -310,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         Util.getToast(getApplicationContext(),"Files are already uploading", false ).show();
                     }else if (message.equalsIgnoreCase("no_permission_to_record")){
                         Util.getToast(getApplicationContext(),"Can not record.  Please go to Android settings and enable all required permissions for this app", true ).show();
-                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        findViewById(R.id.recordNowButton).setEnabled(true);
                         recordNowIdlingResource.decrement();
                     }else if (message.equalsIgnoreCase("recording_and_uploading_finished")){
 
@@ -322,17 +321,17 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         Util.getToast(getApplicationContext(),"Recorded successfully, no network connection so did not upload", false ).show();
                     }else if (message.equalsIgnoreCase("recording_failed")){
                         Util.getToast(getApplicationContext(),"Recording failed", true ).show();
-                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        findViewById(R.id.recordNowButton).setEnabled(true);
                     }else if (message.equalsIgnoreCase("not_logged_in")){
 
                         Util.getToast(getApplicationContext(),"Not logged in to server, could not upload files", true ).show();
                     }else if (message.equalsIgnoreCase("is_already_recording")){                  //      uploadingIdlingResource.decrement();
                         // Will need enable Record Now button
-                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        findViewById(R.id.recordNowButton).setEnabled(true);
                         recordNowIdlingResource.decrement();
 
                         Util.getToast(getApplicationContext(),"Could not do a recording as another recording is already in progress", true ).show();
-                        ((Button) findViewById(R.id.recordNowButton)).setEnabled(true);
+                        findViewById(R.id.recordNowButton).setEnabled(true);
                         recordNowIdlingResource.decrement();
                     }else if (message.equalsIgnoreCase("error_do_not_have_root")){
                         Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
