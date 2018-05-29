@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,13 +22,15 @@ import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting, ActivityCompat.OnRequestPermissionsResultCallback {
-    // Register with idling counter
+    // Register with idling couunter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
 // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
+
+
 
     @Override
     protected void onStart() {
@@ -225,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+
         recordNowIdlingResource.increment();
 
         Util.getToast(getApplicationContext(),"Prepare to start recording", false ).show();
@@ -336,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     }else if (message.equalsIgnoreCase("error_do_not_have_root")){
                         Util.getToast(getApplicationContext(),"It looks like you have incorrectly indicated in settings that this phone has been rooted", true ).show();
                     }
+
                 }
 
             }catch (Exception ex){
@@ -345,23 +350,47 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     };
 
-    @SuppressWarnings("SameReturnValue")
+
     public CountingIdlingResource getRegisterIdlingResource() {
         return registerIdlingResource;
     }
-    @SuppressWarnings("SameReturnValue")
+
     public CountingIdlingResource getRecordNowIdlingResource() {
         return recordNowIdlingResource;
     }
 
-    @SuppressWarnings("SameReturnValue")
+
     public CountingIdlingResource getUploadingIdlingResource() {
         return uploadingIdlingResource;
     }
 
-    @SuppressWarnings("SameReturnValue")
+
     public CountingIdlingResource getToggleAirplaneModeIdlingResource() {
         return toggleAirplaneModeIdlingResource;
+    }
+
+    public void registerEspressoIdlingResources(){
+        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
+        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
+        IdlingRegistry.getInstance().register(registerIdlingResource);
+        IdlingRegistry.getInstance().register(recordNowIdlingResource);
+        IdlingRegistry.getInstance().register(uploadingIdlingResource);
+        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
+    }
+
+    public void unRegisterEspressoIdlingResources(){
+        if (registerIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(registerIdlingResource);
+        }
+        if (recordNowIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
+        }
+        if (uploadingIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
+        }
+        if (toggleAirplaneModeIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+        }
     }
 
     }

@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -51,7 +50,9 @@ public class ChooseModeTestsCode {
     }
 
     private static void modeTest(ActivityTestRule<MainActivity> mActivityTestRule, int idOfFirstGuiRadioButton, String expectedModeStringFromPrefsInitialRadioButton, int idOfSecondGuiRadioButton, String expectedModeStringFromPrefsSecondRadioButton){
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+    //    Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+        setup(mActivityTestRule);
+
         Prefs prefs = new Prefs(getInstrumentation().getTargetContext());
 
         onView(withId(idOfFirstGuiRadioButton)).check(matches(isChecked()));
@@ -62,6 +63,16 @@ public class ChooseModeTestsCode {
         onView(withId(idOfSecondGuiRadioButton)).perform(scrollTo()).check(matches(isChecked()));
         mode = prefs.getMode();
         assertEquals(mode, expectedModeStringFromPrefsSecondRadioButton);
+        tearDown(mActivityTestRule);
+    }
+
+    public static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
+    }
+
+    public static void tearDown(ActivityTestRule<MainActivity> mActivityTestRule){
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+
     }
 
 }

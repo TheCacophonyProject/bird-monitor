@@ -1,7 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -43,7 +42,8 @@ public class RegisterWithServer {
         // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
         // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+      //  Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
         HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
 
         Context targetContext = getInstrumentation().getTargetContext();
@@ -104,7 +104,7 @@ public class RegisterWithServer {
         onView(allOf(withId(R.id.setupRegisterStatus))).check(matches(withText("Registered in group: tim1")));
 
 
-
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
 

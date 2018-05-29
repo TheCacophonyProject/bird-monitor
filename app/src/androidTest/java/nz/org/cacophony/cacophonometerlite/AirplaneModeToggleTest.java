@@ -1,7 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
@@ -46,6 +45,7 @@ public class AirplaneModeToggleTest {
         unCheckRootAccessCheckBox();
         disableAirplaneMode();
         assertTrue(HelperCode.doesNOTHaveNetworkConnection(targetContext));
+        tearDown(mActivityTestRule);
     }
 
     public static void testAirplaneModeTogglingOnNonRootedAndGreaterThanJellyBean(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -68,23 +68,8 @@ public class AirplaneModeToggleTest {
             System.out.println("Running Airplane Mode is ON Tests");
             doNotConnectedToInternetTests();
         }
-//        System.out.println("A Human needs to Toggle Airplane Mode");
-//        // need to wait for human to physically toggle airplane mode
-//        while (connectedToInternet == hasNetworkConnection()){
-//            try {
-//                System.out.println("A Human needs to Toggle Airplane Mode");
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        if (connectedToInternet){
-//            doConnectedToInternetTests();
-//        }else {
-//         //   doNotConnectedToInternetTests();
-//            doNotConnectedToInternetTests();
-//        }
+
+        tearDown(mActivityTestRule);
 
 
     }
@@ -109,9 +94,23 @@ public class AirplaneModeToggleTest {
 
 
     public static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getToggleAirplaneModeIdlingResource()));
+//        MainActivity mainActivity = mActivityTestRule.getActivity();
+//        CountingIdlingResource toggleAirplaneModeIdlingResource = mainActivity.getToggleAirplaneModeIdlingResource();
+//        Espresso.registerIdlingResources(toggleAirplaneModeIdlingResource);
+//        Espresso.registerIdlingResources(mainActivity.getToggleAirplaneModeIdlingResource());
+
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getToggleAirplaneModeIdlingResource()));
+
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
+
+
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
+    }
+
+    public static void tearDown(ActivityTestRule<MainActivity> mActivityTestRule){
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+
     }
 
 //    public static void openSettingsActivity(){

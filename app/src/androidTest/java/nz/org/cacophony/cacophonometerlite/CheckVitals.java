@@ -21,13 +21,6 @@ public class CheckVitals {
     public static void checkVitals( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer) {
 
 
-       // Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
-     //   HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
-
-
-        // Go into Vitals screen to check it shows that device has registered
-//        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-//        onView(withText("Vitals")).perform(click()); // withId(R.id.action_vitals) did not work for some unknown reason
 
         HelperCode.openVitalsActivity();
 

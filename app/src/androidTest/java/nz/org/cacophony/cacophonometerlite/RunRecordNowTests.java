@@ -9,7 +9,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-        RegisterWithTestServer.class,
+        //RegisterWithTestServer.class,
         RunRecordNowButtonAndSaveOnPhone.class,
         RunRecordNowButtonAndSaveOnServer.class
 

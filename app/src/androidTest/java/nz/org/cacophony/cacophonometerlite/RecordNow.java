@@ -1,7 +1,6 @@
 package nz.org.cacophony.cacophonometerlite;
 
 import android.content.Context;
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,19 +91,22 @@ public class RecordNow {
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
         assertTrue(lastRecordingIdFromServer >-1);
 
+        //
+
                 try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
     }
 
 
 
     public static void setUpForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule){
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
 //        Util.disableFlightMode(targetContext);
         HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
@@ -128,8 +130,9 @@ public class RecordNow {
 
     public static void setUpForRecordNowButtonAndSaveOnServerTest(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getUploadingIdlingResource()));
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRecordNowIdlingResource()));
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         //Make sure 'Offline Mode' in Settings is not checked
         uncheckOfflineMode(targetContext);
