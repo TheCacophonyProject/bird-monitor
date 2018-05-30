@@ -14,7 +14,7 @@ import java.io.File;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class ToggleAirplaneModeTest1 {
+public class AirplaneFlightModeToggleTests {
 
 
     @Rule
@@ -22,14 +22,14 @@ public class ToggleAirplaneModeTest1 {
 
 
     @Test
-    public void test1() {
+    public void canToggleAirplaneModeOnRootedDevice() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN && isRootAvailable()) { // Jelly bean is 4.1
             AirplaneModeToggleTest.testAirplaneModeTogglingOnRootedAndGreaterThanJellyBean(mActivityTestRule);
         }
     }
 
     @Test
-    public void test2() {
+    public void canToggleAirplaneModeOnNonRootedDevice() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN && !isRootAvailable()) { // Jelly bean is 4.1
             // This test needs to be run twice, once with airplane mode on and then again with it off
             AirplaneModeToggleTest.testAirplaneModeTogglingOnNonRootedAndGreaterThanJellyBean(mActivityTestRule);

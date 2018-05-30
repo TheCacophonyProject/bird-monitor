@@ -108,6 +108,21 @@ public class HelperCode {
         onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
     }
 
+    public static void checkOnLineModeCheckBox(){
+        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), HelperCode.setChecked(false));
+        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), click());
+    }
+
+    public static void unCheckOnLineModeCheckBox(){
+        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
+        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), click());
+    }
+
+    public static void unCheckRootAccessCheckBox(){
+        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(true));
+        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
+    }
+
     public static void openSettingsActivity(){
         // Open settings
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());

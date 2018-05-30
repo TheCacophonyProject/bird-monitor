@@ -12,8 +12,9 @@ import org.junit.runners.Suite;
 // Runs all unit tests.
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-
+        DisableAirplaneMode.class,
         RunAirplaneFlightModeToggleTests.class,
+        DisableAirplaneMode.class,
         RunBasicGUITests.class,
         RunSettingsOptions.class,
         RunModeTestsInSpecifiedOrder.class,

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD); // helps with testing: Now don't have to use airdroid to open screen
 
         this.setTitle(R.string.main_activity_name);
         setContentView(R.layout.activity_main);

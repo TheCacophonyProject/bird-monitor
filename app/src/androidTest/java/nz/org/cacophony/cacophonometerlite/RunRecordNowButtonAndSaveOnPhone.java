@@ -29,9 +29,9 @@ public class RunRecordNowButtonAndSaveOnPhone {
     public void recordNowButtonAndSaveOnPhone() {
         // Assumptions for intitial conditions
         // 1) Device is registerd with test server and Use test server is checked
-        // 2) Use short recordings is checked
+
         // 3) Root access is checked
-        // 4) Offline mode is NOT checked
+
         // 6) Online mode is probably checked to allow remote control software (AirDroid) to be used
         // 7) Choose Mode is OFF
 
