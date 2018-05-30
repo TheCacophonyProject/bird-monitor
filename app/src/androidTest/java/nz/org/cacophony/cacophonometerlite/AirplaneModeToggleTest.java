@@ -10,17 +10,15 @@ import static org.junit.Assert.assertTrue;
  * Created by Tim Hunt on 13-Apr-18.
  */
 
-public class AirplaneModeToggleTest {
-    static Context targetContext;
-    static Prefs prefs;
+class AirplaneModeToggleTest {
+    private static Context targetContext;
 
     public static void disableAirplaneMode(ActivityTestRule<MainActivity> mActivityTestRule) {
         // Use this to recover AirDroid conncection in Airplane has been enabled
         setup(mActivityTestRule);
         HelperCode.openSettingsActivity();
-        HelperCode.checkRootAccessCheckBox();
-        HelperCode.checkOnLineModeCheckBox();
-        disableAirplaneMode();
+
+        HelperCode.disableAirplaneMode(targetContext);
         tearDown(mActivityTestRule);
     }
 
@@ -30,9 +28,10 @@ public class AirplaneModeToggleTest {
         //Don't know what state settings are in, so first enable required buttons and check can get network access (will repeat this after enabling disabling airplane mode)
         // First disable airplane mode
         HelperCode.openSettingsActivity();
-        HelperCode.checkRootAccessCheckBox();
-        HelperCode.checkOnLineModeCheckBox();
-        disableAirplaneMode();
+//        HelperCode.checkRootAccessCheckBox();
+//        HelperCode.checkOnLineModeCheckBox();
+//        disableAirplaneMode();
+        HelperCode.disableAirplaneMode(targetContext);
         assertTrue(HelperCode.hasNetworkConnection(targetContext));
 
         // Now enable airplane mode and check there is no network access
@@ -72,7 +71,7 @@ public class AirplaneModeToggleTest {
 
     }
 
-    static void connectedToInternetTest() {
+    private static void connectedToInternetTest() {
         HelperCode.checkRootAccessCheckBox(); // But this should not allow toggling of airplane mode - will give an error to the user when try to toggle airplane mode
         HelperCode.unCheckOnLineModeCheckBox();
         enableAirplaneMode();
@@ -80,7 +79,7 @@ public class AirplaneModeToggleTest {
 
     }
 
-    static void notConnectedToInternetTest() {
+    private static void notConnectedToInternetTest() {
         HelperCode.checkRootAccessCheckBox(); // But this should not allow toggling of airplane mode - will give an error to the user when try to toggle airplane mode
         HelperCode.checkOnLineModeCheckBox();
         disableAirplaneMode();
@@ -89,11 +88,11 @@ public class AirplaneModeToggleTest {
 
 
 
-    public static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
 
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
-        prefs = new Prefs(targetContext);
+        Prefs prefs = new Prefs(targetContext);
     }
 
     public static void tearDown(ActivityTestRule<MainActivity> mActivityTestRule){
@@ -110,14 +109,14 @@ public class AirplaneModeToggleTest {
 
 
 
-    public static void disableAirplaneMode(){
+    private static void disableAirplaneMode(){
 
         Util.disableFlightMode(targetContext);
     }
 
 
 
-    public static void enableAirplaneMode(){
+    private static void enableAirplaneMode(){
         Util.enableFlightMode(targetContext);
     }
 

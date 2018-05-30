@@ -9,7 +9,7 @@ import android.util.Log;
  * Expanded to keep all settings in one place
  */
 
-public class Prefs {
+class Prefs {
 
     private static final String TAG = Prefs.class.getName();
 //    private static Context context = null;

@@ -7,7 +7,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.TextView;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -33,7 +32,8 @@ import static org.hamcrest.Matchers.is;
  * Created by Tim Hunt on 14-Mar-18.
  */
 
-public class RegisterWithServer {
+@SuppressWarnings("unchecked")
+class RegisterWithServer {
 
     public static void registerWithServer( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer){
 
@@ -42,9 +42,12 @@ public class RegisterWithServer {
         // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an inteface for app under test activities e.g MainActivity
         // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
-      //  Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
-        HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
+        HelperCode.openSettingsActivity();
+     //   HelperCode.checkRootedCheckBoxAndDisableAirplaneMode(getInstrumentation().getTargetContext());
+        HelperCode.disableAirplaneMode(getInstrumentation().getTargetContext());
+        HelperCode.returnToMainActivityScreen();
 
         Context targetContext = getInstrumentation().getTargetContext();
         openActionBarOverflowOrOptionsMenu(targetContext);
@@ -109,7 +112,7 @@ public class RegisterWithServer {
     }
 
     private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+            final Matcher<View> parentMatcher, @SuppressWarnings("SameParameterValue") final int position) {
 
         return new TypeSafeMatcher<View>() {
             @Override
@@ -129,24 +132,26 @@ public class RegisterWithServer {
 
 
 
-    private static Matcher<View> isDeviceIdOK() {
-        // https://www.programcreek.com/java-api-examples/?code=kevalpatel2106/smart-lens/smart-lens-master/app/src/androidTest/java/com/kevalpatel2106/smartlens/testUtils/CustomMatchers.java
-        // http://blog.sqisland.com/2016/06/advanced-espresso-at-io16.html
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Device Id OK ");
-
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                return view instanceof TextView && ((TextView)view).getText().length() > 11;  // if > 11 characters it means there is a device id displayed
-
-            }
-        };
-    }
+// --Commented out by Inspection START (30-May-18 5:21 PM):
+//    private static Matcher<View> isDeviceIdOK() {
+//        // https://www.programcreek.com/java-api-examples/?code=kevalpatel2106/smart-lens/smart-lens-master/app/src/androidTest/java/com/kevalpatel2106/smartlens/testUtils/CustomMatchers.java
+//        // http://blog.sqisland.com/2016/06/advanced-espresso-at-io16.html
+//
+//        return new TypeSafeMatcher<View>() {
+//            @Override
+//            public void describeTo(Description description) {
+//                description.appendText("is Device Id OK ");
+//
+//            }
+//
+//            @Override
+//            public boolean matchesSafely(View view) {
+//                return view instanceof TextView && ((TextView)view).getText().length() > 11;  // if > 11 characters it means there is a device id displayed
+//
+//            }
+//        };
+//    }
+// --Commented out by Inspection STOP (30-May-18 5:21 PM)
 
 
 

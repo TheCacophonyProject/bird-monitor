@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Tim Hunt on 16-Mar-18.
  */
 
-public class ChooseModeTestsCode {
+class ChooseModeTestsCode {
 
     public static void modeTest1(ActivityTestRule<MainActivity> mActivityTestRule) {
         // Put into Off mode (not method modeTest was written to 'move' from one button to another but testAirplaneModeTogglingOnRootedAndGreaterThanJellyBean just needs to stay on one button so the same button is sent twice
@@ -66,7 +66,7 @@ public class ChooseModeTestsCode {
         tearDown(mActivityTestRule);
     }
 
-    public static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setup(ActivityTestRule<MainActivity> mActivityTestRule){
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
     }
 

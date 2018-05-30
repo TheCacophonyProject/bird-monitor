@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingRegistry;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
@@ -354,23 +353,23 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     };
 
 
-    public CountingIdlingResource getRegisterIdlingResource() {
-        return registerIdlingResource;
-    }
-
-    public CountingIdlingResource getRecordNowIdlingResource() {
-        return recordNowIdlingResource;
-    }
-
-
-    public CountingIdlingResource getUploadingIdlingResource() {
-        return uploadingIdlingResource;
-    }
-
-
-    public CountingIdlingResource getToggleAirplaneModeIdlingResource() {
-        return toggleAirplaneModeIdlingResource;
-    }
+//    public CountingIdlingResource getRegisterIdlingResource() {
+//        return registerIdlingResource;
+//    }
+//
+//    public CountingIdlingResource getRecordNowIdlingResource() {
+//        return recordNowIdlingResource;
+//    }
+//
+//
+//    public CountingIdlingResource getUploadingIdlingResource() {
+//        return uploadingIdlingResource;
+//    }
+//
+//
+//    public CountingIdlingResource getToggleAirplaneModeIdlingResource() {
+//        return toggleAirplaneModeIdlingResource;
+//    }
 
     public void registerEspressoIdlingResources(){
         // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
@@ -382,18 +381,14 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     }
 
     public void unRegisterEspressoIdlingResources(){
-        if (registerIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(registerIdlingResource);
-        }
-        if (recordNowIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-        }
-        if (uploadingIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-        }
-        if (toggleAirplaneModeIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-        }
+        IdlingRegistry.getInstance().unregister(registerIdlingResource);
+        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
+        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
+        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+
+//        if (toggleAirplaneModeIdlingResource != null) {
+//            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+//        }
     }
 
     }

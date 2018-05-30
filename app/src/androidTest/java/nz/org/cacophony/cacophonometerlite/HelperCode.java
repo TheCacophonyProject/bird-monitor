@@ -28,13 +28,21 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 15-Mar-18.
  */
 
-public class HelperCode {
+@SuppressWarnings("unchecked")
+class HelperCode {
+
+    public static void disableAirplaneMode(Context targetContext){
+      // Assume settings already open
+        checkRootAccessCheckBox();
+        checkOnLineModeCheckBox();
+        uncheckOfflineMode();
+        Util.disableFlightMode(targetContext);
+    }
 
     public static ViewAction setChecked(final boolean checked) {
         // https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
@@ -90,18 +98,18 @@ public class HelperCode {
         onView(allOf(withId(checkBoxId))).check(matches(isNotChecked()));
     }
 
-    public static void checkRootedCheckBoxAndDisableAirplaneMode(Context context){
-        openSettingsActivity();
-        checkRootAccessCheckBox();
-        if (!Util.isNetworkConnected(context)){
-            Util.disableFlightMode(context);
-            Util.waitForNetworkConnection(context, true);
-        }
-        assertTrue(Util.isNetworkConnected(context));
-
-        // Go back to main screen
-        returnToMainActivityScreen();
-    }
+//    public static void checkRootedCheckBoxAndDisableAirplaneMode(Context context){
+//        openSettingsActivity();
+//        checkRootAccessCheckBox();
+//        if (!Util.isNetworkConnected(context)){
+//            Util.disableFlightMode(context);
+//            Util.waitForNetworkConnection(context, true);
+//        }
+//        assertTrue(Util.isNetworkConnected(context));
+//
+//        // Go back to main screen
+//        returnToMainActivityScreen();
+//    }
 
     public static void checkRootAccessCheckBox(){
         onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(false));
@@ -118,10 +126,12 @@ public class HelperCode {
         onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), click());
     }
 
-    public static void unCheckRootAccessCheckBox(){
-        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(true));
-        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
-    }
+// --Commented out by Inspection START (30-May-18 5:19 PM):
+//    public static void unCheckRootAccessCheckBox(){
+//        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(true));
+//        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
+//    }
+// --Commented out by Inspection STOP (30-May-18 5:19 PM)
 
     public static void openSettingsActivity(){
         // Open settings
@@ -180,14 +190,14 @@ public class HelperCode {
         return !Util.isNetworkConnected(targetContext);
     }
 
-    public static void uncheckOfflineMode(Context targetContext){
-        openSettingsActivity();
+    public static void uncheckOfflineMode(){
+//        openSettingsActivity();
 
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
         onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
 
         // Return to MainActivity screen
-        returnToMainActivityScreen();
+//        returnToMainActivityScreen();
 
     }
 

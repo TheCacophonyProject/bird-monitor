@@ -19,12 +19,12 @@ public class CheckVitalsProductionServer {
 
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
 
     @Test
     public void checkVitalsProduction() {
-        CheckVitals.checkVitals(mActivityTestRule, false);
+        CheckVitals.checkVitals(false);
     }
 
 }

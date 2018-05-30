@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +21,12 @@ import static org.hamcrest.Matchers.allOf;
  * Created by Tim Hunt on 15-Mar-18.
  */
 
-public class SettingsOptions {
+class SettingsOptions {
 
     public static void settingsOptions(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
-
+//        Espresso.registerIdlingResources((mActivityTestRule.getActivity().getRegisterIdlingResource()));
+        mActivityTestRule.getActivity().registerEspressoIdlingResources();
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
 
@@ -47,7 +46,7 @@ public class SettingsOptions {
         HelperCode.testCheckBox(R.id.cbUseVeryFrequentRecordings);
         HelperCode.testCheckBox(R.id.cbUseFrequentUploads);
 
-
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
 
 
@@ -60,6 +59,7 @@ public class SettingsOptions {
 
 
 
+    @SuppressWarnings("unused")
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 

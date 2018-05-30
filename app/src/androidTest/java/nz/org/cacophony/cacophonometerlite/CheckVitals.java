@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometerlite;
 
-import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,10 +14,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
-public class CheckVitals {
+class CheckVitals {
 
 
-    public static void checkVitals( ActivityTestRule<MainActivity> mActivityTestRule, boolean testServer) {
+    public static void checkVitals(boolean testServer) {
 
 
 
@@ -65,6 +64,7 @@ public class CheckVitals {
                 String deviceIdText = (String)((TextView)view).getText();
                 if (testServer){
                     boolean hasTextServerInText = deviceIdText.contains("Test Server");
+                    //noinspection SimplifiableIfStatement
                     if (!hasTextServerInText){
                         return false;
                     }

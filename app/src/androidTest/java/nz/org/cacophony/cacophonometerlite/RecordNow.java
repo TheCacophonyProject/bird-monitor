@@ -22,7 +22,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static nz.org.cacophony.cacophonometerlite.HelperCode.uncheckOfflineMode;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,13 +30,13 @@ import static org.junit.Assert.assertTrue;
  * Created by Tim Hunt on 16-Mar-18.
  */
 
-public class RecordNow {
+@SuppressWarnings("unused")
+class RecordNow {
 
-    static Context targetContext;
-    static Prefs prefs;
-    static File recordingsFolder;
-   static File recordingFiles[];
-   static int numberOfRecordingsBeforePressingRecord;
+    private static Context targetContext;
+    private static Prefs prefs;
+    private static File recordingsFolder;
+   private static File[] recordingFiles;
 
 
     public static void recordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -51,9 +50,10 @@ public class RecordNow {
         recordingsFolder = Util.getRecordingsFolder(targetContext);
         recordingFiles = recordingsFolder.listFiles();
         for (File file : recordingFiles){
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
-        numberOfRecordingsBeforePressingRecord = recordingsFolder.listFiles().length; // should be zero
+        int numberOfRecordingsBeforePressingRecord = recordingsFolder.listFiles().length;
 
 
 
@@ -88,6 +88,7 @@ public class RecordNow {
         recordingsFolder = Util.getRecordingsFolder(targetContext);
         recordingFiles = recordingsFolder.listFiles();
         for (File file : recordingFiles){
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
 
@@ -105,7 +106,7 @@ public class RecordNow {
 
 
 
-    public static void setUpForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule){
 
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
@@ -127,7 +128,7 @@ public class RecordNow {
         onView(withContentDescription("Navigate up")).perform(click());
     }
 
-    public static void tearDownForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    private static void tearDownForRecordNowButtonAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         // Open settings and turn off 'Offline Mode'
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
@@ -139,18 +140,20 @@ public class RecordNow {
 
     }
 
-    public static void tearDownForRecordNowButtonAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
+    private static void tearDownForRecordNowButtonAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
          mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
     }
 
-    public static void setUpForRecordNowButtonAndSaveOnServerTest(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRecordNowButtonAndSaveOnServerTest(ActivityTestRule<MainActivity> mActivityTestRule){
 
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
 
         //Make sure 'Offline Mode' in Settings is not checked
-        uncheckOfflineMode(targetContext);
+        HelperCode.openSettingsActivity();
+        HelperCode.uncheckOfflineMode();
+        HelperCode.returnToMainActivityScreen();
            }
 
 
