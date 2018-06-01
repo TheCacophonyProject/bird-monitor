@@ -104,6 +104,15 @@ class Util {
 
     }
 
+    /**
+     * Retrieve the location of where data is stored on the phone. Will automatically use the sdcard
+     * if it is present.  This means for phones that do not have a internet connection, you just
+     * have to insert an sdcard and all recordings will be on the card, making it possible to
+     * retrieve the recordings by swapping out the card..
+     *
+     * @param context
+     * @return Returns the location of where to store data on the phone
+     */
     private static File getAppDataFolder(Context context) {
 
         // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
@@ -164,16 +173,24 @@ class Util {
     }
 
 
-    static File getRecordingsFolder(Context context){
-        return getLocalFolder(context);
-    }
-
-//    static File getLogFolder(Context context){
-//        return getLocalFolder(context, DEFAULT_LOGS_FOLDER);
+//    /**
+//     * Returns the subfolder for storing the recordings
+//     * @param context
+//     * @return
+//     */
+//    static File getRecordingsFolder(Context context){
+//        return getLocalFolder(context);
 //    }
 
+
+    /**
+     * Returns the folder for storing recordings on the phone.
+     * @param context
+     * @return File object representing recordings folder.
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static File getLocalFolder(Context context) {
+     public static File getRecordingsFolder(Context context) {
+    //private static File getLocalFolder(Context context) {
 
         File localFolderFile;
         try {
@@ -212,6 +229,14 @@ class Util {
     }
 
 
+    /**
+     * Returns the device id of this phone.  The device id has been allocated by the server when
+     * the phone registers with the server, and is stored locally in a 'webtoken' string in the shared
+     * preferences on this phone.
+     * @param webToken
+     * @return
+     * @throws Exception
+     */
     static String getDeviceID(String webToken) throws Exception {
         if (webToken == null){
             return "";
@@ -222,6 +247,11 @@ class Util {
         return jObject.getString("id");
     }
 
+    /**
+     * Extracts the webtoken from the actual token
+     * @param JWTEncoded
+     * @return
+     */
     private static String decoded(String JWTEncoded) {
         // http://stackoverflow.com/questions/37695877/how-can-i-decode-jwt-token-in-android#38751017
         String webTokenBody = null;
