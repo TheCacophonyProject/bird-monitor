@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
 
-    package="nz.org.cacophony.cacophonometerlite">
+    package="nz.org.cacophony.cacophonometer">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -68,7 +68,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
+                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
         <activity
             android:name=".HelpActivity"
@@ -79,7 +79,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
+                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
         <activity
             android:name=".VitalsActivity"
@@ -90,7 +90,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometerlite.MainActivity" />
+                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
 
     </application>

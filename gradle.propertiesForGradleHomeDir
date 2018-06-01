@@ -1,0 +1,13 @@
+#https://github.com/shaohui10086/android-best-practices-1#gradle-configuration
+# This file allows you to store your keystore values without them being copied to GitHub
+#Intructions
+
+# 1) Copy this file to your in gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC
+# 2) Rename the copied file (the one now in your gradle home dir) to gradle.properties
+# 2) Edit all the lines below putting in your values of passwords, alias and keystore jks file location
+# 3) Might need a restart?
+
+KEYSTORE_PASSWORD=mypassword
+KEY_PASSWORD=mypassword
+KEY_ALIAS=myKey
+STORE_FILE=E:/GoogleDrive/Work/Cacophonoy/keystores/android.jks

@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 repositories {
-    mavenCentral()
+  //  mavenCentral()
+    jcenter()
 }
 
 
@@ -20,7 +21,7 @@ android {
             }
             catch (ignored) {
 
-                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS and STORE_FILE in gradle.properties in your gradle home directory. ie for Windows PC the default location is C:/Users/**User**/.gradle/ where **User** is your username on the PC")
+                throw new InvalidUserDataException("Missing keystore values.  Open the file gradle.propertiesForGradleHomeDir and follow directions.")
             }
         }
     }
@@ -34,7 +35,7 @@ android {
         targetSdkVersion 27
         // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 1
-        versionName "0.995a"
+        versionName "0.996"
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
