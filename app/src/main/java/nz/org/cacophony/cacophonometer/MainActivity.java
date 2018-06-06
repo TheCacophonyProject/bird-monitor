@@ -326,10 +326,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         findViewById(R.id.recordNowButton).setEnabled(true);
                         recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
-
                         Util.getToast(getApplicationContext(), "Recording and uploading finished", false).show();
+
                     } else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")) {
-                        Util.getToast(context, "Recording finished but uploading failed", true).show(); // this didn't fix the problem - stuck :-(
+                        Util.getToast(context, "Recording finished but uploading failed", true).show();
+                        findViewById(R.id.recordNowButton).setEnabled(true);
+                        recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
 
                         Util.getToast(getApplicationContext(), "Recorded successfully, no network connection so did not upload", false).show();
@@ -349,6 +351,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
                         Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+                    }else if (message.equalsIgnoreCase("update_record_now_button")){
+                        findViewById(R.id.recordNowButton).setEnabled(!RecordAndUpload.isRecording);
                     }
 
                 }

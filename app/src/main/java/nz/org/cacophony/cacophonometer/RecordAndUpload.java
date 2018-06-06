@@ -91,7 +91,9 @@ static String doRecord(Context context, String typeOfRecording) {
 if (isRecording){
    return "isRecording";
 }else{
+
     makeRecording(context, recordTimeSeconds, playWarningBeeps);
+
     returnValue = "recorded successfully";
 }
 
@@ -123,7 +125,7 @@ if (isRecording){
                 break;
         }
 
- if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads) { // don't upload if not enough time has passed
+ if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
      if (!offlineMode) { // don't upload if in offline mode
          uploadingIdlingResource.increment();
@@ -147,6 +149,7 @@ if (isRecording){
 
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
+        Util.broadcastAMessage(context, "update_record_now_button");
 try {
 
 
@@ -299,6 +302,7 @@ try {
     Log.e(TAG, ex.getLocalizedMessage());
 }finally {
     isRecording = false;
+    Util.broadcastAMessage(context, "update_record_now_button");
 }
 
     }
