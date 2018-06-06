@@ -9,6 +9,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/**
+ * The app is designed to run on rooted phones so that it can toggle airplane/flight mode on and off
+ * (to save power).  To be able to do this it needs to be able to run root commands - this class
+ * can be used to determine if root commands can run and also to run them.
+ *
+ * The class was copied from http://muzikant-android.blogspot.com/2011/02/how-to-get-root-access-and-execute.html
+ * and extended by ExecuteAsRootBase to allow specific command e.g. enable flight mode to run.
+ */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 abstract class ExecuteAsRootBase
 {

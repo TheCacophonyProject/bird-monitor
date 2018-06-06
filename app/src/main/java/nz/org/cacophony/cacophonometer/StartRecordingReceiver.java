@@ -11,7 +11,15 @@ import android.util.Log;
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.cacophonometer.Util.getBatteryLevelByIntent;
 
-//import android.util.Log;
+/**
+ * This class receives the intents that indicate that a recording is required to be made.  Before a
+ * recording is initiated a number of 'house keeping' tasks/checks are made including creating the
+ * next alarms and checking the phone has enough power to proceed.
+ *
+ * Depending on how a recording request is made (ie from Android alarm or the 'Record Now' button)
+ * either a service or thread is used to proceed to making the actual recording - this was imposed
+ * by the Android OS.
+ */
 
 public class StartRecordingReceiver extends BroadcastReceiver{
 

@@ -1,5 +1,5 @@
-package nz.org.cacophony.cacophonometer;
 
+package nz.org.cacophony.cacophonometer;
 
 
 import android.content.BroadcastReceiver;
@@ -13,13 +13,14 @@ import android.util.Log;
 import static android.content.Context.POWER_SERVICE;
 
 
-
-
+/**
+ * BootReceiver runs when phone is restarted. It does the job that the MainActivity would have done of setting up the repeating alarm.
+ * This means the recordings will be made without having to reopen the application.
+ * If the user needs to change any settings, then they will need to open the application which will save those settings
+ * in the apps shared preferences (file on phone) that are accessed via the Prefs class.
+ */
 public class BootReceiver extends BroadcastReceiver {
-    // BootReceiver runs when phone is restarted. It does the job that the MainActivity would have done of setting up the repeating alarm
-    // This means the recordings will be made without having to reopen the application
-    // Note: If you need to change any settings, then you will need to open the application which will save those settings
-    // in the apps shared preferences (file on phone) that are accessed via the Prefs class.
+
 
     private static final String TAG = BootReceiver.class.getName();
 

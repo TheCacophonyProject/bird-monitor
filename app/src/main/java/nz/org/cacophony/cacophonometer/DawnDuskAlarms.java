@@ -18,22 +18,15 @@ import static android.content.Context.ALARM_SERVICE;
 //import ch.qos.logback.classic.Logger;
 
 /**
- * Created by User on 07-Mar-17.
- * This class is used to calculate the actual times of dawn and dusk for each day at any specified location
- * It is used by the code that sets the extra alarms/recordings around dawn and dusk
+ * This class creates alarms (that start recordings) that occur every 10 minutes either side of
+ * dawn and dusk.  It uses SunriseSunsetCalculator class from com.luckycatlabs to calculate the
+ * time of sunrise and sunset and then applies a rough offset to give dawn and dusk.
+ *
+ * According to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
+ * vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes.
  */
 
 class DawnDuskAlarms {
-
-    // Need to have recordings that automatically run around dawn and dusk
-    // Use code from https://github.com/mikereedell/sunrisesunsetlib-java to get sunrise and sunset for either today or tomorrow, and then offset by the length of twilight - average of 29 mins for NZ
-    // To make app robust (hopefully) these alarms are reset every time a periodic alarm runs.
-
-// --Commented out by Inspection START (12-Jun-17 1:56 PM):
-//    // according to http://www.gaisma.com/en/location/auckland.html it seems that dawn/dusk times
-//    // vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes
-
-// --Commented out by Inspection STOP (12-Jun-17 1:56 PM)
 
 
     private static final String TAG = DawnDuskAlarms.class.getName();

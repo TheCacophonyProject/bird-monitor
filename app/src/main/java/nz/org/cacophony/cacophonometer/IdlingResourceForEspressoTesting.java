@@ -3,7 +3,10 @@ package nz.org.cacophony.cacophonometer;
 import android.support.test.espresso.idling.CountingIdlingResource;
 
 /**
- * Created by Tim Hunt on 12-Mar-18.
+ * This interface (used by the main activities) enables the espresso testing framework to wait for long running background
+ * operations (such as uploading a recording) to finish, before the espresso test moves to the next
+ * line of test code.  Basically a counter can be incremented when a long running operation starts,
+ * and decremented when it finishes.  An Espresso test will not progress is the counter is non zero.
  */
 
 interface IdlingResourceForEspressoTesting {

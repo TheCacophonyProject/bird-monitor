@@ -9,7 +9,14 @@ import android.util.Log;
 import static android.content.Context.POWER_SERVICE;
 
 /**
- * Created by Tim Hunt on 23-Apr-18.
+ * This class is part of the process of updating the GPS location.  A wakelock is used to keep the
+ * process awake long enough to finish.
+ *
+ * Because the time to obtain an new GPS location is
+ * indeterminate, there was an issue of having the correct GPS location for each recording when
+ * in walking mode.  A compromise was made that meant that involved just updating the GPS location
+ * every 5 minutes and so a recording could have a GPS location that was up to 5 minutes old - which
+ * should not be a major issue when moving a typical walking speed.
  */
 
 public class LocationReceiver extends BroadcastReceiver {

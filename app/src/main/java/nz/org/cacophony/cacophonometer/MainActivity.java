@@ -22,9 +22,6 @@ import android.widget.TextView;
 
 
 /**
- * The original version of this app was developed by Cameron Ryan-Pears, then reworked by Tim Hunt
- * and input from Menno Finlay-Smits, with more to come from other members of The Cacophony Project.
- * <p>
  * This MainActivity class creates the opening screen that is shown to the user.  It allows the user
  * to set the mode of operation,  and also access the menu to go to the settings and vitals
  * screens for further configuration.
@@ -34,9 +31,10 @@ import android.widget.TextView;
  * feature, this MainActivity does not take part in the normal operation of periodic recordings -
  * which happen when Alarms/Intents are fired.  Alarms are created by the BootReciever class, and the
  * StartRecordingReciever class listens/responds to the alarm Intents.  The Record Now button also just
- * sends and Intent to the StartRecordingRecciever class.
+ * sends an Intent to the StartRecordingRecciever class.
  *
- * MainActivity implements the interface IdlingResourceForEspressoTesting provides the ability for Espresso testing of this code to wait for background operations
+ * MainActivity implements the interface IdlingResourceForEspressoTesting provides the ability for
+ * Espresso testing of this code to wait for background operations
  * to complete - e.g. Can check if a recording happens.
  *
  *

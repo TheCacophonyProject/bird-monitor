@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 
 /**
  * Defines the solar declination used in computing the sunrise/sunset.
+ * @author http://mikereedell.github.io/sunrisesunsetlib-java/
  */
 @SuppressWarnings("unused")
 public class Zenith {

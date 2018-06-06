@@ -25,11 +25,12 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-//import com.luckycatlabs.sunrisesunset.Zenith;
-//import com.luckycatlabs.sunrisesunset.dto.Location;
 
 /**
  * Parent class of the Sunrise and Sunset calculator classes.
+ * @ author http://mikereedell.github.io/sunrisesunsetlib-java/
+ * The orginal code was modified according to https://github.com/mikereedell/sunrisesunsetlib-java/issues/14#issuecomment-168821506
+ * to fix an error in the divideBy method.
  */
 @SuppressWarnings({"ALL", "BigDecimalMethodWithoutRoundingCalled"})
 public class SolarEventCalculator {

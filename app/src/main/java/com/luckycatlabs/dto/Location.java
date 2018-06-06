@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 
 /**
  * Simple VO class to store latitude/longitude information.
+ * @author http://mikereedell.github.io/sunrisesunsetlib-java/
  */
 @SuppressWarnings("ALL")
 public class Location {

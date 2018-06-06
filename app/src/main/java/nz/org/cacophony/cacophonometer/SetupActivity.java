@@ -26,7 +26,11 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-
+/**
+ * This class creates the Settings screen that is displayed to the user via the menu on the main
+ * screen.
+ * It is used to configure the application.
+ */
 @SuppressWarnings("unused")
 public class SetupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
     // Register with idling counter

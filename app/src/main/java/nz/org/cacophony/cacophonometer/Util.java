@@ -50,7 +50,7 @@ import static android.content.Context.ALARM_SERVICE;
 /**
  *
  *
- * A set of helper methods that are placed here to simplify other classes/methods.
+ * A rather large set of helper methods that are placed here to simplify other classes/methods.
  *
  * @author Tim Hunt
  */

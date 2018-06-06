@@ -25,6 +25,7 @@ import java.util.Calendar;
 
 /**
  * Public interface for getting the various types of sunrise/sunset.
+ * @author http://mikereedell.github.io/sunrisesunsetlib-java/
  */
 @SuppressWarnings({"UnnecessaryLocalVariable", "unused"})
 public class SunriseSunsetCalculator {

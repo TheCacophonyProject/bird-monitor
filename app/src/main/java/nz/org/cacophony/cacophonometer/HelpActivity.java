@@ -10,8 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * Created by User on 24-Mar-17.
- * Code for the user help screen
+ * This class creates the Help screen activity which in turn just displays some text explaining how
+ * to use the app.
  */
 
 public class HelpActivity extends AppCompatActivity {

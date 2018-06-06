@@ -7,7 +7,6 @@ import android.util.Log;
 //import android.util.Log;
 
 /**
- * Created by User on 29-Mar-17.
  * Recordings made from the record now button needed to run in a thread
  */
 

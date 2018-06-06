@@ -9,7 +9,6 @@ import android.util.Log;
 
 
 /**
- * Created by User on 29-Mar-17.
  * Recordings need to happen from a service so needed this class
  */
 

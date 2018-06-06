@@ -14,7 +14,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-//import static nz.org.cacophony.cacophonometerlite.Server.getToken;
 
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP

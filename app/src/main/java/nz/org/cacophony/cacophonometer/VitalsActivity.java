@@ -28,7 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+/**
+ * The code to display the Vitals screen that the user can access from the menu, and displays to the
+ * user information such as whether the app has registered with the server, the Device ID of the
+ * app and the GPS loction.
+ */
 @SuppressWarnings("NullableProblems")
 public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     // Register with idling counter

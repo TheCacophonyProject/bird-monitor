@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 
-
+/**
+ * The app has the ability to save the current GPS location.  When the app asks the Android OS
+ * for a new location, this class listens for the broadcast from the OS and responds to it by
+ * saving the new location and displaying a message to the use.
+ */
 class GPSLocationListener implements LocationListener {
     private static final String TAG = GPSLocationListener.class.getName();
 

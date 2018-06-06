@@ -26,8 +26,8 @@ import java.util.TimeZone;
 
 
 /**
- * Created by User on 29-Mar-17.
- * This is where the action is - however the code starts, it gets here to do a recording and then send recording to server
+ * This is where the action is - however the code starts, it gets here to do a recording and then
+ * sends recording to server.
  */
 
 class RecordAndUpload implements IdlingResourceForEspressoTesting{
