@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -92,6 +93,8 @@ class RegisterWithServer {
 
 
         onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
+        final String devicename = RandomStringUtils.random(20, true, true);
+        onView(withId(R.id.setupDeviceNameInput)).perform(scrollTo(), replaceText(devicename), closeSoftKeyboard());
         onView(withId(R.id.setupGroupNameInput)).perform(pressImeActionButton());
 
         // Check still online
@@ -104,7 +107,10 @@ class RegisterWithServer {
 
         // check it has registerd
 //        onView(withId(R.id.setupRegisterStatus)).perform(scrollTo()).check(matches(withText("Registered in group: tim1")));
-        onView(allOf(withId(R.id.setupRegisterStatus))).check(matches(withText("Registered in group: tim1")));
+        Prefs prefs = new Prefs(targetContext);
+        String deviceName = prefs.getDeviceName();
+       // String groupName = prefs.getGroupName();
+        onView(allOf(withId(R.id.setupRegisterStatus))).check(matches(withText(deviceName + " is registered in group tim1")));
 
 
         mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
