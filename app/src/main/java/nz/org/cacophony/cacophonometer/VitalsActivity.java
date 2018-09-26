@@ -355,20 +355,29 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         else
             loggedInText.setText(getString(R.string.logged_in_to_server_false));
 
-        // Device ID text.
-        TextView deviceIDText = findViewById(R.id.deviceIDText);
-        try {
-            String textServerPrefix = "";
-            if (prefs.getUseTestServer()){
-                textServerPrefix = "Test Server" + " ";
-            }
-String deviceIDToDisplay = getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(prefs.getToken());
-       //     deviceIDText.setText(getString(R.string.device_id) + " " + textServerPrefix + Util.getDeviceID(getApplicationContext(),prefs.getToken()));
-            deviceIDText.setText(deviceIDToDisplay);
-        } catch (Exception e) {
+        // Device Name text.
+        TextView deviceNameText = findViewById(R.id.deviceNameText);
 
-//            logger.error("Device ID not available");
-            Log.e(TAG, "Device ID not available");
+        String deviceName = prefs.getDeviceName();
+
+        if (deviceName != null) {  // only change device name display if it isn't null
+
+            try {
+                String testServerPrefix = "";
+                if (prefs.getUseTestServer()) {
+                    testServerPrefix = "Test Server" + " ";
+                }
+
+                String deviceNameToDisplay = getString(R.string.device_name_colon) + " " + testServerPrefix + prefs.getDeviceName();
+                deviceNameText.setText(deviceNameToDisplay);
+
+
+            } catch (Exception e) {
+
+                Log.e(TAG, "Device Name not available");
+//            Log.e(TAG, "Device ID not available");
+            }
+
         }
 
         // GPS text.

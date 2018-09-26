@@ -247,6 +247,16 @@ class Util {
         return jObject.getString("id");
     }
 
+    static String getDeviceName(String webToken) throws Exception {
+        if (webToken == null){
+            return "";
+        }
+
+        String webTokenBody = Util.decoded(webToken);
+        JSONObject jObject = new JSONObject(webTokenBody);
+        return jObject.getString("deviceName");
+    }
+
     /**
      * Extracts the webtoken from the actual token
      * @param JWTEncoded

@@ -147,8 +147,10 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
         updateGpsDisplay(getApplicationContext());
 
         String group = prefs.getGroupName();
+        String deviceName = prefs.getDeviceName();
         if (group != null) {
-            String str = "Registered in group: " + group;
+          // String str = "Registered in group: " + group;
+            String str = deviceName + " is registered in group " + group;
             registerStatus.setText(str);
         } else
             registerStatus.setText(R.string.not_registered);
@@ -245,6 +247,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     mainScrollView.fullScroll(ScrollView.FOCUS_UP);
                     try {
                         ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
+                        ((TextView) findViewById(R.id.setupDeviceNameInput)).setText("");
 
                     }catch (Exception ex){
                         Log.e(TAG, ex.getLocalizedMessage());
@@ -259,6 +262,10 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
                         errorMessage = Server.getErrorMessage();
+                        // convert to user friendly message
+                        if (errorMessage.equalsIgnoreCase("devicename: device name in use")){
+                            errorMessage = "Sorry, you have already used this Device Name, please use a different Device Name";
+                        }
                     }
 
                     Util.getToast(getApplicationContext(),errorMessage, true ).show();
@@ -302,6 +309,18 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             return;
         }
 
+        // Check that the device name is valid, at least 4 characters.
+        String deviceName = ((EditText) findViewById(R.id.setupDeviceNameInput)).getText().toString();
+        if (deviceName.length() < 1){
+            Util.getToast(getApplicationContext(),"Please enter a device name of at least 4 characters (no spaces)", true ).show();
+            return;
+        }else if (deviceName.length() < 4) {
+            Log.i(TAG, "Invalid device name: "+deviceName);
+
+            Util.getToast(getApplicationContext(),deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true ).show();
+            return;
+        }
+
         Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -319,7 +338,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             return;
         }
 
-        register(group, getApplicationContext());
+        register(group, deviceName, getApplicationContext());
 
     }
 
@@ -362,7 +381,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
      * Will register the device in the given group saving the JSON Web Token, devicename, and password.
      * @param group name of group to join.
      */
-    private void register(final String group, final Context context) {
+    private void register(final String group, final String deviceName, final Context context) {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
 
@@ -382,7 +401,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
             @Override
             public void run() {
                 Message message = handler.obtainMessage();
-                if (Server.register(group, context)) {
+                if (Server.register(group, deviceName, context)) {
                     message.what = REGISTER_SUCCESS;
 
                 } else {
