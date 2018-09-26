@@ -29,8 +29,11 @@ class CheckVitals {
 
         onView(withId(R.id.loggedInText)).check(matches(withText(R.string.logged_in_to_server_true)));
 
-        // Check that Device ID message is appropriate ie has a device ID and says Test Server (or no if production server)
-        onView(withId(R.id.deviceIDText)).check(matches(isDeviceIdOK(testServer)));
+//        // Check that Device ID message is appropriate ie has a device ID and says Test Server (or no if production server)
+//        onView(withId(R.id.deviceIDText)).check(matches(isDeviceIdOK(testServer)));
+
+        // Check that Device Name message is appropriate ie has a device Name and says Test Server (or not if production server)
+        onView(withId(R.id.deviceNameText)).check(matches(isDeviceNameOK(testServer)));
 
 //        try {
 //            Thread.sleep(5000);
@@ -41,18 +44,14 @@ class CheckVitals {
     }
 
 
-
-
-
-
-    private static Matcher<View> isDeviceIdOK(final boolean testServer) {
+    private static Matcher<View> isDeviceNameOK(final boolean testServer) {
         // https://www.programcreek.com/java-api-examples/?code=kevalpatel2106/smart-lens/smart-lens-master/app/src/androidTest/java/com/kevalpatel2106/smartlens/testUtils/CustomMatchers.java
         // http://blog.sqisland.com/2016/06/advanced-espresso-at-io16.html
 
         return new TypeSafeMatcher<View>() {
             @Override
             public void describeTo(Description description) {
-                description.appendText("is Device Id OK ");
+                description.appendText("is Device Name OK ");
 
             }
 
@@ -80,6 +79,45 @@ class CheckVitals {
             }
         };
     }
+
+
+
+
+//    private static Matcher<View> isDeviceIdOK(final boolean testServer) {
+//        // https://www.programcreek.com/java-api-examples/?code=kevalpatel2106/smart-lens/smart-lens-master/app/src/androidTest/java/com/kevalpatel2106/smartlens/testUtils/CustomMatchers.java
+//        // http://blog.sqisland.com/2016/06/advanced-espresso-at-io16.html
+//
+//        return new TypeSafeMatcher<View>() {
+//            @Override
+//            public void describeTo(Description description) {
+//                description.appendText("is Device Id OK ");
+//
+//            }
+//
+//            @Override
+//            public boolean matchesSafely(View view) {
+//                if (!(view instanceof TextView)){
+//                    return false;
+//                }
+//                String deviceIdText = (String)((TextView)view).getText();
+//                if (testServer){
+//                    boolean hasTextServerInText = deviceIdText.contains("Test Server");
+//                    //noinspection SimplifiableIfStatement
+//                    if (!hasTextServerInText){
+//                        return false;
+//                    }
+//                    return  ((TextView)view).getText().length() > 23;  // if > 11 characters it means there is a device id displayed
+//
+//                }else{
+//                    return  ((TextView)view).getText().length() > 11;  // if > 11 characters it means there is a device id displayed
+//                }
+//
+//
+//
+//
+//            }
+//        };
+//    }
 
 
 }

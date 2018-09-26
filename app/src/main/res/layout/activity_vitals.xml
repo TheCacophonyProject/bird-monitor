@@ -103,8 +103,8 @@
 
 
             <TextView
-                android:id="@+id/deviceIDText"
-                android:text="@string/device_id"
+                android:id="@+id/deviceNameText"
+                android:text="@string/device_name_colon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/loggedInText"
@@ -116,7 +116,7 @@
                 android:text="@string/gps_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/deviceIDText"
+                android:layout_below="@id/deviceNameText"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 

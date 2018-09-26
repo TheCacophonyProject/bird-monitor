@@ -76,14 +76,52 @@
                 android:layout_marginTop="5dp"
                 />
 
+            <TextView
+                android:id="@+id/groupNameLabel"
+                android:text="@string/group_name_label"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupRegisterStatus"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp"
+                />
+
             <EditText
                 android:id="@+id/setupGroupNameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:background="@drawable/rect_text_edit"
                 android:ems="10"
                 android:hint="@string/group_name"
-                android:layout_below="@id/setupRegisterStatus"
+                android:layout_below="@id/groupNameLabel"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                android:id="@+id/deviceNameLabel"
+                android:text="@string/device_name_label"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/setupGroupNameInput"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="5dp"
+                />
+
+            <EditText
+                android:id="@+id/setupDeviceNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:background="@drawable/rect_text_edit"
+                android:ems="10"
+                android:hint="@string/device_name_label"
+                android:layout_below="@id/deviceNameLabel"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp" />
@@ -95,7 +133,7 @@
                 android:onClick="registerButton"
                 android:layout_width="match_parent"
 
-                android:layout_below="@id/setupGroupNameInput"
+                android:layout_below="@id/setupDeviceNameInput"
                 android:layout_alignEnd="@id/setupGroupNameInput"
                 android:layout_alignRight="@id/setupGroupNameInput"/>
 

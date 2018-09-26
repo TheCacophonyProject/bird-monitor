@@ -12,6 +12,7 @@
     <string name="registered">Registered: ?</string>
 
     <string name="logged_in_to_server">Logged in to server</string>
+    <string name="device_name_colon">Device Name:</string>
 
 
     <string name="root_access_experts_only">Root Access (Experts Only)</string>
@@ -20,9 +21,11 @@
     <string name="periodically_update_location">Periodically update the location.</string>
 
     <string name="device_not_registered">Device Not Registered</string>
+    <string name="group_name_label">Group Name</string>
+    <string name="device_name_label">Device Name</string>
     <string name="to_register_title">To register this device</string>
 
-    <string name="to_register_instructions">(Choose Help from the menu for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says Registered in group: (with your group name) \n\nMultiple devices can be in the same group.</string>
+    <string name="to_register_instructions">(Choose Help from the menu for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says - device (your device name) is registered in group (your group name). \n\nMultiple devices can be in the same group.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
     <string name="record_now">Record Now</string>
@@ -48,6 +51,7 @@
 
 
     <string name="device_id">Device ID:</string>
+
     <string name="gps_text">GPS location: </string>
     <string name="message_text">Messages: </string>message_text
     <string name="version">Version ID</string>
@@ -95,6 +99,7 @@ If your phone\'s Android version is 4.2(17) or higher then you will need to \'ro
 https://cacophony.org.nz/</string>
 
     <string name="group_name">Group name</string>
+
     <string name="refresh">Refresh</string>
 
     <string name="latitude">Latitude</string>

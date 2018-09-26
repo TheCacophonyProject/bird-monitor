@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -191,7 +192,7 @@ class Server {
      * @return If the device successfully registered.
      */
     @SuppressWarnings("RedundantStringConstructorCall")
-    static boolean register(final String group, final Context context) {
+    static boolean register(final String group, final String deviceName,final Context context) {
 
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
@@ -208,27 +209,45 @@ class Server {
         try {
             HttpURLConnection myConnection = openURL(registerUrl);
 
-            final String devicename = RandomStringUtils.random(20, true, true);
+         //   final String devicename = RandomStringUtils.random(20, true, true);
             final String password = RandomStringUtils.random(20, true, true);
 
             JSONObject jsonParam = new JSONObject();
-            jsonParam.put("devicename", devicename);
+         //   jsonParam.put("devicename", devicename);
+            jsonParam.put("devicename", deviceName);
             jsonParam.put("password", password);
             jsonParam.put("group", group);
             DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
             os.writeBytes(jsonParam.toString());
             os.flush();
 
-            //  Here you read any answer from server.
-            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+
+                      //  Here you read any answer from server.
+            if (myConnection == null){
+                Log.e(TAG, "myConnection is null");
+                return false;
+            }
+
+
+            Log.i("MSG", myConnection.getResponseMessage());
+            String responseCode = String.valueOf(myConnection.getResponseCode());
+            // 26 Sept 2018
+            // If the device name is already in use, the server returns a 422, and attempting to read
+            // the normal stream with getInputStream throws a FileNotFoundException, so instead
+            // read getErrorStream
+            // https://developer.android.com/reference/java/net/HttpURLConnection.html#getErrorStream()
+            BufferedReader serverAnswer;
+            if (responseCode.equalsIgnoreCase("422")) {
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getErrorStream()));
+            }else{
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+            }
             String responseLine;
 
             responseLine = serverAnswer.readLine();
             os.close();
             serverAnswer.close();
 
-            Log.i("MSG", myConnection.getResponseMessage());
-            String responseCode = String.valueOf(myConnection.getResponseCode());
 
             myConnection.disconnect();
             String responseString = new String(responseLine);
@@ -247,7 +266,8 @@ class Server {
                     String deviceID = Util.getDeviceID(prefs.getToken());
                     prefs.setDeviceId(deviceID);
 
-                    prefs.setDeviceName(devicename);
+                 //   prefs.setDeviceName(devicename);
+                    prefs.setDeviceName(deviceName);
                     prefs.setGroupName(group);
                     prefs.setPassword(password);
 
@@ -257,7 +277,19 @@ class Server {
                     Log.w(TAG, "Failed to register");
                     registered = false;
                 }
-            } else { // response code not 200
+            } else if (responseCode.equalsIgnoreCase("422")){ // 422 error response
+
+                Log.w(TAG, "Register Response from server is 422");
+                JSONObject joRes = new JSONObject(responseString);
+               String errorType = joRes.getString("errorType");
+                String message = joRes.getString("message");
+
+
+                setErrorMessage(message);
+                Log.i(TAG, message);
+                registered = false;
+            } else { // response code not 200 or 422 - left this here from Cameron's code as it
+                    // didn't work with 422 response, but not sure if needed for other responses
                 Log.w(TAG, "Register Response from server not 200");
                 JSONObject joRes = new JSONObject(responseString);
                 JSONArray messages = joRes.getJSONArray("messages");
