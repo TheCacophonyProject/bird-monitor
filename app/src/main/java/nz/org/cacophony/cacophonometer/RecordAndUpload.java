@@ -496,6 +496,20 @@ try {
                 additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
             }
 
+            String simImei = "Unknown";
+            try {
+                if (android.os.Build.VERSION.SDK_INT >= 26) {
+                    simImei=mTelephonyManager.getImei();
+                }
+                else
+                {
+                    simImei=mTelephonyManager.getDeviceId();
+                }
+            }catch (SecurityException ex){
+                Log.e(TAG, ex.getLocalizedMessage());
+            }
+            additionalMetadata.put("SIM IMEI", simImei);
+
             audioRecording.put("additionalMetadata", additionalMetadata);
 
         } catch (JSONException ex) {

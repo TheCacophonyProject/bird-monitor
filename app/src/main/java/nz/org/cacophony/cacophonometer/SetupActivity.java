@@ -262,10 +262,10 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
                     String errorMessage = "Failed to register";
                     if(Server.getErrorMessage() != null){
                         errorMessage = Server.getErrorMessage();
-                        // convert to user friendly message
-                        if (errorMessage.equalsIgnoreCase("devicename: device name in use")){
-                            errorMessage = "Sorry, you have already used this Device Name, please use a different Device Name";
-                        }
+                        // Just use second part, i.e. after colon
+                        String message[] = errorMessage.split(":");
+                        errorMessage = message[1].trim();
+
                     }
 
                     Util.getToast(getApplicationContext(),errorMessage, true ).show();
