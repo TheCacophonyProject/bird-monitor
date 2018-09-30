@@ -35,7 +35,7 @@ android {
         targetSdkVersion 27
         // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
         archivesBaseName = "Cacophonometer-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
