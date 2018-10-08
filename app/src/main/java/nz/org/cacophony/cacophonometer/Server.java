@@ -31,7 +31,8 @@ class Server {
 
     private static final String TAG = Server.class.getName();
 
-    private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
+   // private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
+    private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
 

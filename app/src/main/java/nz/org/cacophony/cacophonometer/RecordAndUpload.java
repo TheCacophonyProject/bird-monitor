@@ -467,6 +467,7 @@ try {
             audioRecording.put("batteryCharging", batteryStatus);
             audioRecording.put("batteryLevel", batteryLevel);
             audioRecording.put("airplaneModeOn", airplaneModeOn);
+            audioRecording.put("type", "audio");
 
             if (relativeTo.equalsIgnoreCase("rToDawn")) {
                 audioRecording.put("relativeToDawn", relativeToOffset);
