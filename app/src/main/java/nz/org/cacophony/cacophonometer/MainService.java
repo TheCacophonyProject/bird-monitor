@@ -30,7 +30,7 @@ public class MainService extends IntentService {
             return;
         }
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "MainServiceWakelockTag");
+                "Cacophonometer:MainServiceWakelockTag");
         wakeLock.acquire(10*60*1000L /*10 minutes*/);
 
       try {

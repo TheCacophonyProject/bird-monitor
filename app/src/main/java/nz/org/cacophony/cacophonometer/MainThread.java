@@ -49,6 +49,7 @@ class MainThread implements Runnable {
         try {
 
             recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, alarmIntentType );
+
         }catch (Exception e){
 
             Util.broadcastAMessage(context, "recording_failed");

@@ -2,6 +2,7 @@ package nz.org.cacophony.cacophonometer;
 
 import android.app.Service;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
@@ -307,7 +308,7 @@ try {
 
     }
 
-    private static boolean uploadFiles(Context context){
+    public static boolean uploadFiles(Context context){
 
         Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
@@ -394,6 +395,8 @@ try {
         }
 
     }
+
+
 
     private static boolean sendFile(Context context, File aFile) {
         Prefs prefs = new Prefs(context);

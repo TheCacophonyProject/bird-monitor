@@ -36,7 +36,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         }
 
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "StartRecordingReceiverWakelockTag");
+                "Cacophonometer:StartRecordingReceiverWakelockTag");
         wakeLock.acquire(10*60*1000L /*10 minutes*/);
         try {
             Util.createAlarms(context);

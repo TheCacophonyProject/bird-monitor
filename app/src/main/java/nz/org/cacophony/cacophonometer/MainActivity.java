@@ -217,23 +217,46 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
     private void disableFlightMode() {
-        try {
-            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
-            new Thread() {
-                public void run() {
-                    MainActivity.this.runOnUiThread(new Runnable() {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Util.disableFlightMode(getApplicationContext());
+                }
+                catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
                         public void run() {
-                            Util.disableFlightMode(getApplicationContext());
+                            Log.e(TAG, "Error disabling flight mode");
+                            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
                         }
                     });
                 }
-            }.start();
-
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
-        }
+            }
+        };
+        thread.start();
     }
+
+
+
+//    private void disableFlightMode() {
+//        try {
+//            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
+//            new Thread() {
+//                public void run() {
+//                    MainActivity.this.runOnUiThread(new Runnable() {
+//                        public void run() {
+//                            Util.disableFlightMode(getApplicationContext());
+//                        }
+//                    });
+//                }
+//            }.start();
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+//        }
+//    }
 
 
     public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {

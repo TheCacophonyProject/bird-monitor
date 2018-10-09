@@ -519,44 +519,88 @@ class Util {
         return isConnected;
     }
 
+    static void disableFlightMode(final Context context) {
 
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                        // API 17 onwards.
+                        // Must be a rooted device
+                        Prefs prefs = new Prefs(context);
+                        if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
+                            return ;
+                        }
 
-    static void disableFlightMode(Context context) {
-        try {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-                // API 17 onwards.
-                // Must be a rooted device
-                Prefs prefs = new Prefs(context);
-                if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
-                    return ;
+                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+                            return ;
+                        }
+
+                        // Set Airplane / Flight mode using su commands.
+                        String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
+                        executeCommandTim(context, command);
+                        command = COMMAND_FLIGHT_MODE_2 + " " + "false";
+                        executeCommandTim(context, command);
+
+                    } else {
+                        // API 16 and earlier.
+
+                        //noinspection deprecation
+                        Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
+                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                        intent.putExtra("state", false);
+                        context.sendBroadcast(intent);
+                    }
+
+                }catch (Exception ex){
+                    Log.e(TAG, ex.getLocalizedMessage());
                 }
 
-                if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
-                    return ;
-                }
-
-                // Set Airplane / Flight mode using su commands.
-                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-                executeCommandTim(context, command);
-                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-                executeCommandTim(context, command);
-
-            } else {
-                // API 16 and earlier.
-
-                //noinspection deprecation
-                Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
-                Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                intent.putExtra("state", false);
-                context.sendBroadcast(intent);
             }
+        };
+        thread.start();
 
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
+
+
     }
 
-    static void enableFlightMode(Context context) {
+//    static void disableFlightMode(Context context) {
+//        try {
+//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+//                // API 17 onwards.
+//                // Must be a rooted device
+//                Prefs prefs = new Prefs(context);
+//                if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
+//                    return ;
+//                }
+//
+//                if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+//                    return ;
+//                }
+//
+//                // Set Airplane / Flight mode using su commands.
+//                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
+//                executeCommandTim(context, command);
+//                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
+//                executeCommandTim(context, command);
+//
+//            } else {
+//                // API 16 and earlier.
+//
+//                //noinspection deprecation
+//                Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
+//                Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//                intent.putExtra("state", false);
+//                context.sendBroadcast(intent);
+//            }
+//
+//        }catch (Exception ex){
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//    }
+
+    static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
@@ -583,6 +627,8 @@ class Util {
             return; // don't try to enable airplane mode
         }
 
+
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
 
             // API 17 onwards.
@@ -592,23 +638,96 @@ class Util {
                 Log.e(TAG, "Do NOT have required ROOT access");
                 return;
             }
-
-
-            // Set Airplane / Flight mode using su commands.
-            String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-            executeCommandTim(context, command);
-            command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-            executeCommandTim(context, command);
-
-        } else {
-
-            //noinspection deprecation
-            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
-            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-            intent.putExtra("state", true);
-            context.sendBroadcast(intent);
         }
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
+
+                        // Set Airplane / Flight mode using su commands.
+                        String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
+                        executeCommandTim(context, command);
+                        command = COMMAND_FLIGHT_MODE_2 + " " + "true";
+                        executeCommandTim(context, command);
+
+                    } else {
+
+                        //noinspection deprecation
+                        Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
+                        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                        intent.putExtra("state", true);
+                        context.sendBroadcast(intent);
+                    }
+                }
+                catch (Exception e) {
+                            Log.e(TAG, "Error disabling flight mode");
+                }
+            }
+        };
+        thread.start();
+
+
     }
+
+//    static void enableFlightMode(Context context) {
+//        Prefs prefs = new Prefs(context);
+//
+//        boolean onlineMode = prefs.getOnLineMode();
+//        String mode = prefs.getMode();
+//
+//        switch(mode) { // mode determined earlier
+//            case "off":
+//                // don't change offline mode
+//                break;
+//            case "normal":
+//                // don't change offline mode
+//                break;
+//
+//            case "normalOnline":
+//                onlineMode = true;
+//                break;
+//
+//            case "walking":
+//                // don't change offline mode
+//                break;
+//        }
+//
+//        if (onlineMode){
+//            return; // don't try to enable airplane mode
+//        }
+//
+//
+//
+//
+//
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
+//
+//            // API 17 onwards.
+//            // Must be a rooted device
+//
+//            if (!prefs.getHasRootAccess()) {
+//                Log.e(TAG, "Do NOT have required ROOT access");
+//                return;
+//            }
+//
+//
+//            // Set Airplane / Flight mode using su commands.
+//            String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
+//            executeCommandTim(context, command);
+//            command = COMMAND_FLIGHT_MODE_2 + " " + "true";
+//            executeCommandTim(context, command);
+//
+//        } else {
+//
+//            //noinspection deprecation
+//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
+//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+//            intent.putExtra("state", true);
+//            context.sendBroadcast(intent);
+//        }
+//    }
 
 
 
