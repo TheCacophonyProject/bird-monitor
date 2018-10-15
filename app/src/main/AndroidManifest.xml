@@ -91,17 +91,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
-        <activity
-            android:name=".Wizard1Activity"
-            android:label="@string/title_activity_wizard1"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
         <activity
             android:name=".MainActivity2"
             android:label="@string/title_activity_main2"
@@ -118,7 +108,7 @@
             android:name=".GPSActivity"
             android:label="@string/title_activity_gps"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".ModeActivity"></activity>
+        <activity android:name=".WalkingActivity"></activity>
     </application>
 
 </manifest>

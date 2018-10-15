@@ -20,7 +20,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/setupGroupNameInput"
         android:background="@drawable/rect_text_edit"
 
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvGroup" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvDeviceName"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,10 +46,10 @@
         android:text="Device Name"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/setupGroupNameInput" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/setupDeviceNameInput"
         android:background="@drawable/rect_text_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,21 +61,23 @@
         android:inputType="text"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDeviceName" />
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:onClick="registerButton"
         android:text="Register"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/setupDeviceNameInput" />
 
     <Button
         android:id="@+id/btnUnRegister"
@@ -86,7 +88,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:onClick="unRegisterButton"
         android:text="Un-Register"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
@@ -99,7 +103,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="back"
-        android:text="Back"
+        android:text="Back - Home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -111,7 +115,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="next"
-        android:text="Next"
+        android:text="Next - Rooted"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

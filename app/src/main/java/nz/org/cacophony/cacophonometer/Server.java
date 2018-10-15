@@ -273,10 +273,12 @@ class Server {
                     prefs.setPassword(password);
 
                     prefs.setDeviceId(deviceID);
+                    Util.broadcastAMessage(context,"REGISTER_SUCCESS");
                 } else {
                     // Failed register.
                     Log.w(TAG, "Failed to register");
                     registered = false;
+                    Util.broadcastAMessage(context,"REGISTER_FAIL_UNKNOWN_REASON");
                 }
             } else if (responseCode.equalsIgnoreCase("422")){ // 422 error response
 
@@ -286,18 +288,20 @@ class Server {
                 String message = joRes.getString("message");
 
 
-                setErrorMessage(message);
+                setErrorMessage( message);
                 Log.i(TAG, message);
                 registered = false;
+                Util.broadcastAMessage(context, message);
             } else { // response code not 200 or 422 - left this here from Cameron's code as it
                     // didn't work with 422 response, but not sure if needed for other responses
                 Log.w(TAG, "Register Response from server not 200");
                 JSONObject joRes = new JSONObject(responseString);
                 JSONArray messages = joRes.getJSONArray("messages");
                 String firstMessage = (String) messages.get(0);
-                setErrorMessage(firstMessage);
+                setErrorMessage("NEITHER_200_NOR_422" + firstMessage);
                 Log.i(TAG, firstMessage);
                 registered = false;
+                Util.broadcastAMessage(context,firstMessage);
             }
 
         } catch (Exception e) {
