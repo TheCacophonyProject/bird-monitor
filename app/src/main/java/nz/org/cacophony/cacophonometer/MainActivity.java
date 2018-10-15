@@ -94,10 +94,22 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setDateTimeLastRepeatingAlarmFiredToZero();
         prefs.setDateTimeLastUpload(0);
 
+
+        // Going to close this activity and open Wizard1 instead
+        Intent intent = new Intent(this, Wizard1Activity.class);
+        startActivity(intent);
+        finish();
+
         if (prefs.getIsFirstTime()) {
             // Set Keep Online to be the default
             prefs.setOnLineMode(true);
             prefs.setIsFirstTime();
+
+//            // Going to close this activity and open Wizard1 instead
+//            Intent intent = new Intent(this, Wizard1Activity.class);
+//            startActivity(intent);
+//            finish();
+
         } else {
             disableFlightMode(); // force app to ask for root permission as early as possible
         }
