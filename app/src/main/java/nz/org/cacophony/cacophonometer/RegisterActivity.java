@@ -177,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
             Intent intent = new Intent(this, RootedActivity.class);
             startActivity(intent);
-            finish();
+          //  finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -187,8 +187,8 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
         try {
 
-            Intent intent = new Intent(this, MainActivity2.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, MainActivity2.class);
+//            startActivity(intent);
             finish();
 
         } catch (Exception ex) {

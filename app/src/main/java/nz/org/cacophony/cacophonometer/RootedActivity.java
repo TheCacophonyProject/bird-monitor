@@ -26,17 +26,28 @@ public class RootedActivity extends AppCompatActivity {
         Prefs prefs = new Prefs(getApplicationContext());
 
         boolean hasRootAccess = prefs.getHasRootAccess();
-        final ToggleButton toggleButtonRootAccess = findViewById(R.id.toggleButton);
+        final ToggleButton toggleButtonRootAccess = findViewById(R.id.tgbRooted);
         if (hasRootAccess) {
             toggleButtonRootAccess.setChecked(true);
         } else
             toggleButtonRootAccess.setChecked(false);
     }
 
-    public void ontoggleButtonRootAccess(View v) {
+//    public void ontoggleButtonRootAccess(View v) {
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        // Is the view now checked?
+//        boolean checked = ((ToggleButton) v).isChecked();
+//        if (checked){
+//            prefs.setHasRootAccess(true);
+//        }else{
+//            prefs.setHasRootAccess(false);
+//        }
+//    }
+
+    void setRooted(){
         Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((ToggleButton) v).isChecked();
+        final ToggleButton toggleButtonRooted = findViewById(R.id.tgbRooted);
+        boolean checked = ( toggleButtonRooted).isChecked();
         if (checked){
             prefs.setHasRootAccess(true);
         }else{
@@ -47,10 +58,10 @@ public class RootedActivity extends AppCompatActivity {
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
+            setRooted();
             Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -59,9 +70,9 @@ public class RootedActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
+            setRooted();
+//            Intent intent = new Intent(this, RegisterActivity.class);
+//            startActivity(intent);
             finish();
 
         } catch (Exception ex) {

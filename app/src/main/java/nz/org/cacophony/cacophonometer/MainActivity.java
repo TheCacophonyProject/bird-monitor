@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
 
         // Now create the alarms that will cause the recordings to happen
-        Util.createAlarms(getApplicationContext());
+        Util.createTheNextSingleStandardAlarm(getApplicationContext());
 
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 break;
         }
         // need to reset alarms as their frequency may have changed.
-        Util.createAlarms(getApplicationContext());
+        Util.createTheNextSingleStandardAlarm(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 

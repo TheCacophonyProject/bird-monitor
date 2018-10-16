@@ -22,10 +22,14 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -175,7 +179,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Application name text  appNameVersionText
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
-        TextView versionNameText = findViewById(R.id.appNameVersionText);
+        TextView versionNameText = findViewById(R.id.tvAppVersion);
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
        // versionNameText.setText(getString(R.string.version) + " " + versionName);
         versionNameText.setText(versionNameTextToDisplay);
@@ -379,6 +383,20 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             }
 
         }
+        // Update time of next recording
+        TextView tvNextRecording = findViewById(R.id.tvNextRecording);
+        long tempNextAlarm = 0;
+
+        long nextAlarmLong = prefs.getNextAlarm();
+
+        Date date = new Date(nextAlarmLong);
+       // DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm", Locale.UK);
+//        DateFormat fileFormat = new SimpleDateFormat("dd MM yyy 'at' HH mm", Locale.UK);
+        Locale nzLocale = new Locale("nz");
+        DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
+        String nextAlarmStr = fileFormat.format(date);
+        tvNextRecording.setText("Next Recording: " + nextAlarmStr);
+
 
         // GPS text.
         updateGpsDisplay(prefs);
@@ -448,6 +466,15 @@ try {
         }
     };
 
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+//            Intent intent = new Intent(this, MainActivity2.class);
+//            startActivity(intent);
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
 
 }
 

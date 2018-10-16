@@ -908,6 +908,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
     public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
+        Log.e(TAG, "createCreateAlarms");
              Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
@@ -947,7 +948,8 @@ private static void executeCommandTim(Context context, String command){
      * @param context
      *     *
      */
-    public static void createAlarms(Context context){
+    public static void createTheNextSingleStandardAlarm(Context context){ // Standard repeating as apposed to Dawn or Dusk
+        Log.e(TAG, "createTheNextSingleStandardAlarm");
 Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
@@ -1006,7 +1008,7 @@ Prefs prefs = new Prefs(context);
         alarmManager.setExactAndAllowWhileIdle (AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
     }
-
+    prefs.setTheNextSingleStandardAlarmUsingDelay(delay);
     }
 
     public static void setUpLocationUpdateAlarm(Context context){
@@ -1063,6 +1065,7 @@ Prefs prefs = new Prefs(context);
         }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
         }
+     //   prefs.setNextAlarm(startWindowTimeForLocationUpdate);
     }
 
     private static void deleteLocationUpdateAlarm(Context context){

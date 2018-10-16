@@ -575,7 +575,7 @@ public class SetupActivity extends AppCompatActivity implements IdlingResourceFo
     public void onPause() {
         super.onPause();
         Util.createCreateAlarms(getApplicationContext());
-        Util.createAlarms(getApplicationContext());
+        Util.createTheNextSingleStandardAlarm(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
     }
 

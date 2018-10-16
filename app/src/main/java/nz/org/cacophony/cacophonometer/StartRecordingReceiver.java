@@ -39,7 +39,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 "Cacophonometer:StartRecordingReceiverWakelockTag");
         wakeLock.acquire(10*60*1000L /*10 minutes*/);
         try {
-            Util.createAlarms(context);
+            Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
             if (!Util.checkPermissionsForRecording(context)) {

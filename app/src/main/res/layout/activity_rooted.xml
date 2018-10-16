@@ -30,11 +30,10 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <ToggleButton
-        android:id="@+id/toggleButton"
+        android:id="@+id/tgbRooted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
-        android:onClick="ontoggleButtonRootAccess"
         android:text="ToggleButton"
         android:textOff="No"
         android:textOn="Yes"

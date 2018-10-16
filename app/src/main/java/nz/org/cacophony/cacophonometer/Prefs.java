@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.Date;
+
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
@@ -98,6 +101,10 @@ private final Context context;
     private static final String  MODE_KEY = "MODE";
 
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
+
+    private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
+    private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
+
 
     public Prefs(Context context) {
         this.context = context;
@@ -228,6 +235,111 @@ private final Context context;
 
     void setToken(String token){
         setString(TOKEN_KEY, token);
+    }
+
+    void setTheNextSingleStandardAlarmUsingDelay(long delayInMillisecs){
+        // need to covert this delay into unix time
+        Date date = new Date();
+        long currentUnixTime = date.getTime();
+        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
+        setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
+    }
+
+    private void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime){
+        setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
+//        // used so that the next alarm can be display in the Vitals screen.
+//        // Will normally only set the next alarm if 'nextAlarm' is sooner than the currently set nextAlarm,
+//        // but the first time the app is run is different - in that case nextAlarm will be 0 (ie less than current time)
+//        // Also if app hasn't been used for a while, the last set time may be out of date.
+//
+//        //Ignore alarms that have already passed
+//        Date now = new Date();
+//        if (nextHourlyAlarmInUnixTime < now.getTime()){
+//            return;
+//        }
+//        long nextAlarmMilliseconds = nextHourlyAlarmInUnixTime;
+//        long currentNextAlarmInPrefs = getNextSingleStandardAlarm();
+//
+//        if (currentNextAlarmInPrefs < now.getTime()){ // current stored alarm is out of date
+//            setLong(NEXT_ALARM_KEY, nextAlarmMilliseconds);
+//        }else if (nextAlarmMilliseconds < currentNextAlarmInPrefs){
+//            setLong(NEXT_ALARM_KEY, nextAlarmMilliseconds);
+//        }
+//        // Now do a check
+//        currentNextAlarmInPrefs = getNextAlarm();
+//
+//        Log.e(TAG, "Next alarm set for " + currentNextAlarmInPrefs);
+//        Date date = new Date(currentNextAlarmInPrefs);
+//        DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
+//        String nextAlarmStr = fileFormat.format(date);
+//        Log.e(TAG, nextAlarmStr);
+
+    }
+
+    void addDawnDuskAlarm(long alarmInUnixTime){
+        // First Ignore it if this time has already passed
+        Date now = new Date();
+        if (alarmInUnixTime < now.getTime()){
+            return;
+        }
+
+        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
+        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
+        if (currentAlarms == null){
+            currentAlarms = alarmInUnixTimeStr;
+        }else {
+            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
+        }
+
+
+        setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
+    }
+
+    void deleteDawnDuskAlarmList(){
+        setString(DAWN_DUSK_ALARMS_KEY, null);
+    }
+    
+    long getNextAlarm(){
+        long nextAlarm = getNextSingleStandardAlarm();
+        long[] dawnDuskAlarms = getDawnDuskAlarmList();
+        if (dawnDuskAlarms != null){
+            Date now = new Date();
+            for (long dawnDuskAlarm: dawnDuskAlarms) {
+                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()){
+                    nextAlarm = dawnDuskAlarm;
+                }
+            }
+        }
+
+        return nextAlarm;
+    }
+
+    long[] getDawnDuskAlarmList() {
+        String alarmsString = getString(DAWN_DUSK_ALARMS_KEY);
+        if (alarmsString == null){
+            return null;
+        }
+        String[] tempArray;
+
+        /* delimiter */
+        String delimiter = ",";
+
+        /* given string will be split by the argument delimiter provided. */
+        tempArray = alarmsString.split(delimiter);
+        Arrays.sort(tempArray);
+
+        long[] alarmTimes = new long [tempArray.length];
+        for (int i = 0; i < tempArray.length; i++) {
+            alarmTimes[i] =  Long.parseLong(tempArray[i]);
+        }
+
+        return alarmTimes;
+    }
+
+
+
+    long getNextSingleStandardAlarm(){
+        return getLong(NEXT_ALARM_KEY);
     }
 
     String getToken(){

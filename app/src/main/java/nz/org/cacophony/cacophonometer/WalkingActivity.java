@@ -22,31 +22,34 @@ public class WalkingActivity extends AppCompatActivity {
         Prefs prefs = new Prefs(getApplicationContext());
 
         String modeStr = prefs.getMode();
-        final ToggleButton toggleButtonMode = findViewById(R.id.tbMode);
-        if (modeStr.equalsIgnoreCase("Walking")) {
+        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
+        if (modeStr.equalsIgnoreCase("walking")) {
             toggleButtonMode.setChecked(true);
         } else
             toggleButtonMode.setChecked(false);
     }
 
-    public void ontoggleButtonWalking(View v) {
+
+
+    void setWalking(){
         Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((ToggleButton) v).isChecked();
+        final ToggleButton toggleButtonWalking = findViewById(R.id.tgbWalking);
+        boolean checked = ( toggleButtonWalking).isChecked();
         if (checked){
-            prefs.setMode("Walking");
+            prefs.setMode("walking");
         }else{
-            prefs.setMode("Fixed Location");
+            prefs.setMode("normal");
         }
     }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
+            setWalking();
             Intent intent = new Intent(this, MainActivity2.class);
             startActivity(intent);
-            finish();
+//            finish();
+          //navigateUpTo(new Intent(getBaseContext(), MainActivity.class)); //needs api 16
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -55,9 +58,9 @@ public class WalkingActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-            Intent intent = new Intent(this, GPSActivity.class);
-            startActivity(intent);
+            setWalking();
+//            Intent intent = new Intent(this, GPSActivity.class);
+//            startActivity(intent);
             finish();
 
         } catch (Exception ex) {
