@@ -48,8 +48,8 @@ public class WalkingActivity extends AppCompatActivity {
             setWalking();
             Intent intent = new Intent(this, MainActivity2.class);
             startActivity(intent);
-//            finish();
-          //navigateUpTo(new Intent(getBaseContext(), MainActivity.class)); //needs api 16
+       //     finish();
+
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -59,8 +59,7 @@ public class WalkingActivity extends AppCompatActivity {
 
         try {
             setWalking();
-//            Intent intent = new Intent(this, GPSActivity.class);
-//            startActivity(intent);
+
             finish();
 
         } catch (Exception ex) {

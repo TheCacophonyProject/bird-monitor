@@ -40,12 +40,9 @@ public class GPSActivity extends AppCompatActivity {
     }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
-
         try {
-
             Intent intent = new Intent(this, WalkingActivity.class);
             startActivity(intent);
-//            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -54,11 +51,7 @@ public class GPSActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-//            Intent intent = new Intent(this, RootedActivity.class);
-//            startActivity(intent);
             finish();
-
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -80,7 +73,6 @@ public class GPSActivity extends AppCompatActivity {
                         Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
                     }
                 }
-
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());

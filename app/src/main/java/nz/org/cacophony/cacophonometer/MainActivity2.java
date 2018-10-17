@@ -31,6 +31,7 @@ public class MainActivity2 extends AppCompatActivity {
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
         prefs.setDateTimeLastRepeatingAlarmFiredToZero();
         prefs.setDateTimeLastUpload(0);
+        prefs.setInternetConnectionMode("normal");
 
         // Now create the alarms that will cause the recordings to happen
 
@@ -64,7 +65,6 @@ public class MainActivity2 extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
-            //finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -74,7 +74,6 @@ public class MainActivity2 extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, TestRecordActivity.class);
             startActivity(intent);
-           // finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -84,7 +83,15 @@ public class MainActivity2 extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, VitalsActivity.class);
             startActivity(intent);
-           // finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public void launchAdvancedActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, InternetConnectionActivity.class);
+            startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

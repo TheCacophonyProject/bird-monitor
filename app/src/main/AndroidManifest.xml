@@ -110,7 +110,11 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".WalkingActivity" />
         <activity android:name=".TestRecordActivity" />
-        <activity android:name=".AdvancedActivity"></activity>
+        <activity android:name=".InternetConnectionActivity" />
+        <activity android:name=".SoundActivity" />
+        <activity android:name=".BatteryActivity" />
+        <activity android:name=".FrequencyActivity" />
+        <activity android:name=".TestingActivity"></activity>
     </application>
 
 </manifest>

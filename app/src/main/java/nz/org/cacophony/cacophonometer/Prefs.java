@@ -105,6 +105,8 @@ class Prefs {
     private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
+    private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
+
 
 
     public Prefs(Context context) {
@@ -623,6 +625,14 @@ class Prefs {
 
     void setTimeThatLastRecordingHappened(long lastRecordingTime){
         setLong(LAST_RECORDING_TIME_KEY, lastRecordingTime);
+    }
+
+    String getInternetConnectionMode(){
+        return getString(INTERNET_CONNECTION_MODE_KEY);
+    }
+
+    void setInternetConnectionMode(String internetConnectionMode){
+        setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
     }
 
 }
