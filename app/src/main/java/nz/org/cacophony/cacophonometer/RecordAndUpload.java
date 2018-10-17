@@ -299,6 +299,8 @@ try {
 //            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
     }
+
+    Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
 }catch (Exception ex){
     Log.e(TAG, ex.getLocalizedMessage());
 }finally {

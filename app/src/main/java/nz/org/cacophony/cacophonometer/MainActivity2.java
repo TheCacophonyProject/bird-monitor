@@ -44,19 +44,19 @@ public class MainActivity2 extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause");
+      //  Log.e(TAG, "onPause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e(TAG, "onStop");
+     //   Log.e(TAG, "onStop");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.e(TAG, "onRestart");
+      //  Log.e(TAG, "onRestart");
     }
 
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {

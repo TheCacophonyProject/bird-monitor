@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.test.espresso.IdlingRegistry;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,8 +32,6 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            Intent intent = new Intent(this, MainActivity2.class);
-//            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -138,28 +137,13 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
         }
     };
 
-    /**
-     * Only used by testing code
-     */
-    public void registerEspressoIdlingResources() {
-        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
-        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
-        IdlingRegistry.getInstance().register(registerIdlingResource);
-        IdlingRegistry.getInstance().register(recordNowIdlingResource);
-        IdlingRegistry.getInstance().register(uploadingIdlingResource);
-        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
+    @SuppressWarnings("SameReturnValue")
+    public CountingIdlingResource getIdlingResource() {
+        return registerIdlingResource;
     }
-    /**
-     * Only used by testing code
-     */
-    public void unRegisterEspressoIdlingResources() {
-        IdlingRegistry.getInstance().unregister(registerIdlingResource);
-        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
 
-//        if (toggleAirplaneModeIdlingResource != null) {
-//            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-//        }
+    @SuppressWarnings("SameReturnValue")
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
     }
 }

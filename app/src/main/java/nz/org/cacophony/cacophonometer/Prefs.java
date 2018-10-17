@@ -15,13 +15,13 @@ import java.util.Date;
 class Prefs {
 
     private static final String TAG = Prefs.class.getName();
-//    private static Context context = null;
-private final Context context;
+    //    private static Context context = null;
+    private final Context context;
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
     private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Production Server URL
-   // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
+    // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
 
     private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Test Server URL
 
@@ -36,7 +36,7 @@ private final Context context;
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
-   private static final double RECORDING_DURATION_SECONDS = 60;
+    private static final double RECORDING_DURATION_SECONDS = 60;
 //private static final double RECORDING_DURATION_SECONDS = 1; // for testing Walking mode
 
     private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
@@ -44,13 +44,13 @@ private final Context context;
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
-//private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 60*3;  // 2 minutes for testing walking mode
+    //private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 60*3;  // 2 minutes for testing walking mode
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
 
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
-  //  private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 60; // 1 minute for testing
+    //  private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 60; // 1 minute for testing
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
@@ -77,15 +77,15 @@ private final Context context;
     private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
-    private static final String  HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+    private static final String HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
     private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
     private static final String USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
 
-    private static final String  USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
-    private static final String  USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
-    private static final String  IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
+    private static final String USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
+    private static final String USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
+    private static final String IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
 
-    private static final String  USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
+    private static final String USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
     private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
     private static final String ONLINE_MODE_KEY = "ONLINE_MODE";
     private static final String PLAY_WARNING_SOUND_KEY = "PLAY_WARNING_SOUND";
@@ -98,12 +98,13 @@ private final Context context;
     private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
 
     private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
-    private static final String  MODE_KEY = "MODE";
+    private static final String MODE_KEY = "MODE";
 
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
 
     private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
+    private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
 
 
     public Prefs(Context context) {
@@ -197,13 +198,13 @@ private final Context context;
         preferences.edit().putBoolean(key, val).apply();
     }
 
-     String getServerUrl() {
-        if (getBoolean(USE_TEST_SERVER_KEY)){
+    String getServerUrl() {
+        if (getBoolean(USE_TEST_SERVER_KEY)) {
             return TEST_SERVER_URL;
-        }else{
-             return PRODUCTION_SERVER_URL;
-            }
-     }
+        } else {
+            return PRODUCTION_SERVER_URL;
+        }
+    }
 
     String getPassword() {
         return getString(PASSWORD_KEY);
@@ -219,138 +220,122 @@ private final Context context;
 
     String getMode() {
         String mode = getString(MODE_KEY);
-        if (mode == null){
+        if (mode == null) {
             mode = "off";
         }
         return mode;
     }
 
     void setMode(String mode) {
-            setString(MODE_KEY, mode);
+        setString(MODE_KEY, mode);
     }
 
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
 
-    void setToken(String token){
+    void setToken(String token) {
         setString(TOKEN_KEY, token);
     }
 
-    void setTheNextSingleStandardAlarmUsingDelay(long delayInMillisecs){
-        // need to covert this delay into unix time
-        Date date = new Date();
-        long currentUnixTime = date.getTime();
-        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
-        setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
+//    void setTheNextSingleStandardAlarmUsingDelay(long delayInMillisecs){
+//        // need to covert this delay into unix time
+//        Date date = new Date();
+//        long currentUnixTime = date.getTime();
+//        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
+//        setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
+//    }
+
+    void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
+        setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
     }
 
-    private void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime){
-        setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
-//        // used so that the next alarm can be display in the Vitals screen.
-//        // Will normally only set the next alarm if 'nextAlarm' is sooner than the currently set nextAlarm,
-//        // but the first time the app is run is different - in that case nextAlarm will be 0 (ie less than current time)
-//        // Also if app hasn't been used for a while, the last set time may be out of date.
-//
-//        //Ignore alarms that have already passed
+//    void addDawnDuskAlarm(long alarmInUnixTime){
+//        // First Ignore it if this time has already passed
 //        Date now = new Date();
-//        if (nextHourlyAlarmInUnixTime < now.getTime()){
+//        if (alarmInUnixTime < now.getTime()){
 //            return;
 //        }
-//        long nextAlarmMilliseconds = nextHourlyAlarmInUnixTime;
-//        long currentNextAlarmInPrefs = getNextSingleStandardAlarm();
 //
-//        if (currentNextAlarmInPrefs < now.getTime()){ // current stored alarm is out of date
-//            setLong(NEXT_ALARM_KEY, nextAlarmMilliseconds);
-//        }else if (nextAlarmMilliseconds < currentNextAlarmInPrefs){
-//            setLong(NEXT_ALARM_KEY, nextAlarmMilliseconds);
+//        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
+//        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
+//        if (currentAlarms == null){
+//            currentAlarms = alarmInUnixTimeStr;
+//        }else {
+//            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
 //        }
-//        // Now do a check
-//        currentNextAlarmInPrefs = getNextAlarm();
 //
-//        Log.e(TAG, "Next alarm set for " + currentNextAlarmInPrefs);
-//        Date date = new Date(currentNextAlarmInPrefs);
-//        DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
-//        String nextAlarmStr = fileFormat.format(date);
-//        Log.e(TAG, nextAlarmStr);
+//
+//        setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
+//    }
 
+    String getDawnDuskAlarms() {
+        return getString(DAWN_DUSK_ALARMS_KEY);
     }
 
-    void addDawnDuskAlarm(long alarmInUnixTime){
-        // First Ignore it if this time has already passed
-        Date now = new Date();
-        if (alarmInUnixTime < now.getTime()){
-            return;
-        }
-
-        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
-        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
-        if (currentAlarms == null){
-            currentAlarms = alarmInUnixTimeStr;
-        }else {
-            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
-        }
-
-
-        setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
+    void saveDawnDuskAlarms(String dawnDuskAlarms) {
+        setString(DAWN_DUSK_ALARMS_KEY, dawnDuskAlarms);
     }
 
-    void deleteDawnDuskAlarmList(){
+    void deleteDawnDuskAlarmList() {
         setString(DAWN_DUSK_ALARMS_KEY, null);
     }
-    
-    long getNextAlarm(){
-        long nextAlarm = getNextSingleStandardAlarm();
-        long[] dawnDuskAlarms = getDawnDuskAlarmList();
-        if (dawnDuskAlarms != null){
-            Date now = new Date();
-            for (long dawnDuskAlarm: dawnDuskAlarms) {
-                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()){
-                    nextAlarm = dawnDuskAlarm;
-                }
-            }
-        }
 
-        return nextAlarm;
+//    long getNextAlarm(){
+//        long nextAlarm = getNextSingleStandardAlarm();
+//        long[] dawnDuskAlarms = getDawnDuskAlarmList();
+//        if (dawnDuskAlarms != null){
+//            Date now = new Date();
+//            for (long dawnDuskAlarm: dawnDuskAlarms) {
+//                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()){
+//                    nextAlarm = dawnDuskAlarm;
+//                }
+//            }
+//        }
+//
+//        return nextAlarm;
+//    }
+
+//    long[] getDawnDuskAlarmList() {
+//        String alarmsString = getString(DAWN_DUSK_ALARMS_KEY);
+//        if (alarmsString == null){
+//            return null;
+//        }
+//        String[] tempArray;
+//
+//        /* delimiter */
+//        String delimiter = ",";
+//
+//        /* given string will be split by the argument delimiter provided. */
+//        tempArray = alarmsString.split(delimiter);
+//        Arrays.sort(tempArray);
+//
+//        long[] alarmTimes = new long [tempArray.length];
+//        for (int i = 0; i < tempArray.length; i++) {
+//            alarmTimes[i] =  Long.parseLong(tempArray[i]);
+//        }
+//
+//        return alarmTimes;
+//    }
+
+    String getAlarmString() {
+        return getString(DAWN_DUSK_ALARMS_KEY);
     }
 
-    long[] getDawnDuskAlarmList() {
-        String alarmsString = getString(DAWN_DUSK_ALARMS_KEY);
-        if (alarmsString == null){
-            return null;
-        }
-        String[] tempArray;
 
-        /* delimiter */
-        String delimiter = ",";
-
-        /* given string will be split by the argument delimiter provided. */
-        tempArray = alarmsString.split(delimiter);
-        Arrays.sort(tempArray);
-
-        long[] alarmTimes = new long [tempArray.length];
-        for (int i = 0; i < tempArray.length; i++) {
-            alarmTimes[i] =  Long.parseLong(tempArray[i]);
-        }
-
-        return alarmTimes;
-    }
-
-
-
-    long getNextSingleStandardAlarm(){
+    long getNextSingleStandardAlarm() {
         return getLong(NEXT_ALARM_KEY);
     }
 
-    String getToken(){
+    String getToken() {
         return getString(TOKEN_KEY);
     }
 
-    long getTokenLastRefreshed(){
+    long getTokenLastRefreshed() {
         return getLong(TOKEN_LAST_REFRESHED_KEY);
     }
 
-    void setTokenLastRefreshed(long timeTokenLastRefreshed){
+    void setTokenLastRefreshed(long timeTokenLastRefreshed) {
         setLong(TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
     }
 
@@ -395,22 +380,23 @@ private final Context context;
     }
 
     double getAdjustedTimeBetweenRecordingsSeconds() {
-        if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)){
+        if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)) {
             return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
-        }else  if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)){
-                return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
-        }else{
+        } else if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)) {
+            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
+        } else {
             return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
         }
     }
 
     double getNormalTimeBetweenRecordingsSeconds() {
-           return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
+        return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
     }
 
     double getTimeBetweenFrequentRecordingsSeconds() {
         return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
+
     void setNormalTimeBetweenRecordingsSeconds() {
         setDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY, NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS);
     }
@@ -432,9 +418,9 @@ private final Context context;
     }
 
     double getTimeBetweenUploadsSeconds() {
-        if (getBoolean(USE_FREQUENT_UPLOADS_KEY)){
+        if (getBoolean(USE_FREQUENT_UPLOADS_KEY)) {
             return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
-        }else{
+        } else {
             return getDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY);
         }
     }
@@ -448,18 +434,18 @@ private final Context context;
     }
 
     double getBatteryLevelCutoffRepeatingRecordings() {
-        if (getBoolean(IGNORE_LOW_BATTERY_KEY)){
+        if (getBoolean(IGNORE_LOW_BATTERY_KEY)) {
             return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
-        }else{
+        } else {
             return getDouble(BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
         }
     }
 
     double getBatteryLevelCutoffDawnDuskRecordings() {
-        if (getBoolean(IGNORE_LOW_BATTERY_KEY)){
-            return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY );
-        }else{
-            return getDouble(BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY );
+        if (getBoolean(IGNORE_LOW_BATTERY_KEY)) {
+            return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY);
+        } else {
+            return getDouble(BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY);
         }
     }
 
@@ -479,7 +465,7 @@ private final Context context;
         setDouble(DAWN_DUSK_OFFSET_MINUTES_KEY, DAWN_DUSK_OFFSET_MINUTES);
     }
 
-    double getDawnDuskIncrementMinutes(){
+    double getDawnDuskIncrementMinutes() {
         return getDouble(DAWN_DUSK_INCREMENT_MINUTES_KEY);
     }
 
@@ -614,19 +600,29 @@ private final Context context;
     void setDateTimeLastRepeatingAlarmFiredToZero() {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, (long) 0);
     }
-void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer){
-    setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
-}
+
+    void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer) {
+        setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
+    }
 
     long getLastRecordIdReturnedFromServer() {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
-    void setIsFirstTime(){
+
+    void setIsFirstTime() {
         setBoolean(FIRST_TIME_KEY, false);
     }
 
-    boolean getIsFirstTime(){
+    boolean getIsFirstTime() {
         return getBooleanDefaultTrue();
+    }
+
+    long getTimeThatLastRecordingHappened(){
+        return getLong(LAST_RECORDING_TIME_KEY);
+        }
+
+    void setTimeThatLastRecordingHappened(long lastRecordingTime){
+        setLong(LAST_RECORDING_TIME_KEY, lastRecordingTime);
     }
 
 }

@@ -383,19 +383,16 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             }
 
         }
+
+        // Update time of last recording
+        TextView tvLastRecording = findViewById(R.id.tvLastRecording);
+        String timeThatLastRecordingHappened = Util.getTimeThatLastRecordingHappened(getApplicationContext());
+        tvLastRecording.setText("Last Recording: " + timeThatLastRecordingHappened);
+
         // Update time of next recording
         TextView tvNextRecording = findViewById(R.id.tvNextRecording);
-        long tempNextAlarm = 0;
-
-        long nextAlarmLong = prefs.getNextAlarm();
-
-        Date date = new Date(nextAlarmLong);
-       // DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm", Locale.UK);
-//        DateFormat fileFormat = new SimpleDateFormat("dd MM yyy 'at' HH mm", Locale.UK);
-        Locale nzLocale = new Locale("nz");
-        DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
-        String nextAlarmStr = fileFormat.format(date);
-        tvNextRecording.setText("Next Recording: " + nextAlarmStr);
+        String nextAlarm = Util.getNextAlarm(getApplicationContext());
+        tvNextRecording.setText("Next Recording: " + nextAlarm);
 
 
         // GPS text.
