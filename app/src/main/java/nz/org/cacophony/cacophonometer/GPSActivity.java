@@ -43,6 +43,7 @@ public class GPSActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, WalkingActivity.class);
             startActivity(intent);
+            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -51,6 +52,8 @@ public class GPSActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
+            Intent intent = new Intent(this, RootedActivity.class);
+            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

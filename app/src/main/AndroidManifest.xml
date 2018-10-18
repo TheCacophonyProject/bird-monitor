@@ -94,7 +94,6 @@
         <activity
             android:name=".MainActivity2"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -114,7 +113,8 @@
         <activity android:name=".SoundActivity" />
         <activity android:name=".BatteryActivity" />
         <activity android:name=".FrequencyActivity" />
-        <activity android:name=".TestingActivity"></activity>
+        <activity android:name=".TestingActivity" />
+        <activity android:name=".DisableActivity"></activity>
     </application>
 
 </manifest>

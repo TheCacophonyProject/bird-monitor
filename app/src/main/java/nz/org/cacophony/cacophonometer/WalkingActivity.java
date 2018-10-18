@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,9 +47,9 @@ public class WalkingActivity extends AppCompatActivity {
 
         try {
             setWalking();
-            Intent intent = new Intent(this, MainActivity2.class);
-            startActivity(intent);
-       //     finish();
+//            Intent intent = new Intent(this, MainActivity2.class);
+//            startActivity(intent);
+            finish();
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -59,6 +60,8 @@ public class WalkingActivity extends AppCompatActivity {
 
         try {
             setWalking();
+            Intent intent = new Intent(this, GPSActivity.class);
+            startActivity(intent);
 
             finish();
 

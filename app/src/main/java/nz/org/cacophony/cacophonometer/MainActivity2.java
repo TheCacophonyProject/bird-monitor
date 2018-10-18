@@ -32,6 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
         prefs.setDateTimeLastRepeatingAlarmFiredToZero();
         prefs.setDateTimeLastUpload(0);
         prefs.setInternetConnectionMode("normal");
+        prefs.setIsDisabled(false);
 
         // Now create the alarms that will cause the recordings to happen
 
@@ -91,6 +92,15 @@ public class MainActivity2 extends AppCompatActivity {
     public void launchAdvancedActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
             Intent intent = new Intent(this, InternetConnectionActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, DisableActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

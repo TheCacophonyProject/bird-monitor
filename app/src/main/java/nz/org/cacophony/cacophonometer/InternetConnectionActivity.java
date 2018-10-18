@@ -47,6 +47,7 @@ public class InternetConnectionActivity extends AppCompatActivity implements Idl
         try {
             Intent intent = new Intent(this, SoundActivity.class);
             startActivity(intent);
+            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

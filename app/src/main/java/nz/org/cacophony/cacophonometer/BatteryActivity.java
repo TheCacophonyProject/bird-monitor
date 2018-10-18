@@ -51,6 +51,7 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
         try {
             Intent intent = new Intent(this, FrequencyActivity.class);
             startActivity(intent);
+            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -58,6 +59,8 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            Intent intent = new Intent(this, SoundActivity.class);
+            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

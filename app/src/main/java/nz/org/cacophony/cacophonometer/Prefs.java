@@ -106,6 +106,7 @@ class Prefs {
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
+    private static final String DISABLED_KEY = "DISABLED";
 
 
 
@@ -633,6 +634,14 @@ class Prefs {
 
     void setInternetConnectionMode(String internetConnectionMode){
         setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
+    }
+
+    void setIsDisabled(boolean isDisabled) {
+        setBoolean(DISABLED_KEY, isDisabled);
+    }
+
+    boolean getIsDisabled() {
+        return getBoolean(DISABLED_KEY);
     }
 
 }

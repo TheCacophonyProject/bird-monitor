@@ -61,7 +61,7 @@ public class RootedActivity extends AppCompatActivity {
             setRooted();
             Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
-//            finish();
+            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -71,8 +71,8 @@ public class RootedActivity extends AppCompatActivity {
 
         try {
             setRooted();
-//            Intent intent = new Intent(this, RegisterActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
             finish();
 
         } catch (Exception ex) {

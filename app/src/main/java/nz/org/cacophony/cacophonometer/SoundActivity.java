@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +44,7 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
         try {
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
+            finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -50,6 +52,8 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            Intent intent = new Intent(this, InternetConnectionActivity.class);
+            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
