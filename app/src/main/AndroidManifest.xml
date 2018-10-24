@@ -39,11 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop"> <!-- Fixes an issue with Menu back button, creating a new MainActivity when returning from Settings Activity https://stackoverflow.com/questions/3484643/comments-in-android-layout-xml -->
 
-        </activity>
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -59,27 +55,17 @@
         <service android:name=".MainService" />
 
         <activity
-            android:name=".SetupActivity"
-            android:label="@string/title_activity_setup"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".HelpActivity"
-            android:label="@string/title_activity_help"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
+       
         <activity
             android:name=".VitalsActivity"
             android:label="@string/title_activity_vitals"
@@ -91,16 +77,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
-        <activity
-            android:name=".MainActivity2"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".RootedActivity" />
         <activity

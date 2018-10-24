@@ -33,10 +33,8 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
     }
 
     public void onCheckboxFrequentRecordingsClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
         boolean checked = ((CheckBox) v).isChecked();
-        prefs.setUseFrequentRecordings(checked);
+        Util.setUseFrequentRecordings(getApplicationContext(), checked);
     }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {

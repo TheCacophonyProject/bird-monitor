@@ -53,29 +53,41 @@ static String doRecord(Context context, String typeOfRecording) {
     Prefs prefs = new Prefs(context);
 
     long   recordTimeSeconds = (long) prefs.getRecordingDuration();
-    boolean playWarningBeeps = false;
+//    boolean playWarningBeeps = false;
 
-    String mode = prefs.getMode();
-    switch(mode) {
-        case "off":
+//    String mode = prefs.getMode();
+//    switch(mode) {
+//        case "off":
+//            if (prefs.getUseShortRecordings()) {
+//                recordTimeSeconds = 1;
+//            }
+//            if (prefs.getPlayWarningSound()){
+//                playWarningBeeps = true;
+//            }
+//
+//            break;
+//        case "normal":
+//            playWarningBeeps = false;
+//            break;
+//        case "normalOnline":
+//            playWarningBeeps = false;
+//            break;
+//        case "walking":
+//            playWarningBeeps = true;
+//            break;
+//    }
+
+
             if (prefs.getUseShortRecordings()) {
                 recordTimeSeconds = 1;
             }
-            if (prefs.getPlayWarningSound()){
-                playWarningBeeps = true;
-            }
+//            if (prefs.getPlayWarningSound()){
+//                playWarningBeeps = true;
+//            }else {
+//                playWarningBeeps = false;
+//            }
 
-            break;
-        case "normal":
-            playWarningBeeps = false;
-            break;
-        case "normalOnline":
-            playWarningBeeps = false;
-            break;
-        case "walking":
-            playWarningBeeps = true;
-            break;
-    }
+
 
 
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
@@ -93,7 +105,7 @@ if (isRecording){
    return "isRecording";
 }else{
 
-    makeRecording(context, recordTimeSeconds, playWarningBeeps);
+    makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
 
     returnValue = "recorded successfully";
 }
@@ -113,22 +125,23 @@ if (isRecording){
         //noinspection UnusedAssignment
         boolean uploadedFilesSuccessfully = false;
 
-      boolean offlineMode = prefs.getOffLineMode();
-        switch(mode) { // mode determined earlier
-            case "off":
-                // don't change offline mode
-                break;
-            case "normal":
-                offlineMode = false;
-                break;
-            case "walking":
-                offlineMode = true;
-                break;
-        }
+//      boolean offlineMode = prefs.getOffLineMode();
+//        switch(mode) { // mode determined earlier
+//            case "off":
+//                // don't change offline mode
+//                break;
+//            case "normal":
+//                offlineMode = false;
+//                break;
+//            case "walking":
+//                offlineMode = true;
+//                break;
+//        }
 
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
-     if (!offlineMode) { // don't upload if in offline mode
+//     if (!prefs.getOffLineMode()) { // don't upload if in offline mode
+         if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
          uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
          uploadingIdlingResource.decrement();

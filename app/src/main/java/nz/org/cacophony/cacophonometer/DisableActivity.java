@@ -15,12 +15,25 @@ public class DisableActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disable);
+//        final Switch switchDisable = findViewById(R.id.swDisable);
+//        switchDisable.setTextOn("On"); // displayed text of the Switch whenever it is in checked or on state
+//        switchDisable.setTextOff("Off"); // displayed text of the Switch whenever it is in unchecked i.e. off state
     }
 
     void onSwitchDisabledClicked(View v){
         Prefs prefs = new Prefs(getApplicationContext());
         boolean isDisabled = ((Switch) v).isChecked();
         prefs.setIsDisabled(isDisabled);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchDisable = findViewById(R.id.swDisable);
+        switchDisable.setChecked(prefs.getIsDisabled());
+
     }
 
 

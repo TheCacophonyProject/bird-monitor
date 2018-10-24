@@ -25,6 +25,9 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
     @Override
     public void onResume() {
          super.onResume();
+         Prefs prefs = new Prefs(getApplicationContext());
+        findViewById(R.id.btnRecordNow).setEnabled(!(RecordAndUpload.isRecording || prefs.getIsDisabled()) );
+
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 

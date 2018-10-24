@@ -107,6 +107,7 @@ class Prefs {
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
     private static final String DISABLED_KEY = "DISABLED";
+    private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED";
 
 
 
@@ -221,17 +222,17 @@ class Prefs {
         return getString(DEVICE_NAME_KEY);
     }
 
-    String getMode() {
-        String mode = getString(MODE_KEY);
-        if (mode == null) {
-            mode = "off";
-        }
-        return mode;
-    }
+//    String getMode() {
+//        String mode = getString(MODE_KEY);
+//        if (mode == null) {
+//            mode = "off";
+//        }
+//        return mode;
+//    }
 
-    void setMode(String mode) {
-        setString(MODE_KEY, mode);
-    }
+//    void setMode(String mode) {
+//        setString(MODE_KEY, mode);
+//    }
 
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
@@ -520,9 +521,14 @@ class Prefs {
         return getBoolean(IGNORE_LOW_BATTERY_KEY);
     }
 
-    boolean getOffLineMode() {
-        return getBoolean(OFFLINE_MODE_KEY);
-    }
+//    boolean getOffLineMode() {
+//        return getBoolean(OFFLINE_MODE_KEY);
+//    }
+//
+//    void setIsOffLineMode(boolean isOffLineMode){
+//        setBoolean(OFFLINE_MODE_KEY, isOffLineMode);
+//    }
+
 
     boolean getOnLineMode() {
         return getBoolean(ONLINE_MODE_KEY);
@@ -560,13 +566,13 @@ class Prefs {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-    void setOffLineMode(boolean offLineMode) {
-        setBoolean(OFFLINE_MODE_KEY, offLineMode);
-    }
-
-    void setOnLineMode(boolean onLineMode) {
-        setBoolean(ONLINE_MODE_KEY, onLineMode);
-    }
+//    void setOffLineMode(boolean offLineMode) {
+//        setBoolean(OFFLINE_MODE_KEY, offLineMode);
+//    }
+//
+//    void setOnLineMode(boolean onLineMode) {
+//        setBoolean(ONLINE_MODE_KEY, onLineMode);
+//    }
 
     void setPlayWarningSound(boolean playWarningSound) {
         setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);
@@ -644,4 +650,11 @@ class Prefs {
         return getBoolean(DISABLED_KEY);
     }
 
+    void setIsDisableDawnDuskRecordings(boolean isDisabled) {
+        setBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY, isDisabled);
+    }
+
+    boolean getIsDisableDawnDuskRecordings() {
+        return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
+    }
 }

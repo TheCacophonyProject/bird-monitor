@@ -47,8 +47,9 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
         Prefs prefs = new Prefs(getApplicationContext());
 
-        if (prefs.getOffLineMode()){
-            Util.getToast(getApplicationContext(),"The No Network Connection checkbox is checked - so this device can not be registered", true ).show();
+       // if (prefs.getOffLineMode()){
+        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
+            Util.getToast(getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
             return;
         }
 

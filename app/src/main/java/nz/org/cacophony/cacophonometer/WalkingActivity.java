@@ -10,6 +10,7 @@ import android.widget.ToggleButton;
 
 public class WalkingActivity extends AppCompatActivity {
     private static final String TAG = WalkingActivity.class.getName();
+    private boolean walkingStateWhenActivityDisplays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,25 +23,55 @@ public class WalkingActivity extends AppCompatActivity {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
 
-        String modeStr = prefs.getMode();
+//        String modeStr = prefs.getMode();
+//        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
+//        if (modeStr.equalsIgnoreCase("walking")) {
+//            toggleButtonMode.setChecked(true);
+//        } else
+//            toggleButtonMode.setChecked(false);
+
+        boolean walkingMode = true; // if any of the following are false, then change walking mode to false
+        walkingStateWhenActivityDisplays = true;
+        //if (!prefs.getOffLineMode()){
+        if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if(!prefs.getUseFrequentRecordings()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if (!prefs.getIgnoreLowBattery()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if (!prefs.getPlayWarningSound()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if (!prefs.getPeriodicallyUpdateGPS()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if (!prefs.getIsDisableDawnDuskRecordings()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }else if (prefs.getUseFrequentUploads()){
+            walkingMode = false;
+            walkingStateWhenActivityDisplays = false;
+        }
+
         final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
-        if (modeStr.equalsIgnoreCase("walking")) {
-            toggleButtonMode.setChecked(true);
-        } else
-            toggleButtonMode.setChecked(false);
+        toggleButtonMode.setChecked(walkingMode);
     }
 
 
 
     void setWalking(){
-        Prefs prefs = new Prefs(getApplicationContext());
+        // will check to see if mode has changed before changing prefs values etc
         final ToggleButton toggleButtonWalking = findViewById(R.id.tgbWalking);
         boolean checked = ( toggleButtonWalking).isChecked();
-        if (checked){
-            prefs.setMode("walking");
-        }else{
-            prefs.setMode("normal");
+        if (walkingStateWhenActivityDisplays == checked){
+            // User hasn't changed the state so don't do anything
+            return;
         }
+        Util.setWalkingMode(getApplicationContext(),checked);
+
     }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {

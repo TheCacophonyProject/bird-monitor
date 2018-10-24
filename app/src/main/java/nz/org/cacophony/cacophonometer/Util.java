@@ -537,7 +537,8 @@ class Util {
                             return ;
                         }
 
-                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+//                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+                        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {  // Don't try to turn on aerial if set to be offline
                             return ;
                         }
 
@@ -608,24 +609,24 @@ class Util {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
-        String mode = prefs.getMode();
-
-        switch(mode) { // mode determined earlier
-            case "off":
-                // don't change offline mode
-                break;
-            case "normal":
-                // don't change offline mode
-                break;
-
-            case "normalOnline":
-                onlineMode = true;
-                break;
-
-            case "walking":
-                // don't change offline mode
-                break;
-        }
+//        String mode = prefs.getMode();
+//
+//        switch(mode) { // mode determined earlier
+//            case "off":
+//                // don't change offline mode
+//                break;
+//            case "normal":
+//                // don't change offline mode
+//                break;
+//
+//            case "normalOnline":
+//                onlineMode = true;
+//                break;
+//
+//            case "walking":
+//                // don't change offline mode
+//                break;
+//        }
 
         if (onlineMode){
             return; // don't try to enable airplane mode
@@ -977,22 +978,22 @@ Prefs prefs = new Prefs(context);
     }
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
 
-    String mode = prefs.getMode();
-    switch(mode) {
-        case "off":
-            // don't change
-            break;
-        case "normal":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-            break;
-        case "normalOnline":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-            break;
-
-        case "walking":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
-            break;
-    }
+//    String mode = prefs.getMode();
+//    switch(mode) {
+//        case "off":
+//            // don't change
+//            break;
+//        case "normal":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+//            break;
+//        case "normalOnline":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+//            break;
+//
+//        case "walking":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
+//            break;
+//    }
 
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
@@ -1018,27 +1019,33 @@ Prefs prefs = new Prefs(context);
 
     public static void setUpLocationUpdateAlarm(Context context){
     Prefs prefs = new Prefs(context);
-    String mode = prefs.getMode();
+//    String mode = prefs.getMode();
+//
+//        switch(mode) {
+//            case "off":
+//                if (prefs.getPeriodicallyUpdateGPS()){
+//                    createLocationUpdateAlarm(context);
+//                }else{
+//                    deleteLocationUpdateAlarm(context);
+//                }
+//                break;
+//            case "normal":
+//                deleteLocationUpdateAlarm(context);
+//                break;
+//            case "normalOnline":
+//                deleteLocationUpdateAlarm(context);
+//                break;
+//
+//            case "walking":
+//                   createLocationUpdateAlarm(context);
+//                break;
+//        }
 
-        switch(mode) {
-            case "off":
-                if (prefs.getPeriodicallyUpdateGPS()){
+        if (prefs.getPeriodicallyUpdateGPS()){
                     createLocationUpdateAlarm(context);
                 }else{
                     deleteLocationUpdateAlarm(context);
                 }
-                break;
-            case "normal":
-                deleteLocationUpdateAlarm(context);
-                break;
-            case "normalOnline":
-                deleteLocationUpdateAlarm(context);
-                break;
-
-            case "walking":
-                   createLocationUpdateAlarm(context);
-                break;
-        }
 
     }
 
@@ -1192,6 +1199,44 @@ Prefs prefs = new Prefs(context);
         Locale nzLocale = new Locale("nz");
         DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
         return fileFormat.format(date);
+    }
+
+    static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
+        createTheNextSingleStandardAlarm(context);
+    }
+
+    static void setPeriodicallyUpdateGPS(Context context, boolean periodicallyUpdateGPS){
+        Prefs prefs = new Prefs(context);
+        prefs.setPeriodicallyUpdateGPS(periodicallyUpdateGPS);
+        createLocationUpdateAlarm(context);
+    }
+
+    static void setWalkingMode(Context context, boolean walkingMode){
+        Prefs prefs = new Prefs(context);
+        if (walkingMode){
+            prefs.setInternetConnectionMode("offline");
+            prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
+        }else{
+            prefs.setInternetConnectionMode("normal");
+        }
+
+        prefs.setUseFrequentRecordings(walkingMode);
+        prefs.setIgnoreLowBattery(walkingMode);
+        prefs.setPlayWarningSound(walkingMode);
+        prefs.setPeriodicallyUpdateGPS(walkingMode);
+        prefs.setIsDisableDawnDuskRecordings(walkingMode);
+
+        // need to reset alarms as their frequency may have changed.
+        Util.createTheNextSingleStandardAlarm(context);
+        Util.setUpLocationUpdateAlarm(context);
+    }
+
+    static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseFrequentRecordings(useFrequentRecordings);
+        createTheNextSingleStandardAlarm(context);
     }
 
 }

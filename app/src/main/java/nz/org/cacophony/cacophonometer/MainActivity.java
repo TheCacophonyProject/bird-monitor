@@ -1,55 +1,26 @@
 package nz.org.cacophony.cacophonometer;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingRegistry;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 
-/**
- * This MainActivity class creates the opening screen that is shown to the user.  It allows the user
- * to set the mode of operation,  and also access the menu to go to the settings and vitals
- * screens for further configuration.
- * <p>
- * There is also a 'Record Now' button that allows the user to make an immediate recording - useful
- * for testing, as well as when you happen to hear an interesting bird.  Apart from the Record Now
- * feature, this MainActivity does not take part in the normal operation of periodic recordings -
- * which happen when Alarms/Intents are fired.  Alarms are created by the BootReciever class, and the
- * StartRecordingReciever class listens/responds to the alarm Intents.  The Record Now button also just
- * sends an Intent to the StartRecordingRecciever class.
- *
- * MainActivity implements the interface IdlingResourceForEspressoTesting provides the ability for
- * Espresso testing of this code to wait for background operations
- * to complete - e.g. Can check if a recording happens.
- *
- *
- * @author Tim Hunt
- */
-public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting, ActivityCompat.OnRequestPermissionsResultCallback {
-
+public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     // Register with idling couunter
-// https://developer.android.com/training/testing/espresso/idling-resource.html
-// stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
+   // https://developer.android.com/training/testing/espresso/idling-resource.html
+   // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
-
 
     @Override
     protected void onStart() {
@@ -58,25 +29,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         intentFilter.addAction(intentAction);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD); // helps with testing: Now don't have to use airdroid to open screen, as long as screen has no pin etc
-
-        this.setTitle(R.string.main_activity_name);
-        setContentView(R.layout.activity_main);
-
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        setContentView(R.layout.activity_main2);
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
@@ -91,15 +49,20 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
-        prefs.setDateTimeLastRepeatingAlarmFiredToZero();
-        prefs.setDateTimeLastUpload(0);
-
-
-
+//        prefs.setDateTimeLastRepeatingAlarmFiredToZero();
+//        prefs.setDateTimeLastUpload(0);
+//        prefs.setInternetConnectionMode("normal");
+//        prefs.setIsDisabled(false);
+//        prefs.setIsDisableDawnDuskRecordings(false);
 
         if (prefs.getIsFirstTime()) {
-            // Set Keep Online to be the default
-            prefs.setOnLineMode(true);
+            prefs.setDateTimeLastRepeatingAlarmFiredToZero();
+            prefs.setDateTimeLastUpload(0);
+            prefs.setInternetConnectionMode("normal");
+            prefs.setIsDisabled(false);
+            prefs.setIsDisableDawnDuskRecordings(false);
+
+//            prefs.setOnLineMode(true);
             prefs.setIsFirstTime();
 
 //            // Going to close this activity and open Wizard1 instead
@@ -107,125 +70,45 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 //            startActivity(intent);
 //            finish();
 
-        } else {
-            disableFlightMode(); // force app to ask for root permission as early as possible
-        }
-
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setLogo(R.mipmap.ic_launcher);
-        } else {
-            Log.w(TAG, "ActionBar ab is null");
         }
 
         // Now create the alarms that will cause the recordings to happen
-        Util.createTheNextSingleStandardAlarm(getApplicationContext());
 
+        Util.createTheNextSingleStandardAlarm(getApplicationContext());
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
-
-    } //end onCreate
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.action_settings:
-                openSettings();
-                return true;
-
-            case R.id.action_vitals:
-                openVitals();
-                return true;
-
-            case R.id.action_help:
-                openHelp();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
+    protected void onPause() {
+        super.onPause();
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
-    private void openHelp() {
-        Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    private void openVitals() {
-        Intent intent = new Intent(this, VitalsActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Updated UI.
-     */
     @Override
     public void onResume() {
-        try {
-            super.onResume();
-        } catch (Exception ex) {
-            // This is very poor, but I have no idea why super.onResume give a null pointer exception
-            // Need to spend time on this
-            Log.e(TAG, "Error calling super.onResume");
-        }
-        if (!RecordAndUpload.isRecording) {
-            findViewById(R.id.recordNowButton).setEnabled(true);
-        }
-        Prefs prefs = new Prefs(getApplicationContext());
-        String mode = prefs.getMode();
-        switch (mode) {
-            case "off":
-                final RadioButton offModeRadioButton = findViewById(R.id.offMode);
-                offModeRadioButton.setChecked(true);
-                break;
-            case "normal":
-                final RadioButton normalModeRadioButton = findViewById(R.id.normalMode);
-                normalModeRadioButton.setChecked(true);
-                break;
-            case "normalOnline":
-                final RadioButton normalModeOnlineRadioButton = findViewById(R.id.normalModeOnline);
-                normalModeOnlineRadioButton.setChecked(true);
-                break;
-            case "walking":
-                final RadioButton walkingModeRadioButton = findViewById(R.id.walkingMode);
-                walkingModeRadioButton.setChecked(true);
-                break;
-        }
-
+        super.onResume();
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
-
-    private void openSettings() {
-        try {
-
-            Intent intent = new Intent(this, SetupActivity.class);
-            startActivity(intent);
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+     //   Log.e(TAG, "onStop");
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+      //  Log.e(TAG, "onRestart");
+    }
 
-    private void disableFlightMode() {
+    private void disableFlightMode() { // still need to think about when to test this without causing app to hang and user to get feedup
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -246,78 +129,50 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         thread.start();
     }
 
+    public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
-
-//    private void disableFlightMode() {
-//        try {
-//            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
-//            new Thread() {
-//                public void run() {
-//                    MainActivity.this.runOnUiThread(new Runnable() {
-//                        public void run() {
-//                            Util.disableFlightMode(getApplicationContext());
-//                        }
-//                    });
-//                }
-//            }.start();
-//
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
-//        }
-//    }
-
-
-    public void recordNowButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-
-        recordNowIdlingResource.increment();
-
-        Util.getToast(getApplicationContext(), "Prepare to start recording", false).show();
-
-        findViewById(R.id.recordNowButton).setEnabled(false);
-
-        Intent myIntent = new Intent(MainActivity.this, StartRecordingReceiver.class);
-        myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
         try {
-            myIntent.putExtra("type", "recordNowButton");
-            sendBroadcast(myIntent);
-
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-
-        Util.createCreateAlarms(getApplicationContext());
     }
 
-    public void onModeRadioButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        boolean checked = ((RadioButton) v).isChecked();
-        // Check which radio button was clicked
-        switch (v.getId()) {
-            case R.id.offMode:
-                if (checked) {
-                    prefs.setMode("off");
-                }
-                break;
-            case R.id.normalMode:
-                if (checked) {
-                    prefs.setMode("normal");
-                }
-                break;
-            case R.id.normalModeOnline:
-                if (checked) {
-                    prefs.setMode("normalOnline");
-                }
-                break;
-            case R.id.walkingMode:
-                if (checked) {
-                    prefs.setMode("walking");
-                }
-                break;
+    public void launchTestRecordActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, TestRecordActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
         }
-        // need to reset alarms as their frequency may have changed.
-        Util.createTheNextSingleStandardAlarm(getApplicationContext());
-        Util.setUpLocationUpdateAlarm(getApplicationContext());
+    }
+
+    public void launchVitalsActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, VitalsActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public void launchAdvancedActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, InternetConnectionActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, DisableActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
     }
 
 
@@ -395,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             }
         }
     };
-
     /**
      * Only used by testing code
      */

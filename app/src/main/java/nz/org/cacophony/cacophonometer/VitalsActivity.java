@@ -96,40 +96,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
 
-            case R.id.action_settings:
-                openSettings();
-                return true;
 
-            case R.id.action_help:
-                openHelp();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    private void openHelp() {
-        Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    private void openSettings() {
-        try{
-        //    disableFlightMode();
-            Intent intent = new Intent(this, SetupActivity.class);
-            startActivity(intent);
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-    }
 
     private void disableFlightMode(){
         try {
