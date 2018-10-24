@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -91,6 +92,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     @Override
     public void onResume() {
         super.onResume();
+        Prefs prefs = new Prefs(this.getApplicationContext());
+
+        if (prefs.getIsDisabled()){
+            ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
+        }else{
+            ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
+        }
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);

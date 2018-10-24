@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class TestRecordActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -26,7 +27,10 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
     public void onResume() {
          super.onResume();
          Prefs prefs = new Prefs(getApplicationContext());
-        findViewById(R.id.btnRecordNow).setEnabled(!(RecordAndUpload.isRecording || prefs.getIsDisabled()) );
+        findViewById(R.id.btnRecordNow).setEnabled(!(RecordAndUpload.isRecording || prefs.getIsDisabled()));
+        if (prefs.getIsDisabled()){
+            ((TextView)findViewById(R.id.tvMessages)).setText("The App is currently disabled");
+        }
 
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
@@ -69,6 +73,7 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
+                Prefs prefs = new Prefs(context);
                 String message = intent.getStringExtra("message");
                 TextView tvMessages = findViewById(R.id.tvMessages);
                 if (message != null) {
@@ -104,7 +109,7 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
                     } else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")) {
                         tvMessages.setText("Recording finished but uploading failed");
                         Util.getToast(context, "Recording finished but uploading failed", true).show();
-                        findViewById(R.id.btnRecordNow).setEnabled(true);
+                        findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
                         recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
                         tvMessages.setText("Recorded successfully, no network connection so did not upload");
@@ -112,23 +117,23 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
                     } else if (message.equalsIgnoreCase("recording_failed")) {
                         tvMessages.setText("Recording failed");
                         Util.getToast(getApplicationContext(), "Recording failed", true).show();
-                        findViewById(R.id.btnRecordNow).setEnabled(true);
+                        findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
                     } else if (message.equalsIgnoreCase("not_logged_in")) {
                         tvMessages.setText("Not logged in to server, could not upload files");
                         Util.getToast(getApplicationContext(), "Not logged in to server, could not upload files", true).show();
                     } else if (message.equalsIgnoreCase("is_already_recording")) {                  //      uploadingIdlingResource.decrement();
                         // Will need enable Record Now button
-                        findViewById(R.id.btnRecordNow).setEnabled(true);
+                        findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
                         recordNowIdlingResource.decrement();
                         tvMessages.setText("Could not do a recording as another recording is already in progress");
                         Util.getToast(getApplicationContext(), "Could not do a recording as another recording is already in progress", true).show();
-                        findViewById(R.id.btnRecordNow).setEnabled(true);
+                        findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
                         recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
                         tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
                         Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
                     }else if (message.equalsIgnoreCase("update_record_now_button")){
-                        findViewById(R.id.btnRecordNow).setEnabled(!RecordAndUpload.isRecording);
+                        findViewById(R.id.btnRecordNow).setEnabled(!RecordAndUpload.isRecording && !prefs.getIsDisabled());
                     }
 
                 }
