@@ -29,6 +29,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void onReceive(final Context context, Intent intent) {
+        Prefs prefs = new Prefs(context);
+        if (prefs.getIsDisabled()){
+            return;  // Don't do anything if Turn Off has been enabled.
+        }
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         if (powerManager == null){
             Log.e(TAG, "PowerManger is null");
@@ -39,7 +43,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 "Cacophonometer:StartRecordingReceiverWakelockTag");
         wakeLock.acquire(10*60*1000L /*10 minutes*/);
         try {
-            Util.createAlarms(context);
+            Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
             if (!Util.checkPermissionsForRecording(context)) {
@@ -49,7 +53,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }
-            Prefs prefs = new Prefs(context);
+
 
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
@@ -91,29 +95,13 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 }
             }
 
-            String mode = prefs.getMode();
-            switch (mode) {
-                case "off":
-                    if (prefs.getPeriodicallyUpdateGPS()) {
-// Don't do anything
+
+            if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
+                if (prefs.getIsDisableDawnDuskRecordings()){
+                    return; // exit onReceive method
+                }
+
                     }
-
-                    break;
-                case "normal":
-                    // Don't update location
-                    break;
-                case "normalOnline":
-                    // Don't update location
-                    break;
-
-                case "walking":
-                    // Not going to do dawn/dusk alarms if in walking mode
-                    if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-                        return; // exit onReceive method
-                    }
-
-                    break;
-            }
 
             // need to determine the source of the intent ie Main UI or boot receiver
 
@@ -167,22 +155,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             return true;
         }
 
-
-        String mode = prefs.getMode();
-        switch(mode) { // mode determined earlier
-            case "off":
-                // has no affect on decision
-                break;
-            case "normal":
-                // has no affect on decision
-                break;
-            case "normalOnline":
-                // has no affect on decision
-                break;
-
-            case "walking":
-                return true;  // ignore battery level when in walking mode
-
+        if (prefs.getIgnoreLowBattery()){
+            return true;
         }
 
         if (alarmType.equalsIgnoreCase("repeating")){
@@ -192,12 +166,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
         }
-
     }
-
-
-
-
-
 
 }

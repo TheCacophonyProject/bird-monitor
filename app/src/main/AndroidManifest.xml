@@ -27,6 +27,11 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -34,15 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop"> <!-- Fixes an issue with Menu back button, creating a new MainActivity when returning from Settings Activity https://stackoverflow.com/questions/3484643/comments-in-android-layout-xml -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -53,32 +50,22 @@
         <receiver
             android:name=".LocationReceiver"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false" />
 
         <service android:name=".MainService" />
 
         <activity
-            android:name=".SetupActivity"
-            android:label="@string/title_activity_setup"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".HelpActivity"
-            android:label="@string/title_activity_help"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
 
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
+
         <activity
             android:name=".VitalsActivity"
             android:label="@string/title_activity_vitals"
@@ -91,6 +78,20 @@
                 android:value="nz.org.cacophony.cacophonometer.MainActivity" />
         </activity>
 
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RootedActivity" />
+        <activity
+            android:name=".GPSActivity"
+            android:label="@string/title_activity_gps"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".WalkingActivity" />
+        <activity android:name=".TestRecordActivity" />
+        <activity android:name=".InternetConnectionActivity" />
+        <activity android:name=".SoundActivity" />
+        <activity android:name=".BatteryActivity" />
+        <activity android:name=".FrequencyActivity" />
+        <activity android:name=".TestingActivity" />
+        <activity android:name=".DisableActivity"></activity>
     </application>
 
 </manifest>

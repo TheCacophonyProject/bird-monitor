@@ -37,9 +37,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
@@ -533,7 +537,8 @@ class Util {
                             return ;
                         }
 
-                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+//                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
+                        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {  // Don't try to turn on aerial if set to be offline
                             return ;
                         }
 
@@ -604,24 +609,24 @@ class Util {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
-        String mode = prefs.getMode();
-
-        switch(mode) { // mode determined earlier
-            case "off":
-                // don't change offline mode
-                break;
-            case "normal":
-                // don't change offline mode
-                break;
-
-            case "normalOnline":
-                onlineMode = true;
-                break;
-
-            case "walking":
-                // don't change offline mode
-                break;
-        }
+//        String mode = prefs.getMode();
+//
+//        switch(mode) { // mode determined earlier
+//            case "off":
+//                // don't change offline mode
+//                break;
+//            case "normal":
+//                // don't change offline mode
+//                break;
+//
+//            case "normalOnline":
+//                onlineMode = true;
+//                break;
+//
+//            case "walking":
+//                // don't change offline mode
+//                break;
+//        }
 
         if (onlineMode){
             return; // don't try to enable airplane mode
@@ -908,6 +913,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
     public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
+      //  Log.e(TAG, "createCreateAlarms");
              Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
@@ -947,7 +953,8 @@ private static void executeCommandTim(Context context, String command){
      * @param context
      *     *
      */
-    public static void createAlarms(Context context){
+    public static void createTheNextSingleStandardAlarm(Context context){ // Standard repeating as apposed to Dawn or Dusk
+      //  Log.e(TAG, "createTheNextSingleStandardAlarm");
 Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
@@ -971,22 +978,22 @@ Prefs prefs = new Prefs(context);
     }
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
 
-    String mode = prefs.getMode();
-    switch(mode) {
-        case "off":
-            // don't change
-            break;
-        case "normal":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-            break;
-        case "normalOnline":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-            break;
-
-        case "walking":
-            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
-            break;
-    }
+//    String mode = prefs.getMode();
+//    switch(mode) {
+//        case "off":
+//            // don't change
+//            break;
+//        case "normal":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+//            break;
+//        case "normalOnline":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
+//            break;
+//
+//        case "walking":
+//            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
+//            break;
+//    }
 
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
@@ -1006,32 +1013,39 @@ Prefs prefs = new Prefs(context);
         alarmManager.setExactAndAllowWhileIdle (AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
     }
-
+//    prefs.setTheNextSingleStandardAlarmUsingDelay(delay);
+        setTheNextSingleStandardAlarmUsingDelay(context, delay);
     }
 
     public static void setUpLocationUpdateAlarm(Context context){
     Prefs prefs = new Prefs(context);
-    String mode = prefs.getMode();
+//    String mode = prefs.getMode();
+//
+//        switch(mode) {
+//            case "off":
+//                if (prefs.getPeriodicallyUpdateGPS()){
+//                    createLocationUpdateAlarm(context);
+//                }else{
+//                    deleteLocationUpdateAlarm(context);
+//                }
+//                break;
+//            case "normal":
+//                deleteLocationUpdateAlarm(context);
+//                break;
+//            case "normalOnline":
+//                deleteLocationUpdateAlarm(context);
+//                break;
+//
+//            case "walking":
+//                   createLocationUpdateAlarm(context);
+//                break;
+//        }
 
-        switch(mode) {
-            case "off":
-                if (prefs.getPeriodicallyUpdateGPS()){
+        if (prefs.getPeriodicallyUpdateGPS()){
                     createLocationUpdateAlarm(context);
                 }else{
                     deleteLocationUpdateAlarm(context);
                 }
-                break;
-            case "normal":
-                deleteLocationUpdateAlarm(context);
-                break;
-            case "normalOnline":
-                deleteLocationUpdateAlarm(context);
-                break;
-
-            case "walking":
-                   createLocationUpdateAlarm(context);
-                break;
-        }
 
     }
 
@@ -1063,6 +1077,7 @@ Prefs prefs = new Prefs(context);
         }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
         }
+     //   prefs.setNextAlarm(startWindowTimeForLocationUpdate);
     }
 
     private static void deleteLocationUpdateAlarm(Context context){
@@ -1098,6 +1113,130 @@ Prefs prefs = new Prefs(context);
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
         }
+    }
+
+    static long[] getDawnDuskAlarmList(Context context) {
+        Prefs prefs = new Prefs(context);
+        String alarmsString = prefs.getAlarmString();
+        if (alarmsString == null){
+            return null;
+        }
+        String[] tempArray;
+
+        /* delimiter */
+        String delimiter = ",";
+
+        /* given string will be split by the argument delimiter provided. */
+        tempArray = alarmsString.split(delimiter);
+        Arrays.sort(tempArray);
+
+        long[] alarmTimes = new long [tempArray.length];
+        for (int i = 0; i < tempArray.length; i++) {
+            alarmTimes[i] =  Long.parseLong(tempArray[i]);
+        }
+
+        return alarmTimes;
+    }
+
+    static String getNextAlarm(Context context){
+        Prefs prefs = new Prefs(context);
+        long nextAlarm = prefs.getNextSingleStandardAlarm();
+        long[] dawnDuskAlarms = getDawnDuskAlarmList(context);
+        if (dawnDuskAlarms != null){
+            Date now = new Date();
+            for (long dawnDuskAlarm: dawnDuskAlarms) {
+                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()){
+                    nextAlarm = dawnDuskAlarm;
+                }
+            }
+        }
+        return convertUnixTimeToString(nextAlarm);
+    }
+
+    static void addDawnDuskAlarm(Context context, long alarmInUnixTime){
+        Prefs prefs = new Prefs(context);
+        // First Ignore it if this time has already passed
+        Date now = new Date();
+        if (alarmInUnixTime < now.getTime()){
+            return;
+        }
+
+        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
+//        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
+        String currentAlarms = prefs.getDawnDuskAlarms();
+        if (currentAlarms == null){
+            currentAlarms = alarmInUnixTimeStr;
+        }else {
+            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
+        }
+        //setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
+        prefs.saveDawnDuskAlarms(currentAlarms);
+    }
+
+    static void setTheNextSingleStandardAlarmUsingDelay(Context context, long delayInMillisecs){
+        Prefs prefs = new Prefs(context);
+        // need to covert this delay into unix time
+        Date date = new Date();
+        long currentUnixTime = date.getTime();
+        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
+    }
+
+    static String getTimeThatLastRecordingHappened(Context context){
+        Prefs prefs = new Prefs(context);
+        long  lastRecordingTime = prefs.getTimeThatLastRecordingHappened();
+        return convertUnixTimeToString(lastRecordingTime);
+    }
+
+    static void setTimeThatLastRecordingHappened(Context context, long timeLastRecordingHappened){
+        Prefs prefs = new Prefs(context);
+        prefs.setTimeThatLastRecordingHappened(timeLastRecordingHappened);
+
+    }
+
+    static String convertUnixTimeToString(long unixTimeToConvert){
+        Date date = new Date(unixTimeToConvert);
+        Locale nzLocale = new Locale("nz");
+        DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
+        return fileFormat.format(date);
+    }
+
+    static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
+        createTheNextSingleStandardAlarm(context);
+    }
+
+    static void setPeriodicallyUpdateGPS(Context context, boolean periodicallyUpdateGPS){
+        Prefs prefs = new Prefs(context);
+        prefs.setPeriodicallyUpdateGPS(periodicallyUpdateGPS);
+        createLocationUpdateAlarm(context);
+    }
+
+    static void setWalkingMode(Context context, boolean walkingMode){
+        Prefs prefs = new Prefs(context);
+        if (walkingMode){
+            prefs.setInternetConnectionMode("offline");
+            prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
+        }else{
+            prefs.setInternetConnectionMode("normal");
+        }
+
+        prefs.setUseFrequentRecordings(walkingMode);
+        prefs.setIgnoreLowBattery(walkingMode);
+        prefs.setPlayWarningSound(walkingMode);
+        prefs.setPeriodicallyUpdateGPS(walkingMode);
+        prefs.setIsDisableDawnDuskRecordings(walkingMode);
+
+        // need to reset alarms as their frequency may have changed.
+        Util.createTheNextSingleStandardAlarm(context);
+        Util.setUpLocationUpdateAlarm(context);
+    }
+
+    static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseFrequentRecordings(useFrequentRecordings);
+        createTheNextSingleStandardAlarm(context);
     }
 
 }

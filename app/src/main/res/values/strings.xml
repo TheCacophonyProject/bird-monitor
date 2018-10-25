@@ -40,6 +40,7 @@
     <string name="gps_location_title">GPS Location</string>
     <string name="choose_mode">Choose Mode</string>
     <string name="introduction">To test your device, first choose Settings from the menu (top right). Once that is done you can choose the mode below and you are ready to go.</string>
+    <string name="wizard_introduction">If you haven\'t already done so, register on the Cacophony website and create a group.</string>
     <string name="gps_location_message">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates every five minutes (will use more power).</string>
     <string name="choose_mode_message">Select a mode to override the options selected in settings (uses most appropriate values).</string>
     <string name="location_not_set">GPS Location not set.</string>
@@ -104,8 +105,22 @@ https://cacophony.org.nz/</string>
 
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
-
-
+    <string name="title_activity_login">Sign in</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_wizard1">Register</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_gps">GPSActivity</string>
 
 
 </resources>

@@ -59,7 +59,7 @@ public class BootReceiver extends BroadcastReceiver {
                         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
                         toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
 
-                        Util.createAlarms(context);
+                        Util.createTheNextSingleStandardAlarm(context);
 
                         DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
 

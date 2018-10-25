@@ -22,10 +22,14 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -92,40 +96,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
 
-            case R.id.action_settings:
-                openSettings();
-                return true;
 
-            case R.id.action_help:
-                openHelp();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    private void openHelp() {
-        Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    private void openSettings() {
-        try{
-        //    disableFlightMode();
-            Intent intent = new Intent(this, SetupActivity.class);
-            startActivity(intent);
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-    }
 
     private void disableFlightMode(){
         try {
@@ -175,7 +147,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Application name text  appNameVersionText
         // http://stackoverflow.com/questions/4616095/how-to-get-the-build-version-number-of-your-android-application
         String versionName = BuildConfig.VERSION_NAME;
-        TextView versionNameText = findViewById(R.id.appNameVersionText);
+        TextView versionNameText = findViewById(R.id.tvAppVersion);
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
        // versionNameText.setText(getString(R.string.version) + " " + versionName);
         versionNameText.setText(versionNameTextToDisplay);
@@ -380,6 +352,17 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         }
 
+        // Update time of last recording
+        TextView tvLastRecording = findViewById(R.id.tvLastRecording);
+        String timeThatLastRecordingHappened = Util.getTimeThatLastRecordingHappened(getApplicationContext());
+        tvLastRecording.setText("Last Recording: " + timeThatLastRecordingHappened);
+
+        // Update time of next recording
+        TextView tvNextRecording = findViewById(R.id.tvNextRecording);
+        String nextAlarm = Util.getNextAlarm(getApplicationContext());
+        tvNextRecording.setText("Next Recording: " + nextAlarm);
+
+
         // GPS text.
         updateGpsDisplay(prefs);
 
@@ -448,6 +431,15 @@ try {
         }
     };
 
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+//            Intent intent = new Intent(this, MainActivity2.class);
+//            startActivity(intent);
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
 
 }
 
