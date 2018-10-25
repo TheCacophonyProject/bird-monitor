@@ -125,22 +125,9 @@ if (isRecording){
         //noinspection UnusedAssignment
         boolean uploadedFilesSuccessfully = false;
 
-//      boolean offlineMode = prefs.getOffLineMode();
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // don't change offline mode
-//                break;
-//            case "normal":
-//                offlineMode = false;
-//                break;
-//            case "walking":
-//                offlineMode = true;
-//                break;
-//        }
 
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
-//     if (!prefs.getOffLineMode()) { // don't upload if in offline mode
          if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
          uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);

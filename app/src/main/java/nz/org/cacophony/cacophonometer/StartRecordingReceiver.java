@@ -95,29 +95,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 }
             }
 
-//            String mode = prefs.getMode();
-//            switch (mode) {
-//                case "off":
-//                    if (prefs.getPeriodicallyUpdateGPS()) {
-//// Don't do anything
-//                    }
-//
-//                    break;
-//                case "normal":
-//                    // Don't update location
-//                    break;
-//                case "normalOnline":
-//                    // Don't update location
-//                    break;
-//
-//                case "walking":
-//                    // Not going to do dawn/dusk alarms if in walking mode
-//                    if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-//                        return; // exit onReceive method
-//                    }
-//
-//                    break;
-//            }
 
             if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
                 if (prefs.getIsDisableDawnDuskRecordings()){
@@ -178,24 +155,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             return true;
         }
 
-
-//        String mode = prefs.getMode();
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // has no affect on decision
-//                break;
-//            case "normal":
-//                // has no affect on decision
-//                break;
-//            case "normalOnline":
-//                // has no affect on decision
-//                break;
-//
-//            case "walking":
-//                return true;  // ignore battery level when in walking mode
-//
-//        }
-
         if (prefs.getIgnoreLowBattery()){
             return true;
         }
@@ -207,12 +166,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
         }
-
     }
-
-
-
-
-
 
 }
