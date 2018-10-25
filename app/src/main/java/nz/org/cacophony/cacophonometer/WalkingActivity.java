@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.ToggleButton;
 
 public class WalkingActivity extends AppCompatActivity {
@@ -56,23 +57,38 @@ public class WalkingActivity extends AppCompatActivity {
             walkingStateWhenActivityDisplays = false;
         }
 
-        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
-        toggleButtonMode.setChecked(walkingMode);
+//        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
+//        toggleButtonMode.setChecked(walkingMode);
+
+        final Switch switchWalking = findViewById(R.id.swWalking2);
+        switchWalking.setChecked(prefs.getIsDisabled());
     }
 
 
 
     void setWalking(){
         // will check to see if mode has changed before changing prefs values etc
-        final ToggleButton toggleButtonWalking = findViewById(R.id.tgbWalking);
-        boolean checked = ( toggleButtonWalking).isChecked();
-        if (walkingStateWhenActivityDisplays == checked){
+        final Switch switchWalking = findViewById(R.id.swWalking2);
+        boolean isWalking = switchWalking.isChecked();
+        if (walkingStateWhenActivityDisplays == isWalking){
             // User hasn't changed the state so don't do anything
             return;
         }
-        Util.setWalkingMode(getApplicationContext(),checked);
+        Util.setWalkingMode(getApplicationContext(),isWalking);
 
     }
+
+//    void setWalking(){
+//        // will check to see if mode has changed before changing prefs values etc
+//        final ToggleButton toggleButtonWalking = findViewById(R.id.tgbWalking);
+//        boolean checked = ( toggleButtonWalking).isChecked();
+//        if (walkingStateWhenActivityDisplays == checked){
+//            // User hasn't changed the state so don't do anything
+//            return;
+//        }
+//        Util.setWalkingMode(getApplicationContext(),checked);
+//
+//    }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 

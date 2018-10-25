@@ -202,11 +202,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     } else if (message.equalsIgnoreCase("untick_logged_in_to_server")) {
                         TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                    } else if (message.equalsIgnoreCase("recordNowButton_finished")) {
-                        findViewById(R.id.recordNowButton).setEnabled(true);
-                        recordNowIdlingResource.decrement();
-
-                    } else if (message.equalsIgnoreCase("recording_started")) {
+                    }  else if (message.equalsIgnoreCase("recording_started")) {
                         Util.getToast(getApplicationContext(), "Recording started", false).show();
                     } else if (message.equalsIgnoreCase("recording_finished")) {
                         Util.getToast(getApplicationContext(), "Recording finished", false).show();
@@ -216,38 +212,17 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         Util.getToast(getApplicationContext(), "Files successfully uploaded", false).show();
                     } else if (message.equalsIgnoreCase("already_uploading")) {
                         Util.getToast(getApplicationContext(), "Files are already uploading", false).show();
-                    } else if (message.equalsIgnoreCase("no_permission_to_record")) {
-                        Util.getToast(getApplicationContext(), "Can not record.  Please go to Android settings and enable all required permissions for this app", true).show();
-                        findViewById(R.id.recordNowButton).setEnabled(true);
-                        recordNowIdlingResource.decrement();
-                    } else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
+                    }  else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
                         Util.getToast(getApplicationContext(), "Recording and uploading finished", false).show();
 
-                    } else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")) {
-                        Util.getToast(context, "Recording finished but uploading failed", true).show();
-                        findViewById(R.id.recordNowButton).setEnabled(true);
-                        recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
 
                         Util.getToast(getApplicationContext(), "Recorded successfully, no network connection so did not upload", false).show();
-                    } else if (message.equalsIgnoreCase("recording_failed")) {
-                        Util.getToast(getApplicationContext(), "Recording failed", true).show();
-                        findViewById(R.id.recordNowButton).setEnabled(true);
                     } else if (message.equalsIgnoreCase("not_logged_in")) {
 
                         Util.getToast(getApplicationContext(), "Not logged in to server, could not upload files", true).show();
-                    } else if (message.equalsIgnoreCase("is_already_recording")) {                  //      uploadingIdlingResource.decrement();
-                        // Will need enable Record Now button
-                        findViewById(R.id.recordNowButton).setEnabled(true);
-                        recordNowIdlingResource.decrement();
-
-                        Util.getToast(getApplicationContext(), "Could not do a recording as another recording is already in progress", true).show();
-                        findViewById(R.id.recordNowButton).setEnabled(true);
-                        recordNowIdlingResource.decrement();
                     } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
                         Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
-                    }else if (message.equalsIgnoreCase("update_record_now_button")){
-                        findViewById(R.id.recordNowButton).setEnabled(!RecordAndUpload.isRecording);
                     }
 
                 }

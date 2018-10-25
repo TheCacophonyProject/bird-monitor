@@ -20,7 +20,7 @@ public class DisableActivity extends AppCompatActivity {
 //        switchDisable.setTextOff("Off"); // displayed text of the Switch whenever it is in unchecked i.e. off state
     }
 
-    void onSwitchDisabledClicked(View v){
+    public void onSwitchDisabledClicked(View v){
         Prefs prefs = new Prefs(getApplicationContext());
         boolean isDisabled = ((Switch) v).isChecked();
         prefs.setIsDisabled(isDisabled);
