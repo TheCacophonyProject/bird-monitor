@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.Switch;
 
 public class FrequencyActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = FrequencyActivity.class.getName();
@@ -24,21 +25,23 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
         boolean useFrequentRecordings = prefs.getUseFrequentRecordings();
-        final CheckBox checkBoxUseFrequentRecordings = findViewById(R.id.cbUseFrequentRecordings);
-        if (useFrequentRecordings) {
-            checkBoxUseFrequentRecordings.setChecked(true);
-        } else
-            checkBoxUseFrequentRecordings.setChecked(false);
 
+        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
+        switchUseFrequentRecordings.setChecked(useFrequentRecordings);
     }
 
-    public void onCheckboxFrequentRecordingsClicked(View v) {
-        boolean checked = ((CheckBox) v).isChecked();
-        Util.setUseFrequentRecordings(getApplicationContext(), checked);
+
+
+    void setUseFrequentRecordings(){
+        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
+        boolean useFrequentRecordings = switchUseFrequentRecordings.isChecked();
+        Util.setUseFrequentRecordings(getApplicationContext(), useFrequentRecordings);
+
     }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            setUseFrequentRecordings();
             Intent intent = new Intent(this, TestingActivity.class);
             startActivity(intent);
             finish();
@@ -49,6 +52,7 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            setUseFrequentRecordings();
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
             finish();

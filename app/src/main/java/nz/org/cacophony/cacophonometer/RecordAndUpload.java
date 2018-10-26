@@ -53,52 +53,19 @@ static String doRecord(Context context, String typeOfRecording) {
     Prefs prefs = new Prefs(context);
 
     long   recordTimeSeconds = (long) prefs.getRecordingDuration();
-//    boolean playWarningBeeps = false;
 
-//    String mode = prefs.getMode();
-//    switch(mode) {
-//        case "off":
-//            if (prefs.getUseShortRecordings()) {
-//                recordTimeSeconds = 1;
-//            }
-//            if (prefs.getPlayWarningSound()){
-//                playWarningBeeps = true;
-//            }
-//
-//            break;
-//        case "normal":
-//            playWarningBeeps = false;
-//            break;
-//        case "normalOnline":
-//            playWarningBeeps = false;
-//            break;
-//        case "walking":
-//            playWarningBeeps = true;
-//            break;
-//    }
 
 
             if (prefs.getUseShortRecordings()) {
                 recordTimeSeconds = 1;
             }
-//            if (prefs.getPlayWarningSound()){
-//                playWarningBeeps = true;
-//            }else {
-//                playWarningBeeps = false;
-//            }
-
-
-
 
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
         recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
         Log.d(TAG, "typeOfRecording is dawn or dusk");
-
     } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         recordTimeSeconds += 1; // help to recognise recordNowButton recordings
-
         prefs.setDateTimeLastRepeatingAlarmFiredToZero(); // Helped when testing, but probably don't need when app is running normally
-
     }
 
 if (isRecording){

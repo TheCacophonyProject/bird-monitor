@@ -566,67 +566,14 @@ class Util {
         };
         thread.start();
 
-
-
     }
 
-//    static void disableFlightMode(Context context) {
-//        try {
-//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//                // API 17 onwards.
-//                // Must be a rooted device
-//                Prefs prefs = new Prefs(context);
-//                if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
-//                    return ;
-//                }
-//
-//                if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
-//                    return ;
-//                }
-//
-//                // Set Airplane / Flight mode using su commands.
-//                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-//                executeCommandTim(context, command);
-//                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-//                executeCommandTim(context, command);
-//
-//            } else {
-//                // API 16 and earlier.
-//
-//                //noinspection deprecation
-//                Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
-//                Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//                intent.putExtra("state", false);
-//                context.sendBroadcast(intent);
-//            }
-//
-//        }catch (Exception ex){
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
-//    }
 
     static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
-//        String mode = prefs.getMode();
-//
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // don't change offline mode
-//                break;
-//            case "normal":
-//                // don't change offline mode
-//                break;
-//
-//            case "normalOnline":
-//                onlineMode = true;
-//                break;
-//
-//            case "walking":
-//                // don't change offline mode
-//                break;
-//        }
+
 
         if (onlineMode){
             return; // don't try to enable airplane mode
@@ -676,64 +623,6 @@ class Util {
 
     }
 
-//    static void enableFlightMode(Context context) {
-//        Prefs prefs = new Prefs(context);
-//
-//        boolean onlineMode = prefs.getOnLineMode();
-//        String mode = prefs.getMode();
-//
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // don't change offline mode
-//                break;
-//            case "normal":
-//                // don't change offline mode
-//                break;
-//
-//            case "normalOnline":
-//                onlineMode = true;
-//                break;
-//
-//            case "walking":
-//                // don't change offline mode
-//                break;
-//        }
-//
-//        if (onlineMode){
-//            return; // don't try to enable airplane mode
-//        }
-//
-//
-//
-//
-//
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
-//
-//            // API 17 onwards.
-//            // Must be a rooted device
-//
-//            if (!prefs.getHasRootAccess()) {
-//                Log.e(TAG, "Do NOT have required ROOT access");
-//                return;
-//            }
-//
-//
-//            // Set Airplane / Flight mode using su commands.
-//            String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-//            executeCommandTim(context, command);
-//            command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-//            executeCommandTim(context, command);
-//
-//        } else {
-//
-//            //noinspection deprecation
-//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", true);
-//            context.sendBroadcast(intent);
-//        }
-//    }
-
 
 
 private static void executeCommandTim(Context context, String command){
@@ -746,7 +635,6 @@ private static void executeCommandTim(Context context, String command){
         Util.broadcastAMessage(context, "error_do_not_have_root");
     }
 }
-
 
 
     static String getSimStateAsString(int simState) {
@@ -977,24 +865,6 @@ Prefs prefs = new Prefs(context);
         return;
     }
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
-
-//    String mode = prefs.getMode();
-//    switch(mode) {
-//        case "off":
-//            // don't change
-//            break;
-//        case "normal":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-//            break;
-//        case "normalOnline":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-//            break;
-//
-//        case "walking":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
-//            break;
-//    }
-
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
     long currentElapsedRealTime = SystemClock.elapsedRealtime();
@@ -1019,27 +889,6 @@ Prefs prefs = new Prefs(context);
 
     public static void setUpLocationUpdateAlarm(Context context){
     Prefs prefs = new Prefs(context);
-//    String mode = prefs.getMode();
-//
-//        switch(mode) {
-//            case "off":
-//                if (prefs.getPeriodicallyUpdateGPS()){
-//                    createLocationUpdateAlarm(context);
-//                }else{
-//                    deleteLocationUpdateAlarm(context);
-//                }
-//                break;
-//            case "normal":
-//                deleteLocationUpdateAlarm(context);
-//                break;
-//            case "normalOnline":
-//                deleteLocationUpdateAlarm(context);
-//                break;
-//
-//            case "walking":
-//                   createLocationUpdateAlarm(context);
-//                break;
-//        }
 
         if (prefs.getPeriodicallyUpdateGPS()){
                     createLocationUpdateAlarm(context);
@@ -1237,6 +1086,22 @@ Prefs prefs = new Prefs(context);
         Prefs prefs = new Prefs(context);
         prefs.setUseFrequentRecordings(useFrequentRecordings);
         createTheNextSingleStandardAlarm(context);
+    }
+
+    static void uploadFilesUsingUploadButton(Context context){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+
+                }
+                catch (Exception e) {
+                    Log.e(TAG, "Error disabling flight mode");
+                }
+            }
+        };
+        thread.start();
     }
 
 }

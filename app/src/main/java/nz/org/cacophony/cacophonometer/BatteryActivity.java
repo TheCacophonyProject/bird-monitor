@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Switch;
 
 public class BatteryActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = BatteryActivity.class.getName();
@@ -26,29 +27,23 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
         Prefs prefs = new Prefs(getApplicationContext());
 
         boolean ignoreLowBattery = prefs.getIgnoreLowBattery();
-        final CheckBox checkBoxIgnoreLowBattery = findViewById(R.id.cbIgnoreLowBattery);
-        if (ignoreLowBattery) {
-            checkBoxIgnoreLowBattery.setChecked(true);
-        } else
-            checkBoxIgnoreLowBattery.setChecked(false);
+        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);
+        switchIgnoreLowBattery.setChecked(ignoreLowBattery);
 
     }
 
-    public void onCheckboxIgnoreLowBatteryClicked(View v) {
+    void setLowBattery(){
+        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);;
+        boolean ignoreLowBattery = switchIgnoreLowBattery.isChecked();
         Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        if (checked){
-            prefs.setIgnoreLowBattery(true);
-        }else{
-            prefs.setIgnoreLowBattery(false);
-        }
+        prefs.setIgnoreLowBattery(ignoreLowBattery);
     }
 
 
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            setLowBattery();
             Intent intent = new Intent(this, FrequencyActivity.class);
             startActivity(intent);
             finish();
@@ -59,6 +54,7 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            setLowBattery();
             Intent intent = new Intent(this, SoundActivity.class);
             startActivity(intent);
             finish();

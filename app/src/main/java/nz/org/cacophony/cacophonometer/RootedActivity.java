@@ -29,11 +29,6 @@ public class RootedActivity extends AppCompatActivity {
 
         final Switch switchRooted = findViewById(R.id.swRooted);
         switchRooted.setChecked(hasRootAccess);
-//        final ToggleButton toggleButtonRootAccess = findViewById(R.id.tgbRooted);
-//        if (hasRootAccess) {
-//            toggleButtonRootAccess.setChecked(true);
-//        } else
-//            toggleButtonRootAccess.setChecked(false);
     }
 
     void setRooted(){
@@ -41,37 +36,8 @@ public class RootedActivity extends AppCompatActivity {
         boolean hasRootAccess = switchHasRootAccess.isChecked();
         Prefs prefs = new Prefs(getApplicationContext());
         prefs.setHasRootAccess(hasRootAccess);
-//
-//        final ToggleButton toggleButtonRooted = findViewById(R.id.tgbRooted);
-//        boolean checked = ( toggleButtonRooted).isChecked();
-//        if (checked){
-//            prefs.setHasRootAccess(true);
-//        }else{
-//            prefs.setHasRootAccess(false);
-//        }
     }
 
-//    public void ontoggleButtonRootAccess(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((ToggleButton) v).isChecked();
-//        if (checked){
-//            prefs.setHasRootAccess(true);
-//        }else{
-//            prefs.setHasRootAccess(false);
-//        }
-//    }
-
-//    void setRooted(){
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        final ToggleButton toggleButtonRooted = findViewById(R.id.tgbRooted);
-//        boolean checked = ( toggleButtonRooted).isChecked();
-//        if (checked){
-//            prefs.setHasRootAccess(true);
-//        }else{
-//            prefs.setHasRootAccess(false);
-//        }
-//    }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 

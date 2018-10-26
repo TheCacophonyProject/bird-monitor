@@ -23,6 +23,7 @@
 
     <Button
         android:id="@+id/button6"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -35,6 +36,7 @@
 
     <Button
         android:id="@+id/button7"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -56,15 +58,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-    <CheckBox
-        android:id="@+id/cbUseFrequentRecordings"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swRecordMoreOften"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/frequent_recordings_cb_message"
-        android:onClick="onCheckboxFrequentRecordingsClicked"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Record more often"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textOff="NO"
+        android:textOn="YES"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
 </android.support.constraint.ConstraintLayout>
