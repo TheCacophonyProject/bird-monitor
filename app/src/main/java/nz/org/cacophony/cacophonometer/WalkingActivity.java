@@ -23,9 +23,9 @@ public class WalkingActivity extends AppCompatActivity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                boolean isWalking = switchWalking.isChecked();
-                Util.setWalkingMode(getApplicationContext(),isWalking);
-                findViewById(R.id.btnUploadFiles).setEnabled(!isWalking);
+            //    boolean isWalking = switchWalking.isChecked();
+                Util.setWalkingMode(getApplicationContext(),isChecked);
+                findViewById(R.id.btnUploadFiles).setEnabled(!isChecked);
             }
 
         });

@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 public class TestingActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = TestingActivity.class.getName();
@@ -16,6 +18,56 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testing);
+
+       final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
+        swUseShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+             //   boolean useShortRecordings = swUseShortRecordings.isChecked();
+                prefs.setUseShortRecordings(isChecked);
+            }
+        });
+
+        final Switch swUseTestServer = findViewById(R.id.swUseTestServer);
+        swUseTestServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               // boolean useTestServer = swUseTestServer.isChecked();
+
+                prefs.setUseTestServer(isChecked);
+            }
+        });
+
+        final Switch swUseVeryFrequentRecordings = findViewById(R.id.swUseVeryFrequentRecordings);
+        swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+              //  boolean useVeryFrequentRecordings = swUseVeryFrequentRecordings.isChecked();
+                prefs.setUseVeryFrequentRecordings(isChecked);
+            }
+        });
+
+        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
+        swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+              //  boolean useFrequentUploads = swUseFrequentUploads.isChecked();
+                prefs.setUseFrequentUploads(isChecked);
+            }
+        });
+
+        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
+        swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+           //     boolean periodicallyUpdateGPS = swPeriodicallyUpdateGPS.isChecked();
+                prefs.setPeriodicallyUpdateGPS(isChecked);
+            }
+        });
+
     }
 
     @Override
@@ -24,85 +76,30 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         Prefs prefs = new Prefs(getApplicationContext());
 
         boolean useShortRecordings = prefs.getUseShortRecordings();
-        final CheckBox checkBoxUseUseShortRecordings = findViewById(R.id.cbShortRecordings);
-        checkBoxUseUseShortRecordings.setChecked(useShortRecordings);
-//        if (useShortRecordings) {
-//            checkBoxUseUseShortRecordings.setChecked(true);
-//        } else
-//            checkBoxUseUseShortRecordings.setChecked(false);
+        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
+        swUseShortRecordings.setChecked(useShortRecordings);
 
         boolean useTestServer = prefs.getUseTestServer();
-        final CheckBox checkBoxUseTestServer = findViewById(R.id.cbUseTestServer);
-        checkBoxUseTestServer.setChecked(useTestServer);
-//        if (useTestServer) {
-//            checkBoxUseTestServer.setChecked(true);
-//        } else
-//            checkBoxUseTestServer.setChecked(false);
+        final Switch swUseTestServer = findViewById(R.id.swUseTestServer);
+        swUseTestServer.setChecked(useTestServer);
 
         boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
-        final CheckBox checkBoxUseVeryFrequentRecordings = findViewById(R.id.cbUseVeryFrequentRecordings);
-        checkBoxUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
-//        if (useVeryFrequentRecordings) {
-//            checkBoxUseVeryFrequentRecordings.setChecked(true);
-//        } else
-//            checkBoxUseVeryFrequentRecordings.setChecked(false);
+        final Switch swUseVeryFrequentRecordings = findViewById(R.id.swUseVeryFrequentRecordings);
+        swUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        final CheckBox checkBoxUseFrequentUploads = findViewById(R.id.cbUseFrequentUploads);
-        checkBoxUseFrequentUploads.setChecked(useFrequentUploads);
+        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
+        swUseFrequentUploads.setChecked(useFrequentUploads);
 
         boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        final CheckBox cbPeriodicallyUpdateGPS = findViewById(R.id.cbPeriodicallyUpdateGPS);
-        cbPeriodicallyUpdateGPS.setChecked(periodicallyUpdateGPS);
+        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
+        swPeriodicallyUpdateGPS.setChecked(periodicallyUpdateGPS);
 
     }
 
-
-    public void onCheckboxShortRecordingsClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        prefs.setUseShortRecordings(checked);
-//        if (checked){
-//            prefs.setUseShortRecordings(true);
-//        }else{
-//            prefs.setUseShortRecordings(false);
-//        }
-    }
-
-    public void onCheckboxUseTestServerClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        prefs.setUseTestServer(checked);
-//        if (checked){
-//            prefs.setUseTestServer(true);
-//        }else{
-//            prefs.setUseTestServer(false);
-//        }
-    }
-
-    public void onCheckboxVeryFrequentRecordingsClicked(View v) {
-        boolean checked = ((CheckBox) v).isChecked();
-        Util.setUseVeryFrequentRecordings(getApplicationContext(), checked);
-    }
-
-    public void onCheckboxUseFrequentUploadsClicked(View v) {
-        Prefs prefs = new Prefs(getApplicationContext());
-        // Is the view now checked?
-        boolean checked = ((CheckBox) v).isChecked();
-        prefs.setUseFrequentUploads(checked);
-    }
-
-    public void onCheckboxUsePeriodicallyUpdateGPSClicked(View v) {
-        boolean checked = ((CheckBox) v).isChecked();
-        Util.setPeriodicallyUpdateGPS(getApplicationContext(), checked);
-    }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            Intent intent = new Intent(this, MainActivity2.class);
-//            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

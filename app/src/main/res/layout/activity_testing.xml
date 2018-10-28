@@ -61,63 +61,98 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
-    <CheckBox
-        android:id="@+id/cbShortRecordings"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swShortRecordings"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="onCheckboxShortRecordingsClicked"
-        android:text="@string/use_short_record_cb_message"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Use Short Recordings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textOff="No"
+        android:textOn="Yes"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
-    <CheckBox
-        android:id="@+id/cbUseTestServer"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swUseTestServer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="onCheckboxUseTestServerClicked"
-        android:text="@string/use_test_server_cb_message"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Use Test Server"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textOff="NO"
+        android:textOn="YES"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbShortRecordings" />
+        app:layout_constraintTop_toBottomOf="@+id/swShortRecordings" />
 
-    <CheckBox
-        android:id="@+id/cbUseVeryFrequentRecordings"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swUseVeryFrequentRecordings"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="onCheckboxVeryFrequentRecordingsClicked"
-        android:text="@string/use_very_frequent_recordings_cb_message"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Use Very Frequent Recordings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textOff="NO"
+        android:textOn="YES"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbUseTestServer" />
+        app:layout_constraintTop_toBottomOf="@+id/swUseTestServer" />
 
-    <CheckBox
-        android:id="@+id/cbUseFrequentUploads"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swUseFrequentUploads"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="onCheckboxUseFrequentUploadsClicked"
-        android:text="@string/use_frequent_uploads_cb_message"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Use Frequent Uploads"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textOff="NO"
+        android:textOn="YES"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbUseVeryFrequentRecordings" />
+        app:layout_constraintTop_toBottomOf="@+id/swUseVeryFrequentRecordings" />
 
-    <CheckBox
-        android:id="@+id/cbPeriodicallyUpdateGPS"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swPeriodicallyUpdateGPS"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Periodically update GPS reading"
-        android:onClick="onCheckboxUsePeriodicallyUpdateGPSClicked"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:showText="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:text="Periodically update GPS"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textOff="NO"
+        android:textOn="YES"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbUseFrequentUploads" />
+        app:layout_constraintTop_toBottomOf="@+id/swUseFrequentUploads" />
 </android.support.constraint.ConstraintLayout>
