@@ -2,11 +2,13 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Message;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -152,10 +154,29 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
             return;
         }
-        unregister();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                unregister();
+            }
+        });
+        builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                return;
+            }
+        });
+        builder.setMessage("Are you sure?")
+                .setTitle("Un-register this phone");
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
     }
 
     private void unregister(){
+
+
         try {
 
             Prefs prefs = new Prefs(getApplicationContext());

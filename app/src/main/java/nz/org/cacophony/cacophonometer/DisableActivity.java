@@ -23,17 +23,13 @@ public class DisableActivity extends AppCompatActivity {
         switchDisable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setIsDisabled(isChecked);
+                prefs.setIsDisabled(!isChecked);
             }
         });
 
     }
 
-//    public void onSwitchDisabledClicked(View v){
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        boolean isDisabled = ((Switch) v).isChecked();
-//        prefs.setIsDisabled(isDisabled);
-//    }
+
 
     @Override
     public void onResume() {
@@ -42,7 +38,7 @@ public class DisableActivity extends AppCompatActivity {
         boolean isDisabled = prefs.getIsDisabled();
 
         final Switch switchDisable = findViewById(R.id.swDisable);
-        switchDisable.setChecked(isDisabled);
+        switchDisable.setChecked(!isDisabled);
 
     }
 

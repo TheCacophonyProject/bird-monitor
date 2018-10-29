@@ -49,8 +49,8 @@
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Recording is:"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textOff="ON"
-        android:textOn="OFF"
+        android:textOff="Off"
+        android:textOn="On"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />

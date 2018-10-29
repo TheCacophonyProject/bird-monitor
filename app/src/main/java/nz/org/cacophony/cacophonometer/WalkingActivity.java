@@ -99,6 +99,7 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
         if (numberOfFilesToUpload > 0){
             Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
+            findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getApplicationContext());
         }else{
             Util.getToast(getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
@@ -147,8 +148,10 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
                     if (message.equalsIgnoreCase("files_successfully_uploaded")) {
                         Util.getToast(getApplicationContext(), "Files have been uploaded to the server", false).show();
+                        findViewById(R.id.btnUploadFiles).setEnabled(true);
                     } else if (message.equalsIgnoreCase("files_not_uploaded")) {
                         Util.getToast(getApplicationContext(), "Error: Unable to upload files", true).show();
+                        findViewById(R.id.btnUploadFiles).setEnabled(true);
                     }
                 }
 
