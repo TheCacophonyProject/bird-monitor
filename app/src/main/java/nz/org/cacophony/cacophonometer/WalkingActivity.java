@@ -31,11 +31,11 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                Util.setWalkingMode(getApplicationContext(),isChecked);
-                findViewById(R.id.btnUploadFiles).setEnabled(!isChecked);
+                if (switchWalking.isShown()) { // Listener was firing each time activity loaded - https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
+                    Util.setWalkingMode(getApplicationContext(), isChecked);
+                    findViewById(R.id.btnUploadFiles).setEnabled(!isChecked);
+                }
             }
-
         });
     }
 
@@ -97,9 +97,16 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
 
-        Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " files.", false).show();
+        if (numberOfFilesToUpload > 0){
+            Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
+            Util.uploadFilesUsingUploadButton(getApplicationContext());
+        }else{
+            Util.getToast(getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
+        }
 
-        Util.uploadFilesUsingUploadButton(getApplicationContext());
+
+
+
     }
 
 

@@ -1069,6 +1069,7 @@ Prefs prefs = new Prefs(context);
             prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
         }else{
             prefs.setInternetConnectionMode("normal");
+            prefs.setIsDisabled(!walkingMode); // I thought it best to disable recording when user exits walking mode, but don't enable just because they turn on walking mode
         }
 
         prefs.setUseFrequentRecordings(walkingMode);

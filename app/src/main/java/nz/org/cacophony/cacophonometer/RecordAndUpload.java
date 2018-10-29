@@ -197,12 +197,6 @@ try {
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
             mRecorder.setAudioEncodingBitRate(256000);
-            //mRecorder.setAudioEncodingBitRate(131072);
-
-//        } else {
-//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
-//        }
 
         mRecorder.prepare();
 
@@ -216,7 +210,7 @@ try {
 
        if (playWarningBeeps) {
 
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
         try {
             Thread.sleep(2000);
