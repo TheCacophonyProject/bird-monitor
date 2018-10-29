@@ -1089,10 +1089,14 @@ Prefs prefs = new Prefs(context);
     }
 
     static void uploadFilesUsingUploadButton(final Context context){
+
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
+
+
+
                     boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
                     if (uploadedSuccessfully){
                         Util.broadcastAMessage(context, "files_successfully_uploaded");

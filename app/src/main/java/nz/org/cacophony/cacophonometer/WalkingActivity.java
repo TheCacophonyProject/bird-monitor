@@ -16,6 +16,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.File;
+
 public class WalkingActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = WalkingActivity.class.getName();
 
@@ -80,6 +82,23 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
 
     public void uploadFiles(@SuppressWarnings("UnusedParameters") View v){
+        if (!Util.isNetworkConnected(getApplicationContext())){
+            Util.getToast(getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+            return;
+        }
+
+        Prefs prefs = new Prefs(getApplicationContext());
+        if (prefs.getGroupName() == null){
+            Util.getToast(getApplicationContext(),"You need to register this phone before you can upload", true ).show();
+            return;
+        }
+
+        File recordingsFolder = Util.getRecordingsFolder(getApplicationContext());
+        File recordingFiles[] = recordingsFolder.listFiles();
+        int numberOfFilesToUpload = recordingFiles.length;
+
+        Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " files.", false).show();
+
         Util.uploadFilesUsingUploadButton(getApplicationContext());
     }
 

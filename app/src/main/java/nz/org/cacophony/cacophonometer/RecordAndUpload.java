@@ -312,18 +312,13 @@ try {
                 if ((prefs.getToken() == null) || !tokenIsCurrent) {
 
                     if (!Server.login(context)) {
-//                        logger.warn("sendFile: no JWT. Aborting upload");
                         Log.w(TAG, "sendFile: no JWT. Aborting upload");
                         return false; // Can't upload without JWT, login/register device to get JWT.
                     }
                 }
 
-                int numberOfFilesUploaded = 0;  // put a limit on the number of file uploads as if there are too many I think it may be timing out
+
                 for (File aFile : recordingFiles) {
-//                    if (numberOfFilesUploaded > 9){
-                    if (numberOfFilesUploaded > 19){ // increased as 10 may not be enough for longer intervals between uploads
-                        break;
-                    }
 
                     if (sendFile(context, aFile)) {
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
@@ -349,7 +344,7 @@ try {
                         Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
-                    numberOfFilesUploaded++;
+
                 }
             }
             if (returnValue){

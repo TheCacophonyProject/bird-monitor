@@ -643,8 +643,7 @@ class Prefs {
     }
 
     void setIsDisabled(boolean isDisabled) {
-        Log.e(TAG,"isDisabled is being set to "  + isDisabled);
-        setBoolean(DISABLED_KEY, isDisabled);
+       setBoolean(DISABLED_KEY, isDisabled);
     }
 
     boolean getIsDisabled() {
