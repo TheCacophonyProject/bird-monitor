@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Switch;
 
@@ -18,6 +19,18 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sound);
+
+        final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchPlayWarningSound = findViewById(R.id.swPlayWarningSound);
+        switchPlayWarningSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setPlayWarningSound(isChecked);
+            }
+
+        });
     }
 
     @Override
@@ -31,12 +44,12 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     }
 
-    void setPlaySound(){
-        final Switch switchPlayWarningSound = findViewById(R.id.swPlayWarningSound);
-        boolean playWarningSound = switchPlayWarningSound.isChecked();
-        Prefs prefs = new Prefs(getApplicationContext());
-        prefs.setPlayWarningSound(playWarningSound);
-    }
+//    void setPlaySound(){
+//        final Switch switchPlayWarningSound = findViewById(R.id.swPlayWarningSound);
+//        boolean playWarningSound = switchPlayWarningSound.isChecked();
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        prefs.setPlayWarningSound(playWarningSound);
+//    }
 
 //    public void onCheckboxWarningSoundClicked(View v) {
 //        Prefs prefs = new Prefs(getApplicationContext());
@@ -47,7 +60,7 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setPlaySound();
+//            setPlaySound();
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
             finish();
@@ -58,7 +71,7 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setPlaySound();
+//            setPlaySound();
             Intent intent = new Intent(this, InternetConnectionActivity.class);
             startActivity(intent);
             finish();

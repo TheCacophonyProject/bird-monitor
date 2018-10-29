@@ -72,7 +72,7 @@
         android:showText="true"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Play Sound"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="No"
         android:textOn="Yes"
         app:layout_constraintEnd_toEndOf="parent"

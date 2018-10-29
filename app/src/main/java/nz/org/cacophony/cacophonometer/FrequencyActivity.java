@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Switch;
 
@@ -18,6 +19,18 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_frequency);
+
+        final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
+        switchUseFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setUseFrequentRecordings(isChecked);
+            }
+
+        });
     }
 
     @Override
@@ -32,16 +45,16 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
 
 
-    void setUseFrequentRecordings(){
-        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
-        boolean useFrequentRecordings = switchUseFrequentRecordings.isChecked();
-        Util.setUseFrequentRecordings(getApplicationContext(), useFrequentRecordings);
-
-    }
+//    void setUseFrequentRecordings(){
+//        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
+//        boolean useFrequentRecordings = switchUseFrequentRecordings.isChecked();
+//        Util.setUseFrequentRecordings(getApplicationContext(), useFrequentRecordings);
+//
+//    }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setUseFrequentRecordings();
+//            setUseFrequentRecordings();
             Intent intent = new Intent(this, TestingActivity.class);
             startActivity(intent);
             finish();
@@ -52,7 +65,7 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setUseFrequentRecordings();
+//            setUseFrequentRecordings();
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
             finish();

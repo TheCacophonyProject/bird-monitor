@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 public class BatteryActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -19,6 +20,18 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battery);
+
+        final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);
+        switchIgnoreLowBattery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setIgnoreLowBattery(isChecked);
+            }
+
+        });
     }
 
     @Override
@@ -32,18 +45,18 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     }
 
-    void setLowBattery(){
-        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);;
-        boolean ignoreLowBattery = switchIgnoreLowBattery.isChecked();
-        Prefs prefs = new Prefs(getApplicationContext());
-        prefs.setIgnoreLowBattery(ignoreLowBattery);
-    }
+//    void setLowBattery(){
+//        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);;
+//        boolean ignoreLowBattery = switchIgnoreLowBattery.isChecked();
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        prefs.setIgnoreLowBattery(ignoreLowBattery);
+//    }
 
 
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setLowBattery();
+//            setLowBattery();
             Intent intent = new Intent(this, FrequencyActivity.class);
             startActivity(intent);
             finish();
@@ -54,7 +67,7 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            setLowBattery();
+//            setLowBattery();
             Intent intent = new Intent(this, SoundActivity.class);
             startActivity(intent);
             finish();

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -19,6 +20,16 @@ public class RootedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooted);
+
+        final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchHasRootAccess = findViewById(R.id.swRooted);
+        switchHasRootAccess.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setHasRootAccess(isChecked);
+            }
+        });
     }
 
     @Override
@@ -31,18 +42,18 @@ public class RootedActivity extends AppCompatActivity {
         switchRooted.setChecked(hasRootAccess);
     }
 
-    void setRooted(){
-        final Switch switchHasRootAccess = findViewById(R.id.swRooted);
-        boolean hasRootAccess = switchHasRootAccess.isChecked();
-        Prefs prefs = new Prefs(getApplicationContext());
-        prefs.setHasRootAccess(hasRootAccess);
-    }
+//    void setRooted(){
+//        final Switch switchHasRootAccess = findViewById(R.id.swRooted);
+//        boolean hasRootAccess = switchHasRootAccess.isChecked();
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        prefs.setHasRootAccess(hasRootAccess);
+//    }
 
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            setRooted();
+//            setRooted();
             Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
             finish();
@@ -54,7 +65,7 @@ public class RootedActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            setRooted();
+//            setRooted();
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             finish();

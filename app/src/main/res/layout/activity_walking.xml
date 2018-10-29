@@ -75,7 +75,7 @@
         android:showText="true"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Walking"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="OFF"
         android:textOn="ON"
         app:layout_constraintEnd_toEndOf="parent"

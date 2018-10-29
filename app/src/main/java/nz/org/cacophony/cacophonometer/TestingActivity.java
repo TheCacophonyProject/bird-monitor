@@ -23,10 +23,8 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
 
         final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
         swUseShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-             //   boolean useShortRecordings = swUseShortRecordings.isChecked();
                 prefs.setUseShortRecordings(isChecked);
             }
         });
@@ -35,8 +33,6 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swUseTestServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               // boolean useTestServer = swUseTestServer.isChecked();
-
                 prefs.setUseTestServer(isChecked);
             }
         });
@@ -45,7 +41,6 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-              //  boolean useVeryFrequentRecordings = swUseVeryFrequentRecordings.isChecked();
                 prefs.setUseVeryFrequentRecordings(isChecked);
             }
         });
@@ -54,7 +49,6 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-              //  boolean useFrequentUploads = swUseFrequentUploads.isChecked();
                 prefs.setUseFrequentUploads(isChecked);
             }
         });
@@ -63,7 +57,6 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-           //     boolean periodicallyUpdateGPS = swPeriodicallyUpdateGPS.isChecked();
                 prefs.setPeriodicallyUpdateGPS(isChecked);
             }
         });

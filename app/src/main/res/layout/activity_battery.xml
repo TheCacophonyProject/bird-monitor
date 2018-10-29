@@ -75,7 +75,7 @@
         android:showText="true"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Record with low battery"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"

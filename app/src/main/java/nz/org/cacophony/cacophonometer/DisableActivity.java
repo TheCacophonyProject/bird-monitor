@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
@@ -16,13 +17,23 @@ public class DisableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disable);
 
+        final Prefs prefs = new Prefs(getApplicationContext());
+
+        final Switch switchDisable = findViewById(R.id.swDisable);
+        switchDisable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setIsDisabled(isChecked);
+            }
+        });
+
     }
 
-    public void onSwitchDisabledClicked(View v){
-        Prefs prefs = new Prefs(getApplicationContext());
-        boolean isDisabled = ((Switch) v).isChecked();
-        prefs.setIsDisabled(isDisabled);
-    }
+//    public void onSwitchDisabledClicked(View v){
+//        Prefs prefs = new Prefs(getApplicationContext());
+//        boolean isDisabled = ((Switch) v).isChecked();
+//        prefs.setIsDisabled(isDisabled);
+//    }
 
     @Override
     public void onResume() {
