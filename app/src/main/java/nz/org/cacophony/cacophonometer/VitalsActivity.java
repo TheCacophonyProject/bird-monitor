@@ -72,29 +72,29 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         setContentView(R.layout.activity_vitals);
 
 
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setLogo(R.mipmap.ic_launcher);
-        } else {
-            Log.w(TAG, "ActionBar ab is null");
-
-        }
+//        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myToolbar);
+//
+//        // Get a support ActionBar corresponding to this toolbar
+//        ActionBar ab = getSupportActionBar();
+//
+//        // Enable the Up button
+//        if (ab != null) {
+//            ab.setDisplayHomeAsUpEnabled(true);
+//            ab.setDisplayUseLogoEnabled(true);
+//            ab.setLogo(R.mipmap.ic_launcher);
+//        } else {
+//            Log.w(TAG, "ActionBar ab is null");
+//
+//        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_vitals, menu);
-
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_vitals, menu);
+//
+//        return true;
+//    }
 
 
 

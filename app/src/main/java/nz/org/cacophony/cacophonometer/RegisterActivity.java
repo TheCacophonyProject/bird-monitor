@@ -42,6 +42,13 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+    }
+
     public void registerButton(View v) {
         registerIdlingResource.increment();
 

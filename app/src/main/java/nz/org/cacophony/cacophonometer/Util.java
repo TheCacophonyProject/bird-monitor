@@ -1093,7 +1093,12 @@ Prefs prefs = new Prefs(context);
             @Override
             public void run() {
                 try {
-                    RecordAndUpload.uploadFiles(context);
+                    boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
+                    if (uploadedSuccessfully){
+                        Util.broadcastAMessage(context, "files_successfully_uploaded");
+                    }else{
+                        Util.broadcastAMessage(context, "files_not_uploaded");
+                    }
 
                 }
                 catch (Exception e) {

@@ -37,6 +37,13 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+    }
+
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
             finish();

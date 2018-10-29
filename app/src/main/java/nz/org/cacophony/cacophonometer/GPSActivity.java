@@ -33,6 +33,13 @@ public class GPSActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+    }
+
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
         TextView tvSearching = findViewById(R.id.tvSearching);
         tvSearching.setVisibility(View.VISIBLE);

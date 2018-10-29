@@ -71,6 +71,13 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         findViewById(R.id.btnUploadFiles).setEnabled(!walkingMode);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+    }
+
 
     public void uploadFiles(@SuppressWarnings("UnusedParameters") View v){
         Util.uploadFilesUsingUploadButton(getApplicationContext());
@@ -112,28 +119,10 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
                 TextView tvMessages = findViewById(R.id.tvMessages);
                 if (message != null) {
 
-                    if (message.equalsIgnoreCase("recordNowButton_finished")) {
-                        findViewById(R.id.btnRecordNow).setEnabled(true);
-                        tvMessages.setText("Finished");
-                        recordNowIdlingResource.decrement();
-                    } else if (message.equalsIgnoreCase("about_to_upload_files")) {
-                        Util.getToast(getApplicationContext(), "About to upload files", false).show();
-                    } else if (message.equalsIgnoreCase("files_successfully_uploaded")) {
-                        tvMessages.setText("Files successfully uploaded");
-                        Util.getToast(getApplicationContext(), "Files successfully uploaded", false).show();
-                    } else if (message.equalsIgnoreCase("already_uploading")) {
-                        tvMessages.setText("Files are already uploading");
-                        Util.getToast(getApplicationContext(), "Files are already uploading", false).show();
-                    } else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
-                        tvMessages.setText("Recording and uploading finished");
-                        Util.getToast(getApplicationContext(), "Recording and uploading finished", false).show();
-
-                    }   else if (message.equalsIgnoreCase("not_logged_in")) {
-                        tvMessages.setText("Not logged in to server, could not upload files");
-                        Util.getToast(getApplicationContext(), "Not logged in to server, could not upload files", true).show();
-                    } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
-                        tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
-                        Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+                    if (message.equalsIgnoreCase("files_successfully_uploaded")) {
+                        Util.getToast(getApplicationContext(), "Files have been uploaded to the server", false).show();
+                    } else if (message.equalsIgnoreCase("files_not_uploaded")) {
+                        Util.getToast(getApplicationContext(), "Error: Unable to upload files", true).show();
                     }
                 }
 
