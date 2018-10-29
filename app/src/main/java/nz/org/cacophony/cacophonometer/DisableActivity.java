@@ -39,9 +39,10 @@ public class DisableActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
+        boolean isDisabled = prefs.getIsDisabled();
 
         final Switch switchDisable = findViewById(R.id.swDisable);
-        switchDisable.setChecked(prefs.getIsDisabled());
+        switchDisable.setChecked(isDisabled);
 
     }
 

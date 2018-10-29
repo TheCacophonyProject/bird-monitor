@@ -50,11 +50,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
-//        prefs.setDateTimeLastRepeatingAlarmFiredToZero();
-//        prefs.setDateTimeLastUpload(0);
-//        prefs.setInternetConnectionMode("normal");
-//        prefs.setIsDisabled(false);
-//        prefs.setIsDisableDawnDuskRecordings(false);
 
         if (prefs.getIsFirstTime()) {
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
@@ -63,14 +58,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
 
-//            prefs.setOnLineMode(true);
             prefs.setIsFirstTime();
-
-//            // Going to close this activity and open Wizard1 instead
-//            Intent intent = new Intent(this, Wizard1Activity.class);
-//            startActivity(intent);
-//            finish();
-
         }
 
         // Now create the alarms that will cause the recordings to happen

@@ -107,7 +107,7 @@ class Prefs {
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
     private static final String DISABLED_KEY = "DISABLED";
-    private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED";
+    private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
 
 
 
@@ -643,6 +643,7 @@ class Prefs {
     }
 
     void setIsDisabled(boolean isDisabled) {
+        Log.e(TAG,"isDisabled is being set to "  + isDisabled);
         setBoolean(DISABLED_KEY, isDisabled);
     }
 

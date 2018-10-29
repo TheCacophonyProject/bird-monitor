@@ -1088,12 +1088,12 @@ Prefs prefs = new Prefs(context);
         createTheNextSingleStandardAlarm(context);
     }
 
-    static void uploadFilesUsingUploadButton(Context context){
+    static void uploadFilesUsingUploadButton(final Context context){
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
-
+                    RecordAndUpload.uploadFiles(context);
 
                 }
                 catch (Exception e) {

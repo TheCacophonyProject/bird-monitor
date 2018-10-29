@@ -42,18 +42,9 @@ public class RootedActivity extends AppCompatActivity {
         switchRooted.setChecked(hasRootAccess);
     }
 
-//    void setRooted(){
-//        final Switch switchHasRootAccess = findViewById(R.id.swRooted);
-//        boolean hasRootAccess = switchHasRootAccess.isChecked();
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        prefs.setHasRootAccess(hasRootAccess);
-//    }
-
-
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-//            setRooted();
             Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
             finish();
@@ -65,7 +56,6 @@ public class RootedActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-//            setRooted();
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             finish();
