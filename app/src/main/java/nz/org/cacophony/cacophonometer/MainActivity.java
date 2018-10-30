@@ -13,9 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import static nz.org.cacophony.cacophonometer.R.mipmap.ic_launcher;
+
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
-    // Register with idling couunter
+    // Register with idling counter
    // https://developer.android.com/training/testing/espresso/idling-resource.html
    // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
@@ -33,9 +35,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, "onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        getSupportActionBar().setLogo(ic_launcher);
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();

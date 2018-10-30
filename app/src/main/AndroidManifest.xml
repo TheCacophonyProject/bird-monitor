@@ -34,7 +34,7 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Cacophony"
@@ -55,9 +55,8 @@
         <service android:name=".MainService" />
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,24 +65,10 @@
         </activity>
 
 
-        <activity
-            android:name=".VitalsActivity"
-            android:label="@string/title_activity_vitals"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
-
+        <activity android:name=".VitalsActivity"/>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".RootedActivity" />
-        <activity
-            android:name=".GPSActivity"
-            android:label="@string/title_activity_gps"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".GPSActivity"/>
         <activity android:name=".WalkingActivity" />
         <activity android:name=".TestRecordActivity" />
         <activity android:name=".InternetConnectionActivity" />
