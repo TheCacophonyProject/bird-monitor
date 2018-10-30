@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.v4.content.LocalBroadcastManager;
@@ -39,6 +40,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        // https://stackoverflow.com/questions/3488664/how-to-set-different-label-for-launcher-rather-than-activity-title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
@@ -87,8 +92,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
+            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAlert));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
+            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.accent));
         }
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
@@ -138,9 +145,18 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     }
 
-    public void launchTestRecordActivity(@SuppressWarnings("UnusedParameters") View v) {
+//    public void launchTestRecordActivity(@SuppressWarnings("UnusedParameters") View v) {
+//        try {
+//            Intent intent = new Intent(this, TestRecordActivity.class);
+//            startActivity(intent);
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//    }
+
+    public void launchWalkingActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, TestRecordActivity.class);
+            Intent intent = new Intent(this, WalkingActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

@@ -48,7 +48,7 @@ public class GPSActivity extends AppCompatActivity {
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, WalkingActivity.class);
+            Intent intent = new Intent(this, TestRecordActivity.class);
             startActivity(intent);
             finish();
         } catch (Exception ex) {

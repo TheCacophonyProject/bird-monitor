@@ -44,9 +44,24 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    public void next(@SuppressWarnings("UnusedParameters") View v) {
+
         try {
             finish();
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+
+        try {
+            Intent intent = new Intent(this, GPSActivity.class);
+            startActivity(intent);
+
+            finish();
+
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

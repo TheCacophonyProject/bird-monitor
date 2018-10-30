@@ -70,34 +70,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
-
-
-//        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myToolbar);
-//
-//        // Get a support ActionBar corresponding to this toolbar
-//        ActionBar ab = getSupportActionBar();
-//
-//        // Enable the Up button
-//        if (ab != null) {
-//            ab.setDisplayHomeAsUpEnabled(true);
-//            ab.setDisplayUseLogoEnabled(true);
-//            ab.setLogo(R.mipmap.ic_launcher);
-//        } else {
-//            Log.w(TAG, "ActionBar ab is null");
-//
-//        }
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_vitals, menu);
-//
-//        return true;
-//    }
-
-
-
 
     private void disableFlightMode(){
         try {
@@ -140,7 +113,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             Log.e(TAG, "Error calling super.onResume");
         }
 
-     //   disableFlightMode();
         checkPermissions();
         refreshVitalsDisplayedText();
 
@@ -149,7 +121,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = findViewById(R.id.tvAppVersion);
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
-       // versionNameText.setText(getString(R.string.version) + " " + versionName);
         versionNameText.setText(versionNameTextToDisplay);
 
         // listens for events broadcast from ?
@@ -321,7 +292,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 // Check the age of the webToken
         boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
-//        if (Server.loggedIn && webTokenIsCurrent)
+
         if ( webTokenIsCurrent)
             loggedInText.setText(getString(R.string.logged_in_to_server_true));
         else
@@ -343,11 +314,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 String deviceNameToDisplay = getString(R.string.device_name_colon) + " " + testServerPrefix + prefs.getDeviceName();
                 deviceNameText.setText(deviceNameToDisplay);
 
-
             } catch (Exception e) {
-
                 Log.e(TAG, "Device Name not available");
-//            Log.e(TAG, "Device ID not available");
             }
 
         }
@@ -359,8 +327,14 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         // Update time of next recording
         TextView tvNextRecording = findViewById(R.id.tvNextRecording);
-        String nextAlarm = Util.getNextAlarm(getApplicationContext());
-        tvNextRecording.setText("Next Recording: " + nextAlarm);
+
+        if (prefs.getIsDisabled()){
+            tvNextRecording.setText("Next Recording: Disabled - no next recording");
+        }else{
+            String nextAlarm = Util.getNextAlarm(getApplicationContext());
+            tvNextRecording.setText("Next Recording: " + nextAlarm);
+        }
+
 
 
         // GPS text.

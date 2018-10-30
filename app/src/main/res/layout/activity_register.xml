@@ -21,15 +21,15 @@
 
     <EditText
         android:id="@+id/setupGroupNameInput"
-        android:background="@drawable/rect_text_edit"
-
         android:layout_width="wrap_content"
+
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/rect_text_edit"
         android:ems="10"
-        android:hint="Group Name"
+        android:hint="Enter Group Name"
         android:inputType="text"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,14 +50,14 @@
 
     <EditText
         android:id="@+id/setupDeviceNameInput"
-        android:background="@drawable/rect_text_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/rect_text_edit"
         android:ems="10"
-        android:hint="Device name"
+        android:hint="Enter Device Name"
         android:inputType="text"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,9 +73,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:onClick="registerButton"
-        android:text="Register"
+        android:text="Press to Register"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        app:layout_constraintBottom_toTopOf="@+id/btnUnRegister"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setupDeviceNameInput" />
@@ -83,21 +85,16 @@
     <Button
         android:id="@+id/btnUnRegister"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
+        android:layout_width="124dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="64dp"
         android:onClick="unRegisterButton"
         android:text="Un-Register"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/btnBack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
+        app:layout_constraintBottom_toTopOf="@+id/btnNext"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnBack"

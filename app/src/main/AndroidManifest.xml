@@ -34,14 +34,11 @@
 
     <application
         android:allowBackup="false"
-
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_icon_name"
         android:supportsRtl="true"
         android:theme="@style/Cacophony"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:icon="@mipmap/ic_launcher">
-
-
+        tools:ignore="GoogleAppIndexingWarning">
         <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -57,51 +54,52 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/main_activity_name">
-
+            android:label="@string/app_icon_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".VitalsActivity"
-            android:label="@string/title_activity_vitals"/>
-
-        <activity android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"/>
-
-        <activity android:name=".RootedActivity"
-            android:label="@string/title_activity_rooted"/>
-
-        <activity android:name=".GPSActivity"
-            android:label="@string/title_activity_gps"/>
-
-        <activity android:name=".WalkingActivity"
-            android:label="@string/title_activity_walking"/>
-
-        <activity android:name=".TestRecordActivity"
-            android:label="@string/title_activity_test_record"/>
-
-        <activity android:name=".InternetConnectionActivity"
-            android:label="@string/title_activity_internet_connection"/>
-
-        <activity android:name=".SoundActivity"
-            android:label="@string/title_activity_warning_sound"/>
-
-        <activity android:name=".BatteryActivity"
-            android:label="@string/title_activity_ignore_low_battery"/>
-
-        <activity android:name=".FrequencyActivity"
-            android:label="@string/title_activity_frequent_recordings"/>
-
-        <activity android:name=".TestingActivity"
-            android:label="@string/title_activity_settings_for_testing"/>
-
-        <activity android:name=".DisableActivity"
-            android:label="@string/title_activity_turn_off_or_on"/>
+        <activity
+            android:name=".VitalsActivity"
+            android:label="@string/title_activity_vitals" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_register" />
+        <activity
+            android:name=".RootedActivity"
+            android:label="@string/title_activity_rooted" />
+        <activity
+            android:name=".GPSActivity"
+            android:label="@string/title_activity_gps" />
+        <activity
+            android:name=".WalkingActivity"
+            android:label="@string/title_activity_walking" />
+        <activity
+            android:name=".UploadFilesActivity"
+            android:label="@string/title_activity_upload_files" />
+        <activity
+            android:name=".TestRecordActivity"
+            android:label="@string/title_activity_test_record" />
+        <activity
+            android:name=".InternetConnectionActivity"
+            android:label="@string/title_activity_internet_connection" />
+        <activity
+            android:name=".SoundActivity"
+            android:label="@string/title_activity_warning_sound" />
+        <activity
+            android:name=".BatteryActivity"
+            android:label="@string/title_activity_ignore_low_battery" />
+        <activity
+            android:name=".FrequencyActivity"
+            android:label="@string/title_activity_frequent_recordings" />
+        <activity
+            android:name=".TestingActivity"
+            android:label="@string/title_activity_settings_for_testing" />
+        <activity
+            android:name=".DisableActivity"
+            android:label="@string/title_activity_turn_off_or_on" />
 
     </application>
 

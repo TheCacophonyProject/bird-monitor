@@ -26,13 +26,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnTestRecord"
+        android:id="@+id/btnWalking"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:onClick="launchTestRecordActivity"
-        android:text="Test Record"
+        android:onClick="launchWalkingActivity"
+        android:text="Walking Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="@+id/btnSetup"
         app:layout_constraintStart_toStartOf="@+id/btnSetup"
@@ -47,9 +47,9 @@
         android:onClick="launchVitalsActivity"
         android:text="Vitals"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnTestRecord"
-        app:layout_constraintStart_toStartOf="@+id/btnTestRecord"
-        app:layout_constraintTop_toBottomOf="@+id/btnTestRecord" />
+        app:layout_constraintEnd_toEndOf="@+id/btnWalking"
+        app:layout_constraintStart_toStartOf="@+id/btnWalking"
+        app:layout_constraintTop_toBottomOf="@+id/btnWalking" />
 
     <Button
         android:id="@+id/btnAdvanced"

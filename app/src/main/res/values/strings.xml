@@ -10,6 +10,7 @@
     <string name="title_activity_rooted">Rooted?</string>
     <string name="title_activity_gps">GPS Location</string>
     <string name="title_activity_walking">Walking?</string>
+    <string name="title_activity_upload_files">Finished Walking? - Upload</string>
     <string name="title_activity_test_record">Test Record</string>
     <string name="title_activity_internet_connection">Internet Connection</string>
     <string name="title_activity_warning_sound">Warning Sound</string>
@@ -129,9 +130,6 @@ https://cacophony.org.nz/</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_wizard1">Register</string>
-    <string name="title_activity_main2">Main2Activity</string>
-
 
 
 </resources>
