@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        getSupportActionBar().setLogo(ic_launcher);
 
         Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();

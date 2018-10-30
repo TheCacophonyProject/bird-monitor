@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     tools:context="nz.org.cacophony.cacophonometer.FrequencyActivity">
 
-    <TextView
-        android:id="@+id/textView11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/frequent_recordings_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/button6"
         style="@style/Widget.AppCompat.Button.Colored"
@@ -56,7 +41,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/use_frequent_recordings_message"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/swRecordMoreOften"

@@ -1,11 +1,22 @@
 <resources>
 
     <string name="app_name">Cacophonometer</string>
+    <string name="app_icon_name">Cacophony</string>
     <string name="main_activity_name">Cacophonometer</string>
     <string name="title_activity_setup">Settings</string>
     <string name="title_activity_help">Help</string>
-    <string name="title_activity_vitals">Vitals</string>
-
+    <string name="title_activity_vitals">App Vitals</string>
+    <string name="title_activity_register">Register Phone</string>
+    <string name="title_activity_rooted">Rooted?</string>
+    <string name="title_activity_gps">GPS Location</string>
+    <string name="title_activity_walking">Walking?</string>
+    <string name="title_activity_test_record">Test Record</string>
+    <string name="title_activity_internet_connection">Internet Connection</string>
+    <string name="title_activity_warning_sound">Warning Sound</string>
+    <string name="title_activity_ignore_low_battery">Ignore Low Battery</string>
+    <string name="title_activity_frequent_recordings">Frequent Recordings</string>
+    <string name="title_activity_settings_for_testing">Settings for Testing</string>
+    <string name="title_activity_turn_off_or_on">Turn Off or On</string>
 
     <string name="app_vitals">App Vitals</string>
     <string name="required_permissions">Required Permissions: ?</string>
@@ -120,7 +131,7 @@ https://cacophony.org.nz/</string>
     </string>
     <string name="title_activity_wizard1">Register</string>
     <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_gps">GPSActivity</string>
+
 
 
 </resources>
