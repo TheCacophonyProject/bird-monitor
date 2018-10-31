@@ -85,7 +85,7 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
             Log.e(TAG, ex.getLocalizedMessage());
         }
 
-        Util.createCreateAlarms(getApplicationContext());
+      //  Util.createCreateAlarms(getApplicationContext());
     }
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
