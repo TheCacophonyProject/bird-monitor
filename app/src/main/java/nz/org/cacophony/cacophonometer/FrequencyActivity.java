@@ -31,6 +31,22 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
             }
 
         });
+
+        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
+        swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setUseFrequentUploads(isChecked);
+            }
+        });
+
+        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
+        swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.setPeriodicallyUpdateGPS(isChecked);
+            }
+        });
     }
 
     @Override
@@ -41,16 +57,19 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
         final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
         switchUseFrequentRecordings.setChecked(useFrequentRecordings);
+
+        boolean useFrequentUploads = prefs.getUseFrequentUploads();
+        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
+        swUseFrequentUploads.setChecked(useFrequentUploads);
+
+        boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
+        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
+        swPeriodicallyUpdateGPS.setChecked(periodicallyUpdateGPS);
     }
 
 
 
-//    void setUseFrequentRecordings(){
-//        final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
-//        boolean useFrequentRecordings = switchUseFrequentRecordings.isChecked();
-//        Util.setUseFrequentRecordings(getApplicationContext(), useFrequentRecordings);
-//
-//    }
+
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {

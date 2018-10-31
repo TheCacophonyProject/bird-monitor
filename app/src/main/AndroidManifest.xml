@@ -93,7 +93,7 @@
             android:label="@string/title_activity_ignore_low_battery" />
         <activity
             android:name=".FrequencyActivity"
-            android:label="@string/title_activity_frequent_recordings" />
+            android:label="@string/title_activity_frequency" />
         <activity
             android:name=".TestingActivity"
             android:label="@string/title_activity_settings_for_testing" />

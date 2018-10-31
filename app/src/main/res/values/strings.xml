@@ -15,7 +15,7 @@
     <string name="title_activity_internet_connection">Internet Connection</string>
     <string name="title_activity_warning_sound">Warning Sound</string>
     <string name="title_activity_ignore_low_battery">Ignore Low Battery</string>
-    <string name="title_activity_frequent_recordings">Frequent Recordings</string>
+    <string name="title_activity_frequency">Frequency</string>
     <string name="title_activity_settings_for_testing">Settings for Testing</string>
     <string name="title_activity_turn_off_or_on">Turn Off or On</string>
 
@@ -82,7 +82,7 @@
 
     <string name="warning_sound_message">Play a short waning sound before a recording is made (useful for when out walking with the phone)</string>
     <string name="ignore_low_battery_message">Normally the app will not record when the battery is getting low.  But, you can ignore a low battery when out walking.</string>
-    <string name="use_frequent_recordings_message">Use this to increase the frequency of recordings (Useful when out walking)</string>
+    <string name="frequency_message">You can change the frequency of the following settings (will use more power).</string>
     <string name="use_short_record_cb_message">Use short recordings.</string>
     <string name="use_test_server_cb_message">Use the Test Server (You will need to register device).</string>
     <string name="use_very_frequent_recordings_cb_message">Use very frequent recordings.</string>

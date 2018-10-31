@@ -201,36 +201,36 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 String message = intent.getStringExtra("message");
                 if (message != null) {
 
-                    if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        findViewById(R.id.refreshVitals).setEnabled(true);
-                    } else if (message.equalsIgnoreCase("tick_logged_in_to_server")) {
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
-                    } else if (message.equalsIgnoreCase("untick_logged_in_to_server")) {
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                    }  else if (message.equalsIgnoreCase("recording_started")) {
-                        Util.getToast(getApplicationContext(), "Recording started", false).show();
-                    } else if (message.equalsIgnoreCase("recording_finished")) {
-                        Util.getToast(getApplicationContext(), "Recording finished", false).show();
-                    } else if (message.equalsIgnoreCase("about_to_upload_files")) {
-                        Util.getToast(getApplicationContext(), "About to upload files", false).show();
-                    } else if (message.equalsIgnoreCase("files_successfully_uploaded")) {
-                        Util.getToast(getApplicationContext(), "Files successfully uploaded", false).show();
-                    } else if (message.equalsIgnoreCase("already_uploading")) {
-                        Util.getToast(getApplicationContext(), "Files are already uploading", false).show();
-                    }  else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
-                        Util.getToast(getApplicationContext(), "Recording and uploading finished", false).show();
-
-                    } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
-
-                        Util.getToast(getApplicationContext(), "Recorded successfully, no network connection so did not upload", false).show();
-                    } else if (message.equalsIgnoreCase("not_logged_in")) {
-
-                        Util.getToast(getApplicationContext(), "Not logged in to server, could not upload files", true).show();
-                    } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
-                        Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
-                    }
+//                    if (message.equalsIgnoreCase("enable_vitals_button")) {
+//                        findViewById(R.id.refreshVitals).setEnabled(true);
+//                    } else if (message.equalsIgnoreCase("tick_logged_in_to_server")) {
+//                        TextView loggedInText = findViewById(R.id.loggedInText);
+//                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
+//                    } else if (message.equalsIgnoreCase("untick_logged_in_to_server")) {
+//                        TextView loggedInText = findViewById(R.id.loggedInText);
+//                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
+//                    }  else if (message.equalsIgnoreCase("recording_started")) {
+//                        Util.getToast(getApplicationContext(), "Recording started", false).show();
+//                    } else if (message.equalsIgnoreCase("recording_finished")) {
+//                        Util.getToast(getApplicationContext(), "Recording finished", false).show();
+//                    } else if (message.equalsIgnoreCase("about_to_upload_files")) {
+//                        Util.getToast(getApplicationContext(), "About to upload files", false).show();
+//                    } else if (message.equalsIgnoreCase("files_successfully_uploaded")) {
+//                        Util.getToast(getApplicationContext(), "Files successfully uploaded", false).show();
+//                    } else if (message.equalsIgnoreCase("already_uploading")) {
+//                        Util.getToast(getApplicationContext(), "Files are already uploading", false).show();
+//                    }  else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
+//                        Util.getToast(getApplicationContext(), "Recording and uploading finished", false).show();
+//
+//                    } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
+//
+//                        Util.getToast(getApplicationContext(), "Recorded successfully, no network connection so did not upload", false).show();
+//                    } else if (message.equalsIgnoreCase("not_logged_in")) {
+//
+//                        Util.getToast(getApplicationContext(), "Not logged in to server, could not upload files", true).show();
+//                    } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
+//                        Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+//                    }
 
                 }
 

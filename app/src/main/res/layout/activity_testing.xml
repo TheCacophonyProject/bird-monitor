@@ -41,8 +41,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/short_recordings_message"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
@@ -63,8 +62,9 @@
         android:textOff="No"
         android:textOn="Yes"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+        app:layout_constraintTop_toBottomOf="@+id/divider8" />
 
     <Switch
         android:id="@+id/swUseTestServer"
@@ -72,18 +72,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:text="Test Server"
+        android:text="Test Server (You will need to register)"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swShortRecordings" />
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <Switch
         android:id="@+id/swUseVeryFrequentRecordings"
@@ -91,7 +91,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
@@ -101,45 +100,34 @@
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swUseTestServer" />
+        app:layout_constraintTop_toBottomOf="@+id/divider6" />
 
-    <Switch
-        android:id="@+id/swUseFrequentUploads"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="368dp"
+        android:layout_height="1dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:showText="true"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:text="Frequent Uploads"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textOff="NO"
-        android:textOn="YES"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swUseVeryFrequentRecordings" />
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/textView16"
+        tools:layout_editor_absoluteX="8dp" />
 
-    <Switch
-        android:id="@+id/swPeriodicallyUpdateGPS"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:showText="true"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:text="Periodically update GPS"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textOff="NO"
-        android:textOn="YES"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swUseFrequentUploads" />
+    <View
+        android:id="@+id/divider6"
+        android:layout_width="368dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/swUseTestServer"
+        tools:layout_editor_absoluteX="8dp" />
+
+    <View
+        android:id="@+id/divider8"
+        android:layout_width="368dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/swUseVeryFrequentRecordings"
+        tools:layout_editor_absoluteX="8dp" />
+
+
 </android.support.constraint.ConstraintLayout>

@@ -21,19 +21,34 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
 
        final Prefs prefs = new Prefs(getApplicationContext());
 
-        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
-        swUseShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setUseShortRecordings(isChecked);
-            }
-        });
+
 
         final Switch swUseTestServer = findViewById(R.id.swUseTestServer);
         swUseTestServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
+                if (!buttonView.isShown()){
+                    return;
+                }
                 prefs.setUseTestServer(isChecked);
+
+                final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
+                swUseShortRecordings.setEnabled(isChecked);
+
+                final Switch swUseVeryFrequentRecordings = findViewById(R.id.swUseVeryFrequentRecordings);
+                swUseVeryFrequentRecordings.setEnabled(isChecked);
+
+                if (!isChecked){
+                    prefs.setUseShortRecordings(false);
+                    swUseShortRecordings.setChecked(false);
+                    swUseShortRecordings.setEnabled(false);
+
+                    prefs.setUseVeryFrequentRecordings(false);
+                    swUseVeryFrequentRecordings.setChecked(false);
+                    swUseVeryFrequentRecordings.setEnabled(false);
+                }
+
             }
         });
 
@@ -45,21 +60,15 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
             }
         });
 
-        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
-        swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
+        swUseShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setUseFrequentUploads(isChecked);
+                prefs.setUseShortRecordings(isChecked);
             }
         });
 
-        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
-        swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setPeriodicallyUpdateGPS(isChecked);
-            }
-        });
+
 
     }
 
@@ -68,10 +77,6 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
 
-        boolean useShortRecordings = prefs.getUseShortRecordings();
-        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
-        swUseShortRecordings.setChecked(useShortRecordings);
-
         boolean useTestServer = prefs.getUseTestServer();
         final Switch swUseTestServer = findViewById(R.id.swUseTestServer);
         swUseTestServer.setChecked(useTestServer);
@@ -79,14 +84,12 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
         final Switch swUseVeryFrequentRecordings = findViewById(R.id.swUseVeryFrequentRecordings);
         swUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
+        swUseVeryFrequentRecordings.setEnabled(useTestServer);// only enabled if using test server
 
-        boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        final Switch swUseFrequentUploads = findViewById(R.id.swUseFrequentUploads);
-        swUseFrequentUploads.setChecked(useFrequentUploads);
-
-        boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        final Switch swPeriodicallyUpdateGPS = findViewById(R.id.swPeriodicallyUpdateGPS);
-        swPeriodicallyUpdateGPS.setChecked(periodicallyUpdateGPS);
+        boolean useShortRecordings = prefs.getUseShortRecordings();
+        final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
+        swUseShortRecordings.setChecked(useShortRecordings);
+        swUseShortRecordings.setEnabled(useTestServer); // only enabled if using test server
 
     }
 
