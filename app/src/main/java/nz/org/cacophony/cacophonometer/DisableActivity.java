@@ -27,6 +27,7 @@ public class DisableActivity extends AppCompatActivity {
                     return;
                 }
                 prefs.setIsDisabled(!isChecked);
+               
             }
         });
 

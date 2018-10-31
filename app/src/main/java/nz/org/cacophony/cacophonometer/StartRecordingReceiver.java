@@ -30,9 +30,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
-        if (prefs.getIsDisabled()){
-            return;  // Don't do anything if Turn Off has been enabled.
-        }
+
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         if (powerManager == null){
             Log.e(TAG, "PowerManger is null");
@@ -45,6 +43,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         try {
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
+
+            if (prefs.getIsDisabled()){
+                return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
+            }
 
             if (!Util.checkPermissionsForRecording(context)) {
                 Log.e(TAG, "Don't have proper permissions to record");
