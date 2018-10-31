@@ -43,6 +43,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         try {
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
+            Util.broadcastAMessage(context, "alarms_updated");
 
             if (prefs.getIsDisabled()){
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)

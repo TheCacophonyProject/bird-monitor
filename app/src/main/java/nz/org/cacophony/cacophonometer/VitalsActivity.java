@@ -378,7 +378,6 @@ try {
 
                     if (message.equalsIgnoreCase("enable_vitals_button")) {
                         findViewById(R.id.refreshVitals).setEnabled(true);
-
                     }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
                         TextView loggedInText = findViewById(R.id.loggedInText);
                         loggedInText.setText(getString(R.string.logged_in_to_server_true));
@@ -396,6 +395,8 @@ try {
                         Prefs prefs = new Prefs(context);
                         updateGpsDisplay(prefs);
                     }else if (message.equalsIgnoreCase("recording_finished")) {
+                        refreshVitalsDisplayedText();
+                    }else if (message.equalsIgnoreCase("alarms_updated")) {
                         refreshVitalsDisplayedText();
                     }
 
