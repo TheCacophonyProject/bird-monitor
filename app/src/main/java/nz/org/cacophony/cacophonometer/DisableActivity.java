@@ -23,6 +23,9 @@ public class DisableActivity extends AppCompatActivity {
         switchDisable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!buttonView.isShown()){
+                    return;
+                }
                 prefs.setIsDisabled(!isChecked);
             }
         });

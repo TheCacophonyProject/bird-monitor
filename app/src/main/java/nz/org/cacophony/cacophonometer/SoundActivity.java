@@ -27,6 +27,9 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!buttonView.isShown()){
+                    return;
+                }
                 prefs.setPlayWarningSound(isChecked);
             }
 
@@ -44,23 +47,10 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     }
 
-//    void setPlaySound(){
-//        final Switch switchPlayWarningSound = findViewById(R.id.swPlayWarningSound);
-//        boolean playWarningSound = switchPlayWarningSound.isChecked();
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        prefs.setPlayWarningSound(playWarningSound);
-//    }
-
-//    public void onCheckboxWarningSoundClicked(View v) {
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        // Is the view now checked?
-//        boolean checked = ((CheckBox) v).isChecked();
-//        prefs.setPlayWarningSound(checked);
-//    }
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setPlaySound();
+
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
             finish();
@@ -71,7 +61,7 @@ public class SoundActivity extends AppCompatActivity implements IdlingResourceFo
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setPlaySound();
+
             Intent intent = new Intent(this, InternetConnectionActivity.class);
             startActivity(intent);
             finish();

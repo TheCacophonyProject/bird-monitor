@@ -28,6 +28,9 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!buttonView.isShown()){
+                    return;
+                }
                 prefs.setIgnoreLowBattery(isChecked);
             }
 
@@ -45,18 +48,11 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     }
 
-//    void setLowBattery(){
-//        final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);;
-//        boolean ignoreLowBattery = switchIgnoreLowBattery.isChecked();
-//        Prefs prefs = new Prefs(getApplicationContext());
-//        prefs.setIgnoreLowBattery(ignoreLowBattery);
-//    }
-
 
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setLowBattery();
+
             Intent intent = new Intent(this, FrequencyActivity.class);
             startActivity(intent);
             finish();
@@ -67,7 +63,7 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setLowBattery();
+
             Intent intent = new Intent(this, SoundActivity.class);
             startActivity(intent);
             finish();

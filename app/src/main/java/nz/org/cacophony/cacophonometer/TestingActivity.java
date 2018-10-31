@@ -56,7 +56,9 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //prefs.setUseVeryFrequentRecordings(isChecked);
+                if(!buttonView.isShown()){
+                    return;
+                }
                 Util.setUseVeryFrequentRecordings(getApplicationContext(), isChecked);
             }
         });
@@ -65,6 +67,9 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
         swUseShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!buttonView.isShown()){
+                    return;
+                }
                 prefs.setUseShortRecordings(isChecked);
             }
         });
