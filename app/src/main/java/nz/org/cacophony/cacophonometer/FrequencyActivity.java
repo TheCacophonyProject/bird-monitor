@@ -27,7 +27,8 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setUseFrequentRecordings(isChecked);
+               // prefs.setUseFrequentRecordings(isChecked);
+                Util.setUseFrequentRecordings(getApplicationContext(), isChecked);
             }
 
         });
@@ -44,7 +45,8 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
         swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.setPeriodicallyUpdateGPS(isChecked);
+               // prefs.setPeriodicallyUpdateGPS(isChecked);
+                Util.setPeriodicallyUpdateGPS(getApplicationContext(), isChecked);
             }
         });
     }
