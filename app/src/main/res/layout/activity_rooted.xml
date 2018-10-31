@@ -16,8 +16,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Has your phone been rooted?  If you don't know select NO!"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Has your phone been rooted?  If you got this phone from The Cacophony Project, please leave the setting as you found it (probably – YES).  We normally root the phone to enable the app to save power – pretty essential for using with a solar panel.  Note: Choosing YES, does NOT root the phone (it\'s a bit more involved)."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

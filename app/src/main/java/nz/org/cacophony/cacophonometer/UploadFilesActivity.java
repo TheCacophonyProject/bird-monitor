@@ -27,6 +27,9 @@ public class UploadFilesActivity extends AppCompatActivity {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
 
+        TextView deviceNameText = findViewById(R.id.tvNumberOfRecordings);
+        deviceNameText.setText("Number of recordings on phone: " + getNumberOfRecordings());
+
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 
@@ -37,6 +40,12 @@ public class UploadFilesActivity extends AppCompatActivity {
         super.onPause();
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+    }
+
+    private int getNumberOfRecordings(){
+        File recordingsFolder = Util.getRecordingsFolder(getApplicationContext());
+        File recordingFiles[] = recordingsFolder.listFiles();
+        return recordingFiles.length;
     }
 
     public void uploadFiles(@SuppressWarnings("UnusedParameters") View v){
@@ -55,7 +64,8 @@ public class UploadFilesActivity extends AppCompatActivity {
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
 
-        if (numberOfFilesToUpload > 0){
+//        if (numberOfFilesToUpload > 0){
+        if (getNumberOfRecordings() > 0){
             Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
             findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getApplicationContext());
@@ -79,13 +89,16 @@ public class UploadFilesActivity extends AppCompatActivity {
                 String message = intent.getStringExtra("message");
                 TextView tvMessages = findViewById(R.id.tvMessages);
                 if (message != null) {
+                    TextView deviceNameText = findViewById(R.id.tvNumberOfRecordings);
 
                     if (message.equalsIgnoreCase("files_successfully_uploaded")) {
                         Util.getToast(getApplicationContext(), "Files have been uploaded to the server", false).show();
                         findViewById(R.id.btnUploadFiles).setEnabled(true);
+                        deviceNameText.setText("Number of recordings on phone: " + getNumberOfRecordings());
                     } else if (message.equalsIgnoreCase("files_not_uploaded")) {
                         Util.getToast(getApplicationContext(), "Error: Unable to upload files", true).show();
                         findViewById(R.id.btnUploadFiles).setEnabled(true);
+                        deviceNameText.setText("Number of recordings on phone: " + getNumberOfRecordings());
                     }
                 }
 
