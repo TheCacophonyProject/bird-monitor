@@ -77,6 +77,8 @@ if (isRecording){
     returnValue = "recorded successfully";
 }
 
+
+
     if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         Util.broadcastAMessage(context, "recordNowButton_finished");
     }
@@ -96,9 +98,9 @@ if (isRecording){
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
          if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
-         uploadingIdlingResource.increment();
+        // uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
-         uploadingIdlingResource.decrement();
+       //  uploadingIdlingResource.decrement();
                 if (uploadedFilesSuccessfully) {
                     returnValue = "recorded and uploaded successfully";
                     prefs.setDateTimeLastUpload(now);
@@ -267,6 +269,7 @@ try {
 }finally {
     isRecording = false;
     Util.broadcastAMessage(context, "update_record_now_button");
+    Util.broadcastAMessage(context, "recording_finished");
 }
 
     }

@@ -395,6 +395,8 @@ try {
                     }else if(message.equalsIgnoreCase("refresh_gps_coordinates")){
                         Prefs prefs = new Prefs(context);
                         updateGpsDisplay(prefs);
+                    }else if (message.equalsIgnoreCase("recording_finished")) {
+                        refreshVitalsDisplayedText();
                     }
 
                 }
