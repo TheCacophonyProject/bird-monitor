@@ -59,6 +59,12 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_help, menu);
+        return true;
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
 
@@ -70,6 +76,10 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
+
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     private void disableFlightMode(){
@@ -418,6 +428,19 @@ try {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, "App Vitals");
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 
 

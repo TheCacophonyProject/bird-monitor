@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,6 +22,10 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_frequency);
+
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         final Prefs prefs = new Prefs(getApplicationContext());
 
@@ -59,6 +66,12 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_help, menu);
+        return true;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
@@ -76,13 +89,9 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
         swPeriodicallyUpdateGPS.setChecked(periodicallyUpdateGPS);
     }
 
-
-
-
-
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setUseFrequentRecordings();
+
             Intent intent = new Intent(this, TestingActivity.class);
             startActivity(intent);
             finish();
@@ -93,12 +102,25 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            setUseFrequentRecordings();
             Intent intent = new Intent(this, BatteryActivity.class);
             startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, "Frequency");
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/button_help"
+        android:title="Help"
+        android:icon="@drawable/help"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+</menu>

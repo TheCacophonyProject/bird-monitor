@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +24,10 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battery);
 
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
         final Prefs prefs = new Prefs(getApplicationContext());
 
         final Switch switchIgnoreLowBattery = findViewById(R.id.swIgnoreLowBattery);
@@ -35,6 +42,12 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
             }
 
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_help, menu);
+        return true;
     }
 
     @Override
@@ -69,6 +82,20 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, "Battery");
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
     }
 

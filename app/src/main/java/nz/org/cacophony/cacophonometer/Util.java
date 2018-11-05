@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -1112,6 +1114,73 @@ Prefs prefs = new Prefs(context);
             }
         };
         thread.start();
+    }
+
+    public static void displayHelp(Context context, String activityName){
+
+        String dialogMessage = "";
+
+        switch (activityName) {
+            case "Introduction":
+                dialogMessage = context.getString(R.string.help_text_introduction);
+
+                break;
+            case "Register":
+                dialogMessage = context.getString(R.string.help_text_register);
+                break;
+            case "Battery":
+                dialogMessage = context.getString(R.string.help_text_battery);
+                break;
+            case "Disable":
+                dialogMessage = context.getString(R.string.help_text_disable);
+                break;
+            case "Frequency":
+                dialogMessage = context.getString(R.string.help_text_frequency);
+                break;
+            case "GPS Location":
+                dialogMessage = context.getString(R.string.help_text_GPS_location);
+                break;
+            case "Internet Connection":
+                dialogMessage = context.getString(R.string.help_text_internet_connection);
+                break;
+            case "Rooted":
+                dialogMessage = context.getString(R.string.help_text_rooted);
+                break;
+            case "Warning Sound":
+                dialogMessage = context.getString(R.string.help_text_warning_sound);
+                break;
+            case "Testing":
+                dialogMessage = context.getString(R.string.help_text_testing);
+                break;
+            case "Test Record":
+                dialogMessage = context.getString(R.string.help_text_test_record);
+                break;
+            case "Upload Files":
+                dialogMessage = context.getString(R.string.help_text_upload_files);
+                break;
+            case "App Vitals":
+                dialogMessage = context.getString(R.string.help_text_app_vitals);
+                break;
+            case "Walking":
+                dialogMessage = context.getString(R.string.help_text_walking);
+                break;
+            default:
+                Log.w(TAG, "Invalid Help Activity name");
+                dialogMessage = "";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        // Add the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                return;
+            }
+        });
+
+        builder.setMessage(dialogMessage)
+                .setTitle(activityName + " Help");
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }

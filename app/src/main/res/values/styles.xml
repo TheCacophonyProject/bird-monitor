@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="HeaderBar">
+        <item name="android:background">#303F9F</item>
+    </style>
+
     <!-- Base application theme. -->
 
 
@@ -7,7 +11,7 @@
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Cacophony" parent="Theme.AppCompat">
+    <style name="Cacophony" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
