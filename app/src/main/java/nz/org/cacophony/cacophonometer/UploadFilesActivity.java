@@ -46,6 +46,12 @@ public class UploadFilesActivity extends AppCompatActivity {
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 
+        if(getNumberOfRecordings() == 0){
+            findViewById(R.id.btnUploadFiles).setEnabled(false);
+        }else{
+            findViewById(R.id.btnUploadFiles).setEnabled(true);
+        }
+
     }
 
     @Override
@@ -62,6 +68,7 @@ public class UploadFilesActivity extends AppCompatActivity {
     }
 
     public void uploadFiles(@SuppressWarnings("UnusedParameters") View v){
+
         if (!Util.isNetworkConnected(getApplicationContext())){
             Util.getToast(getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
             return;
@@ -77,18 +84,13 @@ public class UploadFilesActivity extends AppCompatActivity {
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
 
-//        if (numberOfFilesToUpload > 0){
-        if (getNumberOfRecordings() > 0){
+        if (getNumberOfRecordings() > 0){ // should be as button should be disabled if no recordings
             Util.getToast(getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
             findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getApplicationContext());
         }else{
             Util.getToast(getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
         }
-
-
-
-
     }
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -106,12 +108,14 @@ public class UploadFilesActivity extends AppCompatActivity {
 
                     if (message.equalsIgnoreCase("files_successfully_uploaded")) {
                         Util.getToast(getApplicationContext(), "Files have been uploaded to the server", false).show();
-                        findViewById(R.id.btnUploadFiles).setEnabled(true);
+                       // findViewById(R.id.btnUploadFiles).setEnabled(true);
                         deviceNameText.setText("Number of recordings on phone: " + getNumberOfRecordings());
                     } else if (message.equalsIgnoreCase("files_not_uploaded")) {
                         Util.getToast(getApplicationContext(), "Error: Unable to upload files", true).show();
-                        findViewById(R.id.btnUploadFiles).setEnabled(true);
                         deviceNameText.setText("Number of recordings on phone: " + getNumberOfRecordings());
+                        if (getNumberOfRecordings() > 0){
+                            findViewById(R.id.btnUploadFiles).setEnabled(true);
+                        }
                     }
                 }
 
@@ -146,7 +150,7 @@ public class UploadFilesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Upload Files");
+                Util.displayHelp(this, "Upload Recordings");
                 return true;
 
             default:

@@ -24,7 +24,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point."
+        android:text="@string/use_the_test_server"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

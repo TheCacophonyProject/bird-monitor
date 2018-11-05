@@ -19,6 +19,14 @@
         <item name="colorControlNormal">@color/colorAlert</item>
     </style>
 
+    <style name="SettingsForTestServerEnabled" parent="Cacophony">
+        <item name="colorPrimary">@color/colorAlert</item>
+        <item name="colorPrimaryDark">@color/colorAlert</item>
+        <item name="colorAccent">@color/colorAlert</item>
+        <item name="android:colorBackground">@color/colorAlert</item>
+        <item name="colorControlNormal">@color/colorAlert</item>
+    </style>
+
 
 
 </resources>

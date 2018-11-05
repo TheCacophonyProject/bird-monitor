@@ -109,6 +109,7 @@ class Prefs {
     private static final String DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
     private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
+    private static final String BUTTON_DEFAULT_BACKGROUND_COLOR_KEY = "BUTTON_DEFAULT_BACKGROUND_COLOR";
 
 
 
@@ -665,6 +666,22 @@ class Prefs {
 
     boolean getSettingsForTestServerEnabled(){
         return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
+    }
+
+    void setDefaultButtonBackgroundColor(int color){
+        long colorLong = (long)color;
+        setLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY, colorLong);
+    }
+
+    int getDefaultButtonBackgroundColor(){
+        long colorLong = getLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY);
+        try{
+            int colorInt = (int)colorLong;
+            return colorInt;
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+            return 0;
+        }
     }
 
 }

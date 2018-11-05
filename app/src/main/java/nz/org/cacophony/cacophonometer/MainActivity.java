@@ -1,15 +1,26 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -41,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -71,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
 
+
+
         if (prefs.getIsFirstTime()) {
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
@@ -78,20 +92,20 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
-
             Util.displayHelp(this, "Introduction");
-
             prefs.setIsFirstTime();
         }
 
-        final Button advancedButton = (Button)findViewById(R.id.btnAdvanced);
+        final Button advancedButton = findViewById(R.id.btnAdvanced);
+
+        if (prefs.getSettingsForTestServerEnabled()){
+            advancedButton.setText("Very Advanced");
+        }
 
         advancedButton.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                advancedButtonDownTime = 0;
-//                advancedButtonUpTime = 0;
-
         switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     advancedButtonDownTime = System.currentTimeMillis();
@@ -100,23 +114,27 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 case MotionEvent.ACTION_UP:
                     advancedButtonUpTime = System.currentTimeMillis();
                     long timeBetweenDownAndUp = advancedButtonUpTime - advancedButtonDownTime;
-                   // Util.getToast(getApplicationContext(),"Button was pressed for " + timeBetweenDownAndUp, true).show();
+
                     if (timeBetweenDownAndUp > 5000){
-                        Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
-                        prefs.setSettingsForTestServerEnabled(true);
+                        if (prefs.getSettingsForTestServerEnabled()){
+                            advancedButton.setText("Advanced");
+                            Util.getToast(getApplicationContext(),"Settings for Test Server have been DISABLED", false).show();
+                            prefs.setSettingsForTestServerEnabled(false);
+                        }else{
+                            advancedButton.setText("Very Advanced");
+                            Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
+                            prefs.setSettingsForTestServerEnabled(true);
+                        }
+
                     }else{
                         launchAdvancedActivity(null);
                     }
-
-
                     break;
             }
 
-
-
-
         return true;
         }
+
         });
 
         // Now create the alarms that will cause the recordings to happen

@@ -133,11 +133,9 @@ https://cacophony.org.nz/
 
     <string name="help_text_warning_sound">Play a short warning sound before a recording is made (useful for when out walking with the phone or testing at home). \n\nNote: using an external microphone will probably disable this function.</string>
 <string name="play_a_warning_sound">Play a warning sound before a recording starts.</string>
-    <string name="help_text_testing">help_text_testing
-    </string>
-
-    <string name="help_text_test_record">Using the Record Now button will allow you to get immediate feedback on whether your phone has been setup correctly.  \n\nA series of messges are displayed to give you feedback on the progress of recording and uploading to the server.  \n\nThe Record Now button is disabled (greyed out)if a recording is already in progress, or if the app has been disabled.  You can enable the app from the Home screen.  Once the file(s) have been uploaded, you can confirm this by checking on the server page.
-    </string>
+    <string name="help_text_testing">App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point.</string>
+<string name="use_the_test_server">Use the test server?</string>
+    <string name="help_text_test_record">Using the Record Now button will allow you to get immediate feedback on whether your phone has been setup correctly.  \n\nA series of messges are displayed to give you feedback on the progress of recording and uploading to the server.  \n\nThe Record Now button is disabled (greyed out)if a recording is already in progress, or if the app has been disabled.  You can enable the app from the Home screen.  Once the file(s) have been uploaded, you can confirm this by checking on the server page.</string>
 
     <string name="upload_files">Upload all the recordings on the phone</string>
     <string name="help_text_upload_files">Once you have finished your walk, or have just re-established an internet connection (maybe after leaving you phone to make recordings in a location without out internet access) you can now use this screen to upload all the files on the phone to the server.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed, and should change to zero if all the recordings are successfully uploaded.</string>
