@@ -71,12 +71,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setInternetConnectionMode("normal");
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
+            Util.displayHelp(this, "Introduction");
 
             prefs.setIsFirstTime();
         }
 
         // Now create the alarms that will cause the recordings to happen
-
         Util.createTheNextSingleStandardAlarm(getApplicationContext());
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());

@@ -25,7 +25,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Play a short warning sound before a recording is made (useful for when out walking with the phone). Note: using an external microphone will probably disable this function. "
+        android:text="@string/play_a_warning_sound"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

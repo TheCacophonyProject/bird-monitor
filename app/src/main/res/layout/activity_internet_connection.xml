@@ -37,7 +37,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="The App will normally upload recordings to the server and then enable the phone's airplane mode to save power."
+        android:text="@string/choose_the_internet_connection_mode"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,11 +49,39 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnBack"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10">
+
+        <View
+            android:id="@+id/divider10"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider" />
+
+        <RadioButton
+            android:id="@+id/rbOnline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onInternetModeRadioButtonClicked"
+            android:padding="@dimen/fab_margin_small"
+            android:text="Online"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <View
+            android:id="@+id/divider9"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider" />
 
         <RadioButton
             android:id="@+id/rbNormal"
@@ -62,8 +90,8 @@
             android:layout_weight="1"
             android:onClick="onInternetModeRadioButtonClicked"
             android:padding="@dimen/fab_margin_small"
-            android:text="Normal (let App connect and disconnect as it needs to - save power)"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:text="Normal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <View
             android:id="@+id/divider4"
@@ -79,8 +107,8 @@
             android:layout_weight="1"
             android:onClick="onInternetModeRadioButtonClicked"
             android:padding="@dimen/fab_margin_small"
-            android:text="Offline - Select this if you know you don't have an internet connection (this will save power and prevent error messages)"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:text="Offline"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <View
             android:id="@+id/divider5"
@@ -89,15 +117,6 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <RadioButton
-            android:id="@+id/rbOnline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onInternetModeRadioButtonClicked"
-            android:padding="@dimen/fab_margin_small"
-            android:text="Online - Select this if you want to keep the phone alwasy connected to the internet (uses much more power, but useful if you want to control the phone remotely)"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
     </RadioGroup>
 
     <Button
