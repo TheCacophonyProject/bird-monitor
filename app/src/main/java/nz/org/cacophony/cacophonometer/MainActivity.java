@@ -14,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -26,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     private static final String TAG = MainActivity.class.getName();
     private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
+
+    private static long advancedButtonDownTime = 0;
+    private static long advancedButtonUpTime = 0;
 
 
     @Override
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             getSupportActionBar().setTitle(R.string.app_name);
         }
 
-        Prefs prefs = new Prefs(this.getApplicationContext());
+        final Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
         prefs.setNormalTimeBetweenRecordingsSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
@@ -65,16 +70,54 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
+
         if (prefs.getIsFirstTime()) {
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
+            prefs.setSettingsForTestServerEnabled(false);
+
             Util.displayHelp(this, "Introduction");
 
             prefs.setIsFirstTime();
         }
+
+        final Button advancedButton = (Button)findViewById(R.id.btnAdvanced);
+
+        advancedButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+//                advancedButtonDownTime = 0;
+//                advancedButtonUpTime = 0;
+
+        switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    advancedButtonDownTime = System.currentTimeMillis();
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    advancedButtonUpTime = System.currentTimeMillis();
+                    long timeBetweenDownAndUp = advancedButtonUpTime - advancedButtonDownTime;
+                   // Util.getToast(getApplicationContext(),"Button was pressed for " + timeBetweenDownAndUp, true).show();
+                    if (timeBetweenDownAndUp > 5000){
+                        Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
+                        prefs.setSettingsForTestServerEnabled(true);
+                    }else{
+                        launchAdvancedActivity(null);
+                    }
+
+
+                    break;
+            }
+
+
+
+
+        return true;
+        }
+        });
 
         // Now create the alarms that will cause the recordings to happen
         Util.createTheNextSingleStandardAlarm(getApplicationContext());

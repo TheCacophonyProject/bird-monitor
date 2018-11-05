@@ -108,6 +108,7 @@ class Prefs {
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
     private static final String DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
+    private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
 
 
 
@@ -657,4 +658,13 @@ class Prefs {
     boolean getIsDisableDawnDuskRecordings() {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
     }
+
+    void setSettingsForTestServerEnabled(boolean isEnabled){
+        setBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY, isEnabled);
+    }
+
+    boolean getSettingsForTestServerEnabled(){
+        return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
+    }
+
 }
