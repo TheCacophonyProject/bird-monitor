@@ -77,8 +77,8 @@
             android:name=".WalkingActivity"
             android:label="@string/title_activity_walking" />
         <activity
-            android:name=".UploadFilesActivity"
-            android:label="@string/title_activity_upload_files" />
+            android:name=".ManageRecordingsActivity"
+            android:label="@string/title_activity_manage_recordings" />
         <activity
             android:name=".TestRecordActivity"
             android:label="@string/title_activity_test_record" />

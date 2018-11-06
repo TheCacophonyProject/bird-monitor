@@ -1108,8 +1108,8 @@ Prefs prefs = new Prefs(context);
                     }
 
                 }
-                catch (Exception e) {
-                    Log.e(TAG, "Error disabling flight mode");
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
                 }
             }
         };
@@ -1155,8 +1155,8 @@ Prefs prefs = new Prefs(context);
             case "Test Record":
                 dialogMessage = context.getString(R.string.help_text_test_record);
                 break;
-            case "Upload Recordings":
-                dialogMessage = context.getString(R.string.help_text_upload_files);
+            case "Manage Recordings":
+                dialogMessage = context.getString(R.string.help_text_manage_recordings);
                 break;
             case "App Vitals":
                 dialogMessage = context.getString(R.string.help_text_app_vitals);
@@ -1183,4 +1183,37 @@ Prefs prefs = new Prefs(context);
         dialog.show();
     }
 
+    static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context){
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    File recordingsFolder = Util.getRecordingsFolder(context);
+
+                    for (File file : recordingsFolder.listFiles()){
+                        file.delete();
+                    }
+
+                    if (getNumberOfRecordings(context) == 0){
+                        Util.broadcastAMessage(context, "recordings_successfully_deleted");
+
+                    }else{
+                        Util.broadcastAMessage(context, "problem_deleteing_recordings");
+                    }
+
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+    static int getNumberOfRecordings(Context context){
+        File recordingsFolder = Util.getRecordingsFolder(context);
+        File recordingFiles[] = recordingsFolder.listFiles();
+        return recordingFiles.length;
+    }
 }

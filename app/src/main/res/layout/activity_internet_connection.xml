@@ -24,7 +24,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="4dp"
         android:onClick="back"
-        android:text="Back - Home"
+        android:text="Back - Recordings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -55,29 +55,12 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/btnBack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10">
 
         <View
             android:id="@+id/divider10"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:background="?android:attr/listDivider" />
-
-        <RadioButton
-            android:id="@+id/rbOnline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onInternetModeRadioButtonClicked"
-            android:padding="@dimen/fab_margin_small"
-            android:text="Online"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <View
-            android:id="@+id/divider9"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="1"
@@ -91,6 +74,23 @@
             android:onClick="onInternetModeRadioButtonClicked"
             android:padding="@dimen/fab_margin_small"
             android:text="Normal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <View
+            android:id="@+id/divider9"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider" />
+
+        <RadioButton
+            android:id="@+id/rbOnline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onInternetModeRadioButtonClicked"
+            android:padding="@dimen/fab_margin_small"
+            android:text="Online"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <View

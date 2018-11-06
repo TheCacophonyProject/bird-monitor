@@ -68,6 +68,8 @@ public class InternetConnectionActivity extends AppCompatActivity implements Idl
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
+            Intent intent = new Intent(this, ManageRecordingsActivity.class);
+            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

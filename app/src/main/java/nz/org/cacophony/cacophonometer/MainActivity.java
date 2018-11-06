@@ -3,24 +3,12 @@ package nz.org.cacophony.cacophonometer;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +16,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -231,7 +218,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     public void launchAdvancedActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, InternetConnectionActivity.class);
+           // Intent intent = new Intent(this, InternetConnectionActivity.class);
+            Intent intent = new Intent(this, ManageRecordingsActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

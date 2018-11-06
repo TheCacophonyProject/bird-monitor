@@ -89,18 +89,18 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
 
 
-    public void next(@SuppressWarnings("UnusedParameters") View v) {
-
-        try {
-            Intent intent = new Intent(this, UploadFilesActivity.class);
-            startActivity(intent);
-
-            finish();
-
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-    }
+//    public void next(@SuppressWarnings("UnusedParameters") View v) {
+//
+//        try {
+//            Intent intent = new Intent(this, UploadFilesActivity.class);
+//            startActivity(intent);
+//
+//            finish();
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//    }
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
