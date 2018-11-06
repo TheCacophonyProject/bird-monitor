@@ -1155,7 +1155,7 @@ Prefs prefs = new Prefs(context);
             case "Test Record":
                 dialogMessage = context.getString(R.string.help_text_test_record);
                 break;
-            case "Upload Files":
+            case "Upload Recordings":
                 dialogMessage = context.getString(R.string.help_text_upload_files);
                 break;
             case "App Vitals":
