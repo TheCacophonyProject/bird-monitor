@@ -72,7 +72,8 @@ public class GPSActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            Intent intent = new Intent(this, RootedActivity.class);
+            //Intent intent = new Intent(this, RootedActivity.class);
+            Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             finish();
         } catch (Exception ex) {

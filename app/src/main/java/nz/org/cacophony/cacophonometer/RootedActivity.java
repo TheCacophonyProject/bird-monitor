@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -58,8 +60,15 @@ public class RootedActivity extends AppCompatActivity {
     public void next(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            Intent intent = new Intent(this, GPSActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, GPSActivity.class);
+//            startActivity(intent);
+            final Prefs prefs = new Prefs(getApplicationContext());
+            if (prefs.getSettingsForTestServerEnabled()){
+                final Button btnNext = (Button)findViewById(R.id.btnNext);
+               // btnNext.setText("Next - Testing");
+                Intent intent = new Intent(this, TestingActivity.class);
+                startActivity(intent);
+            }
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -69,7 +78,8 @@ public class RootedActivity extends AppCompatActivity {
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            Intent intent = new Intent(this, RegisterActivity.class);
+           // Intent intent = new Intent(this, RegisterActivity.class);
+            Intent intent = new Intent(this, FrequencyActivity.class);
             startActivity(intent);
             finish();
 

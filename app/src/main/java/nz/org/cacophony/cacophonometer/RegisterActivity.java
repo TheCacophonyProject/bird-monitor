@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Message;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -17,9 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class RegisterActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
@@ -45,15 +43,65 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
     @Override
     public void onResume() {
         super.onResume();
-        Prefs prefs = new Prefs(getApplicationContext());
+
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+        displayOrHideGUIObjects();
+    }
+
+    void displayOrHideGUIObjects(){
+        Prefs prefs = new Prefs(getApplicationContext());
+        if ( prefs.getGroupName() != null && prefs.getDeviceName() != null) {
+            // Phone is registered
+            // Phone is NOT registered
+            //Input fields to be INVISIBLE
+            findViewById(R.id.setupGroupNameInput).setVisibility(View.INVISIBLE);
+            findViewById(R.id.setupDeviceNameInput).setVisibility(View.INVISIBLE);
+
+            //Set appropriate messages
+
+            ((TextView) findViewById(R.id.tvTitleMessage)).setText(getString(R.string.register_title_registered));
+            ((TextView) findViewById(R.id.tvGroupName)).setText(getString(R.string.group_name_registered) + prefs.getGroupName());
+            ((TextView) findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_registered) + prefs.getDeviceName());
+
+            //Only unregister button is visible
+            findViewById(R.id.btnRegister).setVisibility(View.INVISIBLE);
+            findViewById(R.id.btnUnRegister).setVisibility(View.VISIBLE);
+
+            //Nudge use to Next Step button
+            findViewById(R.id.btnNext).requestFocus();
+            findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.colorAlert));
+
+
+        }else{
+            // Phone is NOT registered
+            //Input fields to be visible
+            findViewById(R.id.setupGroupNameInput).setVisibility(View.VISIBLE);
+            findViewById(R.id.setupDeviceNameInput).setVisibility(View.VISIBLE);
+
+            //Set appropriate messages
+
+            ((TextView) findViewById(R.id.tvTitleMessage)).setText(getString(R.string.register_title_unregistered));
+            ((TextView) findViewById(R.id.tvGroupName)).setText(getString(R.string.group_name_unregistered));
+            ((TextView) findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_unregistered));
+
+           //Only register button is visible
+            findViewById(R.id.btnRegister).setVisibility(View.VISIBLE);
+            findViewById(R.id.btnUnRegister).setVisibility(View.INVISIBLE);
+
+            //Nudge user to Enter Group Name box
+            //Nudge use to Next Step button
+            findViewById(R.id.tvGroupName).requestFocus();
+            findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.accent));
+        }
+
 
         if ( prefs.getGroupName() != null) {
-            ((TextView) findViewById(R.id.tvGroup)).setText("Group - " + prefs.getGroupName());
+            ((TextView) findViewById(R.id.tvGroupName)).setText("Group - " + prefs.getGroupName());
         }
         if ( prefs.getDeviceName() != null) {
             ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
+
         }
     }
 
@@ -199,9 +247,9 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             prefs.setToken(null);
 
             Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
-
-                ((TextView) findViewById(R.id.tvGroup)).setText("Group");
-                ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name");
+            displayOrHideGUIObjects();
+//                ((TextView) findViewById(R.id.tvGroupName)).setText("Group");
+//                ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name");
 
 
            // Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
@@ -214,15 +262,22 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
-
         try {
-
-            Intent intent = new Intent(this, RootedActivity.class);
+            Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
+
+//        try {
+//
+//            Intent intent = new Intent(this, RootedActivity.class);
+//            startActivity(intent);
+//            finish();
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
     }
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
@@ -279,10 +334,12 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
                        Util.getToast(getApplicationContext(),messageToDisplay, false ).show();
                        registerIdlingResource.decrement();
                        try {
-                           ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
-                           ((TextView) findViewById(R.id.setupDeviceNameInput)).setText("");
-                           ((TextView) findViewById(R.id.tvGroup)).setText("Group - " + prefs.getGroupName());
-                           ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
+                           displayOrHideGUIObjects();
+
+//                           ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
+//                           ((TextView) findViewById(R.id.setupDeviceNameInput)).setText("");
+//                           ((TextView) findViewById(R.id.tvGroupName)).setText("Group - " + prefs.getGroupName());
+//                           ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
 
                        }catch (Exception ex){
                            Log.e(TAG, ex.getLocalizedMessage());

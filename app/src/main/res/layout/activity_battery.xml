@@ -40,7 +40,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="back"
-        android:text="Back - Sound"
+        android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -53,7 +53,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="next"
-        android:text="Next - Frequency"
+        android:text="Next - Step"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -161,8 +161,14 @@ https://cacophony.org.nz/
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+        completions."</string>
+    <string name="register_title_unregistered">Please Register your phone.</string>
+    <string name="register_title_registered">Great - your phone has been registered. Press the \'NEXT STEP\' button to proceed.</string>
+
+    <string name="group_name_unregistered">Create a Group on the Cacophony server and enter it in the box below.</string>
+    <string name="group_name_registered">Group name is: </string>
+    <string name="device_name_unregistered">Make up any name of at least 4 characters that you like for your device and enter it below (you do not create this name on the server).</string>
+    <string name="device_name_registered">Device name is: </string>
 
 
 </resources>

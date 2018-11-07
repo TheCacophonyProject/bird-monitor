@@ -125,7 +125,8 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, FrequencyActivity.class);
+//            Intent intent = new Intent(this, FrequencyActivity.class);
+            Intent intent = new Intent(this, RootedActivity.class);
             startActivity(intent);
             finish();
         } catch (Exception ex) {

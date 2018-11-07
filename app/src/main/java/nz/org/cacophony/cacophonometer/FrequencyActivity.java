@@ -32,9 +32,9 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
         final Prefs prefs = new Prefs(getApplicationContext());
         final Button btnNext = (Button)findViewById(R.id.btnNext);
-        if (prefs.getSettingsForTestServerEnabled()){
-            btnNext.setText("Next - Testing");
-        }
+//        if (prefs.getSettingsForTestServerEnabled()){
+//            btnNext.setText("Next - Testing");
+//        }
 
         final Switch switchUseFrequentRecordings = findViewById(R.id.swRecordMoreOften);
         switchUseFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -100,13 +100,17 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            final Prefs prefs = new Prefs(getApplicationContext());
-            if (prefs.getSettingsForTestServerEnabled()){
-                final Button btnNext = (Button)findViewById(R.id.btnNext);
-                btnNext.setText("Next - Testing");
-                Intent intent = new Intent(this, TestingActivity.class);
-                startActivity(intent);
-            }
+
+            Intent intent = new Intent(this, RootedActivity.class);
+            startActivity(intent);
+
+//            final Prefs prefs = new Prefs(getApplicationContext());
+//            if (prefs.getSettingsForTestServerEnabled()){
+//                final Button btnNext = (Button)findViewById(R.id.btnNext);
+//                btnNext.setText("Next - Testing");
+//                Intent intent = new Intent(this, TestingActivity.class);
+//                startActivity(intent);
+//            }
 
             finish();
         } catch (Exception ex) {
