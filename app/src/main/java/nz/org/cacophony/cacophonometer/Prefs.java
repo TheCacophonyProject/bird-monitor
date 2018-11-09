@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.util.Arrays;
-import java.util.Date;
-
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
@@ -26,31 +23,37 @@ class Prefs {
     private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Test Server URL
 
 
-    private static final String PASSWORD_KEY = "PASSWORD";
+    private static final String DEVICE_PASSWORD_KEY = "PASSWORD";
+    private static final String USERNAME_PASSWORD_KEY = "USERNAME_PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
+    private static final String USERNAME_KEY = "USERNAME";
     private static final String GROUP_NAME_KEY = "GROUP_NAME";
-    private static final String TOKEN_KEY = "TOKEN";
-    private static final long TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
-    private static final String TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
+    private static final String DEVICE_TOKEN_KEY = "TOKEN";
+    private static final String USER_TOKEN_KEY = "USER_TOKEN";
+    private static final long DEVICE_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
+    private static final String DEVICE_TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
+    private static final long USER_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
+    private static final String USER_TOKEN_LAST_REFRESHED_KEY = "USERNAME_TOKEN_LAST_REFRESHED";
+    private static final String EMAIL_ADDRESS_KEY = "EMAIL_ADDRESS";
+
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
-//private static final double RECORDING_DURATION_SECONDS = 1; // for testing Walking mode
 
     private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
-    //private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 60*3;  // 2 minutes for testing walking mode
+
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
 
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
-    //  private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 60; // 1 minute for testing
+
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
@@ -86,7 +89,6 @@ class Prefs {
     private static final String IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
 
     private static final String USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
-    private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
     private static final String ONLINE_MODE_KEY = "ONLINE_MODE";
     private static final String PLAY_WARNING_SOUND_KEY = "PLAY_WARNING_SOUND";
 
@@ -98,7 +100,6 @@ class Prefs {
     private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
 
     private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
-    private static final String MODE_KEY = "MODE";
 
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
 
@@ -112,13 +113,12 @@ class Prefs {
     private static final String BUTTON_DEFAULT_BACKGROUND_COLOR_KEY = "BUTTON_DEFAULT_BACKGROUND_COLOR";
 
 
-
     public Prefs(Context context) {
         this.context = context;
     }
 
-    public static long getTokenTimeoutSeconds() {
-        return TOKEN_TIMEOUT_SECONDS;
+    public static long getDeviceTokenTimeoutSeconds() {
+        return DEVICE_TOKEN_TIMEOUT_SECONDS;
     }
 
 
@@ -212,45 +212,57 @@ class Prefs {
         }
     }
 
-    String getPassword() {
-        return getString(PASSWORD_KEY);
+    String getDevicePassword() {
+        return getString(DEVICE_PASSWORD_KEY);
     }
 
-    void setPassword(String password) {
-        setString(PASSWORD_KEY, password);
+
+    void setDevicePassword(String devicePassword) {
+        setString(DEVICE_PASSWORD_KEY, devicePassword);
     }
 
     public String getDeviceName() {
         return getString(DEVICE_NAME_KEY);
     }
 
-//    String getMode() {
-//        String mode = getString(MODE_KEY);
-//        if (mode == null) {
-//            mode = "off";
-//        }
-//        return mode;
-//    }
+    String getUsernamePassword() {
+        return getString(USERNAME_PASSWORD_KEY);
+    }
 
-//    void setMode(String mode) {
-//        setString(MODE_KEY, mode);
-//    }
+    void setUsernamePassword(String usernamePassword) {
+        setString(USERNAME_PASSWORD_KEY, usernamePassword);
+    }
+
+    void setUsername(String username) {
+        setString(USERNAME_KEY, username);
+    }
+
+    String getUsername() {
+        return getString(USERNAME_KEY);
+    }
+
+    String getEmailAddress() {
+        return getString(EMAIL_ADDRESS_KEY);
+    }
+
+    void setEmailAddress(String emailAddress) {
+        setString(EMAIL_ADDRESS_KEY, emailAddress);
+    }
+
 
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
 
-    void setToken(String token) {
-        setString(TOKEN_KEY, token);
+    void setDeviceToken(String deviceToken) {
+        setString(DEVICE_TOKEN_KEY, deviceToken);
     }
 
-//    void setTheNextSingleStandardAlarmUsingDelay(long delayInMillisecs){
-//        // need to covert this delay into unix time
-//        Date date = new Date();
-//        long currentUnixTime = date.getTime();
-//        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
-//        setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
-//    }
+    void setUserToken(String userToken) {
+        setString(USER_TOKEN_KEY, userToken);
+    }
+
+
 
     void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
         setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
@@ -334,15 +346,19 @@ class Prefs {
     }
 
     String getToken() {
-        return getString(TOKEN_KEY);
+        return getString(DEVICE_TOKEN_KEY);
     }
 
     long getTokenLastRefreshed() {
-        return getLong(TOKEN_LAST_REFRESHED_KEY);
+        return getLong(DEVICE_TOKEN_LAST_REFRESHED_KEY);
     }
 
     void setTokenLastRefreshed(long timeTokenLastRefreshed) {
-        setLong(TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
+        setLong(DEVICE_TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
+    }
+
+    void setUserTokenLastRefreshed(long timeUserTokenLastRefreshed) {
+        setLong(USER_TOKEN_LAST_REFRESHED_KEY, timeUserTokenLastRefreshed);
     }
 
     String getGroupName() {

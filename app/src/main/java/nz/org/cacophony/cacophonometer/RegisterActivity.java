@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -242,17 +241,13 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
             Prefs prefs = new Prefs(getApplicationContext());
             prefs.setGroupName(null);
-            prefs.setPassword(null);
+            prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
-            prefs.setToken(null);
+            prefs.setDeviceToken(null);
 
             Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
             displayOrHideGUIObjects();
-//                ((TextView) findViewById(R.id.tvGroupName)).setText("Group");
-//                ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name");
 
-
-           // Util.broadcastAMessage(getApplicationContext(), "refresh_vitals_displayed_text");
         }catch(Exception ex){
             Log.e(TAG, "Error Un-registering device.");
         }
@@ -270,22 +265,12 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             Log.e(TAG, ex.getLocalizedMessage());
         }
 
-//        try {
-//
-//            Intent intent = new Intent(this, RootedActivity.class);
-//            startActivity(intent);
-//            finish();
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
     }
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
 
-//            Intent intent = new Intent(this, MainActivity2.class);
-//            startActivity(intent);
             finish();
 
         } catch (Exception ex) {
@@ -336,10 +321,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
                        try {
                            displayOrHideGUIObjects();
 
-//                           ((TextView) findViewById(R.id.setupGroupNameInput)).setText("");
-//                           ((TextView) findViewById(R.id.setupDeviceNameInput)).setText("");
-//                           ((TextView) findViewById(R.id.tvGroupName)).setText("Group - " + prefs.getGroupName());
-//                           ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
+
 
                        }catch (Exception ex){
                            Log.e(TAG, ex.getLocalizedMessage());

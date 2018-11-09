@@ -101,6 +101,8 @@
             android:name=".DisableActivity"
             android:label="@string/title_activity_turn_off_or_on" />
 
+        <activity android:name=".SignupActivity"
+            android:label="@string/title_activity_signup" />
     </application>
 
 </manifest>

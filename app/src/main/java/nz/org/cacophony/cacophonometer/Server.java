@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,12 +30,11 @@ class Server {
 
     private static final String TAG = Server.class.getName();
 
-   // private static final String UPLOAD_AUDIO_API_URL = "/api/v1/audiorecordings";
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String REGISTER_URL = "/api/v1/devices";
+    private static final String SIGNUP_URL = "/api/v1/users";
 
-    // static boolean serverConnection = false;
     private static String errorMessage = null;
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -76,11 +74,11 @@ class Server {
             }
 
             String devicename = prefs.getDeviceName();
-            String password = prefs.getPassword();
+            String devicePassword = prefs.getDevicePassword();
             String group = prefs.getGroupName();
 
 
-            if (devicename == null || password == null || group == null) {
+            if (devicename == null || devicePassword == null || group == null) {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
@@ -92,7 +90,7 @@ class Server {
             String serverUrl = prefs.getServerUrl() + LOGIN_URL;
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("devicename", devicename);
-            jsonParam.put("password", password);
+            jsonParam.put("password", devicePassword);
 
             HttpURLConnection myConnection = openURL(serverUrl);
 
@@ -118,18 +116,18 @@ class Server {
                 JSONObject joRes = new JSONObject(responseLine);
                 if (joRes.getBoolean("success")) {
 
-                    Log.i(TAG, "Successful login."); prefs.setToken(joRes.getString("token"));
+                    Log.i(TAG, "Successful login."); prefs.setDeviceToken(joRes.getString("token"));
                     Log.d(TAG, "Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
                 } else { // not success
-                    prefs.setToken(null);
+                    prefs.setDeviceToken(null);
                     Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
                 Log.e(TAG, "Invalid devicename or password for login.");
-                prefs.setToken(null);
+                prefs.setDeviceToken(null);
             }
 
         } catch (Exception ex) {
@@ -259,7 +257,7 @@ class Server {
                 if (joRes.getBoolean("success")) {
                     registered = true;
 
-                    prefs.setToken(joRes.getString("token"));
+                    prefs.setDeviceToken(joRes.getString("token"));
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
                     // look at web token
@@ -270,7 +268,7 @@ class Server {
                  //   prefs.setDeviceName(devicename);
                     prefs.setDeviceName(deviceName);
                     prefs.setGroupName(group);
-                    prefs.setPassword(password);
+                    prefs.setDevicePassword(password);
 
                     prefs.setDeviceId(deviceID);
                     Util.broadcastAMessage(context,"REGISTER_SUCCESS");
@@ -309,6 +307,122 @@ class Server {
         }
 
         return registered;
+    }
+
+    static boolean signUp(final String username, final String emailAddress, final String usernamePassword, final Context context) {
+
+        boolean signedUp = false;
+        final Prefs prefs = new Prefs(context);
+
+        // https://stackoverflow.com/questions/42767249/android-post-request-with-json
+        String registerUrl = prefs.getServerUrl() + SIGNUP_URL;
+
+        try {
+            HttpURLConnection myConnection = openURL(registerUrl);
+
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("username", username);
+            jsonParam.put("password", usernamePassword);
+            jsonParam.put("email", emailAddress);
+            DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
+            os.writeBytes(jsonParam.toString());
+            os.flush();
+
+
+            //  Here you read any answer from server.
+            if (myConnection == null){
+                Log.e(TAG, "myConnection is null");
+                return false;
+            }
+
+
+            Log.i("MSG", myConnection.getResponseMessage());
+            String responseCode = String.valueOf(myConnection.getResponseCode());
+            // 26 Sept 2018
+            // If the device name is already in use, the server returns a 422, and attempting to read
+            // the normal stream with getInputStream throws a FileNotFoundException, so instead
+            // read getErrorStream
+            // https://developer.android.com/reference/java/net/HttpURLConnection.html#getErrorStream()
+            BufferedReader serverAnswer;
+            if (responseCode.equalsIgnoreCase("422")) {
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getErrorStream()));
+            }else{
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+            }
+            String responseLine;
+
+            responseLine = serverAnswer.readLine();
+            os.close();
+            serverAnswer.close();
+
+
+            myConnection.disconnect();
+            String responseString = new String(responseLine);
+            JSONObject joResponseString = new JSONObject(responseString);
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("activityName", "SignupActivity");
+
+            if (responseCode.equalsIgnoreCase("200")) {
+
+
+                if (joResponseString.getBoolean("success")) {
+                    signedUp = true;
+
+                    prefs.setUserToken(joResponseString.getString("token"));
+                    prefs.setUserTokenLastRefreshed(new Date().getTime());
+                    prefs.setUsername(username);
+                    prefs.setUsernamePassword(usernamePassword);
+                    prefs.setEmailAddress(emailAddress);
+
+                    jsonObjectMessageToBroadcast.put("responseCode", 200);
+                    messageToDisplay = "Success, you have successfully signed up";
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                    Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+                } else {
+                    // Failed register.
+                    Log.w(TAG, "Failed to signup");
+                    signedUp = false;
+                    jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                    messageToDisplay = "Sorry - failed to sign up";
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                    Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+                }
+            } else if (responseCode.equalsIgnoreCase("422")){ // 422 error response
+                Log.w(TAG, "Signup Response from server is 422");
+
+
+                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                String errorType = joResponseString.getString("errorType");
+                String message = joResponseString.getString("message");
+
+                if (errorType.equalsIgnoreCase("validation")){
+                    if (message.equalsIgnoreCase("email: email in use")){
+                        messageToDisplay = "Sorry this email address is already being used.";
+                    }else if (message.equalsIgnoreCase("email: Invalid value")){
+                        messageToDisplay = "Sorry this email address is not valid.";
+                    }else{
+                        messageToDisplay = "Sorry there is a problem with email address";
+                    }
+                }
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+            }else { // 422 error response
+                Log.w(TAG, "Signup Response from server is " + responseCode);
+
+                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                String errorType = joResponseString.getString("errorType");
+                String message = joResponseString.getString("message");
+                messageToDisplay = "Unable to sign up (ErrorType is " + errorType + " Message is " + message; // needs improving, find out what the other error codes might be?
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return signedUp;
     }
 
 

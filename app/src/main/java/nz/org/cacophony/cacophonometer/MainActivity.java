@@ -235,7 +235,15 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     }
 
+    public void launchSignupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
+        try {
+            Intent intent = new Intent(this, SignupActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
 
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {

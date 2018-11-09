@@ -23,6 +23,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -253,15 +254,15 @@ class Util {
         return jObject.getString("id");
     }
 
-    static String getDeviceName(String webToken) throws Exception {
-        if (webToken == null){
-            return "";
-        }
-
-        String webTokenBody = Util.decoded(webToken);
-        JSONObject jObject = new JSONObject(webTokenBody);
-        return jObject.getString("deviceName");
-    }
+//    static String getDeviceName(String webToken) throws Exception {
+//        if (webToken == null){
+//            return "";
+//        }
+//
+//        String webTokenBody = Util.decoded(webToken);
+//        JSONObject jObject = new JSONObject(webTokenBody);
+//        return jObject.getString("deviceName");
+//    }
 
     /**
      * Extracts the webtoken from the actual token
@@ -790,10 +791,10 @@ private static void executeCommandTim(Context context, String command){
        }
        long currentTimeMilliSeconds = new Date().getTime();
        long tokenLastRefreshedMilliSeconds = prefs.getTokenLastRefreshed();
-       long tokenTimeOutSeconds = Prefs.getTokenTimeoutSeconds();
+       long tokenTimeOutSeconds = Prefs.getDeviceTokenTimeoutSeconds();
        long tokenTimeOutMilliSeconds = tokenTimeOutSeconds * 1000;
        if ((currentTimeMilliSeconds-tokenLastRefreshedMilliSeconds) > tokenTimeOutMilliSeconds){
-           prefs.setToken(null);
+           prefs.setDeviceToken(null);
            Log.d(TAG, "Web token out of date and so set to null");
           // Server.loggedIn = false;
            return false;
@@ -1215,5 +1216,10 @@ Prefs prefs = new Prefs(context);
         File recordingsFolder = Util.getRecordingsFolder(context);
         File recordingFiles[] = recordingsFolder.listFiles();
         return recordingFiles.length;
+    }
+
+    //https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
+     public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 }
