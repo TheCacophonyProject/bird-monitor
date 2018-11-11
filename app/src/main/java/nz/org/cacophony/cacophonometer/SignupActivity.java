@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-public class SignupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{    private static final String TAG = SignupActivity.class.getName();
+public class SignupActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
+
+    private static final String TAG = SignupActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

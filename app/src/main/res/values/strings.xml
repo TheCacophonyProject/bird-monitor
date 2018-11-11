@@ -19,8 +19,10 @@
     <string name="title_activity_settings_for_testing">Settings for Testing</string>
     <string name="title_activity_turn_off_or_on">Turn Off or On</string>
     <string name="title_activity_signup">Sign Up</string>
+    <string name="title_activity_welcome">Welcome</string>
+    <string name="title_activity_account_question">Cacophony Account?</string>
 
-    title_activity_signup
+
 
     <string name="app_vitals">App Vitals</string>
     <string name="required_permissions">Required Permissions: ?</string>

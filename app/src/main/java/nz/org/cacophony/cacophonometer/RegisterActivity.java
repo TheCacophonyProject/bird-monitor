@@ -270,6 +270,14 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
     public void back(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
+            Intent intent = getIntent();
+            String sendingActivity = intent.getStringExtra("sending_activity");
+            if (sendingActivity != null) {
+                if (sendingActivity.equalsIgnoreCase("WelcomeActivity")) {
+                    Intent backIntent = new Intent(this, WelcomeActivity.class);
+                    startActivity(backIntent);
+                }
+            }
 
             finish();
 

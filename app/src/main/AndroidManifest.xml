@@ -54,13 +54,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_icon_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:label="@string/app_icon_name"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".VitalsActivity"
             android:label="@string/title_activity_vitals" />
@@ -100,9 +95,20 @@
         <activity
             android:name=".DisableActivity"
             android:label="@string/title_activity_turn_off_or_on" />
-
-        <activity android:name=".SignupActivity"
+        <activity
+            android:name=".SignupActivity"
             android:label="@string/title_activity_signup" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:label="@string/title_activity_welcome">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+        <activity android:name=".AccountQuestionActivity"
+            android:label="@string/title_activity_account_question" />
+
     </application>
 
 </manifest>
