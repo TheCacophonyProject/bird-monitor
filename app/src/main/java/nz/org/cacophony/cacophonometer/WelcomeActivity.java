@@ -36,7 +36,7 @@ public class WelcomeActivity extends AppCompatActivity implements IdlingResource
             intent.setType("text/plain");
             intent.putExtra("sending_activity", "WelcomeActivity");
             startActivity(intent);
-            finish();
+           // finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -48,7 +48,7 @@ public class WelcomeActivity extends AppCompatActivity implements IdlingResource
         try {
             Intent intent = new Intent(this, AccountQuestionActivity.class);
             startActivity(intent);
-            finish();
+         //   finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

@@ -54,8 +54,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_icon_name"/>
-
+            android:label="@string/app_icon_name" />
         <activity
             android:name=".VitalsActivity"
             android:label="@string/title_activity_vitals" />
@@ -101,14 +100,21 @@
         <activity
             android:name=".WelcomeActivity"
             android:label="@string/title_activity_welcome">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-        <activity android:name=".AccountQuestionActivity"
-            android:label="@string/title_activity_account_question" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AccountQuestionActivity"
+            android:label="@string/title_activity_account_question" />
+        <activity
+            android:name=".SigninActivity"
+            android:label="@string/title_activity_signin" />
+        <activity
+            android:name=".GroupActivity"
+            android:label="@string/title_activity_group" />
     </application>
 
 </manifest>

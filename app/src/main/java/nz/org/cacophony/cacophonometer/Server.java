@@ -32,6 +32,7 @@ class Server {
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
+    private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
     private static final String SIGNUP_URL = "/api/v1/users";
 
@@ -144,6 +145,117 @@ class Server {
 
 
     }
+
+    static void loginUser(Context context) {
+        final Prefs prefs = new Prefs(context);
+
+        try {
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+
+            Util.disableFlightMode(context);
+
+            // Now wait for network connection as setFlightMode takes a while
+            if (!Util.waitForNetworkConnection(context, true)) {
+                Log.e(TAG, "Failed to disable airplane mode");
+                jsonObjectMessageToBroadcast.put("responseCode", -1);
+                jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+                messageToDisplay = "Unable to get an internet connection";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+                return;
+            }
+
+            String userName = prefs.getUsername();
+            String usernameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+            String userNamePassword = prefs.getUsernamePassword();
+
+            if (usernameOrEmailAddress == null){
+                usernameOrEmailAddress = userName;
+            }
+
+
+
+            if (usernameOrEmailAddress == null || userNamePassword == null ) {
+
+                // One or more credentials are null, so can not attempt to login.
+                Log.e(TAG, "No credentials to login with.");
+                jsonObjectMessageToBroadcast.put("responseCode", -1);
+                jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+                messageToDisplay = "Error: Username/email address or password can not be missing";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+                return ;
+            }
+
+
+            String serverUrl = prefs.getServerUrl() + LOGIN_USER_URL;
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("nameOrEmail", usernameOrEmailAddress);
+            jsonParam.put("password", userNamePassword);
+
+            HttpURLConnection myConnection = openURL(serverUrl);
+
+            DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
+            os.writeBytes(jsonParam.toString());
+            os.flush();
+
+            //  Here you read any answer from server.
+            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+            String responseLine;
+
+            responseLine = serverAnswer.readLine();
+            os.close();
+            serverAnswer.close();
+
+            Log.i("MSG", myConnection.getResponseMessage());
+            String responseCode = String.valueOf(myConnection.getResponseCode());
+
+            myConnection.disconnect();
+
+
+            if (responseCode.equalsIgnoreCase("200")) {
+
+
+                JSONObject joRes = new JSONObject(responseLine);
+                if (joRes.getBoolean("success")) {
+
+                    Log.i(TAG, "Successful authentication.");
+                    prefs.setUserToken(joRes.getString("token"));
+                    Log.d(TAG, "User Web token has been refreshed");
+                    prefs.setTokenLastRefreshed(new Date().getTime());
+
+                    jsonObjectMessageToBroadcast.put("responseCode", 200);
+                    jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+                    messageToDisplay = "Success, you have successfully signed in";
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                    Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+
+                } else { // not success
+                    prefs.setUserToken(null);
+                    jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                    jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+                    messageToDisplay = "Error, unable to sign in";
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                    Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+                }
+
+            } else { // STATUS not OK
+                Log.e(TAG, "Invalid user for login.");
+                prefs.setUserToken(null);
+                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+                messageToDisplay = "Error, unable to sign in";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+            }
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
 
     private static HttpURLConnection openURL(String serverUrl) {
         HttpURLConnection conn = null;

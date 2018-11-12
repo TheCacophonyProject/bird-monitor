@@ -19,9 +19,10 @@
     <string name="title_activity_settings_for_testing">Settings for Testing</string>
     <string name="title_activity_turn_off_or_on">Turn Off or On</string>
     <string name="title_activity_signup">Sign Up</string>
+    <string name="title_activity_signin">Sign In</string>
+    <string name="title_activity_group">Setup Group</string>
     <string name="title_activity_welcome">Welcome</string>
     <string name="title_activity_account_question">Cacophony Account?</string>
-
 
 
     <string name="app_vitals">App Vitals</string>
@@ -173,6 +174,8 @@ https://cacophony.org.nz/
     <string name="group_name_registered">Group name is: </string>
     <string name="device_name_unregistered">Make up any name of at least 4 characters that you like for your device and enter it below (you do not create this name on the server).</string>
     <string name="device_name_registered">Device name is: </string>
+    <string name="username_or_email_address_message">Enter your Cacophony username or email address.</string>
+    <string name="password_message">Enter your Cacophony password.</string>
 
 
 </resources>

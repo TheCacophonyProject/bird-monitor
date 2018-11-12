@@ -35,6 +35,7 @@ class Prefs {
     private static final long USER_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
     private static final String USER_TOKEN_LAST_REFRESHED_KEY = "USERNAME_TOKEN_LAST_REFRESHED";
     private static final String EMAIL_ADDRESS_KEY = "EMAIL_ADDRESS";
+    private static final String USERNAME_OR_EMAIL_ADDRESS_KEY = "USERNAME_OR_EMAIL_ADDRESS";
 
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
@@ -245,9 +246,21 @@ class Prefs {
         return getString(EMAIL_ADDRESS_KEY);
     }
 
+    void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
+        setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
+    }
+
+
+    String getUserNameOrEmailAddress() {
+        return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
+    }
+
     void setEmailAddress(String emailAddress) {
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
+
+
+
 
 
     void setDeviceName(String name) {
