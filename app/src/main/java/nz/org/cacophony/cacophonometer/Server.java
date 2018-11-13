@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +36,8 @@ class Server {
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
     private static final String SIGNUP_URL = "/api/v1/users";
+    private static final String GROUPS_URL = "/api/v1/groups";
+
 
     private static String errorMessage = null;
     private static boolean uploading = false;
@@ -222,7 +225,8 @@ class Server {
                 if (joRes.getBoolean("success")) {
 
                     Log.i(TAG, "Successful authentication.");
-                    prefs.setUserToken(joRes.getString("token"));
+                    String userToken = joRes.getString("token");
+                    prefs.setUserToken(userToken);
                     Log.d(TAG, "User Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
@@ -273,6 +277,34 @@ class Server {
             }
 
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+        return conn;
+    }
+
+    private static HttpURLConnection openURLGet(String serverUrl) {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(serverUrl);
+            switch (url.getProtocol()) {
+                case "http":
+                    conn = (HttpURLConnection) url.openConnection();
+                    break;
+                case "https":
+                    conn = openHttpsURL(url);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported protocol");
+            }
+
+            conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
@@ -605,5 +637,75 @@ class Server {
         return errorMessage;
     }
 
+    static ArrayList<String> getGroups(Context context) {
+        final Prefs prefs = new Prefs(context);
+        ArrayList<String> groups  = new ArrayList<String>();
+        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+        String charset = "UTF-8";
 
+        try {
+            HttpURLConnection conn = openURLGet(groupsUrl);
+            String authorization = prefs.getUserToken();
+            Log.e(TAG, authorization);
+            conn.setRequestProperty("authorization", authorization);
+
+            JSONObject jsonParam = new JSONObject();
+            try {
+                jsonParam.put("where", "{}");
+
+            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+            os.writeBytes(jsonParam.toString());
+            os.flush();
+
+            conn.connect();
+
+            if (conn.getResponseCode() != 200) {
+                int responseCode = conn.getResponseCode();
+                Log.e(TAG, "responseCode is: " + responseCode);
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
+
+            String assembledOutput = "";
+
+            BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            System.out.println("Output from Server:\n");
+            while ((output = responseBuffer.readLine()) != null) {
+                System.out.println(output);
+                assembledOutput = assembledOutput + output;
+            }
+
+            conn.disconnect();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+//            //  Here you read any answer from server.
+//            if (conn == null){
+//                Log.e(TAG, "conn is null");
+//                return null;
+//            }
+//            Log.i(TAG, "SERVER REPLIED:");
+//            try {
+//                uploadSuccess = false;
+//                for (String line : responseString) {
+//                    JSONObject joRes = new JSONObject(line);
+//                   Log.e(TAG,joRes.toString() );
+//
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+
+        } catch (IOException ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }finally {
+            uploading = false;
+        }
+        return groups;
+    }
 }

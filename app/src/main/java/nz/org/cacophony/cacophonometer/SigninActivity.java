@@ -198,7 +198,8 @@ public class SigninActivity extends AppCompatActivity {
 
                         if (responseCode == 200){
                             Util.getToast(getApplicationContext(),messageToDisplay, false ).show();
-                            nextActivity();
+                            Util.getGroupsFromServer(getApplicationContext());
+                         //   nextActivity();
                         }else{
                             Util.getToast(getApplicationContext(),messageToDisplay, true ).show();
                         }

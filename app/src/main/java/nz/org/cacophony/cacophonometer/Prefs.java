@@ -113,6 +113,9 @@ class Prefs {
     private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
     private static final String BUTTON_DEFAULT_BACKGROUND_COLOR_KEY = "BUTTON_DEFAULT_BACKGROUND_COLOR";
 
+    private static final String GROUPS_KEY = "GROUPS";
+
+
 
     public Prefs(Context context) {
         this.context = context;
@@ -273,6 +276,10 @@ class Prefs {
 
     void setUserToken(String userToken) {
         setString(USER_TOKEN_KEY, userToken);
+    }
+
+    String getUserToken() {
+        return getString(USER_TOKEN_KEY);
     }
 
 
@@ -711,6 +718,14 @@ class Prefs {
             Log.e(TAG, ex.getLocalizedMessage());
             return 0;
         }
+    }
+
+    void setGroups(String groups){
+        setString(GROUPS_KEY, groups);
+    }
+
+      String getGroups(){
+        return getString(GROUPS_KEY);
     }
 
 }

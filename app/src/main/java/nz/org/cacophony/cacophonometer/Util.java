@@ -31,6 +31,8 @@ import android.widget.Toast;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -42,6 +44,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -1221,5 +1224,63 @@ Prefs prefs = new Prefs(context);
     //https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
      public final static boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+
+    public static void setGroups(Context context, ArrayList<String> groupsArrayList){
+        try {
+            JSONArray groupsArrayJSON = new JSONArray();
+            for (String group : groupsArrayList) {
+                groupsArrayJSON.put(group);
+            }
+
+            JSONObject jsonGroups = new JSONObject();
+            jsonGroups.put("groups", groupsArrayJSON);
+
+            String groupsAsJsonString = jsonGroups.toString();
+            Prefs prefs = new Prefs(context);
+            prefs.setGroups(groupsAsJsonString);
+
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public static  ArrayList<String> getGroups(Context context){
+        Prefs prefs = new Prefs(context);
+        ArrayList<String> groups  = new ArrayList<String>();
+        String groupsString = prefs.getGroups();
+        try {
+            JSONObject jsonGroups = new JSONObject(groupsString);
+            JSONArray groupsArrayJSON = jsonGroups.getJSONArray("groups");
+            if (groupsArrayJSON != null) {
+                for (int i=0;i<groupsArrayJSON.length();i++){
+                    groups.add(groupsArrayJSON.getString(i));
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return groups;
+    }
+
+    static void getGroupsFromServer(final Context context){
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    ArrayList<String> groupsFromServer = Server.getGroups(context);
+                    setGroups( context, groupsFromServer);
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
     }
 }

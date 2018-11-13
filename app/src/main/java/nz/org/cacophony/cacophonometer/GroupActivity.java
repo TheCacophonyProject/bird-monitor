@@ -46,7 +46,7 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         // and the array that contains the data
 //        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, arrayList);
 
-        adapter = new ArrayAdapter<String>(getApplicationContext(),  arrayList);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_group, arrayList);
         // Here, you set the data in your ListView
         list.setAdapter(adapter);
 
