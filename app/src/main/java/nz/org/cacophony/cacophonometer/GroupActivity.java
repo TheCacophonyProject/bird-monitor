@@ -40,7 +40,7 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         etNewGroupInput = (EditText) findViewById(R.id.etNewGroupInput);
         btnAddGroup = (Button) findViewById(R.id.btnAddGroup);
         lvGroups = (ListView) findViewById(R.id.lvGroups);
-        arrayList = new ArrayList<String>();
+        arrayList = Util.getGroups(this);
 
         // Adapter: You need three parameters 'the context, id of the layout (it will be where the data is shown),
         // and the array that contains the data
@@ -56,10 +56,8 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
 try {
     // this line adds the data of your EditText and puts in your array
     String newGroup = etNewGroupInput.getText().toString();
-    arrayList.add(newGroup); // should first check it is going to be valid
-
-    // next thing you have to do is check if your adapter has changed
-    adapter.notifyDataSetChanged();
+    adapter.add(newGroup);
+    ((EditText) findViewById(R.id.etNewGroupInput)).setText("");
 
 }catch (Exception ex){
     Log.e(TAG, ex.getLocalizedMessage());
@@ -76,6 +74,10 @@ try {
     public void onResume() {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
+
+        //Populate group list
+        arrayList = Util.getGroups(this);
+        adapter.notifyDataSetChanged();
 
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
