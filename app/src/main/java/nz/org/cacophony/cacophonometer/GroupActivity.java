@@ -53,15 +53,16 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         btnAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-try {
-    // this line adds the data of your EditText and puts in your array
-    String newGroup = etNewGroupInput.getText().toString();
-    adapter.add(newGroup);
-    ((EditText) findViewById(R.id.etNewGroupInput)).setText("");
+                try {
+                    // this line adds the data of your EditText and puts in your array
+                    String newGroup = etNewGroupInput.getText().toString();
+                    Util.addGroupToServer(getApplicationContext(), newGroup);
+                    adapter.add(newGroup);
+                    ((EditText) findViewById(R.id.etNewGroupInput)).setText("");
 
-}catch (Exception ex){
-    Log.e(TAG, ex.getLocalizedMessage());
-}
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
             }
         });
 
@@ -110,12 +111,22 @@ try {
                     JSONObject joMessage = new JSONObject(message);
                     String intendedActivity = joMessage.getString("activityName");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
+                    int responseCode = joMessage.getInt("responseCode");
 
-                    if (intendedActivity.equalsIgnoreCase("GroupActivity")){
+                    if (intendedActivity.equalsIgnoreCase("GroupActivity")) {
 
-                      // do something
-                      // update the list of groups from server
-
+                        // do something
+                        // update the list of groups from server
+                        if (responseCode == 200){
+                            Util.getToast(getApplicationContext(), messageToDisplay, false).show();
+                            // Don't need to update list view of groups
+                        }else{
+                            Util.getToast(getApplicationContext(), messageToDisplay, true);
+                            // Need to update list view of groups as it shouldn't have the group that the user was trying to add
+                            //Populate group list
+                            arrayList = Util.getGroups(getApplicationContext());
+                            adapter.notifyDataSetChanged();
+                        }
 
 
                     }

@@ -1246,6 +1246,14 @@ Prefs prefs = new Prefs(context);
         }
     }
 
+    public static void addGroup(Context context, String groupName){
+        ArrayList<String> localGroups = getGroups(context);
+        if (!localGroups.contains(groupName)) {
+            localGroups.add(groupName);
+        }
+        setGroups(context, localGroups);
+    }
+
     public static  ArrayList<String> getGroups(Context context){
         Prefs prefs = new Prefs(context);
         ArrayList<String> groups  = new ArrayList<String>();
@@ -1275,6 +1283,23 @@ Prefs prefs = new Prefs(context);
 
                     ArrayList<String> groupsFromServer = Server.getGroups(context);
                     setGroups( context, groupsFromServer);
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+    static void addGroupToServer(final Context context, final String groupName){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                   Server.addGroupToServer(context, groupName);
+
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
