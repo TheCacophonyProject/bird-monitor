@@ -1,6 +1,7 @@
 package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
@@ -10,17 +11,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import info.guardianproject.netcipher.NetCipher;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -639,31 +650,112 @@ class Server {
 
     static ArrayList<String> getGroups(Context context) {
         final Prefs prefs = new Prefs(context);
-        ArrayList<String> groups  = new ArrayList<String>();
-        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
-        String charset = "UTF-8";
 
+        ArrayList<String> groups = new ArrayList<String>();
         try {
+            OkHttpClient client = new OkHttpClient();
+
+            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+
+            String authorization = prefs.getUserToken();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Authorization", authorization)
+                    .build();
+            String responseBody = "";
+
+            Response  response = client.newCall(request).execute();
+            int responseCode = response.code();
+            Log.e(TAG,"responseCode: " + responseCode);
+
+            //Set message to broadcast
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("activityName", "GroupActivity");
+            jsonObjectMessageToBroadcast.put("responseCode", responseCode); // need to check this
+
+            if (responseCode == 200){
+                responseBody = response.body().string();
+
+                // Get groups from responseBody
+                JSONObject joRes = new JSONObject(responseBody);
+
+                if (joRes.getBoolean("success")) {
+                    JSONArray groupsJSONArray = joRes.getJSONArray("groups");
+                    if (groupsJSONArray != null){
+                        for (int i=0;i<groupsJSONArray.length();i++){
+                            JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
+                            String groupName = groupJSONObject.getString("groupname");
+                            groups.add(groupName);
+                        }
+                    }
+
+                    messageToDisplay = "Success, groups have been updated from server";
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                }
+
+            } else { // not success
+
+                messageToDisplay = "Error, unabale to get groups from server";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+            }
+            Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+        return groups;
+    }
+
+
+
+    static ArrayList<String> getGroups3(Context context) {
+        final Prefs prefs = new Prefs(context);
+
+        ArrayList<String> groups  = new ArrayList<String>();
+        try{
+        //String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+        String query = "{}";
+
+            String param1After = URLEncoder.encode(query, "UTF-8");
+            Log.e(TAG, param1After);
+
+       // String groupsUrl = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+        String groupsUrl = "https://api-test.cacophony.org.nz/api/v1/groups?where=" + param1After;
+            Log.e(TAG, groupsUrl);
+
             HttpURLConnection conn = openURLGet(groupsUrl);
             String authorization = prefs.getUserToken();
             Log.e(TAG, authorization);
             conn.setRequestProperty("authorization", authorization);
 
-            JSONObject jsonParam = new JSONObject();
-            try {
-                jsonParam.put("where", "{}");
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            // conn.setRequestMethod("POST");
+//            conn.setDoInput(true);
+//            conn.setDoOutput(true);
 
-            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-            os.writeBytes(jsonParam.toString());
-            os.flush();
+//            Uri.Builder builder = new Uri.Builder()
+//                    .appendQueryParameter("where", "{}");
+//
+//            String query = builder.build().getEncodedQuery();
+//
+//            OutputStream os = conn.getOutputStream();
+//            BufferedWriter writer = new BufferedWriter(
+//                    new OutputStreamWriter(os, "UTF-8"));
+//            writer.write(query);
+//            writer.flush();
+//            writer.close();
+//            os.close();
 
             conn.connect();
 
             if (conn.getResponseCode() != 200) {
                 int responseCode = conn.getResponseCode();
                 Log.e(TAG, "responseCode is: " + responseCode);
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + conn.getResponseCode());
+//                throw new RuntimeException("Failed : HTTP error code : "
+//                        + conn.getResponseCode());
             }
 
             String assembledOutput = "";
@@ -680,7 +772,123 @@ class Server {
 
             conn.disconnect();
 
-            } catch (JSONException e) {
+        }catch(Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+        return groups;
+    }
+
+
+    static ArrayList<String> getGroups2(Context context) {
+        final Prefs prefs = new Prefs(context);
+        ArrayList<String> groups  = new ArrayList<String>();
+        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+        try{
+            HttpURLConnection conn = openURLGet(groupsUrl);
+            String authorization = prefs.getUserToken();
+            Log.e(TAG, authorization);
+            conn.setRequestProperty("authorization", authorization);
+
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+           // conn.setRequestMethod("POST");
+//            conn.setDoInput(true);
+//            conn.setDoOutput(true);
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("where", "{}");
+
+            String query = builder.build().getEncodedQuery();
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            conn.connect();
+
+            if (conn.getResponseCode() != 200) {
+                int responseCode = conn.getResponseCode();
+                Log.e(TAG, "responseCode is: " + responseCode);
+//                throw new RuntimeException("Failed : HTTP error code : "
+//                        + conn.getResponseCode());
+            }
+
+            String assembledOutput = "";
+
+            BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            System.out.println("Output from Server:\n");
+            while ((output = responseBuffer.readLine()) != null) {
+                System.out.println(output);
+                assembledOutput = assembledOutput + output;
+            }
+
+            conn.disconnect();
+
+        }catch(Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+        return groups;
+    }
+
+    static ArrayList<String> getGroupsOld(Context context) {
+        final Prefs prefs = new Prefs(context);
+        ArrayList<String> groups  = new ArrayList<String>();
+//        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+        String groupsUrl = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+        String charset = "UTF-8";
+
+        try {
+            HttpURLConnection conn = openURLGet(groupsUrl);
+            String authorization = prefs.getUserToken();
+            Log.e(TAG, authorization);
+            conn.setRequestProperty("authorization", authorization);
+
+            JSONObject jsonParam = new JSONObject();
+
+            try {
+//                String whereClause = "{}";
+//                jsonParam.put("where", whereClause);
+//
+//                String jsonParamString = jsonParam.toString();
+////                String jsonParamString = "where: {}";
+
+//            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//            os.writeBytes(jsonParamString);
+//            os.flush();
+
+            conn.connect();
+
+            if (conn.getResponseCode() != 200) {
+                int responseCode = conn.getResponseCode();
+                Log.e(TAG, "responseCode is: " + responseCode);
+//                throw new RuntimeException("Failed : HTTP error code : "
+//                        + conn.getResponseCode());
+            }
+
+            String assembledOutput = "";
+
+            BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            System.out.println("Output from Server:\n");
+            while ((output = responseBuffer.readLine()) != null) {
+                System.out.println(output);
+                assembledOutput = assembledOutput + output;
+            }
+
+            conn.disconnect();
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 //            //  Here you read any answer from server.
@@ -701,7 +909,7 @@ class Server {
 //                e.printStackTrace();
 //            }
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }finally {
             uploading = false;

@@ -24,9 +24,9 @@ import java.util.ArrayList;
 
 public class GroupActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final String TAG = GroupActivity.class.getName();
-    private EditText editTxt;
-    private Button btn;
-    private ListView list;
+    private EditText etNewGroupInput;
+    private Button btnAddGroup;
+    private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> arrayList;
 
@@ -37,27 +37,33 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
 
         //https://stackoverflow.com/questions/4540754/dynamically-add-elements-to-a-listview-android
 
-        editTxt = (EditText) findViewById(R.id.etNewGroupInput);
-        btn = (Button) findViewById(R.id.button);
-        list = (ListView) findViewById(R.id.lvGroups);
+        etNewGroupInput = (EditText) findViewById(R.id.etNewGroupInput);
+        btnAddGroup = (Button) findViewById(R.id.btnAddGroup);
+        lvGroups = (ListView) findViewById(R.id.lvGroups);
         arrayList = new ArrayList<String>();
 
         // Adapter: You need three parameters 'the context, id of the layout (it will be where the data is shown),
         // and the array that contains the data
 //        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, arrayList);
 
-        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_group, arrayList);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arrayList);
         // Here, you set the data in your ListView
-        list.setAdapter(adapter);
+        lvGroups.setAdapter(adapter);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        btnAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+try {
+    // this line adds the data of your EditText and puts in your array
+    String newGroup = etNewGroupInput.getText().toString();
+    arrayList.add(newGroup); // should first check it is going to be valid
 
-                // this line adds the data of your EditText and puts in your array
-                arrayList.add(editTxt.getText().toString());
-                // next thing you have to do is check if your adapter has changed
-                adapter.notifyDataSetChanged();
+    // next thing you have to do is check if your adapter has changed
+    adapter.notifyDataSetChanged();
+
+}catch (Exception ex){
+    Log.e(TAG, ex.getLocalizedMessage());
+}
             }
         });
 
@@ -106,6 +112,7 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
                     if (intendedActivity.equalsIgnoreCase("GroupActivity")){
 
                       // do something
+                      // update the list of groups from server
 
 
 
