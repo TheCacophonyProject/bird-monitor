@@ -48,7 +48,7 @@ class Server {
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
     private static final String SIGNUP_URL = "/api/v1/users";
-    private static final String GROUPS_URL = "/api/v1/groups";
+    private static final String GROUPS_URL = "api/v1/groups"; // deliberatly don't have leading / https://square.github.io/okhttp/3.x/okhttp/ says not to have it
 
 
     private static String errorMessage = null;
@@ -650,13 +650,108 @@ class Server {
     }
 
     static ArrayList<String> getGroups(Context context) {
+        // This code converts the {} (as seen below) and the server returns a 422
+        // Would like to get this to work so can do other queries
+        //https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D
+        // https://api-test.cacophony.org.nz/api/v1/groups?where={}
+
         final Prefs prefs = new Prefs(context);
 
         ArrayList<String> groups = new ArrayList<String>();
         try {
             OkHttpClient client = new OkHttpClient();
 
-            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+
+
+            // From https://square.github.io/okhttp/3.x/okhttp/
+
+            String serverUrl = prefs.getServerUrl();
+            String groupsEndPoint = GROUPS_URL;
+
+            HttpUrl url = new HttpUrl.Builder()
+                    .scheme(prefs.getServerScheme())
+                    .host(prefs.getServerHost())
+                    .addPathSegments(groupsEndPoint)
+                    .addQueryParameter("where", "{}")
+                    .build();
+
+
+            String authorization = prefs.getUserToken();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Authorization", authorization)
+                    .build();
+// From Camerons email on 14/11/18
+
+//            HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api-test.cacophony.org.nz/api/v1/groups").newBuilder();
+//            //  urlBuilder.addQueryParameter("where", jsonParam.toString());
+//            urlBuilder.addQueryParameter("where", "{}");
+//            String url = urlBuilder.build().toString();
+//
+//            Log.e(TAG, url.toString());
+//            String authorization = prefs.getUserToken();
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    .header("Authorization", authorization)
+//                    .build();
+//
+
+            String responseBody = "";
+
+            Response  response = client.newCall(request).execute();
+            int responseCode = response.code();
+            Log.e(TAG,"responseCode: " + responseCode);
+
+            //Set message to broadcast
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("activityName", "GroupActivity");
+            jsonObjectMessageToBroadcast.put("responseCode", responseCode); // need to check this
+
+            if (responseCode == 200){
+                responseBody = response.body().string();
+
+                // Get groups from responseBody
+                JSONObject joRes = new JSONObject(responseBody);
+
+                if (joRes.getBoolean("success")) {
+                    JSONArray groupsJSONArray = joRes.getJSONArray("groups");
+                    if (groupsJSONArray != null){
+                        for (int i=0;i<groupsJSONArray.length();i++){
+                            JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
+                            String groupName = groupJSONObject.getString("groupname");
+                            groups.add(groupName);
+                        }
+                    }
+
+                    messageToDisplay = "Success, groups have been updated from server";
+//                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                }
+
+            } else { // not success
+
+                messageToDisplay = "Error, unable to get groups from server";
+//                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+            }
+            jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+            Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+        return groups;
+    }
+
+    static ArrayList<String> getGroupsWorks(Context context) {
+        final Prefs prefs = new Prefs(context);
+
+        ArrayList<String> groups = new ArrayList<String>();
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+         //   String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
 
             String authorization = prefs.getUserToken();
             Request request = new Request.Builder()
@@ -711,7 +806,7 @@ class Server {
         return groups;
     }
 
-    static ArrayList<String> getGroupsNotYetWorking(Context context) {
+    static ArrayList<String> getGroupsWorksCameronscode(Context context) {
         // This code converts the {} (as seen below) and the server returns a 422
         // Would like to get this to work so can do other queries
         //https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D
@@ -725,21 +820,23 @@ class Server {
 
            // String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
 
-            JSONObject jsonParam = new JSONObject();
-            String jsonParmString = jsonParam.toString();
-
-            // From https://square.github.io/okhttp/3.x/okhttp/
-
+//            JSONObject jsonParam = new JSONObject();
+//            String jsonParmString = jsonParam.toString();
+//            String jsonParmString2 = "%7B%7D";
+//
+//            // From https://square.github.io/okhttp/3.x/okhttp/
+//
 //            HttpUrl url = new HttpUrl.Builder()
 //                    .scheme("https")
 //                 //   .host("api-test.cacophony.org.nz/api/v1/groups")
 //                //    .addPathSegment("search")
 //                    .host("api-test.cacophony.org.nz")
 //                        .addPathSegment("api/v1/groups")
-//                    .addQueryParameter("where", jsonParmString)
+////                    .addQueryParameter("where", jsonParmString)
+//                    .addQueryParameter("where", jsonParmString2)
 //                    .build();
-//
-//
+
+
 //            String authorization = prefs.getUserToken();
 //            Request request = new Request.Builder()
 //                    .url(url)
@@ -748,13 +845,15 @@ class Server {
 // From Camerons email on 14/11/18
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api-test.cacophony.org.nz/api/v1/groups").newBuilder();
-            urlBuilder.addQueryParameter("where", jsonParam.toString());
+          //  urlBuilder.addQueryParameter("where", jsonParam.toString());
+            urlBuilder.addQueryParameter("where", "{}");
             String url = urlBuilder.build().toString();
 
             Log.e(TAG, url.toString());
-
+            String authorization = prefs.getUserToken();
             Request request = new Request.Builder()
                     .url(url)
+                    .header("Authorization", authorization)
                     .build();
 
 
@@ -812,7 +911,8 @@ try {
     OkHttpClient client = new OkHttpClient();
 
 //    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
-    String url = "https://api-test.cacophony.org.nz/api/v1/groups";
+    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
+    //String url = "https://api-test.cacophony.org.nz/api/v1/groups";
     RequestBody formBody = new FormBody.Builder()
             .add("groupname", groupName)
             .build();
