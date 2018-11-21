@@ -21,6 +21,14 @@ public class AccountQuestionActivity extends AppCompatActivity {
 
     }
 
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
     public void yes(View v) {
         try {
             Intent intent = new Intent(this, SigninActivity.class);

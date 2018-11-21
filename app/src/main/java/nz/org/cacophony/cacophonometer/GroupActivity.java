@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,31 +23,36 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class GroupActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+//public class GroupActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    public class GroupActivity extends AppCompatActivity {
     private static final String TAG = GroupActivity.class.getName();
     private EditText etNewGroupInput;
     private Button btnAddGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
-    private ArrayList<String> arrayList;
+    private ArrayList<String> arrayListGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
 
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
         //https://stackoverflow.com/questions/4540754/dynamically-add-elements-to-a-listview-android
 
         etNewGroupInput = (EditText) findViewById(R.id.etNewGroupInput);
         btnAddGroup = (Button) findViewById(R.id.btnAddGroup);
         lvGroups = (ListView) findViewById(R.id.lvGroups);
-        arrayList = Util.getGroups(this);
+        arrayListGroups = Util.getGroups(this);
 
         // Adapter: You need three parameters 'the context, id of the layout (it will be where the data is shown),
         // and the array that contains the data
-//        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, arrayList);
+//        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, arrayListGroups);
 
-        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arrayList);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arrayListGroups);
         // Here, you set the data in your ListView
         lvGroups.setAdapter(adapter);
 
@@ -56,6 +62,24 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
                 try {
                     // this line adds the data of your EditText and puts in your array
                     String newGroup = etNewGroupInput.getText().toString();
+
+                    // Check a group was entered
+                    if (newGroup == null){
+                        Util.getToast(getApplicationContext(), "Please enter a group name." , true).show();
+                        return;
+                    }
+                    // Check group name is at least 4 characters long
+                    if (newGroup.length() < 4){
+                        Util.getToast(getApplicationContext(), "Please enter a group name of at least 4 characters." , true).show();
+                        return;
+                    }
+
+                    // Check if this group already exists
+                    if(arrayListGroups.contains(newGroup)){
+                        Util.getToast(getApplicationContext(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
+                        return;
+                    }
+
                     Util.addGroupToServer(getApplicationContext(), newGroup);
                     adapter.add(newGroup);
                     ((EditText) findViewById(R.id.etNewGroupInput)).setText("");
@@ -66,9 +90,17 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
             }
         });
 
-        //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String group = lvGroups.getItemAtPosition(i).toString();
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                intent.putExtra("GROUP", group);
+                startActivity(intent);
+
+            }
+        });
     }
 
     @Override
@@ -77,7 +109,7 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         Prefs prefs = new Prefs(getApplicationContext());
 
         //Populate group list
-        arrayList = Util.getGroups(this);
+        arrayListGroups = Util.getGroups(this);
         adapter.notifyDataSetChanged();
 
         IntentFilter iff = new IntentFilter("event");
@@ -91,10 +123,12 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-        Toast.makeText(getApplicationContext(), ((TextView) view).getText(),
-                Toast.LENGTH_SHORT).show();
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
     }
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -105,32 +139,33 @@ public class GroupActivity extends AppCompatActivity implements AdapterView.OnIt
         public void onReceive(Context context, Intent intent) {
             Prefs prefs = new Prefs(getApplicationContext());
             try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
+                String action = intent.getAction();
+                if (action.equals("server.getGroups")) {
 
-                    JSONObject joMessage = new JSONObject(message);
-                    String intendedActivity = joMessage.getString("activityName");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-                    int responseCode = joMessage.getInt("responseCode");
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+                if (jsonStringMessage != null) {
 
-                    if (intendedActivity.equalsIgnoreCase("GroupActivity")) {
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageToDisplay;
+                    int responseCode;
+
+                        messageToDisplay = joMessage.getString("messageToDisplay");
+                        responseCode = joMessage.getInt("responseCode");
 
                         // do something
                         // update the list of groups from server
-                        if (responseCode == 200){
+                        if (responseCode == 200) {
                             Util.getToast(getApplicationContext(), messageToDisplay, false).show();
                             // Don't need to update list view of groups
-                        }else{
-                            Util.getToast(getApplicationContext(), messageToDisplay, true);
+                        } else {
+                            Util.getToast(getApplicationContext(), messageToDisplay, true).show();
                             // Need to update list view of groups as it shouldn't have the group that the user was trying to add
                             //Populate group list
-                            arrayList = Util.getGroups(getApplicationContext());
+                            arrayListGroups = Util.getGroups(getApplicationContext());
                             adapter.notifyDataSetChanged();
                         }
-
-
-                    }
                 }
+            }
 
 
             } catch (Exception ex) {

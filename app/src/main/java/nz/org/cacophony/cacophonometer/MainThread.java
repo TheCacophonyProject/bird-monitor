@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 //import android.util.Log;
 
 /**
@@ -39,7 +42,17 @@ class MainThread implements Runnable {
         if (!Util.checkPermissionsForRecording(context)) {
             Log.e(TAG, "App does not have permission to record.");
 
-            Util.broadcastAMessage(context, "no_permission_to_record");
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "no_permission_to_record");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+
+           // Util.broadcastAMessage(context, "no_permission_to_record");
 
             return;
         }
@@ -51,35 +64,71 @@ class MainThread implements Runnable {
             recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, alarmIntentType );
 
         }catch (Exception e){
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "recording_failed");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_failed");
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
 
-            Util.broadcastAMessage(context, "recording_failed");
+          //  Util.broadcastAMessage(context, "recording_failed");
 
             return;
         }
 
         if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully")){
+//            String messageToDisplay = "";
+//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+//            try {
+//                jsonObjectMessageToBroadcast.put("messageToType", "recording_finished");
+//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
 
-            Util.broadcastAMessage(context, "recording_finished");
+           // Util.broadcastAMessage(context, "recording_finished");
 
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded and uploaded successfully")){
+//            String messageToDisplay = "";
+//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+//            try {
+//                jsonObjectMessageToBroadcast.put("messageToType", "recording_and_uploading_finished");
+//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_and_uploading_finished");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
 
-            Util.broadcastAMessage(context, "recording_and_uploading_finished");
+           // Util.broadcastAMessage(context, "recording_and_uploading_finished");
 
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded BUT did not upload")){
+//            String messageToDisplay = "";
+//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+//            try {
+//                jsonObjectMessageToBroadcast.put("messageToType", "recording_finished_but_uploading_failed");
+//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished_but_uploading_failed");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
 
-            Util.broadcastAMessage(context, "recording_finished_but_uploading_failed");
+           // Util.broadcastAMessage(context, "recording_finished_but_uploading_failed");
 
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully no network")){
 
-            Util.broadcastAMessage(context, "recorded_successfully_no_network");
+          //  Util.broadcastAMessage(context, "recorded_successfully_no_network");
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("not logged in")){
-            Util.broadcastAMessage(context, "not_logged_in");
+          //  Util.broadcastAMessage(context, "not_logged_in");
         }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("isRecording")){
-            Util.broadcastAMessage(context, "is_already_recording");
+          //  Util.broadcastAMessage(context, "is_already_recording");
         }
         else{
 
-            Util.broadcastAMessage(context, "recording_failed");
+         //   Util.broadcastAMessage(context, "recording_failed");
         }
 
 

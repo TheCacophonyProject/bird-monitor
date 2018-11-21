@@ -383,33 +383,36 @@ try {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
+                String action = intent.getAction();
+                if (action.equals("server.updateServerConnectionStatus") || action.equals("server.login")) {
+                    String messageType = intent.getStringExtra("message");
+                    if (messageType != null) {
 
-                    if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        findViewById(R.id.refreshVitals).setEnabled(true);
-                    }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
-                    }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                    }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
-                        refreshVitalsDisplayedText();
-                    }else if (message.equalsIgnoreCase("can_not_toggle_airplane_mode")){
-                        TextView messageView = findViewById(R.id.messageText);
-                        if (messageView != null){
-                            messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+                        if (messageType.equalsIgnoreCase("enable_vitals_button")) {
+                            findViewById(R.id.refreshVitals).setEnabled(true);
+                        } else if (messageType.equalsIgnoreCase("tick_logged_in_to_server")) {
+                            TextView loggedInText = findViewById(R.id.loggedInText);
+                            loggedInText.setText(getString(R.string.logged_in_to_server_true));
+                        } else if (messageType.equalsIgnoreCase("untick_logged_in_to_server")) {
+                            TextView loggedInText = findViewById(R.id.loggedInText);
+                            loggedInText.setText(getString(R.string.logged_in_to_server_false));
+                        } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
+                            refreshVitalsDisplayedText();
+                        } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
+                            TextView messageView = findViewById(R.id.messageText);
+                            if (messageView != null) {
+                                messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+                            }
+                        } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
+                            Prefs prefs = new Prefs(context);
+                            updateGpsDisplay(prefs);
+                        } else if (messageType.equalsIgnoreCase("recording_finished")) {
+                            refreshVitalsDisplayedText();
+                        } else if (messageType.equalsIgnoreCase("alarms_updated")) {
+                            refreshVitalsDisplayedText();
                         }
-                    }else if(message.equalsIgnoreCase("refresh_gps_coordinates")){
-                        Prefs prefs = new Prefs(context);
-                        updateGpsDisplay(prefs);
-                    }else if (message.equalsIgnoreCase("recording_finished")) {
-                        refreshVitalsDisplayedText();
-                    }else if (message.equalsIgnoreCase("alarms_updated")) {
-                        refreshVitalsDisplayedText();
-                    }
 
+                    }
                 }
 
             }catch (Exception ex){

@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -101,17 +103,27 @@ public class GPSActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
-                    if (message.equalsIgnoreCase("refresh_gps_coordinates")) {
-                        updateGpsDisplay(context);
-                    } else if (message.equalsIgnoreCase("turn_on_gps_and_try_again")) {
-                        Util.getToast(context, "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.", true).show();
-                    } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
-                        Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+                String action = intent.getAction();
+                if (action.equals("GPS")) {
+                    String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+                    if (jsonStringMessage != null) {
+
+                        JSONObject joMessage = new JSONObject(jsonStringMessage);
+                        String messageToType = intent.getStringExtra("messageToType");
+                        String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                        if (messageToType != null) {
+                            if (messageToType.equalsIgnoreCase("refresh_gps_coordinates")) {
+                                updateGpsDisplay(context);
+                            } else if (messageToType.equalsIgnoreCase("turn_on_gps_and_try_again")) {
+                                Util.getToast(context, messageToDisplay, true).show();
+                            } else if (messageToType.equalsIgnoreCase("error_do_not_have_root")) {
+                                Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+                            }
+
+                        }
                     }
                 }
-
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
             }

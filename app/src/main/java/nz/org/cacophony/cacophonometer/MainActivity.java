@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
 
-
+        boolean isFirstTime = prefs.getIsFirstTime();
 
         if (prefs.getIsFirstTime()) {
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
             Util.displayHelp(this, "Introduction");
-            prefs.setIsFirstTime();
+            prefs.setIsFirstTimeFalse();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
@@ -129,6 +129,14 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
+
+       // for testing setup wizard, set isFirstTime to true, but comment out next line after testing setup wizard
+        isFirstTime = true;
+
+        if (isFirstTime){
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+        }
+
 
     }
 
@@ -189,8 +197,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(new Intent(this, WelcomeActivity.class));
+           // startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

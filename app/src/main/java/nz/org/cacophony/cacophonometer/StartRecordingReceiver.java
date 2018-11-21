@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.cacophonometer.Util.getBatteryLevelByIntent;
 
@@ -43,7 +46,17 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         try {
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-            Util.broadcastAMessage(context, "alarms_updated");
+
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "alarms_updated");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "alarms_updated");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+          //  Util.broadcastAMessage(context, "alarms_updated");
 
             if (prefs.getIsDisabled()){
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
@@ -53,7 +66,16 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 Log.e(TAG, "Don't have proper permissions to record");
 
                 // Need to enable record button
-                Util.broadcastAMessage(context, "no_permission_to_record");
+                 messageToDisplay = "";
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                try {
+                    jsonObjectMessageToBroadcast.put("messageToType", "no_permission_to_record");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+               // Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }
 

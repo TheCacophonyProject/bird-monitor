@@ -61,6 +61,14 @@ public class SigninActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
 
     public void signinButton(View v) {
         try {
@@ -182,16 +190,23 @@ public class SigninActivity extends AppCompatActivity {
         // broadcast notification coming from ??
         @Override
         public void onReceive(Context context, Intent intent) {
+
             Prefs prefs = new Prefs(getApplicationContext());
             try {
+
+
                 String message = intent.getStringExtra("message");
+
                 if (message != null) {
 
-                    JSONObject joMessage = new JSONObject(message);
-                    String intendedActivity = joMessage.getString("activityName");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    if (intendedActivity.equalsIgnoreCase("SigninActivity")){
+                    JSONObject joMessage = new JSONObject(message);
+                    String sender = joMessage.getString("sender");
+                    if (!sender.equalsIgnoreCase("server.loginUser")){
+                        return;
+                    }
+                   // String messageType = joMessage.getString("messageType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
 
                         int responseCode = joMessage.getInt("responseCode");
 
@@ -203,8 +218,7 @@ public class SigninActivity extends AppCompatActivity {
                         }else{
                             Util.getToast(getApplicationContext(),messageToDisplay, true ).show();
                         }
-                      //  displayOrHideGUIObjects();
-                    }
+
                 }
 
             } catch (Exception ex) {

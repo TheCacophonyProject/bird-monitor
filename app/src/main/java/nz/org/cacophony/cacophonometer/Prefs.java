@@ -672,7 +672,7 @@ private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";     
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
 
-    void setIsFirstTime() {
+    void setIsFirstTimeFalse() {
         setBoolean(FIRST_TIME_KEY, false);
     }
 

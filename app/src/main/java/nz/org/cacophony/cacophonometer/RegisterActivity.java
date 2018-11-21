@@ -19,6 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 public class RegisterActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 
     private static final String TAG = RegisterActivity.class.getName();
@@ -43,14 +45,22 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
     public void onResume() {
         super.onResume();
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String group = extras.getString("GROUP");
+            if (group != null) {
+                ((EditText) findViewById(R.id.setupGroupNameInput)).setText(group);
+            }
+        }
+
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
         displayOrHideGUIObjects();
     }
 
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getApplicationContext());
-        if ( prefs.getGroupName() != null && prefs.getDeviceName() != null) {
+        if (prefs.getGroupName() != null && prefs.getDeviceName() != null) {
             // Phone is registered
             // Phone is NOT registered
             //Input fields to be INVISIBLE
@@ -72,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.colorAlert));
 
 
-        }else{
+        } else {
             // Phone is NOT registered
             //Input fields to be visible
             findViewById(R.id.setupGroupNameInput).setVisibility(View.VISIBLE);
@@ -84,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             ((TextView) findViewById(R.id.tvGroupName)).setText(getString(R.string.group_name_unregistered));
             ((TextView) findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_unregistered));
 
-           //Only register button is visible
+            //Only register button is visible
             findViewById(R.id.btnRegister).setVisibility(View.VISIBLE);
             findViewById(R.id.btnUnRegister).setVisibility(View.INVISIBLE);
 
@@ -95,10 +105,10 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         }
 
 
-        if ( prefs.getGroupName() != null) {
+        if (prefs.getGroupName() != null) {
             ((TextView) findViewById(R.id.tvGroupName)).setText("Group - " + prefs.getGroupName());
         }
-        if ( prefs.getDeviceName() != null) {
+        if (prefs.getDeviceName() != null) {
             ((TextView) findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
 
         }
@@ -112,53 +122,53 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
     }
 
     public void registerButton(View v) {
-        registerIdlingResource.increment();
+        //  registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getApplicationContext());
 
-       // if (prefs.getOffLineMode()){
-        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-            Util.getToast(getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
+        // if (prefs.getOffLineMode()){
+        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
+            Util.getToast(getApplicationContext(), "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true).show();
             return;
         }
 
-        if (!Util.isNetworkConnected(getApplicationContext())){
-            Util.getToast(getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+        if (!Util.isNetworkConnected(getApplicationContext())) {
+            Util.getToast(getApplicationContext(), "The phone is not currently connected to the internet - please fix and try again", true).show();
             return;
         }
 
-        if (prefs.getGroupName() != null){
-            Util.getToast(getApplicationContext(),"Already registered - press UNREGISTER first (if you really want to change group)", true ).show();
+        if (prefs.getGroupName() != null) {
+            Util.getToast(getApplicationContext(), "Already registered - press UNREGISTER first (if you really want to change group)", true).show();
             return;
         }
         // Check that the group name is valid, at least 4 characters.
         String group = ((EditText) findViewById(R.id.setupGroupNameInput)).getText().toString();
-        if (group.length() < 1){
-            Util.getToast(getApplicationContext(),"Please enter a group name of at least 4 characters (no spaces)", true ).show();
+        if (group.length() < 1) {
+            Util.getToast(getApplicationContext(), "Please enter a group name of at least 4 characters (no spaces)", true).show();
             return;
-        }else if (group.length() < 4) {
-            Log.i(TAG, "Invalid group name: "+group);
+        } else if (group.length() < 4) {
+            Log.i(TAG, "Invalid group name: " + group);
 
-            Util.getToast(getApplicationContext(),group + " is not a valid group name. Please use at least 4 characters (no spaces)", true ).show();
+            Util.getToast(getApplicationContext(), group + " is not a valid group name. Please use at least 4 characters (no spaces)", true).show();
             return;
         }
 
         // Check that the device name is valid, at least 4 characters.
         String deviceName = ((EditText) findViewById(R.id.setupDeviceNameInput)).getText().toString();
-        if (deviceName.length() < 1){
-            Util.getToast(getApplicationContext(),"Please enter a device name of at least 4 characters (no spaces)", true ).show();
+        if (deviceName.length() < 1) {
+            Util.getToast(getApplicationContext(), "Please enter a device name of at least 4 characters (no spaces)", true).show();
             return;
-        }else if (deviceName.length() < 4) {
-            Log.i(TAG, "Invalid device name: "+deviceName);
+        } else if (deviceName.length() < 4) {
+            Log.i(TAG, "Invalid device name: " + deviceName);
 
-            Util.getToast(getApplicationContext(),deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true ).show();
+            Util.getToast(getApplicationContext(), deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true).show();
             return;
         }
 
-        Util.getToast(getApplicationContext(),"Attempting to register with server - please wait", false ).show();
+        Util.getToast(getApplicationContext(), "Attempting to register with server - please wait", false).show();
 
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
             Log.e(TAG, "imm is null");
             return;
         }
@@ -168,7 +178,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-            Util.getToast(getApplicationContext(),"Already registered with that group", true ).show();
+            Util.getToast(getApplicationContext(), "Already registered with that group", true).show();
             return;
         }
 
@@ -178,6 +188,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
     /**
      * Will register the device in the given group saving the JSON Web Token, devicename, and password.
+     *
      * @param group name of group to join.
      */
     private void register(final String group, final String deviceName, final Context context) {
@@ -191,27 +202,30 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         disableFlightMode();
 
         // Now wait for network connection as setFlightMode takes a while
-        if (!Util.waitForNetworkConnection(getApplicationContext(), true)){
+        if (!Util.waitForNetworkConnection(getApplicationContext(), true)) {
             Log.e(TAG, "Failed to disable airplane mode");
-            return ;
+            return;
         }
 
         Thread registerThread = new Thread() {
             @Override
             public void run() {
-              Server.register(group, deviceName, context);;
+                Server.register(group, deviceName, context);
+                ;
             }
         };
         registerThread.start();
     }
+
     /**
      * Un-registered a device deleting the password, devicename, and JWT.
+     *
      * @param v View
      */
     public void unRegisterButton(@SuppressWarnings("UnusedParameters") View v) {
         Prefs prefs = new Prefs(getApplicationContext());
-        if (prefs.getGroupName() == null){
-            Util.getToast(getApplicationContext(),"Not currently registered - so can not unregister :-(", true ).show();
+        if (prefs.getGroupName() == null) {
+            Util.getToast(getApplicationContext(), "Not currently registered - so can not unregister :-(", true).show();
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -234,7 +248,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
 
     }
 
-    private void unregister(){
+    private void unregister() {
 
 
         try {
@@ -245,22 +259,21 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
 
-            Util.getToast(getApplicationContext(),"Success - Device is no longer registered", false ).show();
+            Util.getToast(getApplicationContext(), "Success - Device is no longer registered", false).show();
             displayOrHideGUIObjects();
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");
         }
 
     }
 
 
-
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {
             Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
-          //  finish();
+            //  finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -268,19 +281,8 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
     }
 
     public void back(@SuppressWarnings("UnusedParameters") View v) {
-
         try {
-//            Intent intent = getIntent();
-//            String sendingActivity = intent.getStringExtra("sending_activity");
-//            if (sendingActivity != null) {
-//                if (sendingActivity.equalsIgnoreCase("WelcomeActivity")) {
-//                    Intent backIntent = new Intent(this, WelcomeActivity.class);
-//                    startActivity(backIntent);
-//                }
-//            }
-
             finish();
-
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -300,12 +302,12 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         }
     }
 
-    private void disableFlightMode(){
+    private void disableFlightMode() {
         try {
             Util.disableFlightMode(getApplicationContext());
 
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
             Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
         }
@@ -319,37 +321,51 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         public void onReceive(Context context, Intent intent) {
             Prefs prefs = new Prefs(getApplicationContext());
             try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
+                String action = intent.getAction();
+                if (!action.equals("server.register")) {
+                    return;
+                }
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+                if (jsonStringMessage != null) {
 
-                   if (message.equalsIgnoreCase("REGISTER_SUCCESS")) {
-                       String messageToDisplay = "Success - Your phone has been registered with the server :-)";
-                       Util.getToast(getApplicationContext(),messageToDisplay, false ).show();
-                       registerIdlingResource.decrement();
-                       try {
-                           displayOrHideGUIObjects();
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageToType = intent.getStringExtra("messageToType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                    if (messageToType != null) {
 
 
+                        if (messageToType.equalsIgnoreCase("REGISTER_SUCCESS")) {
+                            Util.getToast(getApplicationContext(), messageToDisplay, false).show();
+                            //registerIdlingResource.decrement();
+                            try {
+                                displayOrHideGUIObjects();
 
-                       }catch (Exception ex){
-                           Log.e(TAG, ex.getLocalizedMessage());
-                       }
 
-                    }else if (message.equalsIgnoreCase("REGISTER_FAIL_UNKNOWN_REASON")) {
-                       String errorMessage = "Oops, your phone did not register - not sure why";
-                       Util.getToast(getApplicationContext(),errorMessage, true ).show();
-                       registerIdlingResource.decrement();
+                            } catch (Exception ex) {
+                                Log.e(TAG, ex.getLocalizedMessage());
+                            }
 
-                   }else if (message.startsWith("devicename:")) {
-                       String errorMessage = message.substring("devicename:".length());
-                        Util.getToast(getApplicationContext(),errorMessage, true ).show(); // need to improve this message
-                       registerIdlingResource.decrement();
-                    }else if (message.startsWith("NEITHER_200_NOR_422")) {
-                       String errorMessage = message.substring(19);
-                       Util.getToast(getApplicationContext(),errorMessage, true ).show(); // need to improve this message
-                       registerIdlingResource.decrement();
-                   }
+                        } else if (messageToType.equalsIgnoreCase("200_REGISTER_FAIL_UNKNOWN_REASON")) {
+                           // String errorMessage = "Oops, your phone did not register - not sure why";
+                            Util.getToast(getApplicationContext(), messageToDisplay, true).show();
+                            //    registerIdlingResource.decrement();
 
+                      //  } else if (messageToType.startsWith("devicename:")) {
+                        } else if (messageToType.equalsIgnoreCase("422_REGISTER_FAIL_UNKNOWN_REASON")) {
+                         //   String errorMessage = messageToType.substring("devicename:".length());
+                           // Util.getToast(getApplicationContext(), errorMessage, true).show(); // need to improve this message
+                            Util.getToast(getApplicationContext(), messageToDisplay, true).show(); // need to improve this message
+                            //    registerIdlingResource.decrement();
+                     //   } else if (messageToType.startsWith("NEITHER_200_NOR_422")) {
+                        } else if (messageToType.startsWith("NEITHER_200_NOR_422")) {
+                         //   String errorMessage = messageToType.substring(19);
+                          //  Util.getToast(getApplicationContext(), errorMessage, true).show(); // need to improve this message
+                            Util.getToast(getApplicationContext(), messageToDisplay, true).show(); // need to improve this message
+                            //   registerIdlingResource.decrement();
+                        }
+
+                    }
                 }
 
             } catch (Exception ex) {

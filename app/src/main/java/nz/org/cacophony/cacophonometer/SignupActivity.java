@@ -50,6 +50,13 @@ public class SignupActivity extends AppCompatActivity implements IdlingResourceF
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
+    public void back(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
 
 
     @SuppressWarnings("SameReturnValue")

@@ -80,8 +80,6 @@ class Util {
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
 
-    // --Commented out by Inspection (12-Jun-17 2:21 PM):private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
-
 
     /**
      * Make sure user has given permission to record.
@@ -638,7 +636,17 @@ private static void executeCommandTim(Context context, String command){
         executeAsRootBaseTim.execute(context);
     }catch (Exception ex){
         Log.e(TAG, ex.getLocalizedMessage());
-        Util.broadcastAMessage(context, "error_do_not_have_root");
+      //  Util.broadcastAMessage(context, "error_do_not_have_root");
+        String messageToDisplay = "";
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
 
@@ -707,14 +715,12 @@ private static void executeCommandTim(Context context, String command){
 
 
 
-    static void broadcastAMessage(Context context, String message){
+    static void broadcastAMessage(Context context, JSONObject message){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         Intent intent = new Intent("event");
-        // You can also include some extra data.
-        intent.putExtra("message", message);
+        intent.putExtra("jsonStringMessage", message.toString());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
     }
 
 
@@ -958,7 +964,16 @@ Prefs prefs = new Prefs(context);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
+          //  Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "turn_on_gps_and_try_again");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
             return;
         }
 
@@ -1105,10 +1120,22 @@ Prefs prefs = new Prefs(context);
 
 
                     boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
+                    String messageToDisplay = "";
+                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     if (uploadedSuccessfully){
-                        Util.broadcastAMessage(context, "files_successfully_uploaded");
+
+                        jsonObjectMessageToBroadcast.put("messageToType", "files_successfully_uploaded");
+
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "files_successfully_uploaded");
+                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+
+                       // Util.broadcastAMessage(context, "files_successfully_uploaded");
                     }else{
-                        Util.broadcastAMessage(context, "files_not_uploaded");
+                        jsonObjectMessageToBroadcast.put("messageToType", "files_not_uploaded");
+
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "files_not_uploaded");
+                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+//                        Util.broadcastAMessage(context, "files_not_uploaded");
                     }
 
                 }
@@ -1199,11 +1226,22 @@ Prefs prefs = new Prefs(context);
                         file.delete();
                     }
 
+                    String messageToDisplay = "";
+                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+
                     if (getNumberOfRecordings(context) == 0){
-                        Util.broadcastAMessage(context, "recordings_successfully_deleted");
+                        jsonObjectMessageToBroadcast.put("messageToType", "recordings_successfully_deleted");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "recordings_successfully_deleted");
+                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+
+                       // Util.broadcastAMessage(context, "recordings_successfully_deleted");
+
 
                     }else{
-                        Util.broadcastAMessage(context, "problem_deleteing_recordings");
+                        jsonObjectMessageToBroadcast.put("messageToType", "problem_deleteing_recordings");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "problem_deleteing_recordings");
+                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                       // Util.broadcastAMessage(context, "problem_deleteing_recordings");
                     }
 
                 }
