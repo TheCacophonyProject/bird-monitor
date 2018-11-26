@@ -54,9 +54,10 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_icon_name" >
+            android:label="@string/app_icon_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -104,7 +105,7 @@
             android:label="@string/title_activity_signup" />
         <activity
             android:name=".WelcomeActivity"
-            android:label="@string/title_activity_welcome"/>
+            android:label="@string/title_activity_welcome" />
         <activity
             android:name=".AccountQuestionActivity"
             android:label="@string/title_activity_account_question" />
@@ -114,6 +115,15 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group" />
+        <activity
+            android:name=".SetupWizard"
+            android:label="@string/title_activity_setup_wizard"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Cacophony">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

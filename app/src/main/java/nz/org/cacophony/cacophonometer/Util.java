@@ -640,9 +640,9 @@ private static void executeCommandTim(Context context, String command){
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+            jsonObjectMessageToBroadcast.put("messageType", "error_do_not_have_root");
             jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -715,11 +715,12 @@ private static void executeCommandTim(Context context, String command){
 
 
 
-    static void broadcastAMessage(Context context, JSONObject message){
+    //static void broadcastAMessage(Context context, JSONObject message){
+        static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
-        Intent intent = new Intent("event");
-        intent.putExtra("jsonStringMessage", message.toString());
+        Intent intent = new Intent(action);
+        intent.putExtra("jsonStringMessage", jsonStringMessage.toString());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
@@ -968,12 +969,12 @@ Prefs prefs = new Prefs(context);
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageToType", "turn_on_gps_and_try_again");
+                jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_FAILED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
             return;
         }
 
@@ -1124,17 +1125,17 @@ Prefs prefs = new Prefs(context);
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     if (uploadedSuccessfully){
 
-                        jsonObjectMessageToBroadcast.put("messageToType", "files_successfully_uploaded");
+                        jsonObjectMessageToBroadcast.put("messageType", "files_successfully_uploaded");
 
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "files_successfully_uploaded");
-                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
 
                        // Util.broadcastAMessage(context, "files_successfully_uploaded");
                     }else{
-                        jsonObjectMessageToBroadcast.put("messageToType", "files_not_uploaded");
+                        jsonObjectMessageToBroadcast.put("messageType", "files_not_uploaded");
 
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "files_not_uploaded");
-                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
 //                        Util.broadcastAMessage(context, "files_not_uploaded");
                     }
 
@@ -1230,17 +1231,17 @@ Prefs prefs = new Prefs(context);
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
                     if (getNumberOfRecordings(context) == 0){
-                        jsonObjectMessageToBroadcast.put("messageToType", "recordings_successfully_deleted");
+                        jsonObjectMessageToBroadcast.put("messageType", "recordings_successfully_deleted");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "recordings_successfully_deleted");
-                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                        Util.broadcastAMessage(context, "DELETE_RECORDINGS", jsonObjectMessageToBroadcast);
 
                        // Util.broadcastAMessage(context, "recordings_successfully_deleted");
 
 
                     }else{
-                        jsonObjectMessageToBroadcast.put("messageToType", "problem_deleteing_recordings");
+                        jsonObjectMessageToBroadcast.put("messageType", "problem_deleteing_recordings");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "problem_deleteing_recordings");
-                        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                        Util.broadcastAMessage(context, "DELETE_RECORDINGS", jsonObjectMessageToBroadcast);
                        // Util.broadcastAMessage(context, "problem_deleteing_recordings");
                     }
 

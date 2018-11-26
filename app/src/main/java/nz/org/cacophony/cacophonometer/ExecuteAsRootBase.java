@@ -130,7 +130,7 @@ abstract class ExecuteAsRootBase
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
                   //  Util.broadcastAMessage(context, "error_do_not_have_root");
                 }
             }
@@ -147,7 +147,7 @@ abstract class ExecuteAsRootBase
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
             //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (SecurityException ex)
@@ -161,7 +161,7 @@ abstract class ExecuteAsRootBase
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
            // Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (Exception ex)
@@ -175,7 +175,7 @@ abstract class ExecuteAsRootBase
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
             //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
 

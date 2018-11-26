@@ -76,10 +76,10 @@ class Server {
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "refresh_vitals_displayed_text");
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
 
                 jsonObjectMessageToBroadcast.put("messageType", "enable_vitals_button");
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
 
 
             } catch (Exception ex) {
@@ -152,8 +152,8 @@ class Server {
                     prefs.setDeviceToken(null);
 
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageToType", "untick_logged_in_to_server");
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
+                    Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
 
                     // Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
@@ -168,11 +168,11 @@ class Server {
         }
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageToType", "refresh_vitals_displayed_text");
+            jsonObjectMessageToBroadcast.put("messageType", "refresh_vitals_displayed_text");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "SERVER_LOGIN", jsonObjectMessageToBroadcast);
         // Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
         //noinspection RedundantIfStatement
         if (prefs.getToken() == null) {
@@ -187,10 +187,14 @@ class Server {
     static void loginUser(Context context) {
         final Prefs prefs = new Prefs(context);
 
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        String messageToDisplay = "";
         try {
-            String messageToDisplay = "";
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
+            DataOutputStream os = null;
+            BufferedReader serverAnswer = null;
+
+
+           // jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
 
             //jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
 
@@ -207,7 +211,7 @@ class Server {
                 messageToDisplay = "Unable to get an internet connection";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
 
-                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
                 // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
                 return;
             }
@@ -225,11 +229,12 @@ class Server {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
+                jsonObjectMessageToBroadcast.put("messageType", "INVALID_CREDENTIALS");
                 jsonObjectMessageToBroadcast.put("responseCode", -1);
-                jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
+               // jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
                 messageToDisplay = "Error: Username/email address or password can not be missing";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
                 return;
             }
 
@@ -241,62 +246,88 @@ class Server {
 
             HttpURLConnection myConnection = openURL(serverUrl);
 
-            DataOutputStream os = new DataOutputStream(myConnection.getOutputStream());
+             os = new DataOutputStream(myConnection.getOutputStream());
             os.writeBytes(jsonParam.toString());
             os.flush();
 
-            //  Here you read any answer from server.
-            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-            String responseLine;
-
-            responseLine = serverAnswer.readLine();
-            os.close();
-            serverAnswer.close();
-
-            Log.i("MSG", myConnection.getResponseMessage());
             String responseCode = String.valueOf(myConnection.getResponseCode());
 
-            myConnection.disconnect();
+//            //  Here you read any answer from server.
+//            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+//            String responseLine;
+//
+//            responseLine = serverAnswer.readLine();
+//            os.close();
+//            serverAnswer.close();
+//
+//            Log.i("MSG", myConnection.getResponseMessage());
+////            String responseCode = String.valueOf(myConnection.getResponseCode());
+
+//            myConnection.disconnect();
 
 
             if (responseCode.equalsIgnoreCase("200")) {
+                //  Here you read any answer from server.
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
 
+                String responseLine;
+                responseLine = serverAnswer.readLine();
 
                 JSONObject joRes = new JSONObject(responseLine);
                 if (joRes.getBoolean("success")) {
                   //  jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
 
-                    Log.i(TAG, "Successful authentication.");
                     String userToken = joRes.getString("token");
                     prefs.setUserToken(userToken);
-                    Log.d(TAG, "User Web token has been refreshed");
                     prefs.setTokenLastRefreshed(new Date().getTime());
 
-                    jsonObjectMessageToBroadcast.put("responseCode", 200);
                     messageToDisplay = "Success, you have successfully signed in";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
                 } else { // not success
                     prefs.setUserToken(null);
-                    jsonObjectMessageToBroadcast.put("responseCode", responseCode);
-                    messageToDisplay = "Error, unable to sign in";
+                    jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
+                    messageToDisplay = "Error, unable to sign in.";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
                 }
 
-            } else { // STATUS not OK
-                Log.e(TAG, "Invalid user for login.");
+            } else { // responseCode not 200
+                // NOT going to try to read myConnection.getInputStream() in case it throws an exception (responsecode 401 does)!
+
                 prefs.setUserToken(null);
-                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
-                messageToDisplay = "Error, unable to sign in";
+                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
+                messageToDisplay = "Error, unable to sign in. Error " + responseCode;
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
             }
+
+            myConnection.disconnect();
+
+            if (os != null){
+                os.close();
+            }
+
+            if (serverAnswer != null){
+                serverAnswer.close();
+            }
+
+
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
+                messageToDisplay = "Error, unable to sign in. Error.";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getLocalizedMessage());
+            }
+
+
         }
     }
 
@@ -437,10 +468,11 @@ class Server {
 
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            JSONObject joRes = new JSONObject(responseString);
 
             if (responseCode.equalsIgnoreCase("200")) {
 
-                JSONObject joRes = new JSONObject(responseString);
+
                 if (joRes.getBoolean("success")) {
                     registered = true;
 
@@ -458,49 +490,37 @@ class Server {
                     prefs.setDevicePassword(password);
 
                     prefs.setDeviceId(deviceID);
-                    jsonObjectMessageToBroadcast.put("messageToType", "REGISTER_SUCCESS");
+                    jsonObjectMessageToBroadcast.put("messageType", "REGISTER_SUCCESS");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Success - Your phone has been registered with the server :-)");
-                    Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
 
                 } else {
                     // Failed register.
                     Log.w(TAG, "Failed to register");
                     registered = false;
-                    jsonObjectMessageToBroadcast.put("messageToType", "200_REGISTER_FAIL_UNKNOWN_REASON");
+                    jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Oops, your phone did not register - not sure why");
-                    Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
 
                 }
             } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
-
-                Log.w(TAG, "Register Response from server is 422");
-                JSONObject joRes = new JSONObject(responseString);
-                String errorType = joRes.getString("errorType");
                 String message = joRes.getString("message");
-
-
-                setErrorMessage(message);
-                Log.i(TAG, message);
                 registered = false;
-                jsonObjectMessageToBroadcast.put("messageToType", "422_REGISTER_FAIL_UNKNOWN_REASON");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", message);
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
+               // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not register " + deviceName + " as it is already being used");
+                Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
 
-                //   Util.broadcastAMessage(context, message);
             } else { // response code not 200 or 422 - left this here from Cameron's code as it
                 // didn't work with 422 response, but not sure if needed for other responses
-                Log.w(TAG, "Register Response from server not 200");
-                JSONObject joRes = new JSONObject(responseString);
+
                 JSONArray messages = joRes.getJSONArray("messages");
                 String firstMessage = (String) messages.get(0);
-                setErrorMessage("NEITHER_200_NOR_422" + firstMessage);
-                Log.i(TAG, firstMessage);
                 registered = false;
-
-                jsonObjectMessageToBroadcast.put("messageToType", "NEITHER_200_NOR_422");
+                jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
-                //  Util.broadcastAMessage(context,firstMessage);
+                Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
+
             }
 
         } catch (Exception e) {
@@ -579,7 +599,7 @@ class Server {
                     jsonObjectMessageToBroadcast.put("responseCode", 200);
                     messageToDisplay = "Success, you have successfully signed up";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
 
                     //Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
                 } else {
@@ -589,7 +609,7 @@ class Server {
                     jsonObjectMessageToBroadcast.put("responseCode", responseCode);
                     messageToDisplay = "Sorry - failed to sign up";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
                     //Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
                 }
             } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
@@ -610,7 +630,7 @@ class Server {
                     }
                 }
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
                 //Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
             } else { // 422 error response
                 Log.w(TAG, "Signup Response from server is " + responseCode);
@@ -620,7 +640,7 @@ class Server {
                 String message = joResponseString.getString("message");
                 messageToDisplay = "Unable to sign up (ErrorType is " + errorType + " Message is " + message; // needs improving, find out what the other error codes might be?
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
                 // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
             }
 
@@ -643,7 +663,7 @@ class Server {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context,  "SERVER_UPLOAD_RECORDING", jsonObjectMessageToBroadcast);
             //Util.broadcastAMessage(context, "already_uploading");
             return false;
         }
@@ -769,7 +789,7 @@ class Server {
                 messageToDisplay = "Error, unable to get groups from server";
             }
             jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-            Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -807,20 +827,23 @@ class Server {
             //Set message to broadcast
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            jsonObjectMessageToBroadcast.put("activityName", "GroupActivity");
+
             jsonObjectMessageToBroadcast.put("responseCode", responseCode);
 
+
             if (responseCode == 200) {
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_ADDED_GROUP");
                 messageToDisplay = "Success, the group " + groupName + " has been added to the server";
                 // Now add it to local storage
                 Util.addGroup(context, groupName);
 
             } else {
+                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_ADD_GROUP");
                 messageToDisplay = "Sorry, the group " + groupName + " could not be added to the server";
             }
 
             jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-            Util.broadcastAMessage(context,  jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
             // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
 
 

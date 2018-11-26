@@ -81,7 +81,7 @@ if (isRecording){
     } catch (JSONException e) {
         e.printStackTrace();
     }
-    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
 
     returnValue = "recorded successfully";
 }
@@ -97,7 +97,7 @@ if (isRecording){
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
        // Util.broadcastAMessage(context, "recordNowButton_finished");
     }
 
@@ -130,7 +130,7 @@ if (isRecording){
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
                 } else {
                     returnValue = "recorded BUT did not upload";
                     Log.e(TAG, "Files failed to upload");
@@ -142,7 +142,7 @@ if (isRecording){
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
                 }
             }
         }
@@ -163,7 +163,7 @@ if (isRecording){
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
         //Util.broadcastAMessage(context, "update_record_now_button");
 try {
 
@@ -277,7 +277,7 @@ try {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
         //Util.broadcastAMessage(context, "recording_started");
     } catch (Exception e) {
 
@@ -330,7 +330,7 @@ try {
     } catch (JSONException e) {
         e.printStackTrace();
     }
-    Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
    // Util.broadcastAMessage(context, "update_record_now_button");
    // Util.broadcastAMessage(context, "recording_finished");
 }
@@ -346,7 +346,7 @@ try {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
 
        // Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
@@ -425,7 +425,7 @@ try {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
               //  Util.broadcastAMessage(context, "files_successfully_uploaded");
             }
             return returnValue;

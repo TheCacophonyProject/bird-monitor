@@ -112,7 +112,7 @@ import java.util.ArrayList;
         arrayListGroups = Util.getGroups(this);
         adapter.notifyDataSetChanged();
 
-        IntentFilter iff = new IntentFilter("event");
+        IntentFilter iff = new IntentFilter("SERVER_GROUPS");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
@@ -134,38 +134,34 @@ import java.util.ArrayList;
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
-        // broadcast notification coming from ??
-        @Override
+       @Override
         public void onReceive(Context context, Intent intent) {
             Prefs prefs = new Prefs(getApplicationContext());
             try {
-                String action = intent.getAction();
-                if (action.equals("server.getGroups")) {
-
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+
                 if (jsonStringMessage != null) {
 
+
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageToDisplay;
-                    int responseCode;
+                    String messageType = joMessage.getString("messageType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                        messageToDisplay = joMessage.getString("messageToDisplay");
-                        responseCode = joMessage.getInt("responseCode");
+                    // do something
+                    // update the list of groups from server
+                    if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
+                        Util.getToast(getApplicationContext(), messageToDisplay, false).show();
+                        // Don't need to update list view of groups
+                    } else {
+                        Util.getToast(getApplicationContext(), messageToDisplay, true).show();
+                        // Need to update list view of groups as it shouldn't have the group that the user was trying to add
+                        //Populate group list
+                        arrayListGroups = Util.getGroups(getApplicationContext());
+                        adapter.notifyDataSetChanged();
+                    }
 
-                        // do something
-                        // update the list of groups from server
-                        if (responseCode == 200) {
-                            Util.getToast(getApplicationContext(), messageToDisplay, false).show();
-                            // Don't need to update list view of groups
-                        } else {
-                            Util.getToast(getApplicationContext(), messageToDisplay, true).show();
-                            // Need to update list view of groups as it shouldn't have the group that the user was trying to add
-                            //Populate group list
-                            arrayListGroups = Util.getGroups(getApplicationContext());
-                            adapter.notifyDataSetChanged();
-                        }
                 }
-            }
+
 
 
             } catch (Exception ex) {

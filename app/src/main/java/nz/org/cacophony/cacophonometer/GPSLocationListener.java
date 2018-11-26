@@ -42,25 +42,15 @@ class GPSLocationListener implements LocationListener {
            prefs.setLatitude(lat);
            prefs.setLongitude(lon);
 
-           // Tell SetupActivity to resume.
-           Util.getToast(context, "New Location saved", false).show();
-
-           // send a broadcast for SetupActivity to update gps location text
-           String messageToDisplay = "";
            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
            try {
-               jsonObjectMessageToBroadcast.put("messageToType", "refresh_gps_coordinates");
-               jsonObjectMessageToBroadcast.put("messageToDisplay", "refresh_gps_coordinates");
+               jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_SUCCESS");
            } catch (JSONException e) {
                e.printStackTrace();
            }
-           Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+           Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
 
-          // Util.broadcastAMessage(context, "refresh_gps_coordinates");
-
-           Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){
-
            Log.e(TAG, ex.getLocalizedMessage());
        }
 

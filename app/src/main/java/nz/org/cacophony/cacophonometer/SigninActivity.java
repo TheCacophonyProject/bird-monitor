@@ -34,7 +34,7 @@ public class SigninActivity extends AppCompatActivity {
         super.onResume();
         Prefs prefs = new Prefs(getApplicationContext());
 
-        IntentFilter iff = new IntentFilter("event");
+        IntentFilter iff = new IntentFilter("SERVER_USER_LOGIN");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 
        String username = prefs.getUsername();
@@ -191,39 +191,33 @@ public class SigninActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Prefs prefs = new Prefs(getApplicationContext());
+           // Prefs prefs = new Prefs(getApplicationContext());
             try {
 
 
-                String message = intent.getStringExtra("message");
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
-                if (message != null) {
+                if (jsonStringMessage != null) {
 
 
-                    JSONObject joMessage = new JSONObject(message);
-                    String sender = joMessage.getString("sender");
-                    if (!sender.equalsIgnoreCase("server.loginUser")){
-                        return;
-                    }
-                   // String messageType = joMessage.getString("messageType");
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                        int responseCode = joMessage.getInt("responseCode");
-
-
-                        if (responseCode == 200){
-                            Util.getToast(getApplicationContext(),messageToDisplay, false ).show();
-                            Util.getGroupsFromServer(getApplicationContext());
-                            nextActivity();
-                        }else{
-                            Util.getToast(getApplicationContext(),messageToDisplay, true ).show();
-                        }
+                    if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
+                        Util.getToast(getApplicationContext(),messageToDisplay, false ).show();
+                        Util.getGroupsFromServer(getApplicationContext());
+                        nextActivity();
+                    } else{
+                        Util.getToast(getApplicationContext(),messageToDisplay, true ).show();
+                        return;
+                    }
 
                 }
 
             } catch (Exception ex) {
-
                 Log.e(TAG, ex.getLocalizedMessage());
+                Util.getToast(getApplicationContext(),"Could not login", true ).show();
             }
         }
     };

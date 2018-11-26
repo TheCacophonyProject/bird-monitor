@@ -55,7 +55,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
           //  Util.broadcastAMessage(context, "alarms_updated");
 
             if (prefs.getIsDisabled()){
@@ -74,7 +74,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
                // Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }

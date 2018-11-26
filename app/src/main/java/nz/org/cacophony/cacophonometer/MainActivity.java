@@ -134,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         isFirstTime = true;
 
         if (isFirstTime){
-            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+//            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            startActivity(new Intent(MainActivity.this, SetupWizard.class));
         }
 
 

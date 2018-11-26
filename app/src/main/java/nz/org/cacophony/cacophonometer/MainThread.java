@@ -50,7 +50,7 @@ class MainThread implements Runnable {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
 
            // Util.broadcastAMessage(context, "no_permission_to_record");
 
@@ -72,7 +72,7 @@ class MainThread implements Runnable {
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
-            Util.broadcastAMessage(context, jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
 
           //  Util.broadcastAMessage(context, "recording_failed");
 

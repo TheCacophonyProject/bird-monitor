@@ -44,8 +44,11 @@ public class GPSActivity extends AppCompatActivity {
         super.onResume();
         updateGpsDisplay(getApplicationContext());
 
-        IntentFilter iff = new IntentFilter("event");
+        IntentFilter iff = new IntentFilter("GPS");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+
+        IntentFilter iffRoot = new IntentFilter("ROOT");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeRoot, iffRoot);
     }
 
     @Override
@@ -53,9 +56,17 @@ public class GPSActivity extends AppCompatActivity {
         super.onPause();
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeRoot);
     }
 
     public void updateGPSLocationButton(@SuppressWarnings("UnusedParameters") View v) {
+
+        TextView latitudeDisplay = findViewById(R.id.tvLatitude);
+        TextView longitudeDisplay = findViewById(R.id.tvLongitude);
+        latitudeDisplay.setText(getString(R.string.latitude) );
+        longitudeDisplay.setText(getString(R.string.longitude) );
+
+
         TextView tvSearching = findViewById(R.id.tvSearching);
         tvSearching.setVisibility(View.VISIBLE);
         Util.updateGPSLocation(getApplicationContext());
@@ -103,27 +114,50 @@ public class GPSActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                String action = intent.getAction();
-                if (action.equals("GPS")) {
+
                     String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                     if (jsonStringMessage != null) {
 
                         JSONObject joMessage = new JSONObject(jsonStringMessage);
-                        String messageToType = intent.getStringExtra("messageToType");
-                        String messageToDisplay = joMessage.getString("messageToDisplay");
+                        String messageType = joMessage.getString("messageType");
 
-                        if (messageToType != null) {
-                            if (messageToType.equalsIgnoreCase("refresh_gps_coordinates")) {
+                        if (messageType != null) {
+                            if (messageType.equalsIgnoreCase("GPS_UPDATE_SUCCESS")) {
                                 updateGpsDisplay(context);
-                            } else if (messageToType.equalsIgnoreCase("turn_on_gps_and_try_again")) {
+                            } else {
+                                String messageToDisplay = joMessage.getString("messageToDisplay");
                                 Util.getToast(context, messageToDisplay, true).show();
-                            } else if (messageToType.equalsIgnoreCase("error_do_not_have_root")) {
-                                Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
                             }
+                        }
+                    }
 
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getLocalizedMessage());
+            }
+        }
+    };
+
+    private final BroadcastReceiver onNoticeRoot = new BroadcastReceiver() {
+        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+                if (jsonStringMessage != null) {
+
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageType = intent.getStringExtra("messageType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                    if (messageType != null) {
+                        if (messageType.equalsIgnoreCase("error_do_not_have_root")) {
+                            Util.getToast(getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
                         }
                     }
                 }
+
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
             }

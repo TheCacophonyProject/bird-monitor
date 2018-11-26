@@ -53,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             }
         }
 
-        IntentFilter iff = new IntentFilter("event");
+        IntentFilter iff = new IntentFilter("SERVER_REGISTER");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
         displayOrHideGUIObjects();
     }
@@ -321,21 +321,19 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         public void onReceive(Context context, Intent intent) {
             Prefs prefs = new Prefs(getApplicationContext());
             try {
-                String action = intent.getAction();
-                if (!action.equals("server.register")) {
-                    return;
-                }
+
+
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {
 
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageToType = intent.getStringExtra("messageToType");
+                    String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    if (messageToType != null) {
+                    if (messageType != null) {
 
 
-                        if (messageToType.equalsIgnoreCase("REGISTER_SUCCESS")) {
+                        if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
                             Util.getToast(getApplicationContext(), messageToDisplay, false).show();
                             //registerIdlingResource.decrement();
                             try {
@@ -346,31 +344,15 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
                                 Log.e(TAG, ex.getLocalizedMessage());
                             }
 
-                        } else if (messageToType.equalsIgnoreCase("200_REGISTER_FAIL_UNKNOWN_REASON")) {
-                           // String errorMessage = "Oops, your phone did not register - not sure why";
+                        } else  {
                             Util.getToast(getApplicationContext(), messageToDisplay, true).show();
-                            //    registerIdlingResource.decrement();
-
-                      //  } else if (messageToType.startsWith("devicename:")) {
-                        } else if (messageToType.equalsIgnoreCase("422_REGISTER_FAIL_UNKNOWN_REASON")) {
-                         //   String errorMessage = messageToType.substring("devicename:".length());
-                           // Util.getToast(getApplicationContext(), errorMessage, true).show(); // need to improve this message
-                            Util.getToast(getApplicationContext(), messageToDisplay, true).show(); // need to improve this message
-                            //    registerIdlingResource.decrement();
-                     //   } else if (messageToType.startsWith("NEITHER_200_NOR_422")) {
-                        } else if (messageToType.startsWith("NEITHER_200_NOR_422")) {
-                         //   String errorMessage = messageToType.substring(19);
-                          //  Util.getToast(getApplicationContext(), errorMessage, true).show(); // need to improve this message
-                            Util.getToast(getApplicationContext(), messageToDisplay, true).show(); // need to improve this message
-                            //   registerIdlingResource.decrement();
                         }
-
                     }
                 }
 
             } catch (Exception ex) {
-
                 Log.e(TAG, ex.getLocalizedMessage());
+                Util.getToast(getApplicationContext(), "Oops, your phone did not register - not sure why", true).show();
             }
         }
     };
