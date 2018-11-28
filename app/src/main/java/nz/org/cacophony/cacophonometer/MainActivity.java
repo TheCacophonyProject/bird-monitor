@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (isFirstTime){
 //            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
-            startActivity(new Intent(MainActivity.this, SetupWizard.class));
+            startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
 
@@ -198,9 +198,9 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            //Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(new Intent(this, WelcomeActivity.class));
-           // startActivity(intent);
+
+           // startActivity(new Intent(this, WelcomeActivity.class));
+            startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

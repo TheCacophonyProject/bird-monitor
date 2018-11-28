@@ -115,15 +115,7 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group" />
-        <activity
-            android:name=".SetupWizard"
-            android:label="@string/title_activity_setup_wizard"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/Cacophony">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
+        <activity android:name=".SetupWizardActivity"></activity>
     </application>
 
 </manifest>
