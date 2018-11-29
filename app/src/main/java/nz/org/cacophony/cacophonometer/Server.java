@@ -596,7 +596,8 @@ class Server {
                     prefs.setUsernamePassword(usernamePassword);
                     prefs.setEmailAddress(emailAddress);
 
-                    jsonObjectMessageToBroadcast.put("responseCode", 200);
+                    //jsonObjectMessageToBroadcast.put("responseCode", 200);
+                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
                     messageToDisplay = "Success, you have successfully signed up";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                     Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
@@ -606,7 +607,7 @@ class Server {
                     // Failed register.
                     Log.w(TAG, "Failed to signup");
                     signedUp = false;
-                    jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_CREATE_USER");
                     messageToDisplay = "Sorry - failed to sign up";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                     Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
@@ -616,7 +617,7 @@ class Server {
                 Log.w(TAG, "Signup Response from server is 422");
 
 
-                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                jsonObjectMessageToBroadcast.put("messageType", "422_FAILED_TO_CREATE_USER");
                 String errorType = joResponseString.getString("errorType");
                 String message = joResponseString.getString("message");
 
@@ -635,7 +636,7 @@ class Server {
             } else { // 422 error response
                 Log.w(TAG, "Signup Response from server is " + responseCode);
 
-                jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_CREATE_USER");
                 String errorType = joResponseString.getString("errorType");
                 String message = joResponseString.getString("message");
                 messageToDisplay = "Unable to sign up (ErrorType is " + errorType + " Message is " + message; // needs improving, find out what the other error codes might be?

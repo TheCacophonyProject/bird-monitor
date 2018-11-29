@@ -147,7 +147,6 @@ import java.util.ArrayList;
                     String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    // do something
                     // update the list of groups from server
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
                         Util.getToast(getApplicationContext(), messageToDisplay, false).show();
