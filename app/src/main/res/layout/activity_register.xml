@@ -87,7 +87,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvDeviceName" />
 
     <Button
-        android:id="@+id/btnStartSetup"
+        android:id="@+id/btnRegister"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toTopOf="@+id/btnNext"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnStartSetup" />
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
     <Button
         android:id="@+id/btnBack"

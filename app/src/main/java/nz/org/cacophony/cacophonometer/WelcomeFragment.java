@@ -17,7 +17,7 @@ public class WelcomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
-        btnStartSetup = (Button) view.findViewById(R.id.btnStartSetup);
+        btnStartSetup = (Button) view.findViewById(R.id.btnRegister);
 
 
         btnStartSetup.setOnClickListener(new View.OnClickListener(){

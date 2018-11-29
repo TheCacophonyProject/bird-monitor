@@ -45,8 +45,7 @@ public class TestRecordActivity extends AppCompatActivity implements IdlingResou
             ((TextView)findViewById(R.id.tvMessages)).setText("The App is currently disabled");
         }
 
-        IntentFilter iff = new IntentFilter("event");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+
 
     }
 

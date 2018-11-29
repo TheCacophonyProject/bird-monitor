@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             ((TextView) findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_registered) + prefs.getDeviceName());
 
             //Only unregister button is visible
-            findViewById(R.id.btnStartSetup).setVisibility(View.INVISIBLE);
+            findViewById(R.id.btnRegister).setVisibility(View.INVISIBLE);
             findViewById(R.id.btnUnRegister).setVisibility(View.VISIBLE);
 
             //Nudge use to Next Step button
@@ -95,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             ((TextView) findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_unregistered));
 
             //Only register button is visible
-            findViewById(R.id.btnStartSetup).setVisibility(View.VISIBLE);
+            findViewById(R.id.btnRegister).setVisibility(View.VISIBLE);
             findViewById(R.id.btnUnRegister).setVisibility(View.INVISIBLE);
 
             //Nudge user to Enter Group Name box

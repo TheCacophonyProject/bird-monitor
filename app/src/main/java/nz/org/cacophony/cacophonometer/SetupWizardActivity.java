@@ -23,6 +23,8 @@ public class SetupWizardActivity extends AppCompatActivity {
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
 
+    private String group = ""; // to be used to pass the name of the selected group between fragments
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,25 +37,7 @@ public class SetupWizardActivity extends AppCompatActivity {
         setupViewPager(mViewPager);
     }
 
-//    public void next(@SuppressWarnings("UnusedParameters") View v) {
-//        int currentItem = mViewPager.getCurrentItem();
-//        currentItem++;
-//        if (currentItem < mViewPager.getAdapter().getCount()){
-//            mViewPager.setCurrentItem(currentItem);
-//        }else{
-//            finish();
-//        }
-//    }
 
-//    public void back(@SuppressWarnings("UnusedParameters") View v) {
-//        int currentItem = mViewPager.getCurrentItem();
-//        currentItem--;
-//        if (currentItem >= 0 ){
-//            mViewPager.setCurrentItem(currentItem);
-//        }else{
-//            finish();
-//        }
-//    }
 
     public void previousPageView(){
         int currentItem = mViewPager.getCurrentItem();
@@ -92,5 +76,11 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
 
+    public String getGroup() {
+        return group;
+    }
 
+    public void setGroup(String group) {
+        this.group = group;
+    }
 }
