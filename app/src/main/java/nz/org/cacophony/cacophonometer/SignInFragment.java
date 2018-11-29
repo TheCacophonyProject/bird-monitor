@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,11 @@ public class SignInFragment extends Fragment {
         btnSignIn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                // close soft keyboard
+                // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
                 signinButton();
             }
         });
@@ -143,6 +149,8 @@ public class SignInFragment extends Fragment {
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
                         Util.getToast(getActivity().getApplicationContext(),messageToDisplay, false ).show();
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
+
+
                         ((SetupWizardActivity) getActivity()).nextPageView();
                     } else{
                         Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();

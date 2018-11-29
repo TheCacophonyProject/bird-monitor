@@ -194,9 +194,7 @@ class Server {
             BufferedReader serverAnswer = null;
 
 
-           // jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
 
-            //jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
 
             Util.disableFlightMode(context);
 
@@ -252,28 +250,31 @@ class Server {
 
             String responseCode = String.valueOf(myConnection.getResponseCode());
 
-//            //  Here you read any answer from server.
-//            BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-//            String responseLine;
-//
-//            responseLine = serverAnswer.readLine();
-//            os.close();
-//            serverAnswer.close();
-//
-//            Log.i("MSG", myConnection.getResponseMessage());
-////            String responseCode = String.valueOf(myConnection.getResponseCode());
+            // NOT going to try to read myConnection.getInputStream() in case it throws an exception (responsecode 401 does)!
+            // Instead read the ErrorStream to get the error message
+            if (responseCode.equalsIgnoreCase("200")) {
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+            } else {
+                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getErrorStream()));
+            }
+            String responseLine;
 
-//            myConnection.disconnect();
+            responseLine = serverAnswer.readLine();
+            os.close();
+            serverAnswer.close();
+            myConnection.disconnect();
+
+            JSONObject joRes = new JSONObject(responseLine);
 
 
             if (responseCode.equalsIgnoreCase("200")) {
                 //  Here you read any answer from server.
-                serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+               // serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
 
-                String responseLine;
-                responseLine = serverAnswer.readLine();
+               // String responseLine;
+              //  responseLine = serverAnswer.readLine();
 
-                JSONObject joRes = new JSONObject(responseLine);
+
                 if (joRes.getBoolean("success")) {
                   //  jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
@@ -294,25 +295,22 @@ class Server {
                     Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
                 }
 
-            } else { // responseCode not 200
-                // NOT going to try to read myConnection.getInputStream() in case it throws an exception (responsecode 401 does)!
+            } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
 
-                prefs.setUserToken(null);
-                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                messageToDisplay = "Error, unable to sign in. Error " + responseCode;
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-            }
+            jsonObjectMessageToBroadcast.put("messageType", "");
+            // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not sign in.");
+            Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
-            myConnection.disconnect();
+        } else {
+            JSONArray messages = joRes.getJSONArray("messages");
+            String firstMessage = (String) messages.get(0);
 
-            if (os != null){
-                os.close();
-            }
+            jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
+            Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
-            if (serverAnswer != null){
-                serverAnswer.close();
-            }
+        }
 
 
 
@@ -320,14 +318,12 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage());
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                messageToDisplay = "Error, unable to sign in. Error.";
+                messageToDisplay = "Error, unable to sign in.";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
             } catch (JSONException e) {
                 Log.e(TAG, e.getLocalizedMessage());
             }
-
-
         }
     }
 
@@ -719,13 +715,13 @@ class Server {
     }
 
 
-    private static void setErrorMessage(String errorMessage) {
-        Server.errorMessage = errorMessage;
-    }
-
-    static String getErrorMessage() {
-        return errorMessage;
-    }
+//    private static void setErrorMessage(String errorMessage) {
+//        Server.errorMessage = errorMessage;
+//    }
+//
+//    static String getErrorMessage() {
+//        return errorMessage;
+//    }
 
     static ArrayList<String> getGroups(Context context) {
         final Prefs prefs = new Prefs(context);
