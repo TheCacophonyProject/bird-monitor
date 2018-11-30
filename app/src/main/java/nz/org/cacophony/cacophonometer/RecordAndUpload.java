@@ -39,6 +39,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting{
     }
 
 static String doRecord(Context context, String typeOfRecording) {
+    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
     String returnValue;
@@ -69,37 +70,23 @@ static String doRecord(Context context, String typeOfRecording) {
     }
 
 if (isRecording){
-   return "isRecording";
-}else{
-
-    makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
-    String messageToDisplay = "";
-    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+     jsonObjectMessageToBroadcast = new JSONObject();
     try {
-        jsonObjectMessageToBroadcast.put("messageToType", "recording_finished");
-        jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished");
+        jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
+        jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress");
     } catch (JSONException e) {
         e.printStackTrace();
     }
     Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+   return "isRecording";
+}else{
+
+    makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
 
     returnValue = "recorded successfully";
 }
 
 
-
-    if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
-        String messageToDisplay = "";
-        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-        try {
-            jsonObjectMessageToBroadcast.put("messageToType", "recordNowButton_finished");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "recordNowButton_finished");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
-       // Util.broadcastAMessage(context, "recordNowButton_finished");
-    }
 
 // Checked that it has a webToken before trying to upload
     if (prefs.getToken() == null) {
@@ -122,11 +109,11 @@ if (isRecording){
                 if (uploadedFilesSuccessfully) {
                     returnValue = "recorded and uploaded successfully";
                     prefs.setDateTimeLastUpload(now);
-                    String messageToDisplay = "";
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+
+                     jsonObjectMessageToBroadcast = new JSONObject();
                     try {
-                        jsonObjectMessageToBroadcast.put("messageToType", "recording_and_uploading_finished");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_and_uploading_finished");
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been uploaded");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -135,10 +122,10 @@ if (isRecording){
                     returnValue = "recorded BUT did not upload";
                     Log.e(TAG, "Files failed to upload");
                     String messageToDisplay = "";
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                     jsonObjectMessageToBroadcast = new JSONObject();
                     try {
-                        jsonObjectMessageToBroadcast.put("messageToType", "recording_finished_but_uploading_failed");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished_but_uploading_failed");
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -158,8 +145,8 @@ if (isRecording){
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageToType", "update_record_now_button");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "update_record_now_button");
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has Started");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -272,8 +259,8 @@ try {
          messageToDisplay = "";
          jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageToType", "recording_started");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_started");
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -322,17 +309,14 @@ try {
     Log.e(TAG, ex.getLocalizedMessage());
 }finally {
     isRecording = false;
-     messageToDisplay = "";
      jsonObjectMessageToBroadcast = new JSONObject();
     try {
-        jsonObjectMessageToBroadcast.put("messageToType", "recording_finished");
-        jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished");
+        jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
     } catch (JSONException e) {
         e.printStackTrace();
     }
     Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
-   // Util.broadcastAMessage(context, "update_record_now_button");
-   // Util.broadcastAMessage(context, "recording_finished");
 }
 
     }
@@ -341,7 +325,7 @@ try {
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageToType", "about_to_upload_files");
+            jsonObjectMessageToBroadcast.put("messageType", "about_to_upload_files");
             jsonObjectMessageToBroadcast.put("messageToDisplay", "about_to_upload_files");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -420,7 +404,7 @@ try {
                  messageToDisplay = "";
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
-                    jsonObjectMessageToBroadcast.put("messageToType", "files_successfully_uploaded");
+                    jsonObjectMessageToBroadcast.put("messageType", "files_successfully_uploaded");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "files_successfully_uploaded");
                 } catch (JSONException e) {
                     e.printStackTrace();

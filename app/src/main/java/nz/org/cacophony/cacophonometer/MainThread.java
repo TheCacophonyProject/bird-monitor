@@ -45,7 +45,7 @@ class MainThread implements Runnable {
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageToType", "no_permission_to_record");
+                jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
             } catch (JSONException e) {
                 e.printStackTrace();

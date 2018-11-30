@@ -50,7 +50,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageToType", "alarms_updated");
+                jsonObjectMessageToBroadcast.put("messageType", "alarms_updated");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "alarms_updated");
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -59,6 +59,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
           //  Util.broadcastAMessage(context, "alarms_updated");
 
             if (prefs.getIsDisabled()){
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
+                Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
             }
 
@@ -69,7 +73,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                  messageToDisplay = "";
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
-                    jsonObjectMessageToBroadcast.put("messageToType", "no_permission_to_record");
+                    jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
                 } catch (JSONException e) {
                     e.printStackTrace();
