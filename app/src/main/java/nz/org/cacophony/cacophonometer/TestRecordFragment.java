@@ -111,6 +111,9 @@ public class TestRecordFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (getView() == null) {
+                return;
+            }
             TextView tvMessages = getView().findViewById(R.id.tvMessages);
             try {
                 Prefs prefs = new Prefs(context);

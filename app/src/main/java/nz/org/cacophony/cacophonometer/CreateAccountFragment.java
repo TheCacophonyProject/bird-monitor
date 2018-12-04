@@ -111,7 +111,7 @@ public class CreateAccountFragment extends Fragment {
         if (prefs.getUsername() == null){
             ((TextView) getView().findViewById(R.id.tvChooseUsername)).setText("Choose a username");
             ((TextView) getView().findViewById(R.id.tvEnterEmail)).setText("Email address");
-            ((TextView) getView().findViewById(R.id.tvTitle)).setText("You need to signup to the Cacophony Server");
+            ((TextView) getView().findViewById(R.id.tvTitle)).setText("You need to create an account on the Cacophony Server");
 
             getView().findViewById(R.id.etUsername).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.etEmail).setVisibility(View.VISIBLE);
@@ -253,6 +253,9 @@ public class CreateAccountFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
           //  Prefs prefs = new Prefs(getActivity().getApplicationContext());
             try {
+                if (getView() == null) {
+                    return;
+                }
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
                 if (jsonStringMessage != null) {

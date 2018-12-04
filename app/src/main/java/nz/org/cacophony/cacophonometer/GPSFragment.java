@@ -105,6 +105,9 @@ public class GPSFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
+                if (getView() == null) {
+                    return;
+                }
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {
@@ -134,6 +137,9 @@ public class GPSFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
+                if (getView() == null) {
+                    return;
+                }
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
-    private Button btnBack;
+
     private EditText etNewGroupInput;
-    private Button btnAddGroup;
+    private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> arrayListGroups;
@@ -37,24 +37,15 @@ public class GroupsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_groups, container, false);
         setUserVisibleHint(false);
 
-        btnBack = (Button) view.findViewById(R.id.btnBack);
-
-        btnBack.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).previousPageView();
-            }
-        });
-
         etNewGroupInput = (EditText) view.findViewById(R.id.etNewGroupInput);
-        btnAddGroup = (Button) view.findViewById(R.id.btnAddGroup);
+        btnCreateGroup = (Button) view.findViewById(R.id.btnCreateGroup);
         lvGroups = (ListView) view.findViewById(R.id.lvGroups);
         arrayListGroups = Util.getGroups(getActivity());
 
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayListGroups);
         lvGroups.setAdapter(adapter);
 
-        btnAddGroup.setOnClickListener(new View.OnClickListener() {
+        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -132,6 +123,10 @@ public class GroupsFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
            
             try {
+
+                if (getView() == null) {
+                    return;
+                }
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
                 if (jsonStringMessage != null) {

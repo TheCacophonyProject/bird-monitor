@@ -63,59 +63,41 @@
         </activity>
         <activity
             android:name=".VitalsActivity"
-            android:label="@string/title_activity_vitals" />
-        <activity
-            android:name=".RegisterActivity"
-            android:label="@string/title_activity_register" />
-        <activity
-            android:name=".RootedActivity"
-            android:label="@string/title_activity_rooted" />
-        <activity
-            android:name=".GPSActivity"
-            android:label="@string/title_activity_gps" />
+            android:label="@string/activity_or_fragment_title_vitals" />
         <activity
             android:name=".WalkingActivity"
-            android:label="@string/title_activity_walking" />
+            android:label="@string/activity_or_fragment_title_walking" />
         <activity
             android:name=".ManageRecordingsActivity"
-            android:label="@string/title_activity_manage_recordings" />
+            android:label="@string/activity_or_fragment_title_manage_recordings" />
         <activity
             android:name=".TestRecordActivity"
-            android:label="@string/title_activity_test_record" />
+            android:label="@string/activity_or_fragment_title_test_record" />
         <activity
             android:name=".InternetConnectionActivity"
-            android:label="@string/title_activity_internet_connection" />
+            android:label="@string/activity_or_fragment_title_internet_connection" />
         <activity
             android:name=".SoundActivity"
-            android:label="@string/title_activity_warning_sound" />
+            android:label="@string/activity_or_fragment_title_warning_sound" />
         <activity
             android:name=".BatteryActivity"
-            android:label="@string/title_activity_ignore_low_battery" />
+            android:label="@string/activity_or_fragment_title_activity_ignore_low_battery" />
+        <activity
+            android:name=".RootedActivity"
+            android:label="@string/activity_or_fragment_title_rooted" />
         <activity
             android:name=".FrequencyActivity"
-            android:label="@string/title_activity_frequency" />
+            android:label="@string/activity_or_fragment_title_activity_frequency" />
         <activity
             android:name=".TestingActivity"
-            android:label="@string/title_activity_settings_for_testing" />
+            android:label="@string/activity_or_fragment_title_settings_for_testing" />
         <activity
             android:name=".DisableActivity"
-            android:label="@string/title_activity_turn_off_or_on" />
-        <activity
-            android:name=".SignupActivity"
-            android:label="@string/title_activity_signup" />
-        <activity
-            android:name=".WelcomeActivity"
-            android:label="@string/title_activity_welcome" />
-        <activity
-            android:name=".AccountQuestionActivity"
-            android:label="@string/title_activity_account_question" />
-        <activity
-            android:name=".SigninActivity"
-            android:label="@string/title_activity_signin" />
-        <activity
-            android:name=".GroupActivity"
-            android:label="@string/title_activity_group" />
-        <activity android:name=".SetupWizardActivity"></activity>
+            android:label="@string/activity_or_fragment_title_turn_off_or_on" />
+
+        <activity android:name=".SetupWizardActivity"
+            android:label="@string/activity_or_fragment_title_setup"/>
+
     </application>
 
 </manifest>

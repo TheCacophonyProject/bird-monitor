@@ -137,6 +137,9 @@ public class SignInFragment extends Fragment {
 
             // Prefs prefs = new Prefs(getApplicationContext());
             try {
+                if (getView() == null) {
+                    return;
+                }
 
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");

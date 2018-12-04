@@ -146,7 +146,7 @@ class Util {
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
 
         try {
-            String appName = context.getResources().getString(R.string.main_activity_name);
+            String appName = context.getResources().getString(R.string.activity_or_fragment_title_main);
 
             if (canCreateFile != null){
                 // Use the sdcard
@@ -1148,58 +1148,101 @@ Prefs prefs = new Prefs(context);
         thread.start();
     }
 
-    public static void displayHelp(Context context, String activityName){
+    public static void displayHelp(Context context, String activityOrFragmentName){
 
         String dialogMessage = "";
 
-        switch (activityName) {
-            case "Introduction":
-                dialogMessage = context.getString(R.string.help_text_introduction);
-
-                break;
-            case "Register":
-                dialogMessage = context.getString(R.string.help_text_register);
-                break;
-            case "Battery":
-                dialogMessage = context.getString(R.string.help_text_battery);
-                break;
-            case "Disable":
-                dialogMessage = context.getString(R.string.help_text_disable);
-                break;
-            case "Frequency":
-                dialogMessage = context.getString(R.string.help_text_frequency);
-                break;
-            case "GPS Location":
-                dialogMessage = context.getString(R.string.help_text_GPS_location);
-                break;
-            case "Internet Connection":
-                dialogMessage = context.getString(R.string.help_text_internet_connection);
-                break;
-            case "Rooted":
-                dialogMessage = context.getString(R.string.help_text_rooted);
-                break;
-            case "Warning Sound":
-                dialogMessage = context.getString(R.string.help_text_warning_sound);
-                break;
-            case "Testing":
-                dialogMessage = context.getString(R.string.help_text_testing);
-                break;
-            case "Test Record":
-                dialogMessage = context.getString(R.string.help_text_test_record);
-                break;
-            case "Manage Recordings":
-                dialogMessage = context.getString(R.string.help_text_manage_recordings);
-                break;
-            case "App Vitals":
-                dialogMessage = context.getString(R.string.help_text_app_vitals);
-                break;
-            case "Walking":
-                dialogMessage = context.getString(R.string.help_text_walking);
-                break;
-            default:
-                Log.w(TAG, "Invalid Help Activity name");
-                dialogMessage = "";
+        if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))){
+            dialogMessage = context.getString(R.string.help_text_welcome);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_account))){
+            dialogMessage = context.getString(R.string.help_text_create_account);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_sign_in))){
+            dialogMessage = context.getString(R.string.help_text_sign_in);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group))){
+            dialogMessage = context.getString(R.string.help_text_create_or_choose_group);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_register_phone))){
+            dialogMessage = context.getString(R.string.help_text_register_phone);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_gps_location))){
+            dialogMessage = context.getString(R.string.help_text_gps_location);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_test_record))){
+            dialogMessage = context.getString(R.string.help_text_test_record);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_vitals))){
+            dialogMessage = context.getString(R.string.help_text_vitals);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_walking))){
+            dialogMessage = context.getString(R.string.help_text_walking);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery))){
+            dialogMessage = context.getString(R.string.help_text_battery);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_warning_sound))){
+            dialogMessage = context.getString(R.string.help_text_warning_sound);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_manage_recordings))){
+            dialogMessage = context.getString(R.string.help_text_manage_recordings);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_internet_connection))){
+            dialogMessage = context.getString(R.string.help_text_internet_connection);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_frequency))){
+            dialogMessage = context.getString(R.string.help_text_frequency);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_rooted))){
+            dialogMessage = context.getString(R.string.help_text_rooted);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_testing))){
+            dialogMessage = context.getString(R.string.help_text_settings_for_testing);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on))){
+            dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
+        }else {
+            dialogMessage = "Still to fix in Util.displayHelp";
         }
+
+//        switch (activityOrFragmentName) {
+//            case "Welcome":
+//                dialogMessage = context.getString(R.string.help_text_welcome);
+//                break;
+//            case create_account_title:
+//                dialogMessage = context.getString(R.string.help_text_welcome);
+//                break;
+//            case "Register":
+//                dialogMessage = context.getString(R.string.help_text_register);
+//                break;
+//            case "Battery":
+//                dialogMessage = context.getString(R.string.help_text_battery);
+//                break;
+//            case "Disable":
+//                dialogMessage = context.getString(R.string.help_text_disable);
+//                break;
+//            case "Frequency":
+//                dialogMessage = context.getString(R.string.help_text_frequency);
+//                break;
+//            case "GPS Location":
+//                dialogMessage = context.getString(R.string.help_text_GPS_location);
+//                break;
+//            case "Internet Connection":
+//                dialogMessage = context.getString(R.string.help_text_internet_connection);
+//                break;
+//            case "Rooted":
+//                dialogMessage = context.getString(R.string.help_text_rooted);
+//                break;
+//            case "Warning Sound":
+//                dialogMessage = context.getString(R.string.help_text_warning_sound);
+//                break;
+//            case "Testing":
+//                dialogMessage = context.getString(R.string.help_text_testing);
+//                break;
+//            case "Test Record":
+//                dialogMessage = context.getString(R.string.help_text_test_record);
+//                break;
+//            case "Manage Recordings":
+//                dialogMessage = context.getString(R.string.help_text_manage_recordings);
+//                break;
+//            case "App Vitals":
+//                dialogMessage = context.getString(R.string.help_text_app_vitals);
+//                break;
+//            case "Walking":
+//                dialogMessage = context.getString(R.string.help_text_walking);
+//                break;
+//            case "Setup":
+//                dialogMessage = context.getString(R.string.help_setup);
+//                break;
+//            default:
+//                Log.w(TAG, "Invalid Help Activity name");
+//                dialogMessage = "";
+//        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         // Add the buttons
@@ -1210,7 +1253,7 @@ Prefs prefs = new Prefs(context);
         });
 
         builder.setMessage(dialogMessage)
-                .setTitle(activityName + " Help");
+                .setTitle(activityOrFragmentName + " Help");
         AlertDialog dialog = builder.create();
         dialog.show();
     }

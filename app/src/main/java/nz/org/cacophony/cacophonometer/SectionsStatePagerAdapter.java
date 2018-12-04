@@ -33,4 +33,11 @@ private final List<Fragment> mfragmentList = new ArrayList<>();
     public int getCount() {
         return mfragmentList.size();
     }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        // http://codetheory.in/android-pagertabstrip-pagertitlestrip-viewpager/
+        return mfragmentTitleList.get(position);
+
+    }
 }

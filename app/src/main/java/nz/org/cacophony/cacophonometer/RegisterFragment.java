@@ -104,6 +104,9 @@ public class RegisterFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             try {
+                if (getView() == null) {
+                    return;
+                }
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {

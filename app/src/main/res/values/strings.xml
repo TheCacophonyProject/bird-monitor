@@ -2,30 +2,64 @@
 
     <string name="app_name">Cacophonometer</string>
     <string name="app_icon_name">Cacophony</string>
-    <string name="main_activity_name">Cacophonometer</string>
-    <string name="title_activity_setup">Settings</string>
-    <string name="title_activity_help">Help</string>
-    <string name="title_activity_vitals">App Vitals</string>
-    <string name="title_activity_register">Register Phone</string>
-    <string name="title_activity_rooted">Rooted?</string>
-    <string name="title_activity_gps">GPS Location</string>
-    <string name="title_activity_walking">Walking?</string>
-    <string name="title_activity_manage_recordings">Manage Recordings</string>
-    <string name="title_activity_test_record">Test Record</string>
-    <string name="title_activity_internet_connection">Internet Connection</string>
-    <string name="title_activity_warning_sound">Warning Sound</string>
-    <string name="title_activity_ignore_low_battery">Ignore Low Battery</string>
-    <string name="title_activity_frequency">Frequency</string>
-    <string name="title_activity_settings_for_testing">Settings for Testing</string>
-    <string name="title_activity_turn_off_or_on">Turn Off or On</string>
-    <string name="title_activity_signup">Sign Up</string>
-    <string name="title_activity_signin">Sign In</string>
-    <string name="title_activity_group">Setup Group</string>
-    <string name="title_activity_welcome">Welcome</string>
-    <string name="title_activity_account_question">Cacophony Account?</string>
+
+    <string name="activity_or_fragment_title_setup">Setup</string>
+    <string name="activity_or_fragment_title_main">Cacophonometer</string>
+    <string name="activity_or_fragment_title_register_phone">Register Phone</string>
+    <string name="activity_or_fragment_title_rooted">Rooted?</string>
+    <string name="activity_or_fragment_title_gps">GPS Location</string>
+    <string name="activity_or_fragment_title_walking">Walking?</string>
+    <string name="activity_or_fragment_title_manage_recordings">Manage Recordings</string>
+    <string name="activity_or_fragment_title_test_record">Test Record</string>
+    <string name="activity_or_fragment_title_internet_connection">Internet Connection</string>
+    <string name="activity_or_fragment_title_warning_sound">Warning Sound</string>
+    <string name="activity_or_fragment_title_activity_ignore_low_battery">Ignore Low Battery</string>
+    <string name="activity_or_fragment_title_activity_frequency">Frequency</string>
+    <string name="activity_or_fragment_title_settings_for_testing">Settings for Testing</string>
+    <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
+    <string name="activity_or_fragment_title_app_vitals">App Vitals</string>
+    <string name="activity_or_fragment_title_vitals">App Vitals</string>
+    <string name="activity_or_fragment_title_create_account">Create a Cacophony account</string>
+    <string name="activity_or_fragment_title_sign_in">Sign in to your Cacophony Account</string>
+    <string name="activity_or_fragment_title_create_or_choose_group">Create or choose a group</string>
+
+    <string name="activity_or_fragment_title_gps_location">GPS Location</string>
 
 
-    <string name="app_vitals">App Vitals</string>
+    <string name="help_text_welcome">Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.\n\nTo use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project\nhttps://cacophony.org.nz/</string>
+     <string name="help_text_create_account">The Cacophonometer is designed to work with an account on the Cacophony server.  Please fill in the form to create your account, or if you already have an account you can skip this step.</string>
+    <string name="help_text_sign_in">Signing in, will enable you to create a group on the server, or select a group that you have previously created.\n\nIf you already know the group that you are going to use with this phone, you can skip this step.</string>
+    <string name="help_text_create_or_choose_group">Your phone needs to be registered with a group on the server.  If you signed in on the previous page, you will see a list of groups associated with your account.\n\nYou can either select one of the groups or create a new group.</string>
+    <string name="help_text_test_record">Using the Record Now button will allow you to get immediate feedback on whether your phone has been setup correctly.  \n\nThe app will record for the normal length of one minute, so you will need to wait that long (A series of messages are displayed to give you feedback on the progress of recording and uploading to the server.  \n\nThe Record Now button is disabled (greyed out)if a recording is already in progress, or if the app has been disabled.  You can enable the app from the Home screen.  Once the file(s) have been uploaded, you can confirm this by checking on the server page.</string>
+    <string name="help_text_register_phone">Once you have created a group on the server, you can enter it in the \'Group Name\' field, and also enter a unique name for your phone (at least 4 characters).  Press the button to register.  You will see  messages informing you of progress - the last message will say that registration has been successful.
+                    \n\nYou can un-register this device if you want to change the name.
+                    \n\nOnce your phone has been successfully registered, press the \'NEXT-ROOTED\' button.</string>
+    <string name="help_text_battery">Normally the app will not record when the battery is getting low.  But, you can ignore a low battery when out walking or if you have just left the phone somewhere without power and you want it to keep recording until the battery goes flat. \n\nNote: It is NOT advisable to use this option if you are using a solar panel as once the battery has gone completely flat, the phone is very unlikely to turn back on even if the solar panel re-charges the battery.</string>
+    <string name="help_text_turn_off_or_on">You may want to prevent the app from making recordings.  This is useful if you have installed the app on a phone that you are now keeping close to you.  If you choose this option, the \‘Disable Recording\’ button on the home screen will change colour to remind you that recording has been disabled.</string>
+     <string name="help_text_frequency">The App\’s default settings have been chosen to be suitable for most situations and so the following should only be changed if you have a good reason.\n\nRecord More Often:  The App will make recordings every hour during the day and night, and every ten minutes for an hour each side of dawn and dusk.  This frequency is seen as a good compromise between getting a reasonable sample of bird song, not overloading the Cacophony server and saving power.  If you need to, you can choose to \’Record more often\’ which will increase the frequency to record every 15 minutes through out the day and night.  There is also the possibility that at some point in the future, the server may limit the number of recordings received from a device.\n\nUpload after every recording: If you are not concerned with how much power your phone is using and you can’t wait to hear your birds, then this option will upload each recording as soon as it has finished – rather than every six hours. \n\nPeriodically update GPS will attempt to get a new GPS location every 15 minutes.  This option is automatically selected when you choose walking mode, but if you know that you will not be able to get a GPS location, turning this off may save some power.</string>
+    <string name="help_text_gps_location">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates every five minutes (will use more power).</string>
+    <string name="help_text_internet_connection">The App can work in a number of internet connection configurations - BUT it is most likely that your will use it in \'Normal\' mode. \n\nIf your phone has been rooted, \’Normal\’ mode will enable the phones flight (airplane) mode to save power.  If the phone has NOT been rooted, still use Normal mode and the app will work just fine. \n\nIf you are going to be using the phone to make recordings in a location that you know has no internet connection, then use \’Offline\’ mode and the app will not waste power by attempting to acquire an internet connection.  Also manually enable airplane mode as the phone will not be able to do this automatically if it hasn\’t been rooted. \n\n\'Online\' mode will not enable airplane mode.  It requires the phone to be plugged into the mains power supply as it will use too much power to work with a solar panel.  Online mode is useful if you want to remotely access your phone, perhaps because you have remote control software installed.  If the phone isn\’t in Online mode, you would be very unlikely to be able to connect to the phone.</string>
+    <string name="help_text_rooted"> If you got this phone from The Cacophony Project, please leave the setting as you found it (probably – YES).  We normally root the phone to enable the app to save power – pretty essential for using with a solar panel.  Note: Choosing YES, does NOT root the phone (it\'s a bit more involved).</string>
+    <string name="help_text_warning_sound">Play a short warning sound before a recording is made (useful for when out walking with the phone or testing at home). \n\nNote: using an external microphone will probably disable this function.</string>
+    <string name="help_text_settings_for_testing">App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point.</string>
+    <string name="help_text_manage_recordings">Normally you will not need to \’Manage Recordings\’ as the app will automatically upload your recordings to the server.\n\nHowever, if you have been using the phone without an internet connection (perhaps you have been for a walk or have just re-established an internet connection after leaving your phone to make recordings in a location without out internet access) you can now use this screen to upload all the recordings on the phone to the server.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed and should change to zero if all the recordings are successfully uploaded.\n\nIf you prefer, you can delete all the recordings on the phone – perhaps you didn’t realize you had been making recordings! Careful with this option – you can’t get them back.</string>
+
+    <string name="help_text_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it say Disabled. \n\nMessages displays any extra information. \n\nThe REFRESH button will attempt to reconnect with the server to check that a connection can still be established.</string>
+
+    <string name="help_text_walking">Walking mode is designed for using when you are out for a walk!  If you are just going to leave the phone in a fixed location, walking mode should be set to OFF.  \n\nIn walking mode, the phone will automatically do the following: make a recording every 15 minutes, periodically update the GPS location,  it will not attempt to upload the recordings to the server, will keep recording when the battery is getting low and attempt to make a warning sound (an external microphone and/or other phone settings may mute this feature). \n\nSee the Upload Files screen for when you have finished your walk.</string>
+
+    <string name="gps_message">Press the button and then wait for the phone to get a new GPS location.  You may need to go outside.</string>
+    <string name="has_your_phone_been_rooted">Has your phone been rooted?</string>
+    <string name="play_a_warning_sound">Play a warning sound before a recording starts.</string>
+    <string name="use_the_test_server">Use the test server?</string>
+    <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone</string>
+
+    <string name="text_1_welcome_fragment">Thank you for installing the Cacophonometer app.  \'Swipe\' the screen to move through the setup process or press the Help icon for more instructions.</string>
+
+    <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - This will disable all recordings (even after a restart).</string>
+    <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'</string>
+
+
     <string name="required_permissions">Required Permissions: ?</string>
     <string name="registered">Registered: ?</string>
 
@@ -53,7 +87,7 @@
 
     <string name="normal_mode_online">Normal Mode (But keep internet connection on).</string>
 
-    <string name="gps_location_title">GPS Location</string>
+
     <string name="choose_mode">Choose Mode</string>
     <string name="introduction">To test your device, first choose Settings from the menu (top right). Once that is done you can choose the mode below and you are ready to go.</string>
     <string name="wizard_introduction">If you haven\'t already done so, register on the Cacophony website and create a group.</string>
@@ -63,7 +97,7 @@
 
     <string name="help">Help</string>
     <string name="settings">Settings</string>
-    <string name="vitals">Vitals</string>
+
 
 
     <string name="device_id">Device ID:</string>
@@ -102,52 +136,12 @@
     <string name="required_permissions_true">Required Permissions: ✔</string>
     <string name="required_permissions_false">Required Permissions: ✘</string>
     <string name="not_registered">Device not registered.</string>
-
-    <string name="help_text_introduction">Thank you for installing the Cacophonometer app.\n\nThe app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.
-\n\nTo use this app first register on the data server (https://browse.cacophony.org.nz/) AND create a group name (also on the server).
-        \n\nOnce you have created the group name on the data server, press the \'Basic Setup\' button (in this app) and follow the instructions to configure the app.
-\n\nOnce recordings have been sent to the server you will be able to log back in and listen to them - as will anyone who has your password!\n\nWe intend to perform automatic machine analysis of all recordings rather than have a human listen to each recording.  We also expect to implement a system to automatically remove any speech present in the recordings.\n\nIf you believe you have inadvertently recorded a private conversation, please use the delete function on the server to remove it.
-\n\nThank you again for supporting The Cacophony Project\n
-https://cacophony.org.nz/
-</string>
-
-    <string name="help_text_register">Once you have created a group on the server, you can enter it in the \'Group Name\' field, and also enter a unique name for your phone (at least 4 characters).  Press the button to register.  You will see  messages informing you of progress - the last message will say that registration has been successful.
-\n\nYou can un-register this device if you want to change the name.
-\n\nOnce your phone has been successfully registered, press the \'NEXT-ROOTED\' button.
-
-</string>
-
-    <string name="help_text_battery">Normally the app will not record when the battery is getting low.  But, you can ignore a low battery when out walking or if you have just left the phone somewhere without power and you want it to keep recording until the battery goes flat. \n\nNote: It is NOT advisable to use this option if you are using a solar panel as once the battery has gone completely flat, the phone is very unlikely to turn back on even if the solar panel re-charges the battery.</string>
-    <string name="keep_recording_with_a_low_battery">Keep recording with a low battery?</string>
+    <string name="activity_or_fragment_title_welcome">Welcome</string>
+     <string name="keep_recording_with_a_low_battery">Keep recording with a low battery?</string>
 
 
-    <string name="help_text_disable">You may want to prevent the app from making recordings.  This is useful if you have installed the app on a phone that you are now keeping close to you.  If you choose this option, the \‘Disable Recording\’ button on the home screen will change colour to remind you that recording has been disabled.</string>
-    <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - This will disable all recordings (even after a restart).</string>
-    <string name="help_text_frequency">The App\’s default settings have been chosen to be suitable for most situations and so the following should only be changed if you have a good reason.\n\nRecord More Often:  The App will make recordings every hour during the day and night, and every ten minutes for an hour each side of dawn and dusk.  This frequency is seen as a good compromise between getting a reasonable sample of bird song, not overloading the Cacophony server and saving power.  If you need to, you can choose to \’Record more often\’ which will increase the frequency to record every 15 minutes through out the day and night.  There is also the possibility that at some point in the future, the server may limit the number of recordings received from a device.\n\nUpload after every recording: If you are not concerned with how much power your phone is using and you can’t wait to hear your birds, then this option will upload each recording as soon as it has finished – rather than every six hours. \n\nPeriodically update GPS will attempt to get a new GPS location every 15 minutes.  This option is automatically selected when you choose walking mode, but if you know that you will not be able to get a GPS location, turning this off may save some power.</string>
 
-    <string name="help_text_GPS_location">Setting the GPS location is very useful for keeping track of the phone.  Press the button below to set the location (you may be asked to turn on location/gps).  It could take a minute to get a location.  If you are moving about, you can check the box below so that the location updates every five minutes (will use more power).</string>
-    <string name="gps_message">Press the button and then wait for the phone to get a new GPS location.  You may need to go outside.</string>
-
-    <string name="help_text_internet_connection">The App can work in a number of internet connection configurations - BUT it is most likely that your will use it in \'Normal\' mode. \n\nIf your phone has been rooted, \’Normal\’ mode will enable the phones flight (airplane) mode to save power.  If the phone has NOT been rooted, still use Normal mode and the app will work just fine. \n\nIf you are going to be using the phone to make recordings in a location that you know has no internet connection, then use \’Offline\’ mode and the app will not waste power by attempting to acquire an internet connection.  Also manually enable airplane mode as the phone will not be able to do this automatically if it hasn\’t been rooted. \n\n\'Online\' mode will not enable airplane mode.  It requires the phone to be plugged into the mains power supply as it will use too much power to work with a solar panel.  Online mode is useful if you want to remotely access your phone, perhaps because you have remote control software installed.  If the phone isn\’t in Online mode, you would be very unlikely to be able to connect to the phone.</string>
-    <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'</string>
-
-    <string name="has_your_phone_been_rooted">Has your phone been rooted?
-     </string>
-    <string name="help_text_rooted"> If you got this phone from The Cacophony Project, please leave the setting as you found it (probably – YES).  We normally root the phone to enable the app to save power – pretty essential for using with a solar panel.  Note: Choosing YES, does NOT root the phone (it\'s a bit more involved).
-    </string>
-
-    <string name="help_text_warning_sound">Play a short warning sound before a recording is made (useful for when out walking with the phone or testing at home). \n\nNote: using an external microphone will probably disable this function.</string>
-    <string name="play_a_warning_sound">Play a warning sound before a recording starts.</string>
-    <string name="help_text_testing">App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point.</string>
-    <string name="use_the_test_server">Use the test server?</string>
-    <string name="help_text_test_record">Using the Record Now button will allow you to get immediate feedback on whether your phone has been setup correctly.  \n\nThe app will record for the normal length of one minute, so you will need to wait that long (A series of messages are displayed to give you feedback on the progress of recording and uploading to the server.  \n\nThe Record Now button is disabled (greyed out)if a recording is already in progress, or if the app has been disabled.  You can enable the app from the Home screen.  Once the file(s) have been uploaded, you can confirm this by checking on the server page.</string>
-    <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone</string>
-    <string name="help_text_manage_recordings">Normally you will not need to \’Manage Recordings\’ as the app will automatically upload your recordings to the server.\n\nHowever, if you have been using the phone without an internet connection (perhaps you have been for a walk or have just re-established an internet connection after leaving your phone to make recordings in a location without out internet access) you can now use this screen to upload all the recordings on the phone to the server.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed and should change to zero if all the recordings are successfully uploaded.\n\nIf you prefer, you can delete all the recordings on the phone – perhaps you didn’t realize you had been making recordings! Careful with this option – you can’t get them back.</string>
-
-    <string name="help_text_app_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it say Disabled. \n\nMessages displays any extra information. \n\nThe REFRESH button will attempt to reconnect with the server to check that a connection can still be established.</string>
-
-    <string name="help_text_walking">Walking mode is designed for using when you are out for a walk!  If you are just going to leave the phone in a fixed location, walking mode should be set to OFF.  \n\nIn walking mode, the phone will automatically do the following: make a recording every 15 minutes, periodically update the GPS location,  it will not attempt to upload the recordings to the server, will keep recording when the battery is getting low and attempt to make a warning sound (an external microphone and/or other phone settings may mute this feature). \n\nSee the Upload Files screen for when you have finished your walk.</string>
-
+    <string name="help_setup">Setup your phone</string>
 
     <string name="group_name">Group name</string>
 
@@ -183,8 +177,8 @@ https://cacophony.org.nz/
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 
 
 </resources>

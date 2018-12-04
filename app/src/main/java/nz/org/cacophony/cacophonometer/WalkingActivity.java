@@ -1,12 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.test.espresso.idling.CountingIdlingResource;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,10 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import java.io.File;
 
 public class WalkingActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = WalkingActivity.class.getName();
@@ -117,7 +107,7 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Walking");
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_walking));
                 return true;
 
             default:
