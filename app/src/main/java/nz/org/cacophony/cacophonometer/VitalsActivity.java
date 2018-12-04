@@ -430,7 +430,7 @@ try {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_walking));
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_vitals));
                 return true;
 
             default:

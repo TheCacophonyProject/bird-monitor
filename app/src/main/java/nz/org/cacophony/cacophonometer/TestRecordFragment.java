@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
-    private Button btnBack;
+
     private Button btnNext;
     private Button btnRecordNow;
 
@@ -29,13 +29,6 @@ public class TestRecordFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        btnBack = (Button) view.findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).previousPageView();
-            }
-        });
 
         btnNext = (Button) view.findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener(){

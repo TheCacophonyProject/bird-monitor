@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
-            Util.displayHelp(this, "Introduction");
+            Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
             prefs.setIsFirstTimeFalse();
         }
 
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Introduction");
+                Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
                 return true;
 
             default:

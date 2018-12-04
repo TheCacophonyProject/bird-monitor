@@ -1154,6 +1154,8 @@ Prefs prefs = new Prefs(context);
 
         if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))){
             dialogMessage = context.getString(R.string.help_text_welcome);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.app_icon_name))){
+            dialogMessage = context.getString(R.string.help_text_welcome);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_account))){
             dialogMessage = context.getString(R.string.help_text_create_account);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_sign_in))){
@@ -1186,63 +1188,10 @@ Prefs prefs = new Prefs(context);
             dialogMessage = context.getString(R.string.help_text_settings_for_testing);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on))){
             dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
+
         }else {
             dialogMessage = "Still to fix in Util.displayHelp";
         }
-
-//        switch (activityOrFragmentName) {
-//            case "Welcome":
-//                dialogMessage = context.getString(R.string.help_text_welcome);
-//                break;
-//            case create_account_title:
-//                dialogMessage = context.getString(R.string.help_text_welcome);
-//                break;
-//            case "Register":
-//                dialogMessage = context.getString(R.string.help_text_register);
-//                break;
-//            case "Battery":
-//                dialogMessage = context.getString(R.string.help_text_battery);
-//                break;
-//            case "Disable":
-//                dialogMessage = context.getString(R.string.help_text_disable);
-//                break;
-//            case "Frequency":
-//                dialogMessage = context.getString(R.string.help_text_frequency);
-//                break;
-//            case "GPS Location":
-//                dialogMessage = context.getString(R.string.help_text_GPS_location);
-//                break;
-//            case "Internet Connection":
-//                dialogMessage = context.getString(R.string.help_text_internet_connection);
-//                break;
-//            case "Rooted":
-//                dialogMessage = context.getString(R.string.help_text_rooted);
-//                break;
-//            case "Warning Sound":
-//                dialogMessage = context.getString(R.string.help_text_warning_sound);
-//                break;
-//            case "Testing":
-//                dialogMessage = context.getString(R.string.help_text_testing);
-//                break;
-//            case "Test Record":
-//                dialogMessage = context.getString(R.string.help_text_test_record);
-//                break;
-//            case "Manage Recordings":
-//                dialogMessage = context.getString(R.string.help_text_manage_recordings);
-//                break;
-//            case "App Vitals":
-//                dialogMessage = context.getString(R.string.help_text_app_vitals);
-//                break;
-//            case "Walking":
-//                dialogMessage = context.getString(R.string.help_text_walking);
-//                break;
-//            case "Setup":
-//                dialogMessage = context.getString(R.string.help_setup);
-//                break;
-//            default:
-//                Log.w(TAG, "Invalid Help Activity name");
-//                dialogMessage = "";
-//        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         // Add the buttons
@@ -1253,7 +1202,7 @@ Prefs prefs = new Prefs(context);
         });
 
         builder.setMessage(dialogMessage)
-                .setTitle(activityOrFragmentName + " Help");
+                .setTitle(activityOrFragmentName);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

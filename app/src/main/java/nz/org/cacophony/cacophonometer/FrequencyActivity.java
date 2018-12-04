@@ -132,7 +132,8 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Frequency");
+                Util.displayHelp(this,  getResources().getString(R.string.activity_or_fragment_title_activity_frequency));
+
                 return true;
 
             default:

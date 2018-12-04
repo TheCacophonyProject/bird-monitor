@@ -22,7 +22,7 @@ public class CreateAccountFragment extends Fragment {
     private static final String TAG = "CreateAccountFragment";
 
     private Button btnSignUp;
-    private Button btnSkip_Next;
+
     private Button btnForgetUser;
 
     @Override
@@ -32,7 +32,7 @@ public class CreateAccountFragment extends Fragment {
 
         setUserVisibleHint(false);
         btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
-        btnSkip_Next = (Button) view.findViewById(R.id.btnSkip_Next);
+
         btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
 
 
@@ -43,12 +43,7 @@ public class CreateAccountFragment extends Fragment {
             }
         });
 
-        btnSkip_Next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity) getActivity()).nextPageView();
-            }
-        });
+
 
         btnForgetUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +117,7 @@ public class CreateAccountFragment extends Fragment {
             getView().findViewById(R.id.etPassword2).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.btnSignUp).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.btnForgetUser).setVisibility(View.INVISIBLE);
-            btnSkip_Next.setText("Skip");
+
         }else{
 
             ((TextView) getView().findViewById(R.id.tvChooseUsername)).setText("Username is " + prefs.getUsername());
@@ -138,7 +133,7 @@ public class CreateAccountFragment extends Fragment {
             getView().findViewById(R.id.etPassword2).setVisibility(View.INVISIBLE);
             getView().findViewById(R.id.btnSignUp).setVisibility(View.INVISIBLE);
             getView().findViewById(R.id.btnForgetUser).setVisibility(View.VISIBLE);
-            btnSkip_Next.setText("Next");
+
         }
 
     }

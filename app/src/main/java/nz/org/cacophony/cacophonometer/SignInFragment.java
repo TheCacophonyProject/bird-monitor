@@ -22,8 +22,7 @@ public class SignInFragment extends Fragment {
     private static final String TAG = "SignInFragment";
 
     private Button btnSignIn;
-    private Button btnSkip_Next;
-    private Button btnBack;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,8 +30,7 @@ public class SignInFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_sign_in, container, false);
         setUserVisibleHint(false);
         btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
-        btnSkip_Next = (Button) view.findViewById(R.id.btnSkip_Next);
-        btnBack = (Button) view.findViewById(R.id.btnBack);
+
 
         btnSignIn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -48,21 +46,7 @@ public class SignInFragment extends Fragment {
             }
         });
 
-        btnSkip_Next.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).nextPageView();
-            }
-        });
-
-        btnBack.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).previousPageView();
-            }
-        });
-
-        return view;
+         return view;
     }
 
     private void login(){

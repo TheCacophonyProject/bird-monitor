@@ -89,7 +89,8 @@ public class BatteryActivity extends AppCompatActivity implements IdlingResource
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Battery");
+
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery));
                 return true;
 
             default:

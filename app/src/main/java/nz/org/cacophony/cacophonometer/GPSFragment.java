@@ -24,8 +24,7 @@ public class GPSFragment extends Fragment {
 
     private static final String TAG = "GPSFragment";
 
-    private Button btnBack;
-    private Button btnNext;
+
     private Button btnGetGPSLocation;
 
     @Override
@@ -34,23 +33,6 @@ public class GPSFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_gps, container, false);
 
         setUserVisibleHint(false);
-
-        btnBack = (Button) view.findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).previousPageView();
-
-            }
-        });
-
-        btnNext = (Button) view.findViewById(R.id.btnNext);
-        btnNext.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).nextPageView();
-            }
-        });
 
         btnGetGPSLocation = (Button) view.findViewById(R.id.btnGetGPSLocation);
         btnGetGPSLocation.setOnClickListener(new View.OnClickListener(){

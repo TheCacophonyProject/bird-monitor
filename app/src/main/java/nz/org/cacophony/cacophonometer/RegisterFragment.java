@@ -24,8 +24,7 @@ import org.json.JSONObject;
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
 
-    private Button btnBack;
-    private Button btnNext;
+
     private Button btnRegister;
     private Button btnUnRegister;
 
@@ -36,22 +35,7 @@ public class RegisterFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        btnBack = (Button) view.findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).previousPageView();
 
-            }
-        });
-
-        btnNext = (Button) view.findViewById(R.id.btnNext);
-        btnNext.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ((SetupWizardActivity)getActivity()).nextPageView();
-            }
-        });
 
         btnRegister = (Button) view.findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(new View.OnClickListener(){
@@ -160,10 +144,6 @@ public class RegisterFragment extends Fragment {
             getView().findViewById(R.id.btnRegister).setVisibility(View.INVISIBLE);
             getView().findViewById(R.id.btnUnRegister).setVisibility(View.VISIBLE);
 
-            //Nudge use to Next Step button
-            getView().findViewById(R.id.btnNext).requestFocus();
-            getView().findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.colorAlert));
-
 
         } else {
             // Phone is NOT registered
@@ -182,9 +162,8 @@ public class RegisterFragment extends Fragment {
             getView().findViewById(R.id.btnUnRegister).setVisibility(View.INVISIBLE);
 
             //Nudge user to Enter Group Name box
-            //Nudge use to Next Step button
             getView().findViewById(R.id.tvGroupName).requestFocus();
-            getView().findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.accent));
+
         }
 
 

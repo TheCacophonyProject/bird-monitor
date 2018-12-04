@@ -92,7 +92,7 @@ public class RootedActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Rooted");
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_rooted));
                 return true;
 
             default:
