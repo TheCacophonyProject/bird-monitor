@@ -38,7 +38,8 @@ public class TestingActivity extends AppCompatActivity implements IdlingResource
                 if (!buttonView.isShown()){
                     return;
                 }
-                prefs.setUseTestServer(isChecked);
+               // prefs.setUseTestServer(isChecked);
+                Util.setUseTestServer(getApplicationContext(), isChecked);
 
                 final Switch swUseShortRecordings = findViewById(R.id.swShortRecordings);
                 swUseShortRecordings.setEnabled(isChecked);

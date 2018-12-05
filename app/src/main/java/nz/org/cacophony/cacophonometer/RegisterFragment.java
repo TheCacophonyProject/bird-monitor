@@ -305,11 +305,13 @@ public class RegisterFragment extends Fragment {
 
         try {
 
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-            prefs.setGroupName(null);
-            prefs.setDevicePassword(null);
-            prefs.setDeviceName(null);
-            prefs.setDeviceToken(null);
+//            Prefs prefs = new Prefs(getActivity().getApplicationContext());
+//            prefs.setGroupName(null);
+//            prefs.setDevicePassword(null);
+//            prefs.setDeviceName(null);
+//            prefs.setDeviceToken(null);
+
+            Util.unregister(getActivity().getApplicationContext());
 
             Util.getToast(getActivity().getApplicationContext(), "Success - Device is no longer registered", false).show();
             displayOrHideGUIObjects();

@@ -1354,4 +1354,33 @@ Prefs prefs = new Prefs(context);
         };
         thread.start();
     }
+
+   static void setUseTestServer(final Context context, boolean useTestServer) {
+        Prefs prefs = new Prefs(context);
+        prefs.setUseTestServer(useTestServer);
+        // Need to un register phone and remove groups, account
+        unregister(context);
+    }
+
+    static void unregister(final Context context) {
+        try {
+            Prefs prefs = new Prefs(context);
+
+            prefs.setGroupName(null);
+            prefs.setDevicePassword(null);
+            prefs.setDeviceName(null);
+            prefs.setDeviceToken(null);
+
+            prefs.setEmailAddress(null);
+            prefs.setDeviceId(null);
+            prefs.setGroups(null);
+            prefs.setUserNameOrEmailAddress(null);
+            prefs.setUsernamePassword(null);
+            prefs.setUsername(null);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Error Un-registering device.");
+        }
+
+    }
 }
