@@ -28,7 +28,7 @@ public class GroupsFragment extends Fragment {
     private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
-    private ArrayList<String> arrayListGroups;
+
 
 
     @Override
@@ -40,9 +40,10 @@ public class GroupsFragment extends Fragment {
         etNewGroupInput = (EditText) view.findViewById(R.id.etNewGroupInput);
         btnCreateGroup = (Button) view.findViewById(R.id.btnCreateGroup);
         lvGroups = (ListView) view.findViewById(R.id.lvGroups);
-        arrayListGroups = Util.getGroups(getActivity());
+      //  arrayListGroups = Util.getGroupsStoredOnPhone(getActivity());
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayListGroups);
+        //adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayListGroups);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
@@ -64,15 +65,16 @@ public class GroupsFragment extends Fragment {
                     }
 
                     // Check if this group already exists
-                    if(arrayListGroups.contains(newGroup)){
+                   // if(arrayListGroups.contains(newGroup)){
+                        if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
                         Util.getToast(getActivity(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
                         return;
                     }
-
+                    ((SetupWizardActivity) getActivity()).setGroup(newGroup);
                     Util.addGroupToServer(getActivity(), newGroup);
                     adapter.add(newGroup);
                     ((EditText) view.findViewById(R.id.etNewGroupInput)).setText("");
-                    ((SetupWizardActivity) getActivity()).setGroup(newGroup);
+                   // ((SetupWizardActivity) getActivity()).setGroup(newGroup);
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -104,10 +106,6 @@ public class GroupsFragment extends Fragment {
         }
         if (visible) {
 
-            //Populate group list
-            arrayListGroups = Util.getGroups(getActivity());
-            adapter.notifyDataSetChanged();
-
             IntentFilter iff = new IntentFilter("SERVER_GROUPS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
@@ -135,19 +133,30 @@ public class GroupsFragment extends Fragment {
                     String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    // update the list of groups from server
+
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
+                        // update the list of groups from server
                         Util.getToast(getActivity(), messageToDisplay, false).show();
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
+                        // Need to note this group for Register Phone screen
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
-                    } else {
+                    } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                         Util.getToast(getActivity(), messageToDisplay, true).show();
-                        // Need to update list view of groups as it shouldn't have the group that the user was trying to add
-                        //Populate group list
-                        arrayListGroups = Util.getGroups(getActivity());
+
+                        ((SetupWizardActivity) getActivity()).setGroup(null);
+
+                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
-                    }
+                    }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
+
+                      //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
+                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
+                        adapter.notifyDataSetChanged();
+
+                    }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
+                        Util.getToast(getActivity(), messageToDisplay, true).show();
+                }
 
                 }
 

@@ -763,6 +763,7 @@ class Server {
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             jsonObjectMessageToBroadcast.put("responseCode", responseCode);
 
+
             if (responseCode == 200) {
                 responseBody = response.body().string();
 
@@ -770,6 +771,7 @@ class Server {
                 JSONObject joRes = new JSONObject(responseBody);
 
                 if (joRes.getBoolean("success")) {
+                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
                     JSONArray groupsJSONArray = joRes.getJSONArray("groups");
                     if (groupsJSONArray != null) {
                         for (int i = 0; i < groupsJSONArray.length(); i++) {
@@ -780,10 +782,14 @@ class Server {
                     }
 
                     messageToDisplay = "Success, groups have been updated from server";
+                }else{
+                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_RETRIEVE_GROUPS");
+                    messageToDisplay = "Error, unable to get groups from server";
                 }
 
             } else { // not success
                 messageToDisplay = "Error, unable to get groups from server";
+                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_RETRIEVE_GROUPS");
             }
             jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
             Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
@@ -795,7 +801,6 @@ class Server {
         return groups;
     }
 
-
     static void addGroupToServer(Context context, String groupName) {
         final Prefs prefs = new Prefs(context);
         try {
@@ -803,8 +808,19 @@ class Server {
             OkHttpClient client = new OkHttpClient();
 
 //    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
-            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
+           // String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
             //String url = "https://api-test.cacophony.org.nz/api/v1/groups";
+
+            String groupsEndPoint = GROUPS_URL;
+
+            HttpUrl url = new HttpUrl.Builder()
+                    .scheme(prefs.getServerScheme())
+                    .host(prefs.getServerHost())
+                    .addPathSegments(groupsEndPoint)
+                   // .addQueryParameter("where", jsonSearchTermsString)
+                    .build();
+
+
             RequestBody formBody = new FormBody.Builder()
                     .add("groupname", groupName)
                     .build();
@@ -848,5 +864,58 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage());
         }
     }
+
+//    static void addGroupToServer(Context context, String groupName) {
+//        final Prefs prefs = new Prefs(context);
+//        try {
+//
+//            OkHttpClient client = new OkHttpClient();
+//
+////    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
+//            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
+//            //String url = "https://api-test.cacophony.org.nz/api/v1/groups";
+//            RequestBody formBody = new FormBody.Builder()
+//                    .add("groupname", groupName)
+//                    .build();
+//
+//            String authorization = prefs.getUserToken();
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    .header("Authorization", authorization)
+//                    .post(formBody)
+//                    .build();
+//            String responseBody = "";
+//
+//            Log.e(TAG, url.toString());
+//
+//            Response response = client.newCall(request).execute();
+//            int responseCode = response.code();
+//            //Set message to broadcast
+//            String messageToDisplay = "";
+//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+//
+//            jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+//
+//
+//            if (responseCode == 200) {
+//                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_ADDED_GROUP");
+//                messageToDisplay = "Success, the group " + groupName + " has been added to the server";
+//                // Now add it to local storage
+//                Util.addGroup(context, groupName);
+//
+//            } else {
+//                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_ADD_GROUP");
+//                messageToDisplay = "Sorry, the group " + groupName + " could not be added to the server";
+//            }
+//
+//            jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+//            Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
+//            // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+//
+//
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//    }
 
 }

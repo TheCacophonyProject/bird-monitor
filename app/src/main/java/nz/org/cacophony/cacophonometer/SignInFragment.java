@@ -107,7 +107,7 @@ public class SignInFragment extends Fragment {
             }
 
         }else{
-            // Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment disappeared", true ).show();
+
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }

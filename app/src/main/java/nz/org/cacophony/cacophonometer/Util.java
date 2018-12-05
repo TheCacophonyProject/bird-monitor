@@ -23,9 +23,13 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luckycatlabs.SunriseSunsetCalculator;
@@ -1193,6 +1197,11 @@ Prefs prefs = new Prefs(context);
             dialogMessage = "Still to fix in Util.displayHelp";
         }
 
+        // Make any urls 'clickable'
+        //https://stackoverflow.com/questions/9204303/android-is-it-possible-to-add-a-clickable-link-into-a-string-resource
+        final SpannableString s = new SpannableString(dialogMessage);
+        Linkify.addLinks(s, Linkify.ALL);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         // Add the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1201,10 +1210,13 @@ Prefs prefs = new Prefs(context);
             }
         });
 
-        builder.setMessage(dialogMessage)
+        builder.setMessage(s)
                 .setTitle(activityOrFragmentName);
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        // Make the textview clickable. Must be called after show()
+        ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context){
@@ -1278,28 +1290,30 @@ Prefs prefs = new Prefs(context);
     }
 
     public static void addGroup(Context context, String groupName){
-        ArrayList<String> localGroups = getGroups(context);
+        ArrayList<String> localGroups = getGroupsStoredOnPhone(context);
         if (!localGroups.contains(groupName)) {
             localGroups.add(groupName);
         }
         setGroups(context, localGroups);
     }
 
-    public static  ArrayList<String> getGroups(Context context){
+    public static  ArrayList<String> getGroupsStoredOnPhone(Context context){
         Prefs prefs = new Prefs(context);
         ArrayList<String> groups  = new ArrayList<String>();
         String groupsString = prefs.getGroups();
-        try {
-            JSONObject jsonGroups = new JSONObject(groupsString);
-            JSONArray groupsArrayJSON = jsonGroups.getJSONArray("groups");
-            if (groupsArrayJSON != null) {
-                for (int i=0;i<groupsArrayJSON.length();i++){
-                    groups.add(groupsArrayJSON.getString(i));
+        if (groupsString != null) {
+            try {
+                JSONObject jsonGroups = new JSONObject(groupsString);
+                JSONArray groupsArrayJSON = jsonGroups.getJSONArray("groups");
+                if (groupsArrayJSON != null) {
+                    for (int i = 0; i < groupsArrayJSON.length(); i++) {
+                        groups.add(groupsArrayJSON.getString(i));
+                    }
                 }
-            }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         return groups;
@@ -1314,6 +1328,7 @@ Prefs prefs = new Prefs(context);
 
                     ArrayList<String> groupsFromServer = Server.getGroups(context);
                     setGroups( context, groupsFromServer);
+
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());

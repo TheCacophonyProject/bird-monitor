@@ -72,7 +72,7 @@ public class DisableActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.button_help:
-                Util.displayHelp(this, "Disable");
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on));
                 return true;
 
             default:

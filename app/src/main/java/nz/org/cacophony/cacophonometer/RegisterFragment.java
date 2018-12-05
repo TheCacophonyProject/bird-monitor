@@ -70,7 +70,10 @@ public class RegisterFragment extends Fragment {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
             String group = ((SetupWizardActivity) getActivity()).getGroup();
-            ((EditText) getView().findViewById(R.id.setupGroupNameInput)).setText(group);
+            if (group != null){
+                ((EditText) getView().findViewById(R.id.setupGroupNameInput)).setText(group);
+            }
+
 
             displayOrHideGUIObjects();
 

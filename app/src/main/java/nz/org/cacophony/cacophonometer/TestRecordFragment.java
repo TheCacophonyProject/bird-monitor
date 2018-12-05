@@ -7,6 +7,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.text.util.LinkifyCompat;
+import android.text.SpannableStringBuilder;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +19,14 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
     private Button btnNext;
     private Button btnRecordNow;
+    private TextView tvServerLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +52,17 @@ public class TestRecordFragment extends Fragment {
                 recordNowButtonPressed();
             }
         });
+
+        // Turn the words 'Cacophony Server' in the text view into a link
+        // https://stackoverflow.com/questions/2734270/how-do-i-make-links-in-a-textview-clickable
+        // and
+        // https://android-developers.googleblog.com/2008/03/linkify-your-text.html
+
+        tvServerLink = (TextView)view.findViewById(R.id.tvServerLink);
+        Pattern cacophonyServerMatcher = Pattern.compile("Cacophony Server");
+        Prefs prefs = new Prefs(getActivity());
+        String browseRecordingsServerUrl = prefs.getBrowseRecordingsServerUrl();
+        LinkifyCompat.addLinks(tvServerLink, cacophonyServerMatcher, browseRecordingsServerUrl);
 
 
         return view;

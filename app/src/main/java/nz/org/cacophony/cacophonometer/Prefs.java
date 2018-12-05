@@ -17,12 +17,11 @@ class Prefs {
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
-//    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Production Server URL
-    private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
-    // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
+    private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
+    private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
 
-//    private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Test Server URL
-private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
+    private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
+    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
 
     private static final String SCHEME = "https";
 
@@ -210,6 +209,14 @@ private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";     
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         preferences.edit().putBoolean(key, val).apply();
+    }
+
+    String getBrowseRecordingsServerUrl() {
+        if (getBoolean(USE_TEST_SERVER_KEY)) {
+            return TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS;
+        } else {
+            return PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS;
+        }
     }
 
     String getServerUrl() {
