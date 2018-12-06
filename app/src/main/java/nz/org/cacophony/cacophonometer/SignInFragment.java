@@ -133,12 +133,28 @@ public class SignInFragment extends Fragment {
             etPasswordInput.setText("");
 
         }else{
-            // try to signin
-            // next if on broadcast receiver
-            tvMessages.setText("Signing in to your account");
-            btnSignIn.setEnabled(true);
-            btnForgetUser.setEnabled(true);
-            login();
+
+            if (prefs.getUserSignedIn()){
+                String userNameOrEmailAddress = "";
+                if (prefs.getUserNameOrEmailAddress()!= null){
+                    userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+                }else if (prefs.getUsername()!= null){
+                    userNameOrEmailAddress = prefs.getUsername();
+                }
+                tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+                btnSignIn.setEnabled(false);
+                btnForgetUser.setEnabled(true);
+                etUserNameOrPasswordInput.setEnabled(false);
+                etPasswordInput.setEnabled(false);
+            }else{
+                // try to signin
+                // next if on broadcast receiver
+                tvMessages.setText("Signing in to your account");
+                btnSignIn.setEnabled(true);
+                btnForgetUser.setEnabled(true);
+                login();
+            }
+
 
         }
 
@@ -203,6 +219,8 @@ public class SignInFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
                        // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, false ).show();
+
+                        prefs.setUserSignedIn(true);
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
                         btnSignIn.setEnabled(false);
@@ -317,6 +335,11 @@ public class SignInFragment extends Fragment {
         tvMessages.setText("The user details have been removed from this phone");
         btnSignIn.setEnabled(true);
         btnForgetUser.setEnabled(false);
+
+        etUserNameOrPasswordInput.setEnabled(true);
+        etPasswordInput.setEnabled(true);
+
+        prefs.setUserSignedIn(false);
 
         displayOrHideGUIObjects();
     }

@@ -118,6 +118,8 @@ class Prefs {
 
     private static final String GROUPS_KEY = "GROUPS";
 
+    private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
+
 
 
     public Prefs(Context context) {
@@ -751,5 +753,11 @@ class Prefs {
         return getString(GROUPS_KEY);
     }
 
+    void setUserSignedIn(boolean userSignedIn) {
+        setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
+    }
 
+    boolean getUserSignedIn() {
+       return getBoolean(USER_SIGNED_IN_KEY);
+    }
 }
