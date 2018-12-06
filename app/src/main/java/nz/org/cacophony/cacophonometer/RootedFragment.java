@@ -39,19 +39,17 @@ public class RootedFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
-        Prefs prefs = new Prefs(getActivity());
-        if (prefs.getSettingsForTestServerEnabled()){
-            btnFinished.setVisibility(View.VISIBLE);
 
             btnFinished = (Button) view.findViewById(R.id.btnFinished);
             btnFinished.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    ((SetupWizardActivity)getActivity()).nextPageView();
+
+                    ((AdvancedWizardActivity)getActivity()).nextPageView();
                 }
             });
 
-        }
+
 
         swRooted = (Switch) view.findViewById(R.id.swRooted);
         swRooted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -74,6 +72,12 @@ public class RootedFragment extends Fragment {
         if (visible) {
             Prefs prefs = new Prefs(getActivity());
             ((Switch) getView().findViewById(R.id.swRooted)).setChecked(prefs.getHasRootAccess());
+
+            if (prefs.getSettingsForTestServerEnabled()){
+                ((Button) getView().findViewById(R.id.btnFinished)).setVisibility(View.INVISIBLE);
+            }else{
+                ((Button) getView().findViewById(R.id.btnFinished)).setVisibility(View.VISIBLE);
+            }
         }
     }
 

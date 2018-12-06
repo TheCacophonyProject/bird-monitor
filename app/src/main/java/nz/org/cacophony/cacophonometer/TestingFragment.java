@@ -31,7 +31,7 @@ public class TestingFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ((SetupWizardActivity)getActivity()).nextPageView();
+                ((AdvancedWizardActivity)getActivity()).nextPageView();
             }
         });
 
@@ -66,7 +66,7 @@ public class TestingFragment extends Fragment {
             }
         });
 
-        swUseVeryFrequentRecordings = getView().findViewById(R.id.swUseVeryFrequentRecordings);
+        swUseVeryFrequentRecordings = view.findViewById(R.id.swUseVeryFrequentRecordings);
         swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -77,7 +77,7 @@ public class TestingFragment extends Fragment {
             }
         });
 
-         swShortRecordings = getView().findViewById(R.id.swShortRecordings);
+         swShortRecordings = view.findViewById(R.id.swShortRecordings);
         swShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
