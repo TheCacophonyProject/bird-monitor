@@ -78,8 +78,8 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             findViewById(R.id.btnUnRegister).setVisibility(View.VISIBLE);
 
             //Nudge use to Next Step button
-            findViewById(R.id.btnNext).requestFocus();
-            findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.colorAlert));
+            findViewById(R.id.btnFinished).requestFocus();
+            findViewById(R.id.btnFinished).setBackgroundColor(getResources().getColor(R.color.colorAlert));
 
 
         } else {
@@ -101,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             //Nudge user to Enter Group Name box
             //Nudge use to Next Step button
             findViewById(R.id.tvGroupName).requestFocus();
-            findViewById(R.id.btnNext).setBackgroundColor(getResources().getColor(R.color.accent));
+            findViewById(R.id.btnFinished).setBackgroundColor(getResources().getColor(R.color.accent));
         }
 
 

@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.Switch;
 
 public class FrequencyActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -31,7 +28,7 @@ public class FrequencyActivity extends AppCompatActivity implements IdlingResour
         setSupportActionBar(myToolbar);
 
         final Prefs prefs = new Prefs(getApplicationContext());
-        final Button btnNext = (Button)findViewById(R.id.btnNext);
+        final Button btnNext = (Button)findViewById(R.id.btnFinished);
 //        if (prefs.getSettingsForTestServerEnabled()){
 //            btnNext.setText("Next - Testing");
 //        }

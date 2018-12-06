@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
-import android.text.SpannableStringBuilder;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +34,7 @@ public class TestRecordFragment extends Fragment {
         setUserVisibleHint(false);
 
 
-        btnNext = (Button) view.findViewById(R.id.btnNext);
+        btnNext = (Button) view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

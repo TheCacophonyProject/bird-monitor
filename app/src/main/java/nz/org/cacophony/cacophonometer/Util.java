@@ -1115,34 +1115,31 @@ Prefs prefs = new Prefs(context);
         createTheNextSingleStandardAlarm(context);
     }
 
+    static void setUseFrequentUploads(Context context, boolean useFrequentUploads){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseFrequentUploads(useFrequentUploads);
+
+    }
+
     static void uploadFilesUsingUploadButton(final Context context){
 
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
-
-
-
                     boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
-                    String messageToDisplay = "";
+
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     if (uploadedSuccessfully){
 
-                        jsonObjectMessageToBroadcast.put("messageType", "files_successfully_uploaded");
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
 
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "files_successfully_uploaded");
-                        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
-
-                       // Util.broadcastAMessage(context, "files_successfully_uploaded");
                     }else{
-                        jsonObjectMessageToBroadcast.put("messageType", "files_not_uploaded");
-
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "files_not_uploaded");
-                        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
-//                        Util.broadcastAMessage(context, "files_not_uploaded");
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
                     }
-
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -1231,23 +1228,17 @@ Prefs prefs = new Prefs(context);
                         file.delete();
                     }
 
-                    String messageToDisplay = "";
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
                     if (getNumberOfRecordings(context) == 0){
-                        jsonObjectMessageToBroadcast.put("messageType", "recordings_successfully_deleted");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "recordings_successfully_deleted");
-                        Util.broadcastAMessage(context, "DELETE_RECORDINGS", jsonObjectMessageToBroadcast);
-
-                       // Util.broadcastAMessage(context, "recordings_successfully_deleted");
-
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
 
                     }else{
-                        jsonObjectMessageToBroadcast.put("messageType", "problem_deleteing_recordings");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "problem_deleteing_recordings");
-                        Util.broadcastAMessage(context, "DELETE_RECORDINGS", jsonObjectMessageToBroadcast);
-                       // Util.broadcastAMessage(context, "problem_deleteing_recordings");
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
                     }
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
                 }
                 catch (Exception ex) {

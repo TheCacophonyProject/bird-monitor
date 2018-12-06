@@ -107,14 +107,21 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                             advancedButton.setText("Advanced");
                             Util.getToast(getApplicationContext(),"Settings for Test Server have been DISABLED", false).show();
                             prefs.setSettingsForTestServerEnabled(false);
+
+
                         }else{
                             advancedButton.setText("Very Advanced");
                             Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
                             prefs.setSettingsForTestServerEnabled(true);
+
                         }
 
+                        // Add or Remove Settings for Test Server fragment
+
+
                     }else{
-                        launchAdvancedActivity(null);
+                       // launchAdvancedActivity(null);
+                        startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
                     break;
             }

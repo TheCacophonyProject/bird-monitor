@@ -63,15 +63,15 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
 
-    public void previousPageView(){
-        int currentItem = mViewPager.getCurrentItem();
-        currentItem--;
-        if (currentItem >= 0 ){
-            mViewPager.setCurrentItem(currentItem);
-        }else{
-            finish();
-        }
-    }
+//    public void previousPageView(){
+//        int currentItem = mViewPager.getCurrentItem();
+//        currentItem--;
+//        if (currentItem >= 0 ){
+//            mViewPager.setCurrentItem(currentItem);
+//        }else{
+//            finish();
+//        }
+//    }
 
     public void nextPageView(){
         int currentItem = mViewPager.getCurrentItem();

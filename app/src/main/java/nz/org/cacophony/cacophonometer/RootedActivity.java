@@ -1,9 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,11 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 public class RootedActivity extends AppCompatActivity {
     private static final String TAG = RootedActivity.class.getName();
@@ -64,7 +58,7 @@ public class RootedActivity extends AppCompatActivity {
 //            startActivity(intent);
             final Prefs prefs = new Prefs(getApplicationContext());
             if (prefs.getSettingsForTestServerEnabled()){
-                final Button btnNext = (Button)findViewById(R.id.btnNext);
+                final Button btnNext = (Button)findViewById(R.id.btnFinished);
                // btnNext.setText("Next - Testing");
                 Intent intent = new Intent(this, TestingActivity.class);
                 startActivity(intent);

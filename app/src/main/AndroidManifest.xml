@@ -67,18 +67,14 @@
         <activity
             android:name=".WalkingActivity"
             android:label="@string/activity_or_fragment_title_walking" />
-        <activity
-            android:name=".ManageRecordingsActivity"
-            android:label="@string/activity_or_fragment_title_manage_recordings" />
+
         <activity
             android:name=".TestRecordActivity"
             android:label="@string/activity_or_fragment_title_test_record" />
         <activity
             android:name=".InternetConnectionActivity"
             android:label="@string/activity_or_fragment_title_internet_connection" />
-        <activity
-            android:name=".SoundActivity"
-            android:label="@string/activity_or_fragment_title_warning_sound" />
+
         <activity
             android:name=".BatteryActivity"
             android:label="@string/activity_or_fragment_title_activity_ignore_low_battery" />
@@ -94,10 +90,10 @@
         <activity
             android:name=".DisableActivity"
             android:label="@string/activity_or_fragment_title_turn_off_or_on" />
-
-        <activity android:name=".SetupWizardActivity"
-            android:label="@string/activity_or_fragment_title_setup"/>
-
+        <activity
+            android:name=".SetupWizardActivity"
+            android:label="@string/activity_or_fragment_title_setup" />
+        <activity android:name=".AdvancedWizardActivity"></activity>
     </application>
 
 </manifest>
