@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -22,6 +23,10 @@ public class SignInFragment extends Fragment {
     private static final String TAG = "SignInFragment";
 
     private Button btnSignIn;
+    private Button btnForgetUser;
+    private TextView tvMessages;
+    private EditText etUserNameOrPasswordInput;
+    private EditText etPasswordInput;
 
 
     @Override
@@ -29,7 +34,13 @@ public class SignInFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_sign_in, container, false);
         setUserVisibleHint(false);
+        etUserNameOrPasswordInput = (EditText)view.findViewById(R.id.etUserNameOrPasswordInput);
+        etPasswordInput = (EditText)view.findViewById(R.id.etPasswordInput);
         btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
+        btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+
+      //  displayOrHideGUIObjects();
 
 
         btnSignIn.setOnClickListener(new View.OnClickListener(){
@@ -42,7 +53,21 @@ public class SignInFragment extends Fragment {
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
 
-                signinButton();
+                signinButtonPressed();
+            }
+        });
+
+        btnForgetUser.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if (imm != null){
+                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                }
+
+                forgetUserButtonPressed();
             }
         });
 
@@ -89,28 +114,62 @@ public class SignInFragment extends Fragment {
             IntentFilter iff = new IntentFilter("SERVER_USER_LOGIN");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-
-            String username = prefs.getUsername();
-            String emailAddress = prefs.getEmailAddress();
-            String usernameOrEmailAddress = prefs.getUserNameOrEmailAddress();
-            if (usernameOrEmailAddress !=null){
-                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(usernameOrEmailAddress);
-            }else if (username != null){
-                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(username);
-            }else if(emailAddress != null){
-                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(emailAddress);
-            }
-            String password = prefs.getUsernamePassword();
-            if (password != null){
-                ((EditText)getView().findViewById(R.id.etPasswordInput)).setText(password);
-            }
+            displayOrHideGUIObjects();
 
         }else{
 
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
+
+    void displayOrHideGUIObjects(){
+
+        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+        if (prefs.getUsername() == null && prefs.getUserNameOrEmailAddress() == null){
+           // Show normal signin page
+            btnSignIn.setEnabled(true);
+            btnForgetUser.setEnabled(false);
+            etUserNameOrPasswordInput.setText("");
+            etPasswordInput.setText("");
+
+        }else{
+            // try to signin
+            // next if on broadcast receiver
+            tvMessages.setText("Signing in to your account");
+            btnSignIn.setEnabled(true);
+            btnForgetUser.setEnabled(true);
+            login();
+
+        }
+
+//        if (prefs.getUsername() != null && prefs.getUserNameOrEmailAddress() != null){
+//            btnSignIn.setVisibility(View.VISIBLE);
+//            btnForgetUser.setVisibility(View.INVISIBLE);
+//
+//            String username = prefs.getUsername();
+//            String emailAddress = prefs.getEmailAddress();
+//            String usernameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+//            if (usernameOrEmailAddress !=null){
+//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(usernameOrEmailAddress);
+//            }else if (username != null){
+//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(username);
+//            }else if(emailAddress != null){
+//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(emailAddress);
+//            }
+//            String password = prefs.getUsernamePassword();
+//            if (password != null){
+//                ((EditText)getView().findViewById(R.id.etPasswordInput)).setText(password);
+//            }
+//        }else{
+//            btnSignIn.setVisibility(View.INVISIBLE);
+//            btnForgetUser.setVisibility(View.VISIBLE);
+//
+//
+//        }
+
+
+    }
+
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
@@ -119,7 +178,13 @@ public class SignInFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            // Prefs prefs = new Prefs(getApplicationContext());
+             Prefs prefs = new Prefs(getActivity().getApplicationContext());
+            String userNameOrEmailAddress = "";
+            if (prefs.getUserNameOrEmailAddress()!= null){
+                userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+            }else if (prefs.getUsername()!= null){
+                userNameOrEmailAddress = prefs.getUsername();
+            }
             try {
                 if (getView() == null) {
                     return;
@@ -135,14 +200,33 @@ public class SignInFragment extends Fragment {
                     String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
+
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
-                        Util.getToast(getActivity().getApplicationContext(),messageToDisplay, false ).show();
+                       // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, false ).show();
+
+                        tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+                        btnSignIn.setEnabled(false);
+                        btnForgetUser.setEnabled(true);
+                        etUserNameOrPasswordInput.setEnabled(false);
+                        etPasswordInput.setEnabled(false);
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
-                        ((SetupWizardActivity) getActivity()).nextPageView();
-                    } else{
-                        Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
+                       // ((SetupWizardActivity) getActivity()).nextPageView();
+                    } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
+                       // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
+                        tvMessages.setText(messageToDisplay);
+                        etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         return;
-                    }
+                    }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
+                            // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
+                            tvMessages.setText(messageToDisplay);
+                            etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                            return;
+                    }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
+                    // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
+                    tvMessages.setText(messageToDisplay);
+                    etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                    return;
+                }
 
                 }
 
@@ -152,7 +236,7 @@ public class SignInFragment extends Fragment {
             }
         }
     };
-    public void signinButton() {
+    public void signinButtonPressed() {
         try {
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
@@ -225,5 +309,18 @@ public class SignInFragment extends Fragment {
         Util.getToast(getActivity().getApplicationContext(),"Attempting to sign into the server - please wait", false ).show();
 
     }
+
+    public void forgetUserButtonPressed() {
+        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+        prefs.setUsername(null);
+        Util.unregisterUser(getActivity().getApplicationContext());
+        tvMessages.setText("The user details have been removed from this phone");
+        btnSignIn.setEnabled(true);
+        btnForgetUser.setEnabled(false);
+
+        displayOrHideGUIObjects();
+    }
+
+
 
 }

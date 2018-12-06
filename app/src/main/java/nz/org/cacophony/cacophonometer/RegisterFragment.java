@@ -305,7 +305,7 @@ public class RegisterFragment extends Fragment {
 
         try {
 
-            Util.unregister(getActivity().getApplicationContext());
+            Util.unregisterPhone(getActivity().getApplicationContext());
 
             Util.getToast(getActivity().getApplicationContext(), "Success - Device is no longer registered", false).show();
             displayOrHideGUIObjects();

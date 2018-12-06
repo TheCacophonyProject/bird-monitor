@@ -62,17 +62,6 @@ public class SetupWizardActivity extends AppCompatActivity {
         }
     }
 
-
-//    public void previousPageView(){
-//        int currentItem = mViewPager.getCurrentItem();
-//        currentItem--;
-//        if (currentItem >= 0 ){
-//            mViewPager.setCurrentItem(currentItem);
-//        }else{
-//            finish();
-//        }
-//    }
-
     public void nextPageView(){
         int currentItem = mViewPager.getCurrentItem();
         currentItem++;
@@ -88,7 +77,11 @@ public class SetupWizardActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager){
 
         mSectionsStatePagerAdapter.addFragment(new WelcomeFragment(), getResources().getString(R.string.activity_or_fragment_title_welcome));
-        mSectionsStatePagerAdapter.addFragment(new CreateAccountFragment(), getResources().getString(R.string.activity_or_fragment_title_create_account));
+        Prefs prefs = new Prefs(this);
+        if (prefs.getUsername() != null && prefs.getUserNameOrEmailAddress() != null){
+            mSectionsStatePagerAdapter.addFragment(new CreateAccountFragment(), getResources().getString(R.string.activity_or_fragment_title_create_account));
+        }
+
         mSectionsStatePagerAdapter.addFragment(new SignInFragment(), getResources().getString(R.string.activity_or_fragment_title_sign_in));
         mSectionsStatePagerAdapter.addFragment(new GroupsFragment(), getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group));
         mSectionsStatePagerAdapter.addFragment(new RegisterFragment(), getResources().getString(R.string.activity_or_fragment_title_register_phone));

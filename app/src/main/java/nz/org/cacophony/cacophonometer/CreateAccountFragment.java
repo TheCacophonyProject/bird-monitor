@@ -92,6 +92,8 @@ public class CreateAccountFragment extends Fragment {
 
             IntentFilter iff = new IntentFilter("SERVER_SIGNUP");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+
+            displayOrHideGUIObjects();
         }else{
            // Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment disappeared", true ).show();
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);

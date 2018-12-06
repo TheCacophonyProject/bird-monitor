@@ -92,7 +92,7 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 //        }
 //    }
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
 

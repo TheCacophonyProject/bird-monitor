@@ -416,7 +416,7 @@ try {
         }
     };
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
         try {
 //            Intent intent = new Intent(this, MainActivity2.class);
 //            startActivity(intent);

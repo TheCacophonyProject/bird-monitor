@@ -1275,6 +1275,10 @@ Prefs prefs = new Prefs(context);
             Prefs prefs = new Prefs(context);
             prefs.setGroups(groupsAsJsonString);
 
+            // Broadcast that groups have been updated
+
+
+
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -1350,10 +1354,11 @@ Prefs prefs = new Prefs(context);
         Prefs prefs = new Prefs(context);
         prefs.setUseTestServer(useTestServer);
         // Need to un register phone and remove groups, account
-        unregister(context);
+        unregisterPhone(context);
+        unregisterUser(context);
     }
 
-    static void unregister(final Context context) {
+    static void unregisterPhone(final Context context) {
         try {
             Prefs prefs = new Prefs(context);
 
@@ -1361,6 +1366,16 @@ Prefs prefs = new Prefs(context);
             prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Error Un-registering device.");
+        }
+
+    }
+
+    static void unregisterUser(final Context context) {
+        try {
+            Prefs prefs = new Prefs(context);
 
             prefs.setEmailAddress(null);
             prefs.setDeviceId(null);
@@ -1370,8 +1385,7 @@ Prefs prefs = new Prefs(context);
             prefs.setUsername(null);
 
         } catch (Exception ex) {
-            Log.e(TAG, "Error Un-registering device.");
+            Log.e(TAG, "Error Un-registering user.");
         }
-
     }
 }

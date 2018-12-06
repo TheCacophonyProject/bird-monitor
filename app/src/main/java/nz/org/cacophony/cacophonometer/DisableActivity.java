@@ -59,7 +59,7 @@ public class DisableActivity extends AppCompatActivity {
 
 
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
             finish();
