@@ -31,6 +31,7 @@ public class SoundFragment extends Fragment {
 
 
     private Switch swPlayWarningSound;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class SoundFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_sound, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         swPlayWarningSound = (Switch) view.findViewById(R.id.swPlayWarningSound);
         swPlayWarningSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

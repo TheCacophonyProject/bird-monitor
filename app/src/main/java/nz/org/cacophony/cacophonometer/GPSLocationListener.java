@@ -33,6 +33,7 @@ class GPSLocationListener implements LocationListener {
 
        try {
            Log.d(TAG, "onLocationChanged 1");
+
            double lat = location.getLatitude();
            lat = Math.round(lat*1000000.0)/1000000.0;
            double lon = location.getLongitude();

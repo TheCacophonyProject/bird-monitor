@@ -46,6 +46,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     private static final int PERMISSION_RECORD_AUDIO = 1;
     private static final int PERMISSION_LOCATION = 2;
 
+    private TextView tvMessages;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -71,6 +73,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
+
+        tvMessages = (TextView) findViewById(R.id.tvMessages);
 
         //https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -102,7 +106,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+          //  Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+            tvMessages.setText("Error disabling flight mode");
+
         }
     }
     /**
@@ -165,7 +171,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
 
-        Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
+     //   Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
+        tvMessages.setText(missingPermissionMessage);
 
         Log.w(TAG, missingPermissionMessage);
 
@@ -230,7 +237,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     private void refreshVitals() {
         findViewById(R.id.refreshVitals).setEnabled(false);
 
-        Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
+       // Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
+        tvMessages.setText("About to update vitals - please wait a moment");
         try {
 
             Thread server = new Thread() {
@@ -243,8 +251,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             };
             server.start();
         }catch (Exception ex){
-            Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
-
+            //Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
+            tvMessages.setText("Error refreshing vitals");
             Log.e(TAG, ex.getLocalizedMessage());
             findViewById(R.id.refreshVitals).setEnabled(true);
 
@@ -261,9 +269,11 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
 
-                Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
+               // Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
+                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
             } else {
-                Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
+              //  Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
+                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
             }
         }
 
@@ -272,9 +282,11 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
 
-                Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
+             //   Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
+                tvMessages.setText("RECORD_AUDIO permission granted");
             } else {
-                Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
+             //   Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
+                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
             }
         }
 
@@ -394,10 +406,11 @@ try {
                         } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
                             refreshVitalsDisplayedText();
                         } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
-                            TextView messageView = findViewById(R.id.messageText);
-                            if (messageView != null) {
-                                messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-                            }
+                          //  TextView messageView = findViewById(R.id.messageText);
+                         //   if (messageView != null) {
+                          //      messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+                                tvMessages.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+                         //   }
                         } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
                             Prefs prefs = new Prefs(context);
                             updateGpsDisplay(prefs);

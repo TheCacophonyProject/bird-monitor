@@ -31,7 +31,7 @@ public class ManageRecordingsFragment extends Fragment {
     private Button btnUploadFiles;
     private Button btnDeleteAllRecordings;
     TextView tvNumberOfRecordings;
-
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class ManageRecordingsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_manage_recordings, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         btnUploadFiles = (Button) view.findViewById(R.id.btnUploadFiles);
         btnUploadFiles.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -57,7 +57,7 @@ public class ManageRecordingsFragment extends Fragment {
         });
 
          tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
-
+        displayOrHideGUIObjects();
 
         return view;
     }
@@ -72,16 +72,8 @@ public class ManageRecordingsFragment extends Fragment {
 
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+            displayOrHideGUIObjects();
 
-            tvNumberOfRecordings.setText("Number of recordings on phone: " + getNumberOfRecordings());
-
-            if(getNumberOfRecordings() == 0){
-                getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
-                getView().findViewById(R.id.btnDeleteAllRecordings).setEnabled(false);
-            }else{
-                getView().findViewById(R.id.btnUploadFiles).setEnabled(true);
-                getView().findViewById(R.id.btnDeleteAllRecordings).setEnabled(true);
-            }
 
         }else{
 
@@ -90,7 +82,18 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
+    void displayOrHideGUIObjects() {
+        int numberOfRecordings = getNumberOfRecordings();
+        tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordings);
 
+        if(numberOfRecordings == 0){
+            btnUploadFiles.setEnabled(false);
+            btnDeleteAllRecordings.setEnabled(false);
+        }else{
+            btnUploadFiles.setEnabled(true);
+            btnDeleteAllRecordings.setEnabled(true);
+        }
+    }
 
 
 
@@ -99,13 +102,15 @@ public class ManageRecordingsFragment extends Fragment {
     public void uploadRecordings(){
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-            Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+           // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+            tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null){
-            Util.getToast(getActivity().getApplicationContext(),"You need to register this phone before you can upload", true ).show();
+           // Util.getToast(getActivity().getApplicationContext(),"You need to register this phone before you can upload", true ).show();
+            tvMessages.setText("You need to register this phone before you can upload");
             return;
         }
 
@@ -114,11 +119,13 @@ public class ManageRecordingsFragment extends Fragment {
         int numberOfFilesToUpload = recordingFiles.length;
 
         if (getNumberOfRecordings() > 0){ // should be as button should be disabled if no recordings
-            Util.getToast(getActivity().getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
+           // Util.getToast(getActivity().getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
+            tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
         }else{
-            Util.getToast(getActivity().getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
+            tvMessages.setText("There are no recordings on the phone to upload.");
         }
     }
 
@@ -177,20 +184,22 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-                            Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+                         //   Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+                            tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
-                            Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                          //  Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                            tvMessages.setText(messageToDisplay);
                         }
 
                         // Update button and message (get number of recordings again just in case a new recording has occurred)
                         int numberOfRecordingsOnPhone = getNumberOfRecordings();
                         tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordingsOnPhone);
                         if (numberOfRecordingsOnPhone == 0){
-                            getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
-                            getView().findViewById(R.id.btnDeleteAllRecordings).setEnabled(false);
+                            btnUploadFiles.setEnabled(false);
+                            btnDeleteAllRecordings.setEnabled(false);
                         }else{
-                            getView().findViewById(R.id.btnUploadFiles).setEnabled(true);
-                            getView().findViewById(R.id.btnDeleteAllRecordings).setEnabled(true);
+                            btnUploadFiles.setEnabled(true);
+                            btnDeleteAllRecordings.setEnabled(true);
                         }
                     }
                 }

@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -28,7 +29,7 @@ public class GroupsFragment extends Fragment {
     private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
-
+    private TextView tvMessages;
 
 
     @Override
@@ -55,19 +56,22 @@ public class GroupsFragment extends Fragment {
 
                     // Check a group was entered
                     if (newGroup == null){
-                        Util.getToast(getActivity(), "Please enter a group name." , true).show();
+                       // Util.getToast(getActivity(), "Please enter a group name." , true).show();
+                        tvMessages.setText("Please enter a group name.");
                         return;
                     }
                     // Check group name is at least 4 characters long
                     if (newGroup.length() < 4){
-                        Util.getToast(getActivity(), "Please enter a group name of at least 4 characters." , true).show();
+                      //  Util.getToast(getActivity(), "Please enter a group name of at least 4 characters." , true).show();
+                        tvMessages.setText("Please enter a group name of at least 4 characters.");
                         return;
                     }
 
                     // Check if this group already exists
                    // if(arrayListGroups.contains(newGroup)){
                         if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
-                        Util.getToast(getActivity(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
+                      //  Util.getToast(getActivity(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
+                            tvMessages.setText("Sorry, can NOT add \" + newGroup + \" as it already exists.");
                         return;
                     }
                     ((SetupWizardActivity) getActivity()).setGroup(newGroup);
@@ -106,6 +110,9 @@ public class GroupsFragment extends Fragment {
         }
         if (visible) {
 
+            adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
+            adapter.notifyDataSetChanged();
+
             IntentFilter iff = new IntentFilter("SERVER_GROUPS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
@@ -136,13 +143,15 @@ public class GroupsFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
                         // update the list of groups from server
-                        Util.getToast(getActivity(), messageToDisplay, false).show();
+                     //   Util.getToast(getActivity(), messageToDisplay, false).show();
+                        tvMessages.setText(messageToDisplay);
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
                         // Need to note this group for Register Phone screen
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
                     } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
-                        Util.getToast(getActivity(), messageToDisplay, true).show();
+                       // Util.getToast(getActivity(), messageToDisplay, true).show();
+                        tvMessages.setText(messageToDisplay);
 
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
@@ -155,7 +164,8 @@ public class GroupsFragment extends Fragment {
                         adapter.notifyDataSetChanged();
 
                     }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
-                        Util.getToast(getActivity(), messageToDisplay, true).show();
+                       // Util.getToast(getActivity(), messageToDisplay, true).show();
+                        tvMessages.setText(messageToDisplay);
                 }
 
                 }

@@ -31,6 +31,7 @@ public class BatteryFragment extends Fragment {
 
 
     private Switch swIgnoreLowBattery;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class BatteryFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_battery, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
         swIgnoreLowBattery = (Switch) view.findViewById(R.id.swIgnoreLowBattery);
         swIgnoreLowBattery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

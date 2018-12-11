@@ -32,6 +32,7 @@ public class RootedFragment extends Fragment {
 
     private Switch swRooted;
     private Button btnFinished;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class RootedFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
             btnFinished = (Button) view.findViewById(R.id.btnFinished);
             btnFinished.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -71,12 +72,12 @@ public class RootedFragment extends Fragment {
         }
         if (visible) {
             Prefs prefs = new Prefs(getActivity());
-            ((Switch) getView().findViewById(R.id.swRooted)).setChecked(prefs.getHasRootAccess());
+            swRooted.setChecked(prefs.getHasRootAccess());
 
             if (prefs.getSettingsForTestServerEnabled()){
-                ((Button) getView().findViewById(R.id.btnFinished)).setVisibility(View.INVISIBLE);
+                btnFinished.setVisibility(View.INVISIBLE);
             }else{
-                ((Button) getView().findViewById(R.id.btnFinished)).setVisibility(View.VISIBLE);
+                btnFinished.setVisibility(View.VISIBLE);
             }
         }
     }

@@ -72,7 +72,7 @@
         app:layout_constraintTop_toBottomOf="@+id/setupGroupNameInput" />
 
     <EditText
-        android:id="@+id/setupDeviceNameInput"
+        android:id="@+id/etDeviceNameInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -81,7 +81,7 @@
         android:background="@drawable/rect_text_edit"
         android:ems="10"
         android:hint="Enter Device Name Here"
-        android:inputType="text"
+        android:inputType="text|textNoSuggestions"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDeviceName" />
@@ -101,7 +101,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setupDeviceNameInput" />
+        app:layout_constraintTop_toBottomOf="@+id/etDeviceNameInput" />
 
     <Button
         android:id="@+id/btnUnRegister"

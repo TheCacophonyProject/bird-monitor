@@ -33,6 +33,7 @@ public class FrequencyFragment extends Fragment {
     private Switch swRecordMoreOften;
     private Switch swUseFrequentUploads;
     private Switch swPeriodicallyUpdateGPS;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class FrequencyFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_frequency, container, false);
 
         setUserVisibleHint(false);
+
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
         swRecordMoreOften = (Switch) view.findViewById(R.id.swRecordMoreOften);
         swRecordMoreOften.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

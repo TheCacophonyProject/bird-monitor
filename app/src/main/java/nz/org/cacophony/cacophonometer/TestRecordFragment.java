@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ public class TestRecordFragment extends Fragment {
     private Button btnNext;
     private Button btnRecordNow;
     private TextView tvServerLink;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +34,7 @@ public class TestRecordFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_test_record, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
         btnNext = (Button) view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener(){
@@ -57,10 +59,15 @@ public class TestRecordFragment extends Fragment {
         // https://android-developers.googleblog.com/2008/03/linkify-your-text.html
 
         tvServerLink = (TextView)view.findViewById(R.id.tvServerLink);
-        Pattern cacophonyServerMatcher = Pattern.compile("Cacophony Server");
+
         Prefs prefs = new Prefs(getActivity());
-        String browseRecordingsServerUrl = prefs.getBrowseRecordingsServerUrl();
-        LinkifyCompat.addLinks(tvServerLink, cacophonyServerMatcher, browseRecordingsServerUrl);
+        String tvServerLinkText = tvServerLink.getText() + " " + prefs.getBrowseRecordingsServerUrl();
+        tvServerLink.setText(tvServerLinkText);
+     //   Pattern cacophonyServerMatcher = Pattern.compile("Cacophony Server");
+
+      //  String browseRecordingsServerUrl = prefs.getBrowseRecordingsServerUrl();
+       // LinkifyCompat.addLinks(tvServerLink, cacophonyServerMatcher, browseRecordingsServerUrl);
+        LinkifyCompat.addLinks(tvServerLink, Linkify.ALL);
 
 
         return view;
@@ -111,8 +118,6 @@ public class TestRecordFragment extends Fragment {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-
-        //  Util.createCreateAlarms(getApplicationContext());
     }
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -159,73 +164,7 @@ public class TestRecordFragment extends Fragment {
                 tvMessages.setText("Could not record");
 
             }
-//                TextView tvMessages = getView().findViewById(R.id.tvMessages);
-//                if (message != null) {
-//
-//                    if (message.equalsIgnoreCase("recordNowButton_finished")) {
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true);
-//                        tvMessages.setText("Finished");
-//                       // recordNowIdlingResource.decrement();
-//                    } else if (message.equalsIgnoreCase("recording_started")) {
-//                        tvMessages.setText("Recording");
-//                        Util.getToast(getActivity().getApplicationContext(), "Recording started", false).show();
-//                    } else if (message.equalsIgnoreCase("recording_finished")) {
-//                        tvMessages.setText("Finished");
-//                        Util.getToast(getActivity().getApplicationContext(), "Recording finished", false).show();
-//                    } else if (message.equalsIgnoreCase("about_to_upload_files")) {
-//                        tvMessages.setText("About to upload files");
-//                        Util.getToast(getActivity().getApplicationContext(), "About to upload files", false).show();
-//                    } else if (message.equalsIgnoreCase("files_successfully_uploaded")) {
-//                        tvMessages.setText("Files successfully uploaded");
-//                        Util.getToast(getActivity().getApplicationContext(), "Files successfully uploaded", false).show();
-//                    } else if (message.equalsIgnoreCase("already_uploading")) {
-//                        tvMessages.setText("Files are already uploading");
-//                        Util.getToast(getActivity().getApplicationContext(), "Files are already uploading", false).show();
-//                    } else if (message.equalsIgnoreCase("no_permission_to_record")) {
-//                        tvMessages.setText("Can not record.  Please go to Android settings and enable all required permissions for this app");
-//                        Util.getToast(getActivity().getApplicationContext(), "Can not record.  Please go to Android settings and enable all required permissions for this app", true).show();
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true);
-//                      //  recordNowIdlingResource.decrement();
-//                    } else if (message.equalsIgnoreCase("recording_and_uploading_finished")) {
-//                        tvMessages.setText("Recording and uploading finished");
-//                        Util.getToast(getActivity().getApplicationContext(), "Recording and uploading finished", false).show();
-//
-//                    } else if (message.equalsIgnoreCase("recording_finished_but_uploading_failed")) {
-//                        tvMessages.setText("Recording finished but uploading failed");
-//                        Util.getToast(context, "Recording finished but uploading failed", true).show();
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
-//                     //   recordNowIdlingResource.decrement();
-//                    } else if (message.equalsIgnoreCase("recorded_successfully_no_network")) {
-//                        tvMessages.setText("Recorded successfully, no network connection so did not upload");
-//                        Util.getToast(getActivity().getApplicationContext(), "Recorded successfully, no network connection so did not upload", false).show();
-//                    } else if (message.equalsIgnoreCase("recording_failed")) {
-//                        tvMessages.setText("Recording failed");
-//                        Util.getToast(getActivity().getApplicationContext(), "Recording failed", true).show();
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
-//                    } else if (message.equalsIgnoreCase("not_logged_in")) {
-//                        tvMessages.setText("Not logged in to server, could not upload files");
-//                        Util.getToast(getActivity().getApplicationContext(), "Not logged in to server, could not upload files", true).show();
-//                    } else if (message.equalsIgnoreCase("is_already_recording")) {                  //      uploadingIdlingResource.decrement();
-//                        // Will need enable Record Now button
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
-//                     //   recordNowIdlingResource.decrement();
-//                        tvMessages.setText("Could not do a recording as another recording is already in progress");
-//                        Util.getToast(getActivity().getApplicationContext(), "Could not do a recording as another recording is already in progress", true).show();
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(true && !prefs.getIsDisabled());
-//                    //    recordNowIdlingResource.decrement();
-//                    } else if (message.equalsIgnoreCase("error_do_not_have_root")) {
-//                        tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
-//                        Util.getToast(getActivity().getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
-//                    }else if (message.equalsIgnoreCase("update_record_now_button")){
-//                        getView().findViewById(R.id.btnRecordNow).setEnabled(!RecordAndUpload.isRecording && !prefs.getIsDisabled());
-//                    }
-//
-//                }
-//
-//            } catch (Exception ex) {
-//
-//                Log.e(TAG, ex.getLocalizedMessage());
-//            }
+
         }
     };
 

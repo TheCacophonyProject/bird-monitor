@@ -26,6 +26,7 @@ public class GPSFragment extends Fragment {
 
 
     private Button btnGetGPSLocation;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class GPSFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_gps, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         btnGetGPSLocation = (Button) view.findViewById(R.id.btnGetGPSLocation);
         btnGetGPSLocation.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -102,8 +103,10 @@ public class GPSFragment extends Fragment {
                             updateGpsDisplay(context);
                         } else {
                             String messageToDisplay = joMessage.getString("messageToDisplay");
-                            Util.getToast(context, messageToDisplay, true).show();
+//                            Util.getToast(context, messageToDisplay, true).show();
+                            tvMessages.setText(messageToDisplay);
                         }
+
                     }
                 }
 
@@ -132,7 +135,8 @@ public class GPSFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("error_do_not_have_root")) {
-                            Util.getToast(getActivity().getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+//                            Util.getToast(getActivity().getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
+                            tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
                         }
                     }
                 }

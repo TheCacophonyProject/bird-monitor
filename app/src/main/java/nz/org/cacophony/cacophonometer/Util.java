@@ -960,7 +960,7 @@ Prefs prefs = new Prefs(context);
 
     public static void updateGPSLocation(Context context){
 
-        Util.getToast(context,"Getting new Location...", false ).show();
+      //  Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null){
             Log.e(TAG, "locationManager is null");
@@ -969,6 +969,7 @@ Prefs prefs = new Prefs(context);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+
           //  Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -985,8 +986,10 @@ Prefs prefs = new Prefs(context);
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
+
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
+
         }
     }
 

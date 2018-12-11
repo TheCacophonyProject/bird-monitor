@@ -29,8 +29,10 @@ public class SignInFragment extends Fragment {
     private EditText etPasswordInput;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_sign_in, container, false);
         setUserVisibleHint(false);
@@ -99,7 +101,8 @@ public class SignInFragment extends Fragment {
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+            tvMessages.setText("Error disabling flight mode");
         }
     }
 
@@ -194,7 +197,8 @@ public class SignInFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-             Prefs prefs = new Prefs(getActivity().getApplicationContext());
+             Prefs prefs = new Prefs(context);
+
             String userNameOrEmailAddress = "";
             if (prefs.getUserNameOrEmailAddress()!= null){
                 userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
@@ -250,7 +254,8 @@ public class SignInFragment extends Fragment {
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
-                Util.getToast(getActivity().getApplicationContext(),"Could not login", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),"Could not login", true ).show();
+                tvMessages.setText("Could not login.");
             }
         }
     };
@@ -259,36 +264,42 @@ public class SignInFragment extends Fragment {
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
             if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-                Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
+                tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
                 return;
             }
 
             if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-                Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+                tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
                 return;
             }
 
             // Check that the user name is valid, at least 5 characters.
             String usernameOrEmailAddress = ((EditText) getView().findViewById(R.id.etUserNameOrPasswordInput)).getText().toString();
             if (usernameOrEmailAddress.length() < 1){
-                Util.getToast(getActivity().getApplicationContext(),"Please enter a username of at least 5 characters (no spaces)", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),"Please enter a username of at least 5 characters (no spaces)", true ).show();
+                tvMessages.setText("Please enter a username of at least 5 characters (no spaces)");
                 return;
             }else if (usernameOrEmailAddress.length() < 5 && !usernameOrEmailAddress.contains("@")) {
                 Log.i(TAG, "Invalid usernameOrEmailAddress: "+usernameOrEmailAddress);
 
-                Util.getToast(getActivity().getApplicationContext(),usernameOrEmailAddress + " is not a valid username or email address.", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),usernameOrEmailAddress + " is not a valid username or email address.", true ).show();
+                tvMessages.setText(usernameOrEmailAddress + " is not a valid username or email address.");
                 return;
             }
 
             // Check that the password is valid, at least 8 characters.
             String password = ((EditText) getView().findViewById(R.id.etPasswordInput)).getText().toString();
             if (password.length() < 1){
-                Util.getToast(getActivity().getApplicationContext(),"Please enter a passord of at least 8 characters (no spaces)", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(),"Please enter a passord of at least 8 characters (no spaces)", true ).show();
+                tvMessages.setText("Please enter a password of at least 8 characters (no spaces)");
                 return;
             }else if (password.length() < 5) {
-                Log.i(TAG, "Invalid password");
+               // Log.i(TAG, "Invalid password");
 
-                Util.getToast(getActivity().getApplicationContext(), "Please use at least 8 characters (no spaces)", true ).show();
+               // Util.getToast(getActivity().getApplicationContext(), "Please use at least 8 characters (no spaces)", true ).show();
+                tvMessages.setText("Please use at least 8 characters (no spaces)");
                 return;
             }
 
@@ -324,8 +335,8 @@ public class SignInFragment extends Fragment {
             Log.e(TAG, ex.getLocalizedMessage());
         }
 
-        Util.getToast(getActivity().getApplicationContext(),"Attempting to sign into the server - please wait", false ).show();
-
+       // Util.getToast(getActivity().getApplicationContext(),"Attempting to sign into the server - please wait", false ).show();
+        tvMessages.setText("Attempting to sign into the server - please wait");
     }
 
     public void forgetUserButtonPressed() {

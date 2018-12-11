@@ -7,6 +7,7 @@
 
     <string name="activity_or_fragment_title_welcome">Welcome</string>
     <string name="activity_or_fragment_title_setup">Setup</string>
+    <string name="activity_or_fragment_title_advanced_setup">Advanced Setup</string>
     <string name="activity_or_fragment_title_main">Cacophonometer</string>
     <string name="activity_or_fragment_title_register_phone">Register Phone</string>
     <string name="activity_or_fragment_title_rooted">Rooted?</string>
@@ -163,7 +164,7 @@
     <string name="register_title_unregistered">Please Register your phone.</string>
     <string name="register_title_registered">Great - your phone has been registered. Swipe to the next step or press the \'UN-REGISTER\' button to register with a different group or name.</string>
 
-    <string name="group_name_unregistered">Create a Group on the Cacophony server and enter it in the box below.</string>
+    <string name="group_name_unregistered">Enter the group name (that your have already created) in the box below.</string>
     <string name="group_name_registered">Group name is: </string>
     <string name="device_name_unregistered">Make up any name of at least 4 characters that you like for your device and enter it below (you do not create this name on the server).</string>
     <string name="device_name_registered">Device name is: </string>

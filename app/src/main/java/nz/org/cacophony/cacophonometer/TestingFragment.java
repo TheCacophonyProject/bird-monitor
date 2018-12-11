@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class TestingFragment extends Fragment {
 
@@ -18,6 +19,7 @@ public class TestingFragment extends Fragment {
     private Switch swUseVeryFrequentRecordings;
     private Switch swShortRecordings;
     private Button btnFinished;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class TestingFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_testing, container, false);
 
         setUserVisibleHint(false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         btnFinished = (Button) view.findViewById(R.id.btnFinished);
         btnFinished.setOnClickListener(new View.OnClickListener(){
             @Override

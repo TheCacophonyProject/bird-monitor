@@ -27,6 +27,12 @@ public class RegisterFragment extends Fragment {
 
     private Button btnRegister;
     private Button btnUnRegister;
+    private TextView tvMessages;
+    private EditText etGroupNameInput;
+    private EditText etDeviceNameInput;
+    private TextView tvTitleMessage;
+    private TextView tvGroupName;
+    private TextView tvDeviceName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +41,9 @@ public class RegisterFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+        etGroupNameInput =  view.findViewById(R.id.etGroupNameInput);
+        etDeviceNameInput =  view.findViewById(R.id.etDeviceNameInput);
 
         btnRegister = (Button) view.findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(new View.OnClickListener(){
@@ -53,6 +61,9 @@ public class RegisterFragment extends Fragment {
             }
         });
 
+        tvTitleMessage = (TextView) view.findViewById(R.id.tvTitleMessage);
+        tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
+        tvDeviceName = (TextView) view.findViewById(R.id.tvDeviceName);
 
 
         return view;
@@ -71,7 +82,7 @@ public class RegisterFragment extends Fragment {
 
             String group = ((SetupWizardActivity) getActivity()).getGroup();
             if (group != null){
-                ((EditText) getView().findViewById(R.id.setupGroupNameInput)).setText(group);
+                etGroupNameInput.setText(group);
             }
 
 
@@ -106,7 +117,8 @@ public class RegisterFragment extends Fragment {
 
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
-                            Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+                          //  Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+                            tvMessages.setText(messageToDisplay);
                             //registerIdlingResource.decrement();
                             try {
                                 displayOrHideGUIObjects();
@@ -116,14 +128,16 @@ public class RegisterFragment extends Fragment {
                             }
 
                         } else  {
-                            Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                       //     Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                            tvMessages.setText(messageToDisplay);
                         }
                     }
                 }
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
-                Util.getToast(getActivity().getApplicationContext(), "Oops, your phone did not register - not sure why", true).show();
+             //   Util.getToast(getActivity().getApplicationContext(), "Oops, your phone did not register - not sure why", true).show();
+                tvMessages.setText("Oops, your phone did not register - not sure why");
             }
         }
     };
@@ -134,47 +148,47 @@ public class RegisterFragment extends Fragment {
             // Phone is registered
             // Phone is NOT registered
             //Input fields to be INVISIBLE
-            getView().findViewById(R.id.setupGroupNameInput).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.setupDeviceNameInput).setVisibility(View.INVISIBLE);
+            etGroupNameInput.setVisibility(View.INVISIBLE);
+            etDeviceNameInput.setVisibility(View.INVISIBLE);
 
             //Set appropriate messages
 
-            ((TextView) getView().findViewById(R.id.tvTitleMessage)).setText(getString(R.string.register_title_registered));
-            ((TextView) getView().findViewById(R.id.tvGroupName)).setText(getString(R.string.group_name_registered) + prefs.getGroupName());
-            ((TextView) getView().findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_registered) + prefs.getDeviceName());
+            tvTitleMessage.setText(getString(R.string.register_title_registered));
+            tvGroupName.setText(getString(R.string.group_name_registered) + prefs.getGroupName());
+            tvDeviceName.setText(getString(R.string.device_name_registered) + prefs.getDeviceName());
 
             //Only unregister button is visible
-            getView().findViewById(R.id.btnRegister).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.btnUnRegister).setVisibility(View.VISIBLE);
+            btnRegister.setVisibility(View.INVISIBLE);
+            btnUnRegister.setVisibility(View.VISIBLE);
 
 
         } else {
             // Phone is NOT registered
             //Input fields to be visible
-            getView().findViewById(R.id.setupGroupNameInput).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.setupDeviceNameInput).setVisibility(View.VISIBLE);
+            etGroupNameInput.setVisibility(View.VISIBLE);
+            etDeviceNameInput.setVisibility(View.VISIBLE);
 
             //Set appropriate messages
 
-            ((TextView) getView().findViewById(R.id.tvTitleMessage)).setText(getString(R.string.register_title_unregistered));
-            ((TextView) getView().findViewById(R.id.tvGroupName)).setText(getString(R.string.group_name_unregistered));
-            ((TextView) getView().findViewById(R.id.tvDeviceName)).setText(getString(R.string.device_name_unregistered));
+            tvTitleMessage.setText(getString(R.string.register_title_unregistered));
+            tvGroupName.setText(getString(R.string.group_name_unregistered));
+            tvDeviceName.setText(getString(R.string.device_name_unregistered));
 
             //Only register button is visible
-            getView().findViewById(R.id.btnRegister).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.btnUnRegister).setVisibility(View.INVISIBLE);
+            btnRegister.setVisibility(View.VISIBLE);
+            btnUnRegister.setVisibility(View.INVISIBLE);
 
             //Nudge user to Enter Group Name box
-            getView().findViewById(R.id.tvGroupName).requestFocus();
+            tvGroupName.requestFocus();
 
         }
 
 
         if (prefs.getGroupName() != null) {
-            ((TextView) getView().findViewById(R.id.tvGroupName)).setText("Group - " + prefs.getGroupName());
+            tvGroupName.setText("Group - " + prefs.getGroupName());
         }
         if (prefs.getDeviceName() != null) {
-            ((TextView) getView().findViewById(R.id.tvDeviceName)).setText("Device Name - " + prefs.getDeviceName());
+            tvDeviceName.setText("Device Name - " + prefs.getDeviceName());
 
         }
     }
@@ -186,44 +200,51 @@ public class RegisterFragment extends Fragment {
 
         // if (prefs.getOffLineMode()){
         if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
-            Util.getToast(getActivity().getApplicationContext(), "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true).show();
+            tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
             return;
         }
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
-            Util.getToast(getActivity().getApplicationContext(), "The phone is not currently connected to the internet - please fix and try again", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "The phone is not currently connected to the internet - please fix and try again", true).show();
+            tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
         if (prefs.getGroupName() != null) {
-            Util.getToast(getActivity().getApplicationContext(), "Already registered - press UNREGISTER first (if you really want to change group)", true).show();
+         //   Util.getToast(getActivity().getApplicationContext(), "Already registered - press UNREGISTER first (if you really want to change group)", true).show();
+            tvMessages.setText("Already registered - press UNREGISTER first (if you really want to change group)");
             return;
         }
         // Check that the group name is valid, at least 4 characters.
-        String group = ((EditText)  getView().findViewById(R.id.setupGroupNameInput)).getText().toString();
+        String group = etGroupNameInput.getText().toString();
         if (group.length() < 1) {
-            Util.getToast(getActivity().getApplicationContext(), "Please enter a group name of at least 4 characters (no spaces)", true).show();
+           // Util.getToast(getActivity().getApplicationContext(), "Please enter a group name of at least 4 characters (no spaces)", true).show();
+            tvMessages.setText("Please enter a group name of at least 4 characters (no spaces)");
             return;
         } else if (group.length() < 4) {
-            Log.i(TAG, "Invalid group name: " + group);
+          //  Log.i(TAG, "Invalid group name: " + group);
 
-            Util.getToast(getActivity().getApplicationContext(), group + " is not a valid group name. Please use at least 4 characters (no spaces)", true).show();
+           // Util.getToast(getActivity().getApplicationContext(), group + " is not a valid group name. Please use at least 4 characters (no spaces)", true).show();
+            tvMessages.setText(group + " is not a valid group name. Please use at least 4 characters (no spaces)");
             return;
         }
 
         // Check that the device name is valid, at least 4 characters.
-        String deviceName = ((EditText)  getView().findViewById(R.id.setupDeviceNameInput)).getText().toString();
+        String deviceName = ((EditText)  getView().findViewById(R.id.etDeviceNameInput)).getText().toString();
         if (deviceName.length() < 1) {
-            Util.getToast(getActivity().getApplicationContext(), "Please enter a device name of at least 4 characters (no spaces)", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "Please enter a device name of at least 4 characters (no spaces)", true).show();
+            tvMessages.setText("Please enter a device name of at least 4 characters (no spaces)");
             return;
         } else if (deviceName.length() < 4) {
-            Log.i(TAG, "Invalid device name: " + deviceName);
-
-            Util.getToast(getActivity().getApplicationContext(), deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true).show();
+           // Log.i(TAG, "Invalid device name: " + deviceName);
+          //  Util.getToast(getActivity().getApplicationContext(), deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true).show();
+            tvMessages.setText(deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)");
             return;
         }
 
-        Util.getToast(getActivity().getApplicationContext(), "Attempting to register with server - please wait", false).show();
+        //Util.getToast(getActivity().getApplicationContext(), "Attempting to register with server - please wait", false).show();
+        tvMessages.setText("Attempting to register with server - please wait");
 
         // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -234,7 +255,8 @@ public class RegisterFragment extends Fragment {
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-            Util.getToast(getActivity().getApplicationContext(), "Already registered with that group", true).show();
+            //Util.getToast(getActivity().getApplicationContext(), "Already registered with that group", true).show();
+            tvMessages.setText("Already registered with that group");
             return;
         }
 
@@ -277,7 +299,8 @@ public class RegisterFragment extends Fragment {
     public void unregisterButtonPressed() {
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
-            Util.getToast(getActivity().getApplicationContext(), "Not currently registered - so can not unregister :-(", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "Not currently registered - so can not unregister :-(", true).show();
+            tvMessages.setText("Not currently registered - so can not unregister :-(");
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -307,7 +330,10 @@ public class RegisterFragment extends Fragment {
 
             Util.unregisterPhone(getActivity().getApplicationContext());
 
-            Util.getToast(getActivity().getApplicationContext(), "Success - Device is no longer registered", false).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "Success - Device is no longer registered", false).show();
+            tvMessages.setText("Success - Device is no longer registered");
+            etGroupNameInput.setText("");
+
             displayOrHideGUIObjects();
 
         } catch (Exception ex) {
@@ -323,7 +349,8 @@ public class RegisterFragment extends Fragment {
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+          //  Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+            tvMessages.setText("Error disabling flight mode");
         }
     }
 

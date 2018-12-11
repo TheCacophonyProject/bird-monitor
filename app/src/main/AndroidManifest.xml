@@ -92,8 +92,11 @@
             android:label="@string/activity_or_fragment_title_turn_off_or_on" />
         <activity
             android:name=".SetupWizardActivity"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/activity_or_fragment_title_setup" />
-        <activity android:name=".AdvancedWizardActivity"></activity>
+        <activity android:name=".AdvancedWizardActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:label="@string/activity_or_fragment_title_advanced_setup" />
     </application>
 
 </manifest>

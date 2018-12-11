@@ -65,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             // Phone is NOT registered
             //Input fields to be INVISIBLE
             findViewById(R.id.setupGroupNameInput).setVisibility(View.INVISIBLE);
-            findViewById(R.id.setupDeviceNameInput).setVisibility(View.INVISIBLE);
+            findViewById(R.id.etDeviceNameInput).setVisibility(View.INVISIBLE);
 
             //Set appropriate messages
 
@@ -86,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
             // Phone is NOT registered
             //Input fields to be visible
             findViewById(R.id.setupGroupNameInput).setVisibility(View.VISIBLE);
-            findViewById(R.id.setupDeviceNameInput).setVisibility(View.VISIBLE);
+            findViewById(R.id.etDeviceNameInput).setVisibility(View.VISIBLE);
 
             //Set appropriate messages
 
@@ -154,7 +154,7 @@ public class RegisterActivity extends AppCompatActivity implements IdlingResourc
         }
 
         // Check that the device name is valid, at least 4 characters.
-        String deviceName = ((EditText) findViewById(R.id.setupDeviceNameInput)).getText().toString();
+        String deviceName = ((EditText) findViewById(R.id.etDeviceNameInput)).getText().toString();
         if (deviceName.length() < 1) {
             Util.getToast(getApplicationContext(), "Please enter a device name of at least 4 characters (no spaces)", true).show();
             return;

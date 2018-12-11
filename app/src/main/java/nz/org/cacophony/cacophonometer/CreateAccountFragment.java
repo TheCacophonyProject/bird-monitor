@@ -24,12 +24,13 @@ public class CreateAccountFragment extends Fragment {
     private Button btnSignUp;
 
     private Button btnForgetUser;
+    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
-
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         setUserVisibleHint(false);
         btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
 

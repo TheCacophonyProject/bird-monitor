@@ -19,6 +19,9 @@ public class SetupWizardActivity extends AppCompatActivity {
 
     private String group = ""; // to be used to pass the name of the selected group between fragments
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

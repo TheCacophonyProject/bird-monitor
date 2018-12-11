@@ -297,7 +297,7 @@ class Server {
 
             } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
 
-            jsonObjectMessageToBroadcast.put("messageType", "");
+            jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
             // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
             jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not sign in.");
             Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
