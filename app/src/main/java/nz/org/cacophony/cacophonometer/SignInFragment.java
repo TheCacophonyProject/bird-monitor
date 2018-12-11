@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class SignInFragment extends Fragment {
     private TextView tvMessages;
     private EditText etUserNameOrPasswordInput;
     private EditText etPasswordInput;
+   // private TextInputLayout tilPassword;
 
 
 
@@ -38,6 +40,7 @@ public class SignInFragment extends Fragment {
         setUserVisibleHint(false);
         etUserNameOrPasswordInput = (EditText)view.findViewById(R.id.etUserNameOrPasswordInput);
         etPasswordInput = (EditText)view.findViewById(R.id.etPasswordInput);
+       // tilPassword =(TextInputLayout)view.findViewById(R.id.tilPassword);
         btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
         btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
@@ -69,6 +72,8 @@ public class SignInFragment extends Fragment {
                 forgetUserButtonPressed();
             }
         });
+
+        //tilPassword.setPasswordVisibilityToggleEnabled(true);
 
          return view;
     }

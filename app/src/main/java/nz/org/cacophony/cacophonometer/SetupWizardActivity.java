@@ -81,9 +81,11 @@ public class SetupWizardActivity extends AppCompatActivity {
 
         mSectionsStatePagerAdapter.addFragment(new WelcomeFragment(), getResources().getString(R.string.activity_or_fragment_title_welcome));
         Prefs prefs = new Prefs(this);
-        if (prefs.getUsername() != null && prefs.getUserNameOrEmailAddress() != null){
+        String userName = prefs.getUsername();
+        String userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+        //if (userName == null && userNameOrEmailAddress == null){
             mSectionsStatePagerAdapter.addFragment(new CreateAccountFragment(), getResources().getString(R.string.activity_or_fragment_title_create_account));
-        }
+        //}
 
         mSectionsStatePagerAdapter.addFragment(new SignInFragment(), getResources().getString(R.string.activity_or_fragment_title_sign_in));
         mSectionsStatePagerAdapter.addFragment(new GroupsFragment(), getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group));

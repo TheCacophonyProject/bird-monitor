@@ -109,7 +109,8 @@ public class CreateAccountFragment extends Fragment {
         if (prefs.getUsername() == null){
             ((TextView) getView().findViewById(R.id.tvChooseUsername)).setText("Choose a username");
             ((TextView) getView().findViewById(R.id.tvEnterEmail)).setText("Email address");
-            ((TextView) getView().findViewById(R.id.tvTitle)).setText("You need to create an account on the Cacophony Server");
+          //  ((TextView) getView().findViewById(R.id.tvTitle)).setText("You need to create an account on the Cacophony Server");
+            ((TextView) getView().findViewById(R.id.tvTitle)).setText(getActivity().getResources().getString(R.string.fragment_create_account_intro_text));
 
             getView().findViewById(R.id.etUsername).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.etEmail).setVisibility(View.VISIBLE);
