@@ -46,38 +46,44 @@
         android:inputType="text"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvUserName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
 
     <TextView
         android:id="@+id/tvPassword"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginTop="8dp"
         android:text="@string/password_message"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etUserNameOrPasswordInput" />
+        app:layout_constraintTop_toBottomOf="@+id/etUserNameOrPasswordInput" />
 
-    <EditText
-        android:id="@+id/etPasswordInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_password"
+        android:layout_width="289dp"
+        android:layout_height="74dp"
+        android:layout_below="@id/tvPassword"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/rect_text_edit"
-        android:ems="10"
-        android:hint="Enter password here"
-        android:inputType="textPassword"
-        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPassword">
+
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:hint="Enter password here"
+            android:inputType="textPassword" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/btnSignIn"
@@ -86,24 +92,23 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-
         android:text="Sign in"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etPasswordInput" />
+        app:layout_constraintTop_toBottomOf="@+id/layout_password" />
 
     <Button
         android:id="@+id/btnForgetUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="Sign out"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPasswordInput" />
+        app:layout_constraintTop_toBottomOf="@+id/layout_password" />
 
     <TextView
         android:id="@+id/tvMessages"
@@ -115,6 +120,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.471"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSignIn" />
 

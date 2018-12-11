@@ -129,7 +129,6 @@ public class TestRecordFragment extends Fragment {
             }
             TextView tvMessages = getView().findViewById(R.id.tvMessages);
             try {
-                Prefs prefs = new Prefs(context);
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 

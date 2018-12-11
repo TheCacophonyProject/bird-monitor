@@ -117,9 +117,9 @@ public class RegisterFragment extends Fragment {
 
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
-                          //  Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+
                             tvMessages.setText(messageToDisplay);
-                            //registerIdlingResource.decrement();
+
                             try {
                                 displayOrHideGUIObjects();
 
@@ -128,7 +128,7 @@ public class RegisterFragment extends Fragment {
                             }
 
                         } else  {
-                       //     Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+
                             tvMessages.setText(messageToDisplay);
                         }
                     }
@@ -136,7 +136,7 @@ public class RegisterFragment extends Fragment {
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
-             //   Util.getToast(getActivity().getApplicationContext(), "Oops, your phone did not register - not sure why", true).show();
+
                 tvMessages.setText("Oops, your phone did not register - not sure why");
             }
         }

@@ -42,9 +42,6 @@ public class SignInFragment extends Fragment {
         btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
-      //  displayOrHideGUIObjects();
-
-
         btnSignIn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -101,7 +98,7 @@ public class SignInFragment extends Fragment {
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-          //  Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+
             tvMessages.setText("Error disabling flight mode");
         }
     }
@@ -160,33 +157,6 @@ public class SignInFragment extends Fragment {
 
 
         }
-
-//        if (prefs.getUsername() != null && prefs.getUserNameOrEmailAddress() != null){
-//            btnSignIn.setVisibility(View.VISIBLE);
-//            btnForgetUser.setVisibility(View.INVISIBLE);
-//
-//            String username = prefs.getUsername();
-//            String emailAddress = prefs.getEmailAddress();
-//            String usernameOrEmailAddress = prefs.getUserNameOrEmailAddress();
-//            if (usernameOrEmailAddress !=null){
-//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(usernameOrEmailAddress);
-//            }else if (username != null){
-//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(username);
-//            }else if(emailAddress != null){
-//                ((EditText)getView().findViewById(R.id.etUserNameOrPasswordInput)).setText(emailAddress);
-//            }
-//            String password = prefs.getUsernamePassword();
-//            if (password != null){
-//                ((EditText)getView().findViewById(R.id.etPasswordInput)).setText(password);
-//            }
-//        }else{
-//            btnSignIn.setVisibility(View.INVISIBLE);
-//            btnForgetUser.setVisibility(View.VISIBLE);
-//
-//
-//        }
-
-
     }
 
 
@@ -222,7 +192,6 @@ public class SignInFragment extends Fragment {
 
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
-                       // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, false ).show();
 
                         prefs.setUserSignedIn(true);
 
@@ -244,7 +213,7 @@ public class SignInFragment extends Fragment {
                             etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                             return;
                     }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
-                    // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
+
                     tvMessages.setText(messageToDisplay);
                     etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                     return;
@@ -254,7 +223,7 @@ public class SignInFragment extends Fragment {
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
-               // Util.getToast(getActivity().getApplicationContext(),"Could not login", true ).show();
+
                 tvMessages.setText("Could not login.");
             }
         }
@@ -264,13 +233,11 @@ public class SignInFragment extends Fragment {
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
             if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-               // Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
-                tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
+             tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
                 return;
             }
 
             if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-               // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
                 tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
                 return;
             }
@@ -278,13 +245,11 @@ public class SignInFragment extends Fragment {
             // Check that the user name is valid, at least 5 characters.
             String usernameOrEmailAddress = ((EditText) getView().findViewById(R.id.etUserNameOrPasswordInput)).getText().toString();
             if (usernameOrEmailAddress.length() < 1){
-               // Util.getToast(getActivity().getApplicationContext(),"Please enter a username of at least 5 characters (no spaces)", true ).show();
                 tvMessages.setText("Please enter a username of at least 5 characters (no spaces)");
                 return;
             }else if (usernameOrEmailAddress.length() < 5 && !usernameOrEmailAddress.contains("@")) {
                 Log.i(TAG, "Invalid usernameOrEmailAddress: "+usernameOrEmailAddress);
 
-               // Util.getToast(getActivity().getApplicationContext(),usernameOrEmailAddress + " is not a valid username or email address.", true ).show();
                 tvMessages.setText(usernameOrEmailAddress + " is not a valid username or email address.");
                 return;
             }
@@ -292,24 +257,12 @@ public class SignInFragment extends Fragment {
             // Check that the password is valid, at least 8 characters.
             String password = ((EditText) getView().findViewById(R.id.etPasswordInput)).getText().toString();
             if (password.length() < 1){
-               // Util.getToast(getActivity().getApplicationContext(),"Please enter a passord of at least 8 characters (no spaces)", true ).show();
-                tvMessages.setText("Please enter a password of at least 8 characters (no spaces)");
+               tvMessages.setText("Please enter a password of at least 8 characters (no spaces)");
                 return;
             }else if (password.length() < 5) {
-               // Log.i(TAG, "Invalid password");
-
-               // Util.getToast(getActivity().getApplicationContext(), "Please use at least 8 characters (no spaces)", true ).show();
                 tvMessages.setText("Please use at least 8 characters (no spaces)");
                 return;
             }
-
-//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            if (imm == null){
-//                Log.e(TAG, "imm is null");
-//                return;
-//            }
-//
-//            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
             String userNameFromPrefs = prefs.getUsername();
             if (userNameFromPrefs == null){
@@ -335,7 +288,6 @@ public class SignInFragment extends Fragment {
             Log.e(TAG, ex.getLocalizedMessage());
         }
 
-       // Util.getToast(getActivity().getApplicationContext(),"Attempting to sign into the server - please wait", false ).show();
         tvMessages.setText("Attempting to sign into the server - please wait");
     }
 

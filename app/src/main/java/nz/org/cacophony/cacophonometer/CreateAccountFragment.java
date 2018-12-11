@@ -264,11 +264,11 @@ public class CreateAccountFragment extends Fragment {
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_CREATED_USER")) {
-                        Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
+                        Util.getToast(context, messageToDisplay, false).show();
                     }else if(messageType.equalsIgnoreCase("FAILED_TO_CREATE_USER")) {
-                        Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                        Util.getToast(context, messageToDisplay, true).show();
                     }else if (messageType.equalsIgnoreCase("422_FAILED_TO_CREATE_USER")) {
-                        Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                        Util.getToast(context, messageToDisplay, true).show();
                     }
 
                     }
