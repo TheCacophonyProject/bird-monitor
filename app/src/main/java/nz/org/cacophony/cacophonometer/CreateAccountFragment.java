@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,21 +22,44 @@ import org.json.JSONObject;
 public class CreateAccountFragment extends Fragment {
     private static final String TAG = "CreateAccountFragment";
 
-    private Button btnSignUp;
+    private TextView tvTitle;
 
-    private Button btnForgetUser;
+    private TextInputLayout tilUsername;
+    private TextInputEditText etUsername;
+
+    private TextInputLayout tilEmail;
+    private TextInputEditText etEmail;
+
+    private TextInputLayout tilPassword1;
+    private TextInputEditText etPassword1;
+
+    private TextInputLayout tilPassword2;
+    private TextInputEditText etPassword2;
+
+    private Button btnSignUp;
+  //  private Button btnForgetUser;
     private TextView tvMessages;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        setUserVisibleHint(false);
+
+        tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+        tilUsername = (TextInputLayout) view.findViewById(R.id.tilUsername);
+        etUsername = (TextInputEditText) view.findViewById(R.id.etUsername);
+        tilEmail = (TextInputLayout) view.findViewById(R.id.tilEmail);
+        etEmail = (TextInputEditText) view.findViewById(R.id.etEmail);
+        tilPassword1 = (TextInputLayout) view.findViewById(R.id.tilPassword1);
+        etPassword1 = (TextInputEditText) view.findViewById(R.id.etPassword1);
+        tilPassword2 = (TextInputLayout) view.findViewById(R.id.tilPassword2);
+         etPassword2 = (TextInputEditText) view.findViewById(R.id.etPassword2);
         btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
+      //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
+        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
-        btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
-
+        setUserVisibleHint(false);
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,15 +68,12 @@ public class CreateAccountFragment extends Fragment {
             }
         });
 
-
-
-        btnForgetUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                forgetUser();
-            }
-        });
-
+//        btnForgetUser.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                forgetUser();
+//            }
+//        });
 
         return view;
     }
@@ -60,27 +81,22 @@ public class CreateAccountFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-       // Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onResume", true ).show();
-
-        displayOrHideGUIObjects();
-
-
-
+      //  displayOrHideGUIObjects();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-     //   Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onSTART", true ).show();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//     //   Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onSTART", true ).show();
+//    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-      //  Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onPAUSE", true ).show();
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//      //  Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onPAUSE", true ).show();
+//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//    }
 
     @Override
     public void setUserVisibleHint(final boolean visible) {
@@ -89,128 +105,110 @@ public class CreateAccountFragment extends Fragment {
             return;
         }
         if (visible) {
-            //Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment came visible", true ).show();
-
             IntentFilter iff = new IntentFilter("SERVER_SIGNUP");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
-            displayOrHideGUIObjects();
+          //  displayOrHideGUIObjects();
         }else{
-           // Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment disappeared", true ).show();
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
-
 
 
     void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
         if (prefs.getUsername() == null){
-            ((TextView) getView().findViewById(R.id.tvChooseUsername)).setText("Choose a username");
-            ((TextView) getView().findViewById(R.id.tvEnterEmail)).setText("Email address");
-          //  ((TextView) getView().findViewById(R.id.tvTitle)).setText("You need to create an account on the Cacophony Server");
-            ((TextView) getView().findViewById(R.id.tvTitle)).setText(getActivity().getResources().getString(R.string.fragment_create_account_intro_text));
+            tvTitle.setText(getActivity().getResources().getString(R.string.fragment_create_account_intro_text));
 
-            getView().findViewById(R.id.etUsername).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.etEmail).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.etEmail).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.tvEnterPassword).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.etPassword1).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.tvConfirmPassword).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.etPassword2).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.btnSignUp).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.btnForgetUser).setVisibility(View.INVISIBLE);
+            etUsername.setText("");
+            etEmail.setText("");
+            etPassword1.setText("");
+            etPassword2.setText("");
+
+//           etUsername.setVisibility(View.VISIBLE);
+//           etEmail.setVisibility(View.VISIBLE);
+//           etEmail.setVisibility(View.VISIBLE);
+//         etPassword1.setVisibility(View.VISIBLE);
+//           etPassword2.setVisibility(View.VISIBLE);
+//            btnSignUp.setVisibility(View.VISIBLE);
+//            btnForgetUser.setVisibility(View.INVISIBLE);
 
         }else{
-
-            ((TextView) getView().findViewById(R.id.tvChooseUsername)).setText("Username is " + prefs.getUsername());
-            ((TextView) getView().findViewById(R.id.tvEnterEmail)).setText("Email address is " + prefs.getEmailAddress());
-            ((TextView) getView().findViewById(R.id.tvTitle)).setText("This phone is registered with a valid Cacophonometer account.");
-
-            getView().findViewById(R.id.etUsername).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.etEmail).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.etEmail).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.tvEnterPassword).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.etPassword1).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.tvConfirmPassword).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.etPassword2).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.btnSignUp).setVisibility(View.INVISIBLE);
-            getView().findViewById(R.id.btnForgetUser).setVisibility(View.VISIBLE);
+           tvTitle.setText("This phone is registered with a valid Cacophonometer account.");
+            tvMessages.setText("This phone is registered with a valid Cacophonometer account.\n\nUsername is " + prefs.getUsername() + "\n\n" + "Email address is " + prefs.getEmailAddress() );
+//           tilUsername.setVisibility(View.INVISIBLE);
+//          tilEmail.setVisibility(View.INVISIBLE);
+            etPassword1.setText("");
+            etPassword2.setText("");
+//          btnSignUp.setVisibility(View.INVISIBLE);
+//           btnForgetUser.setVisibility(View.VISIBLE);
 
         }
 
     }
 
-    private void forgetUser() {
-        Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        prefs.setUsername(null);
-        displayOrHideGUIObjects();
-    }
+//    private void forgetUser() {
+//        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+//        prefs.setUsername(null);
+//        displayOrHideGUIObjects();
+//    }
 
     private void createUserButtonPressed(){
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
-        // if (prefs.getOffLineMode()){
-        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-            Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
+         if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
+          //  Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
+             tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
             return;
         }
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-            Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+           // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
+            tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
-
         // Check that the username is valid, at least 5 characters.
-        String username = ((EditText) getView().findViewById(R.id.etUsername)).getText().toString();
+        String username = etUsername.getText().toString();
         if (username.length() < 1){
-            Util.getToast(getActivity().getApplicationContext(),"Please enter a Username of at least 5 characters (no spaces)", true ).show();
+           // Util.getToast(getActivity().getApplicationContext(),"Please enter a Username of at least 5 characters (no spaces)", true ).show();
+            tvMessages.setText("Please enter a Username of at least 5 characters (no spaces)");
             return;
         }else if (username.length() < 5) {
-            Log.i(TAG, "Invalid Username: "+ username);
-
-            Util.getToast(getActivity().getApplicationContext(),username + " is not a valid username. Please use at least 5 characters (no spaces)", true ).show();
+           //    Util.getToast(getActivity().getApplicationContext(),username + " is not a valid username. Please use at least 5 characters (no spaces)", true ).show();
+            tvMessages.setText(username + " is not a valid username. Please use at least 5 characters (no spaces)");
             return;
         }
 
         //Check email is valid
-        String emailAddress = ((EditText) getView().findViewById(R.id.etEmail)).getText().toString();
+        String emailAddress = etEmail.getText().toString();
 
         if (emailAddress.length() < 1) {
-            Util.getToast(getActivity().getApplicationContext(), "Please enter an email address", true).show();
+           // Util.getToast(getActivity().getApplicationContext(), "Please enter an email address", true).show();
+            tvMessages.setText("Please enter an email address");
             return;
         } else if (!Util.isValidEmail(emailAddress)){
-            Util.getToast(getActivity().getApplicationContext(),emailAddress + " is not a valid email address.", true ).show();
+           // Util.getToast(getActivity().getApplicationContext(),emailAddress + " is not a valid email address.", true ).show();
+            tvMessages.setText(emailAddress + " is not a valid email address.");
             return;
         }
 
         //Check password is valid
         String etPassword1 = ((EditText) getView().findViewById(R.id.etPassword1)).getText().toString();
         if (etPassword1.length() < 8){
-            Util.getToast(getActivity().getApplicationContext(),"Minimum password length is 8 characters.", true ).show();
+            //Util.getToast(getActivity().getApplicationContext(),"Minimum password length is 8 characters.", true ).show();
+            tvMessages.setText("Minimum password length is 8 characters.");
             return;
         }
         String etPassword2 = ((EditText) getView().findViewById(R.id.etPassword2)).getText().toString();
         if (!etPassword1.equals(etPassword2)){
-            Util.getToast(getActivity().getApplicationContext(),"Passwords must match.", true ).show();
+          //  Util.getToast(getActivity().getApplicationContext(),"Passwords must match.", true ).show();
+            tvMessages.setText("Passwords must match.");
             return;
         }
 
-
-        Util.getToast(getActivity().getApplicationContext(),"Attempting to sign-up with server - please wait", false ).show();
-
-//        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        if (imm == null){
-//            Log.e(TAG, "imm is null");
-//            return;
-//        }
-//
-//        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-
-
+       // Util.getToast(getActivity().getApplicationContext(),"Attempting to sign-up with server - please wait", false ).show();
+        tvMessages.setText("Attempting to create user - please wait");
         signUp(username, emailAddress, etPassword1, getActivity().getApplicationContext());
     }
 
@@ -226,6 +224,7 @@ public class CreateAccountFragment extends Fragment {
         Thread signUpThread = new Thread() {
             @Override
             public void run() {
+
                 Server.signUp(username, emailAddress, password, context);;
             }
         };
@@ -240,7 +239,8 @@ public class CreateAccountFragment extends Fragment {
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+//            Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
+            tvMessages.setText("Error disabling flight mode.");
         }
     }
 
@@ -250,7 +250,7 @@ public class CreateAccountFragment extends Fragment {
         // broadcast notification coming from ??
         @Override
         public void onReceive(Context context, Intent intent) {
-          //  Prefs prefs = new Prefs(getActivity().getApplicationContext());
+            Prefs prefs = new Prefs(getActivity().getApplicationContext());
             try {
                 if (getView() == null) {
                     return;
@@ -265,16 +265,27 @@ public class CreateAccountFragment extends Fragment {
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_CREATED_USER")) {
-                        Util.getToast(context, messageToDisplay, false).show();
+                     //   Util.getToast(context, messageToDisplay, false).show();
+                        Util.signOutUser(getActivity().getApplicationContext());
+                        prefs.setUsername(etUsername.getText().toString());
+                        prefs.setUserNameOrEmailAddress(etUsername.getText().toString());
+                        etUsername.setText("");
+                        etEmail.setText("");
+                        etPassword1.setText("");
+                        etPassword2.setText("");
+                        tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
+                        etUsername.requestFocus();
                     }else if(messageType.equalsIgnoreCase("FAILED_TO_CREATE_USER")) {
-                        Util.getToast(context, messageToDisplay, true).show();
+                      //  Util.getToast(context, messageToDisplay, true).show();
+                        tvMessages.setText(messageToDisplay);
                     }else if (messageType.equalsIgnoreCase("422_FAILED_TO_CREATE_USER")) {
-                        Util.getToast(context, messageToDisplay, true).show();
+//                        Util.getToast(context, messageToDisplay, true).show();
+                        tvMessages.setText(messageToDisplay);
                     }
 
                     }
 
-                displayOrHideGUIObjects();
+              //  displayOrHideGUIObjects();
 
             } catch (Exception ex) {
 

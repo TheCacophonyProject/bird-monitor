@@ -594,7 +594,7 @@ class Server {
 
                     //jsonObjectMessageToBroadcast.put("responseCode", 200);
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
-                    messageToDisplay = "Success, you have successfully signed up";
+                    messageToDisplay = "Success, you have successfully created a new user account";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                     Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
 
@@ -619,11 +619,17 @@ class Server {
 
                 if (errorType.equalsIgnoreCase("validation")) {
                     if (message.equalsIgnoreCase("email: email in use")) {
-                        messageToDisplay = "Sorry this email address is already being used.";
+                        messageToDisplay = "Sorry that email address (" + emailAddress + ") is already being used.";
+                    }else if (message.equalsIgnoreCase("username: username in use")) {
+                        messageToDisplay = "Sorry that username (" + username + ") is already being used.";
+                    }else if (message.equalsIgnoreCase("username: username in use; email: email in use")) {
+                        messageToDisplay = "Sorry both that username and email address are already being used.";
+                    }else if (message.equalsIgnoreCase("username: invalid name")) {
+                        messageToDisplay = "Sorry that username (" + username + ") is not a valid.";
                     } else if (message.equalsIgnoreCase("email: Invalid value")) {
-                        messageToDisplay = "Sorry this email address is not valid.";
+                        messageToDisplay = "Sorry that email address (" + emailAddress + ") is not valid.";
                     } else {
-                        messageToDisplay = "Sorry there is a problem with email address";
+                        messageToDisplay = "Sorry there is an unknown problem creating the user";
                     }
                 }
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);

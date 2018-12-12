@@ -1358,7 +1358,7 @@ Prefs prefs = new Prefs(context);
         prefs.setUseTestServer(useTestServer);
         // Need to un register phone and remove groups, account
         unregisterPhone(context);
-        unregisterUser(context);
+        signOutUser(context);
     }
 
     static void unregisterPhone(final Context context) {
@@ -1376,16 +1376,17 @@ Prefs prefs = new Prefs(context);
 
     }
 
-    static void unregisterUser(final Context context) {
+    static void signOutUser(final Context context) {
         try {
             Prefs prefs = new Prefs(context);
+            prefs.setUserSignedIn(false);
 
-            prefs.setEmailAddress(null);
-            prefs.setDeviceId(null);
-            prefs.setGroups(null);
-            prefs.setUserNameOrEmailAddress(null);
-            prefs.setUsernamePassword(null);
-            prefs.setUsername(null);
+//            prefs.setEmailAddress(null);
+//            prefs.setDeviceId(null);
+//            prefs.setGroups(null);
+//            prefs.setUserNameOrEmailAddress(null);
+//            prefs.setUsernamePassword(null);
+//            prefs.setUsername(null);
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering user.");

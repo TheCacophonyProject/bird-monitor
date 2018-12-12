@@ -219,7 +219,7 @@ public class SignupActivity extends AppCompatActivity implements IdlingResourceF
             findViewById(R.id.tvConfirmPassword).setVisibility(View.VISIBLE);
             findViewById(R.id.etPassword2).setVisibility(View.VISIBLE);
             findViewById(R.id.btnSignUp).setVisibility(View.VISIBLE);
-            findViewById(R.id.btnForgetUser).setVisibility(View.INVISIBLE);
+            findViewById(R.id.btnSignOutUser).setVisibility(View.INVISIBLE);
         }else{
 
             ((TextView) findViewById(R.id.tvChooseUsername)).setText("Username is " + prefs.getUsername());
@@ -234,7 +234,7 @@ public class SignupActivity extends AppCompatActivity implements IdlingResourceF
             findViewById(R.id.tvConfirmPassword).setVisibility(View.INVISIBLE);
             findViewById(R.id.etPassword2).setVisibility(View.INVISIBLE);
             findViewById(R.id.btnSignUp).setVisibility(View.INVISIBLE);
-            findViewById(R.id.btnForgetUser).setVisibility(View.VISIBLE);
+            findViewById(R.id.btnSignOutUser).setVisibility(View.VISIBLE);
         }
 
     }

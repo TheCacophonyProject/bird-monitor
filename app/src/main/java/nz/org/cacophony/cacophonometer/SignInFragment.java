@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -24,7 +23,7 @@ public class SignInFragment extends Fragment {
     private static final String TAG = "SignInFragment";
 
     private Button btnSignIn;
-    private Button btnForgetUser;
+    private Button btnSignOutUser;
     private TextView tvMessages;
     private EditText etUserNameOrPasswordInput;
     private EditText etPasswordInput;
@@ -42,7 +41,7 @@ public class SignInFragment extends Fragment {
         etPasswordInput = (EditText)view.findViewById(R.id.etPasswordInput);
        // tilPassword =(TextInputLayout)view.findViewById(R.id.tilPassword);
         btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
-        btnForgetUser = (Button) view.findViewById(R.id.btnForgetUser);
+        btnSignOutUser = (Button) view.findViewById(R.id.btnSignOutUser);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
         btnSignIn.setOnClickListener(new View.OnClickListener(){
@@ -59,7 +58,7 @@ public class SignInFragment extends Fragment {
             }
         });
 
-        btnForgetUser.setOnClickListener(new View.OnClickListener(){
+        btnSignOutUser.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
 
@@ -69,7 +68,7 @@ public class SignInFragment extends Fragment {
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
 
-                forgetUserButtonPressed();
+                signOutUserButtonPressed();
             }
         });
 
@@ -130,35 +129,57 @@ public class SignInFragment extends Fragment {
     void displayOrHideGUIObjects(){
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        if (prefs.getUsername() == null && prefs.getUserNameOrEmailAddress() == null){
-           // Show normal signin page
-            btnSignIn.setEnabled(true);
-            btnForgetUser.setEnabled(false);
+        boolean signedIn = prefs.getUserSignedIn();
+        String userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+        if (signedIn) {
             etUserNameOrPasswordInput.setText("");
+            etUserNameOrPasswordInput.setEnabled(false);
             etPasswordInput.setText("");
-
+            etPasswordInput.setEnabled(false);
+           tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+            btnSignIn.setEnabled(false);
+            btnSignOutUser.setEnabled(true);
+            btnSignOutUser.requestFocus();
         }else{
-
-            if (prefs.getUserSignedIn()){
-                String userNameOrEmailAddress = "";
-                if (prefs.getUserNameOrEmailAddress()!= null){
-                    userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
-                }else if (prefs.getUsername()!= null){
-                    userNameOrEmailAddress = prefs.getUsername();
-                }
-                tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
-                btnSignIn.setEnabled(false);
-                btnForgetUser.setEnabled(true);
-                etUserNameOrPasswordInput.setEnabled(false);
-                etPasswordInput.setEnabled(false);
+            if (userNameOrEmailAddress == null){
+                etUserNameOrPasswordInput.requestFocus();
             }else{
-                // try to signin
-                // next if on broadcast receiver
-                tvMessages.setText("Signing in to your account");
-                btnSignIn.setEnabled(true);
-                btnForgetUser.setEnabled(true);
-                login();
+                etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                etPasswordInput.requestFocus();
             }
+            btnSignIn.setEnabled(true);
+            btnSignOutUser.setEnabled(false);
+
+
+//        if (prefs.getUsername() == null && prefs.getUserNameOrEmailAddress() == null){
+//           // Show normal signin page
+//            btnSignIn.setEnabled(true);
+//            btnSignOutUser.setEnabled(false);
+//            etUserNameOrPasswordInput.setText("");
+//            etPasswordInput.setText("");
+//
+//        }else{
+//
+//            if (prefs.getUserSignedIn()){
+//                String userNameOrEmailAddress = "";
+//                if (prefs.getUserNameOrEmailAddress()!= null){
+//                    userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+//                }else if (prefs.getUsername()!= null){
+//                    userNameOrEmailAddress = prefs.getUsername();
+//                }
+//                tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+//                btnSignIn.setEnabled(false);
+//                btnSignOutUser.setEnabled(true);
+//                etUserNameOrPasswordInput.setEnabled(false);
+//                etPasswordInput.setEnabled(false);
+//            }else{
+//                // try to signin
+//                // next if on broadcast receiver
+//                tvMessages.setText("Signing in to your account");
+//                btnSignIn.setEnabled(true);
+//                btnSignOutUser.setEnabled(true);
+//                login();
+//            }
 
 
         }
@@ -202,8 +223,11 @@ public class SignInFragment extends Fragment {
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
                         btnSignIn.setEnabled(false);
-                        btnForgetUser.setEnabled(true);
+                        btnSignOutUser.setEnabled(true);
+                        btnSignOutUser.requestFocus();
+                        etUserNameOrPasswordInput.setText("");
                         etUserNameOrPasswordInput.setEnabled(false);
+                        etPasswordInput.setText("");
                         etPasswordInput.setEnabled(false);
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
                        // ((SetupWizardActivity) getActivity()).nextPageView();
@@ -296,18 +320,18 @@ public class SignInFragment extends Fragment {
         tvMessages.setText("Attempting to sign into the server - please wait");
     }
 
-    public void forgetUserButtonPressed() {
-        Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        prefs.setUsername(null);
-        Util.unregisterUser(getActivity().getApplicationContext());
-        tvMessages.setText("The user details have been removed from this phone");
+    public void signOutUserButtonPressed() {
+      //  Prefs prefs = new Prefs(getActivity().getApplicationContext());
+       // prefs.setUsername(null);
+        Util.signOutUser(getActivity().getApplicationContext());
+        tvMessages.setText("You have been signed out from this phone");
         btnSignIn.setEnabled(true);
-        btnForgetUser.setEnabled(false);
+        btnSignOutUser.setEnabled(false);
 
         etUserNameOrPasswordInput.setEnabled(true);
         etPasswordInput.setEnabled(true);
 
-        prefs.setUserSignedIn(false);
+    //    prefs.setUserSignedIn(false);
 
         displayOrHideGUIObjects();
     }

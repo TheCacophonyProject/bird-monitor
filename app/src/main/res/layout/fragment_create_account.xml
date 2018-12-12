@@ -17,23 +17,15 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/fragment_create_account_intro_text"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
-    <TextView
-        android:id="@+id/tvChooseUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Choose a username"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
-    <EditText
-        android:id="@+id/etUsername"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -41,28 +33,23 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/rect_text_edit"
-        android:ems="10"
-        android:hint="Enter username"
-        android:inputType="text"
-        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvChooseUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-    <TextView
-        android:id="@+id/tvEnterEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Email Address"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Enter username"
+            android:singleLine="true" />
 
-    <EditText
-        android:id="@+id/etEmail"
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -70,27 +57,25 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/rect_text_edit"
-        android:ems="10"
-        android:hint="Enter email address here"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/tilUsername">
 
-    <TextView
-        android:id="@+id/tvEnterPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Enter a password"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Enter email address"
+            android:inputType="textEmailAddress"
+            android:singleLine="true" />
 
-    <EditText
-        android:id="@+id/etPassword1"
+    </android.support.design.widget.TextInputLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPassword1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -98,28 +83,27 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/rect_text_edit"
-        android:ems="10"
-        android:hint="Enter password here"
-        android:inputType="textPassword"
-        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+        app:passwordToggleEnabled="true">
 
-    <TextView
-        android:id="@+id/tvConfirmPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Confirm Password"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword1" />
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPassword1"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Enter password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:singleLine="true" />
 
-    <EditText
-        android:id="@+id/etPassword2"
+    </android.support.design.widget.TextInputLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilPassword2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -127,14 +111,22 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/rect_text_edit"
-        android:ems="10"
-        android:hint="Confirm password here"
-        android:inputType="textPassword"
-        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvConfirmPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/tilPassword1"
+        app:passwordToggleEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etPassword2"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Confirm password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/btnSignUp"
@@ -147,23 +139,24 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
 
-        android:text="Create"
+        android:text="Create User"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword2" />
+        app:layout_constraintTop_toBottomOf="@+id/tilPassword2" />
 
-    <Button
-        android:id="@+id/btnForgetUser"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tvMessages"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Forget User"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword2" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSignUp" />
 
 
 </android.support.constraint.ConstraintLayout>
