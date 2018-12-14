@@ -41,7 +41,13 @@ public class RootedFragment extends Fragment {
 
         setUserVisibleHint(false);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-            btnFinished = (Button) view.findViewById(R.id.btnFinished);
+        swRooted = (Switch) view.findViewById(R.id.swRooted);
+        btnFinished = (Button) view.findViewById(R.id.btnFinished);
+
+        displayOrHideGUIObjects();
+
+
+
             btnFinished.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -50,9 +56,6 @@ public class RootedFragment extends Fragment {
                 }
             });
 
-
-
-        swRooted = (Switch) view.findViewById(R.id.swRooted);
         swRooted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -71,15 +74,20 @@ public class RootedFragment extends Fragment {
             return;
         }
         if (visible) {
-            Prefs prefs = new Prefs(getActivity());
-            swRooted.setChecked(prefs.getHasRootAccess());
-
-            if (prefs.getSettingsForTestServerEnabled()){
-                btnFinished.setVisibility(View.INVISIBLE);
-            }else{
-                btnFinished.setVisibility(View.VISIBLE);
-            }
+            displayOrHideGUIObjects();
         }
     }
+
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity());
+        swRooted.setChecked(prefs.getHasRootAccess());
+
+        if (prefs.getSettingsForTestServerEnabled()){
+            btnFinished.setVisibility(View.INVISIBLE);
+        }else{
+            btnFinished.setVisibility(View.VISIBLE);
+        }
+    }
+
 
 }

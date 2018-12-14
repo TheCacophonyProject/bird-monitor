@@ -43,8 +43,12 @@ public class FrequencyFragment extends Fragment {
         setUserVisibleHint(false);
 
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-
         swRecordMoreOften = (Switch) view.findViewById(R.id.swRecordMoreOften);
+        swUseFrequentUploads = (Switch) view.findViewById(R.id.swUseFrequentUploads);
+        swPeriodicallyUpdateGPS = (Switch) view.findViewById(R.id.swPeriodicallyUpdateGPS);
+
+        displayOrHideGUIObjects();
+
         swRecordMoreOften.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -52,7 +56,7 @@ public class FrequencyFragment extends Fragment {
             }
         });
 
-        swUseFrequentUploads = (Switch) view.findViewById(R.id.swUseFrequentUploads);
+
         swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,7 +64,7 @@ public class FrequencyFragment extends Fragment {
             }
         });
 
-        swPeriodicallyUpdateGPS = (Switch) view.findViewById(R.id.swPeriodicallyUpdateGPS);
+
         swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -78,20 +82,16 @@ public class FrequencyFragment extends Fragment {
             return;
         }
         if (visible) {
-
-            Prefs prefs = new Prefs(getActivity());
-            ((Switch) getView().findViewById(R.id.swRecordMoreOften)).setChecked(prefs.getUseFrequentRecordings());
-            ((Switch) getView().findViewById(R.id.swUseFrequentUploads)).setChecked(prefs.getUseFrequentUploads());
-            ((Switch) getView().findViewById(R.id.swPeriodicallyUpdateGPS)).setChecked(prefs.getPeriodicallyUpdateGPS());
-
+            displayOrHideGUIObjects();
         }
     }
 
 
-
-
-
-
-
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity());
+        swRecordMoreOften.setChecked(prefs.getUseFrequentRecordings());
+        swUseFrequentUploads.setChecked(prefs.getUseFrequentUploads());
+       swPeriodicallyUpdateGPS.setChecked(prefs.getPeriodicallyUpdateGPS());
+    }
 
 }

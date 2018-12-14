@@ -109,7 +109,7 @@ public class GroupsFragment extends Fragment {
             return;
         }
         if (visible) {
-
+            adapter.clear();
             adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
             adapter.notifyDataSetChanged();
 
@@ -159,7 +159,8 @@ public class GroupsFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                     }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
-                      //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
+                      adapter.clear();
+                        //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
 

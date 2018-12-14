@@ -35,6 +35,7 @@ public class InternetConnectionFragment extends Fragment {
 
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -43,6 +44,11 @@ public class InternetConnectionFragment extends Fragment {
         setUserVisibleHint(false);
 
         rbNormal = (RadioButton) view.findViewById(R.id.rbNormal);
+        rbOnline = (RadioButton) view.findViewById(R.id.rbOnline);
+        rbOffline = (RadioButton) view.findViewById(R.id.rbOffline);
+
+        displayOrHideGUIObjects();
+
         rbNormal.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -51,21 +57,21 @@ public class InternetConnectionFragment extends Fragment {
             }
         });
 
-        rbOnline = (RadioButton) view.findViewById(R.id.rbOnline);
+
         rbOnline.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Prefs prefs = new Prefs(getActivity());
-                prefs.setInternetConnectionMode("offline");
+                prefs.setInternetConnectionMode("online");
             }
         });
 
-        rbOffline = (RadioButton) view.findViewById(R.id.rbOffline);
+
         rbOffline.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Prefs prefs = new Prefs(getActivity());
-                prefs.setInternetConnectionMode("online");
+                prefs.setInternetConnectionMode("offline");
             }
         });
 
@@ -81,23 +87,26 @@ public class InternetConnectionFragment extends Fragment {
         }
         if (visible) {
 
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-            String mode = prefs.getInternetConnectionMode();
-            switch (mode) {
-
-                case "normal":
-                    ((RadioButton) getView().findViewById(R.id.rbNormal)).setChecked(true);
-                    break;
-                case "offline":
-                    ((RadioButton) getView().findViewById(R.id.rbOffline)).setChecked(true);
-                    break;
-                case "online":
-                    ((RadioButton) getView().findViewById(R.id.rbOnline)).setChecked(true);
-                    break;
-            }
+            displayOrHideGUIObjects();
         }
     }
 
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+        String mode = prefs.getInternetConnectionMode();
 
+        switch (mode) {
+
+            case "normal":
+                rbNormal.setChecked(true);
+                break;
+            case "offline":
+                rbOffline.setChecked(true);
+                break;
+            case "online":
+                rbOnline.setChecked(true);
+                break;
+        }
+    }
 
 }

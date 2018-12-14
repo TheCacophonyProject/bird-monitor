@@ -27,7 +27,7 @@ import java.text.NumberFormat;
 
 public class SoundFragment extends Fragment {
 
-    private static final String TAG = "GPSFragment";
+    private static final String TAG = "SoundFragment";
 
 
     private Switch swPlayWarningSound;
@@ -41,6 +41,9 @@ public class SoundFragment extends Fragment {
         setUserVisibleHint(false);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         swPlayWarningSound = (Switch) view.findViewById(R.id.swPlayWarningSound);
+
+        displayOrHideGUIObjects();
+
         swPlayWarningSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -59,19 +62,13 @@ public class SoundFragment extends Fragment {
             return;
         }
         if (visible) {
-
-            Prefs prefs = new Prefs(getActivity());
-            ((Switch) getView().findViewById(R.id.swPlayWarningSound)).setChecked(prefs.getPlayWarningSound());
-
-
+            displayOrHideGUIObjects();
         }
     }
 
-
-
-
-
-
-
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity());
+        swPlayWarningSound.setChecked(prefs.getPlayWarningSound());
+    }
 
 }

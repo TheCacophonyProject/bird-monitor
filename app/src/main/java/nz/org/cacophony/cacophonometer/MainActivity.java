@@ -106,13 +106,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     if (timeBetweenDownAndUp > 5000){
                         if (prefs.getSettingsForTestServerEnabled()){
                             advancedButton.setText("Advanced");
-                            Util.getToast(getApplicationContext(),"Settings for Test Server have been DISABLED", false).show();
+                           // Util.getToast(getApplicationContext(),"Settings for Test Server have been DISABLED", false).show();
                             prefs.setSettingsForTestServerEnabled(false);
 
 
                         }else{
                             advancedButton.setText("Very Advanced");
-                            Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
+                           // Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
                             prefs.setSettingsForTestServerEnabled(true);
 
                         }

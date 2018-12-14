@@ -45,7 +45,7 @@ public class ManageRecordingsActivity extends AppCompatActivity {
         TextView tvNumberOfRecordings = findViewById(R.id.tvNumberOfRecordings);
         tvNumberOfRecordings.setText("Number of recordings on phone: " + getNumberOfRecordings());
 
-        IntentFilter iff = new IntentFilter("event");
+        IntentFilter iff = new IntentFilter("UPLOAD_FILES");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
 
         if(getNumberOfRecordings() == 0){
@@ -125,7 +125,6 @@ public class ManageRecordingsActivity extends AppCompatActivity {
 
     }
 
-
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
@@ -167,6 +166,48 @@ public class ManageRecordingsActivity extends AppCompatActivity {
             }
         }
     };
+
+//    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
+//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//        // broadcast notification coming from ??
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            try {
+//                Prefs prefs = new Prefs(context);
+//                String message = intent.getStringExtra("message");
+//                TextView tvMessages = findViewById(R.id.tvMessages);
+//                if (message != null) {
+//                    TextView tvNumberOfRecordings = findViewById(R.id.tvNumberOfRecordings);
+//
+//                    if (message.equalsIgnoreCase("files_successfully_uploaded")) {
+//                        Util.getToast(getApplicationContext(), "Files have been uploaded to the server", false).show();
+//                    } else if (message.equalsIgnoreCase("files_not_uploaded")) {
+//                        Util.getToast(getApplicationContext(), "Error: Unable to upload files", true).show();
+//                    }else if (message.equalsIgnoreCase("recordings_successfully_deleted")) {
+//                        Util.getToast(getApplicationContext(), "All recordings have been deleted.", false).show();
+//                    }else if (message.equalsIgnoreCase("problem_deleteing_recordings")) {
+//                        Util.getToast(getApplicationContext(), "Oops - Did NOT delete all recordings.", true).show();
+//                    }
+//
+//                    // Update button and message (get number of recordings again just in case a new recording has occurred)
+//                    int numberOfRecordingsOnPhone = getNumberOfRecordings();
+//                    tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordingsOnPhone);
+//                    if (numberOfRecordingsOnPhone == 0){
+//                        findViewById(R.id.btnUploadFiles).setEnabled(false);
+//                        findViewById(R.id.btnDeleteAllRecordings).setEnabled(false);
+//                    }else{
+//                        findViewById(R.id.btnUploadFiles).setEnabled(true);
+//                        findViewById(R.id.btnDeleteAllRecordings).setEnabled(true);
+//                    }
+//                }
+//
+//            } catch (Exception ex) {
+//
+//                Log.e(TAG, ex.getLocalizedMessage());
+//            }
+//        }
+//    };
 
     public void next(@SuppressWarnings("UnusedParameters") View v) {
         try {

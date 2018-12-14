@@ -45,12 +45,12 @@ class MainThread implements Runnable {
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
+                jsonObjectMessageToBroadcast.put("messageType", "NO_PERMISSION_TO_RECORD");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "You do not have permission to record.");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
            // Util.broadcastAMessage(context, "no_permission_to_record");
 
@@ -67,69 +67,18 @@ class MainThread implements Runnable {
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageToType", "recording_failed");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_failed");
+                jsonObjectMessageToBroadcast.put("messageToType", "RECORD_AND_UPLOAD_FAILED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", e.getLocalizedMessage());
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
-            Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
           //  Util.broadcastAMessage(context, "recording_failed");
 
             return;
         }
 
-        if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully")){
-//            String messageToDisplay = "";
-//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-//            try {
-//                jsonObjectMessageToBroadcast.put("messageToType", "recording_finished");
-//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
-
-           // Util.broadcastAMessage(context, "recording_finished");
-
-        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded and uploaded successfully")){
-//            String messageToDisplay = "";
-//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-//            try {
-//                jsonObjectMessageToBroadcast.put("messageToType", "recording_and_uploading_finished");
-//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_and_uploading_finished");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
-
-           // Util.broadcastAMessage(context, "recording_and_uploading_finished");
-
-        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded BUT did not upload")){
-//            String messageToDisplay = "";
-//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-//            try {
-//                jsonObjectMessageToBroadcast.put("messageToType", "recording_finished_but_uploading_failed");
-//                jsonObjectMessageToBroadcast.put("messageToDisplay", "recording_finished_but_uploading_failed");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            Util.broadcastAMessage(context,TAG + ".run", jsonObjectMessageToBroadcast);
-
-           // Util.broadcastAMessage(context, "recording_finished_but_uploading_failed");
-
-        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("recorded successfully no network")){
-
-          //  Util.broadcastAMessage(context, "recorded_successfully_no_network");
-        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("not logged in")){
-          //  Util.broadcastAMessage(context, "not_logged_in");
-        }else if (recordAndUploadedSuccessfully.equalsIgnoreCase("isRecording")){
-          //  Util.broadcastAMessage(context, "is_already_recording");
-        }
-        else{
-
-         //   Util.broadcastAMessage(context, "recording_failed");
-        }
 
 
         Looper.loop();

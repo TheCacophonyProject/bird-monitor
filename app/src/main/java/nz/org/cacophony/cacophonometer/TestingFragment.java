@@ -29,6 +29,12 @@ public class TestingFragment extends Fragment {
         setUserVisibleHint(false);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         btnFinished = (Button) view.findViewById(R.id.btnFinished);
+        swUseTestServer = (Switch) view.findViewById(R.id.swUseTestServer);
+        swUseVeryFrequentRecordings =  (Switch) view.findViewById(R.id.swUseVeryFrequentRecordings);
+        swShortRecordings =  (Switch) view.findViewById(R.id.swShortRecordings);
+
+
+        displayOrHideGUIObjects();
         btnFinished.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -37,7 +43,7 @@ public class TestingFragment extends Fragment {
             }
         });
 
-        swUseTestServer = view.findViewById(R.id.swUseTestServer);
+
         swUseTestServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -68,7 +74,7 @@ public class TestingFragment extends Fragment {
             }
         });
 
-        swUseVeryFrequentRecordings = view.findViewById(R.id.swUseVeryFrequentRecordings);
+
         swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -79,7 +85,7 @@ public class TestingFragment extends Fragment {
             }
         });
 
-         swShortRecordings = view.findViewById(R.id.swShortRecordings);
+
         swShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -101,26 +107,29 @@ public class TestingFragment extends Fragment {
             return;
         }
         if (visible) {
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
-            boolean useTestServer = prefs.getUseTestServer();
-            swUseTestServer = getView().findViewById(R.id.swUseTestServer);
-            swUseTestServer.setChecked(useTestServer);
-
-            boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
-            swUseVeryFrequentRecordings = getView().findViewById(R.id.swUseVeryFrequentRecordings);
-            swUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
-            swUseVeryFrequentRecordings.setEnabled(useTestServer);// only enabled if using test server
-
-            boolean useShortRecordings = prefs.getUseShortRecordings();
-            swShortRecordings = getView().findViewById(R.id.swShortRecordings);
-            swShortRecordings.setChecked(useShortRecordings);
-            swShortRecordings.setEnabled(useTestServer); // only enabled if using test server
-
+            displayOrHideGUIObjects();
 
         }
     }
 
+
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+
+        boolean useTestServer = prefs.getUseTestServer();
+        swUseTestServer.setChecked(useTestServer);
+
+        boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
+
+        swUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
+        swUseVeryFrequentRecordings.setEnabled(useTestServer);// only enabled if using test server
+
+        boolean useShortRecordings = prefs.getUseShortRecordings();
+
+        swShortRecordings.setChecked(useShortRecordings);
+        swShortRecordings.setEnabled(useTestServer); // only enabled if using test server
+    }
 
 
 

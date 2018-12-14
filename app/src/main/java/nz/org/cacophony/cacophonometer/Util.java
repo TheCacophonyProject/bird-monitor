@@ -1359,6 +1359,7 @@ Prefs prefs = new Prefs(context);
         // Need to un register phone and remove groups, account
         unregisterPhone(context);
         signOutUser(context);
+        prefs.setGroups(null);
     }
 
     static void unregisterPhone(final Context context) {

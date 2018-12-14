@@ -42,6 +42,9 @@ public class BatteryFragment extends Fragment {
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
         swIgnoreLowBattery = (Switch) view.findViewById(R.id.swIgnoreLowBattery);
+
+        displayOrHideGUIObjects();
+
         swIgnoreLowBattery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,19 +63,13 @@ public class BatteryFragment extends Fragment {
             return;
         }
         if (visible) {
-
-            Prefs prefs = new Prefs(getActivity());
-            ((Switch) getView().findViewById(R.id.swIgnoreLowBattery)).setChecked(prefs.getIgnoreLowBattery());
-
-
+            displayOrHideGUIObjects();
         }
     }
 
-
-
-
-
-
-
+    void displayOrHideGUIObjects() {
+        Prefs prefs = new Prefs(getActivity());
+        swIgnoreLowBattery.setChecked(prefs.getIgnoreLowBattery());
+    }
 
 }

@@ -144,7 +144,9 @@ public class RegisterFragment extends Fragment {
 
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        if (prefs.getGroupName() != null && prefs.getDeviceName() != null) {
+        String groupName = prefs.getGroupName();
+        String deviceName = prefs.getDeviceName();
+        if (groupName != null && deviceName != null) {
             // Phone is registered
             // Phone is NOT registered
             //Input fields to be INVISIBLE

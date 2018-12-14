@@ -478,7 +478,7 @@ class Server {
                     // look at web token
 
                     String deviceID = Util.getDeviceID(prefs.getToken());
-                    prefs.setDeviceId(deviceID);
+                  //  prefs.setDeviceId(deviceID);
 
                     //   prefs.setDeviceName(devicename);
                     prefs.setDeviceName(deviceName);
@@ -666,7 +666,7 @@ class Server {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context,  "SERVER_UPLOAD_RECORDING", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context,  "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             //Util.broadcastAMessage(context, "already_uploading");
             return false;
         }

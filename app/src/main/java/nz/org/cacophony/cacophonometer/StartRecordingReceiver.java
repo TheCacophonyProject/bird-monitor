@@ -78,7 +78,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
                // Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }

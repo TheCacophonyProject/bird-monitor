@@ -77,7 +77,7 @@ if (isRecording){
     } catch (JSONException e) {
         e.printStackTrace();
     }
-    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
    return "isRecording";
 }else{
 
@@ -91,6 +91,14 @@ if (isRecording){
 // Checked that it has a webToken before trying to upload
     if (prefs.getToken() == null) {
         returnValue =  "not logged in";
+        jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "The Phone is NOT registered - could not upload the files.");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
     }else {
         // only upload recordings if sufficient time has passed since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
@@ -106,31 +114,44 @@ if (isRecording){
         // uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
        //  uploadingIdlingResource.decrement();
-                if (uploadedFilesSuccessfully) {
-                    returnValue = "recorded and uploaded successfully";
-                    prefs.setDateTimeLastUpload(now);
-
-                     jsonObjectMessageToBroadcast = new JSONObject();
-                    try {
-                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been uploaded");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
-                } else {
-                    returnValue = "recorded BUT did not upload";
-                    Log.e(TAG, "Files failed to upload");
-                    String messageToDisplay = "";
-                     jsonObjectMessageToBroadcast = new JSONObject();
-                    try {
-                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
-                }
+             if (!uploadedFilesSuccessfully) {
+                 returnValue = "recorded BUT did not upload";
+                 Log.e(TAG, "Files failed to upload");
+                 String messageToDisplay = "";
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                 try {
+                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 }
+                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+             }
+//                if (uploadedFilesSuccessfully) {
+//                    returnValue = "recorded and uploaded successfully";
+//                    prefs.setDateTimeLastUpload(now);
+//
+//                     jsonObjectMessageToBroadcast = new JSONObject();
+//                    try {
+//                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
+//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been uploaded");
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+//                } else {
+//                    returnValue = "recorded BUT did not upload";
+//                    Log.e(TAG, "Files failed to upload");
+//                    String messageToDisplay = "";
+//                     jsonObjectMessageToBroadcast = new JSONObject();
+//                    try {
+//                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+//                }
             }
         }
 
@@ -145,12 +166,12 @@ if (isRecording){
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has Started");
+            jsonObjectMessageToBroadcast.put("messageType", "GETTING_READY_TO_RECORD");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Getting ready to record.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
         //Util.broadcastAMessage(context, "update_record_now_button");
 try {
 
@@ -219,10 +240,6 @@ try {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFile(filePath);
 
-//
-      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
-
-
             // Sampling configuration
             mRecorder.setAudioChannels(1);
             mRecorder.setAudioSamplingRate(16000);
@@ -259,12 +276,12 @@ try {
          messageToDisplay = "";
          jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has started");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
         //Util.broadcastAMessage(context, "recording_started");
     } catch (Exception e) {
 
@@ -316,7 +333,7 @@ try {
     } catch (JSONException e) {
         e.printStackTrace();
     }
-    Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 }
 
     }
@@ -325,12 +342,12 @@ try {
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "about_to_upload_files");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "about_to_upload_files");
+            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading recordings");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
        // Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
@@ -404,12 +421,12 @@ try {
                  messageToDisplay = "";
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
-                    jsonObjectMessageToBroadcast.put("messageType", "files_successfully_uploaded");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "files_successfully_uploaded");
+                    jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, "UPLOAD_FILES", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
               //  Util.broadcastAMessage(context, "files_successfully_uploaded");
             }
             return returnValue;

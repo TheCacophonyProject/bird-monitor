@@ -44,6 +44,7 @@ public class ManageRecordingsFragment extends Fragment {
         btnUploadFiles.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                tvMessages.setText("");
                 uploadRecordings();
             }
         });
@@ -52,6 +53,7 @@ public class ManageRecordingsFragment extends Fragment {
         btnDeleteAllRecordings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                tvMessages.setText("");
                 deleteAllRecordingsButton();
             }
         });
@@ -72,8 +74,8 @@ public class ManageRecordingsFragment extends Fragment {
 
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-            displayOrHideGUIObjects();
 
+            displayOrHideGUIObjects();
 
         }else{
 
@@ -184,23 +186,14 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-                         //   Util.getToast(getActivity().getApplicationContext(), messageToDisplay, false).show();
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
-                          //  Util.getToast(getActivity().getApplicationContext(), messageToDisplay, true).show();
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
                             tvMessages.setText(messageToDisplay);
                         }
 
-                        // Update button and message (get number of recordings again just in case a new recording has occurred)
-                        int numberOfRecordingsOnPhone = getNumberOfRecordings();
-                        tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordingsOnPhone);
-                        if (numberOfRecordingsOnPhone == 0){
-                            btnUploadFiles.setEnabled(false);
-                            btnDeleteAllRecordings.setEnabled(false);
-                        }else{
-                            btnUploadFiles.setEnabled(true);
-                            btnDeleteAllRecordings.setEnabled(true);
-                        }
+                        displayOrHideGUIObjects();
                     }
                 }
 
