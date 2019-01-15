@@ -1073,6 +1073,9 @@ Prefs prefs = new Prefs(context);
     }
 
     static String convertUnixTimeToString(long unixTimeToConvert){
+        if (unixTimeToConvert < 1){
+            return "";
+        }
         Date date = new Date(unixTimeToConvert);
         Locale nzLocale = new Locale("nz");
         DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
