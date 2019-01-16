@@ -25,7 +25,7 @@ import java.text.NumberFormat;
 
 public class ManageRecordingsFragment extends Fragment {
 
-    private static final String TAG = "GPSFragment";
+    private static final String TAG = "ManageRecordFragment";
 
 
     private Button btnUploadFiles;
@@ -33,10 +33,15 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
 
+    boolean deleteRecordings = false;  // Used by dialog as if call deleteAllRecordings() directly, the dialog blocks the broadcast reciever
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_manage_recordings, container, false);
+
+        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         setUserVisibleHint(false);
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
@@ -65,6 +70,12 @@ public class ManageRecordingsFragment extends Fragment {
     }
 
     @Override
+    public void onStop(){
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+    }
+
+    @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
         if (getActivity() == null){
@@ -72,14 +83,14 @@ public class ManageRecordingsFragment extends Fragment {
         }
         if (visible) {
 
-            IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+//            IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+//            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
             displayOrHideGUIObjects();
 
         }else{
 
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+//            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
 
         }
     }
@@ -144,7 +155,7 @@ public class ManageRecordingsFragment extends Fragment {
         // Add the buttons
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteAllRecordings();
+              deleteAllRecordings();
             }
         });
         builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
@@ -156,7 +167,6 @@ public class ManageRecordingsFragment extends Fragment {
                 .setTitle("Delete ALL Recordings");
         AlertDialog dialog = builder.create();
         dialog.show();
-
 
     }
     public void deleteAllRecordings(){
