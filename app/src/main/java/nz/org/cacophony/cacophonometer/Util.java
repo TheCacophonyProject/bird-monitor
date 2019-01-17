@@ -709,9 +709,9 @@ private static void executeCommandTim(Context context, String command){
 
         @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         if (standOut){
-            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAlert));
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         }else{
-            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.green));
         }
 
         return toast;

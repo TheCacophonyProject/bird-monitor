@@ -177,8 +177,8 @@
     <string name="action_settings">Settings</string>
      <string name="fragment_create_account_intro_text">Create a Cacophony account (or swipe to skip this step if you already have an account).</string>
 
-
-
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
 
 
 </resources>

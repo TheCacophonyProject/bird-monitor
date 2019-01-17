@@ -13,7 +13,9 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <TextView
         android:id="@+id/tvAppVersion"
@@ -23,24 +25,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="App version:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
-    <Button
-        android:id="@+id/refreshVitals"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="refreshButton"
-        android:text="@string/refresh"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageText" />
 
     <TextView
         android:id="@+id/appPermissionText"
@@ -53,6 +41,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/required_permissions"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppVersion" />
 
@@ -67,6 +56,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/registered"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appPermissionText" />
 
@@ -82,6 +72,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/logged_in_to_server"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainRegisteredStatus" />
 
@@ -97,6 +88,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/device_name_colon"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loggedInText" />
 
@@ -111,6 +103,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/gps_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deviceNameText" />
 
@@ -125,9 +118,9 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/message_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNextRecording" />
-
 
 
     <TextView
@@ -140,6 +133,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="Next Recording:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -155,6 +149,7 @@
         android:layout_marginBottom="8dp"
         android:onClick="finished"
         android:text="Finished"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -166,6 +161,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="Last Recording:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gpsText" />
 

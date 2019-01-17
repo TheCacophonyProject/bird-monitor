@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAlert));
+            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.alert));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
             ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.accent));
@@ -234,15 +234,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     }
 
-    public void launchAdvancedActivity(@SuppressWarnings("UnusedParameters") View v) {
-        try {
-           // Intent intent = new Intent(this, InternetConnectionActivity.class);
-            Intent intent = new Intent(this, ManageRecordingsActivity.class);
-            startActivity(intent);
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-    }
+
 
     public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {

@@ -24,6 +24,7 @@
 
     <Switch
         android:id="@+id/swRecordMoreOften"
+        style="@style/SwitchAndRadioButtonCompatTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -32,9 +33,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Record more often"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,6 +43,7 @@
 
     <Switch
         android:id="@+id/swUseFrequentUploads"
+        style="@style/SwitchAndRadioButtonCompatTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -51,9 +51,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Upload after every recording"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,6 +61,7 @@
 
     <Switch
         android:id="@+id/swPeriodicallyUpdateGPS"
+        style="@style/SwitchAndRadioButtonCompatTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -70,9 +69,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
         android:text="Periodically update GPS"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="NO"
         android:textOn="YES"
         app:layout_constraintEnd_toEndOf="parent"

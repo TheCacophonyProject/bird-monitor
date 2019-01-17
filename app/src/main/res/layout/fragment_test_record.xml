@@ -65,6 +65,7 @@
         android:layout_marginBottom="8dp"
 
         android:text="Finished"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -81,6 +82,7 @@
 
 
         android:text="@string/test_record_link_to_server_recordings2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/btnFinished"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

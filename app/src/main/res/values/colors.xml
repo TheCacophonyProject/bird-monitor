@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#256828</color>
-    <color name="primary_dark">#2a6b2d</color>
-    <color name="primary_light">#6e8f6f</color>
-    <color name="accent">#5b8030</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#757575</color>
-    <color name="icons">#FFFFFF</color>
-    <color name="divider">#BDBDBD</color>
-    <color name="background">#203B17</color>
-    <color name="colorAlert">#FF4081</color>
-    <color name="colorGreen">#f41d8e30</color>
+    <color name="primary">#141414</color>
+    <color name="primary_dark">#FF5252</color>
+    <color name="primary_light">#FF5252</color>
+
+    <color name="textColorPrimary">#FFFF00</color>
+
+    <color name="windowBackground">#010101</color>
+
+    <color name="accent">#FF5252</color>
+
+    <color name="textColor">#FF5252</color>
+
+    <color name="textColorHint">#FF5252</color>
+    <color name="controlActivated">#FF5252</color>
+    <color name="foreground">#FF5252</color>
+
+    <color name="editTextColor">#FF5252</color>
+
+
+
+
+
+    <color name="controlNormal">#FF5252</color>
+
+    <color name="controlHighlight">#FF5252</color>
+    <color name="switchThumbNormal">#FF5252</color>
+
+
+    <color name="textPrimary">#FF5252</color>
+    <color name="textSecondary">#FF5252</color>
+
+
+    <color name="primary_text">#FF5252</color>
+    <color name="secondary_text">#FF5252</color>
+    <color name="icons">#FF5252</color>
+    <color name="divider">#FF5252</color>
+
+    <color name="alert">#FF5252</color>
+    <color name="green">#E0F7FA</color>
+    <color name="backgroundFloating">#FF5252</color>
+    <color name="buttonNormal">#FF5252</color>
+    <color name="error">#FF5252</color>
+
+
+    <color name="editTextBackground">#FF5252</color>
+    <color name="textAppearanceListItem">#FF5252</color>
+
+    <color name="textColorSecondary">#FF5252</color>
+    <color name="textColorTertiary">#FF5252</color>
+
+    <color name="textAppearance">#FF5252</color>
+
+
+
 
 </resources>

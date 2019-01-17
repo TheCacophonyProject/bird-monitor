@@ -15,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
+//import android.widget.RadioButton;
+import android.support.v7.widget.AppCompatRadioButton;
+
+
+
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -29,9 +33,9 @@ public class InternetConnectionFragment extends Fragment {
     private static final String TAG = "InternetConnectionFragment";
 
 
-    private RadioButton rbNormal;
-    private RadioButton rbOnline;
-    private RadioButton rbOffline;
+    private AppCompatRadioButton rbNormal;
+    private AppCompatRadioButton rbOnline;
+    private AppCompatRadioButton rbOffline;
 
 
 
@@ -43,9 +47,9 @@ public class InternetConnectionFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        rbNormal = (RadioButton) view.findViewById(R.id.rbNormal);
-        rbOnline = (RadioButton) view.findViewById(R.id.rbOnline);
-        rbOffline = (RadioButton) view.findViewById(R.id.rbOffline);
+        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbNormal);
+        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbOnline);
+        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.rbOffline);
 
         displayOrHideGUIObjects();
 

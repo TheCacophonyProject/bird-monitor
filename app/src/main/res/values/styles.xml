@@ -11,20 +11,58 @@
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="Cacophony" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorControlNormal">@color/colorAlert</item>
+
+
+
+
+
+        <item name="colorControlNormal">@color/controlNormal</item>
+        <item name="colorControlActivated">@color/controlActivated</item>
+        <item name="colorControlHighlight">@color/controlHighlight</item>
+        <item name="colorSwitchThumbNormal">@color/switchThumbNormal</item>
+        <item name="colorBackgroundFloating">@color/backgroundFloating</item>
+        <item name="colorButtonNormal">@color/buttonNormal</item>
+        <item name="colorError">@color/error</item>
+
+
+        <item name="editTextColor">@color/editTextColor</item>
+        <item name="editTextBackground">@color/editTextBackground</item>
+
+        <item name="textAppearanceListItem">@color/textAppearanceListItem</item>
+
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textColorTertiary">@color/textColorTertiary</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+        <item name="android:textAppearance">@color/textAppearance</item>
+        <item name="android:colorForeground">@color/foreground</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:textColor">@color/textColor</item>
+
+
     </style>
 
-    <style name="SettingsForTestServerEnabled" parent="Cacophony">
-        <item name="colorPrimary">@color/colorAlert</item>
-        <item name="colorPrimaryDark">@color/colorAlert</item>
-        <item name="colorAccent">@color/colorAlert</item>
-        <item name="android:colorBackground">@color/colorAlert</item>
-        <item name="colorControlNormal">@color/colorAlert</item>
+    <style name="SwitchAndRadioButtonCompatTheme" >
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+        <item name="android:switchTextAppearance">@style/TextAppearance.AppCompat.Display1</item>
+
+
+    </style>
+
+    <style name="SettingsForTestServerEnabled" parent="AppTheme">
+        <item name="colorPrimary">@color/alert</item>
+        <item name="colorPrimaryDark">@color/alert</item>
+        <item name="colorAccent">@color/alert</item>
+
+        <item name="colorControlNormal">@color/alert</item>
+        <item name="android:colorBackground">@color/alert</item>
+
+
     </style>
 
     <style name="Cacophony.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

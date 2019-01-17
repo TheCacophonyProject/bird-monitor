@@ -37,7 +37,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_icon_name"
         android:supportsRtl="true"
-        android:theme="@style/Cacophony"
+        android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -68,25 +68,6 @@
             android:name=".WalkingActivity"
             android:label="@string/activity_or_fragment_title_walking" />
 
-        <activity
-            android:name=".TestRecordActivity"
-            android:label="@string/activity_or_fragment_title_test_record" />
-        <activity
-            android:name=".InternetConnectionActivity"
-            android:label="@string/activity_or_fragment_title_internet_connection" />
-
-        <activity
-            android:name=".BatteryActivity"
-            android:label="@string/activity_or_fragment_title_activity_ignore_low_battery" />
-        <activity
-            android:name=".RootedActivity"
-            android:label="@string/activity_or_fragment_title_rooted" />
-        <activity
-            android:name=".FrequencyActivity"
-            android:label="@string/activity_or_fragment_title_activity_frequency" />
-        <activity
-            android:name=".TestingActivity"
-            android:label="@string/activity_or_fragment_title_settings_for_testing" />
         <activity
             android:name=".DisableActivity"
             android:label="@string/activity_or_fragment_title_turn_off_or_on" />

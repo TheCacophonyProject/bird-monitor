@@ -43,14 +43,15 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <RadioButton
+        <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbNormal"
+            style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
             android:text="Normal"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            />
 
         <View
             android:id="@+id/divider9"
@@ -59,14 +60,14 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <RadioButton
+        <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbOnline"
+            style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Online"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:text="Online"/>
 
         <View
             android:id="@+id/divider4"
@@ -75,14 +76,14 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <RadioButton
+        <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbOffline"
+            style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Offline"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:text="Offline"/>
 
         <View
             android:id="@+id/divider5"
