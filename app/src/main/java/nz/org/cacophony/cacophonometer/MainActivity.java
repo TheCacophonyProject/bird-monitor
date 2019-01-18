@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.alert));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.accent));
+            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");

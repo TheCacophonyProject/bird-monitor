@@ -1,56 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#141414</color>
-    <color name="primary_dark">#FF5252</color>
-    <color name="primary_light">#FF5252</color>
+    <color name="colorPrimary">#141414</color>
+    <color name="colorPrimaryDark">#646464</color>
+    <color name="colorAccent">#303F9F</color>
+    <color name="colorControlHighlight">#FFF59D</color>
 
-    <color name="textColorPrimary">#FFFF00</color>
 
-    <color name="windowBackground">#010101</color>
+    <color name="primary_light">#FFF59D</color>
 
-    <color name="accent">#FF5252</color>
+    <color name="windowBackground">#000000</color>
 
-    <color name="textColor">#FF5252</color>
-
-    <color name="textColorHint">#FF5252</color>
-    <color name="controlActivated">#FF5252</color>
-    <color name="foreground">#FF5252</color>
-
-    <color name="editTextColor">#FF5252</color>
+    <color name="textInputEditTextBackground">#00796B</color>
 
 
 
+    <color name="textColor">#FFF59D</color>
+    <color name="textColorPrimary">#FFF59D</color>
+    <color name="textColorSecondary">#FFF59D</color>
+    <color name="textColorHint">#FFF59D</color>
+    <color name="colorControlActivated">#80DEEA</color>
+    <color name="colorForeground">#FFF59D</color>
+    <color name="editTextColor">#FFF59D</color>
+    <color name="colorControlNormal">#FFF59D</color>
+    <color name="colorBackgroundFloating">#969696</color>
+
+    <color name="controlHighlight">#FFF59D</color>
+    <color name="colorSwitchThumbNormal">#FFF59D</color>
 
 
-    <color name="controlNormal">#FF5252</color>
-
-    <color name="controlHighlight">#FF5252</color>
-    <color name="switchThumbNormal">#FF5252</color>
+    <color name="textPrimary">#FFF59D</color>
+    <color name="textSecondary">#FFF59D</color>
 
 
-    <color name="textPrimary">#FF5252</color>
-    <color name="textSecondary">#FF5252</color>
+    <color name="primary_text">#FFF59D</color>
+    <color name="secondary_text">#FFF59D</color>
+    <color name="icons">#FFF59D</color>
+    <color name="listDivider">#FFF59D</color>
+
+    <color name="alert">#E64A19</color>
+    <color name="green">#FFF59D</color>
+
+    <color name="colorButtonNormal">#FFF59D</color>
+    <color name="colorError">#FFF59D</color>
 
 
-    <color name="primary_text">#FF5252</color>
-    <color name="secondary_text">#FF5252</color>
-    <color name="icons">#FF5252</color>
-    <color name="divider">#FF5252</color>
-
-    <color name="alert">#FF5252</color>
-    <color name="green">#E0F7FA</color>
-    <color name="backgroundFloating">#FF5252</color>
-    <color name="buttonNormal">#FF5252</color>
-    <color name="error">#FF5252</color>
+    <color name="editTextBackground">#FFF59D</color>
+    <color name="textAppearanceListItem">#FFF59D</color>
 
 
-    <color name="editTextBackground">#FF5252</color>
-    <color name="textAppearanceListItem">#FF5252</color>
+    <color name="textColorTertiary">#FFF59D</color>
 
-    <color name="textColorSecondary">#FF5252</color>
-    <color name="textColorTertiary">#FF5252</color>
+    <color name="textAppearance">#FFF59D</color>
 
-    <color name="textAppearance">#FF5252</color>
+    <color name="editTextStyle">#FFF59D</color>
+
+
+    <color name="user_input_color">#FFF59D</color>
+    <color name="unfocused_color">#FFF59D</color>
+
+
+
 
 
 

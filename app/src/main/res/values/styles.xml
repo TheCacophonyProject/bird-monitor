@@ -12,36 +12,38 @@
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
 
 
-
-
-
-        <item name="colorControlNormal">@color/controlNormal</item>
-        <item name="colorControlActivated">@color/controlActivated</item>
-        <item name="colorControlHighlight">@color/controlHighlight</item>
-        <item name="colorSwitchThumbNormal">@color/switchThumbNormal</item>
-        <item name="colorBackgroundFloating">@color/backgroundFloating</item>
-        <item name="colorButtonNormal">@color/buttonNormal</item>
-        <item name="colorError">@color/error</item>
-
-
-        <item name="editTextColor">@color/editTextColor</item>
-        <item name="editTextBackground">@color/editTextBackground</item>
-
-        <item name="textAppearanceListItem">@color/textAppearanceListItem</item>
-
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:textColorSecondary">@color/textColorSecondary</item>
-        <item name="android:textColorTertiary">@color/textColorTertiary</item>
-        <item name="android:textColorHint">@color/textColorHint</item>
-        <item name="android:textAppearance">@color/textAppearance</item>
-        <item name="android:colorForeground">@color/foreground</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+
+
         <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:colorForeground">@color/colorForeground</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+
+
+
+
+        <item name="colorSwitchThumbNormal">@color/colorSwitchThumbNormal</item>
+        <item name="colorBackgroundFloating">@color/colorBackgroundFloating</item>
+        <item name="colorButtonNormal">@color/colorButtonNormal</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="textAppearanceListItem">@color/textAppearanceListItem</item>
+        <item name="android:textColorTertiary">@color/textColorTertiary</item>
+        <item name="android:textAppearance">@color/textAppearance</item>
+
+        <item name="android:listDivider">@color/listDivider</item>
+
 
 
     </style>
@@ -51,8 +53,9 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
         <item name="android:switchTextAppearance">@style/TextAppearance.AppCompat.Display1</item>
 
-
     </style>
+
+
 
     <style name="SettingsForTestServerEnabled" parent="AppTheme">
         <item name="colorPrimary">@color/alert</item>
@@ -68,6 +71,8 @@
     <style name="Cacophony.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Cacophony.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 
 
 </resources>
