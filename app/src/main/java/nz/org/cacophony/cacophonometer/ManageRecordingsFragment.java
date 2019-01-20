@@ -1,5 +1,6 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +35,7 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
 
-    boolean deleteRecordings = false;  // Used by dialog as if call deleteAllRecordings() directly, the dialog blocks the broadcast reciever
+    //boolean deleteRecordings = false;  // Used by dialog as if call deleteAllRecordings() directly, the dialog blocks the broadcast reciever
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -165,7 +167,27 @@ public class ManageRecordingsFragment extends Fragment {
         });
         builder.setMessage("Are you sure you want to delete all the recordings on this phone?")
                 .setTitle("Delete ALL Recordings");
-        AlertDialog dialog = builder.create();
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                btnPositive.setTextSize(24);
+                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+                btnPositive.setTextColor(btnPositiveColor);
+
+                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+                btnNegative.setTextSize(24);
+                int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+                btnNegative.setTextColor(btnNegativeColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                textView.setTextSize(22);
+            }
+        });
         dialog.show();
 
     }

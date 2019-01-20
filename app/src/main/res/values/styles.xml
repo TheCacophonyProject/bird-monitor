@@ -11,6 +11,7 @@
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- To find source of Theme - https://stackoverflow.com/questions/26583780/where-can-i-find-the-default-styles-for-theme-appcompat-light -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -46,6 +47,7 @@
 
 
 
+
     </style>
 
     <style name="SwitchAndRadioButtonCompatTheme" >
@@ -57,16 +59,7 @@
 
 
 
-    <style name="SettingsForTestServerEnabled" parent="AppTheme">
-        <item name="colorPrimary">@color/alert</item>
-        <item name="colorPrimaryDark">@color/alert</item>
-        <item name="colorAccent">@color/alert</item>
 
-        <item name="colorControlNormal">@color/alert</item>
-        <item name="android:colorBackground">@color/alert</item>
-
-
-    </style>
 
     <style name="Cacophony.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

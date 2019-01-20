@@ -23,9 +23,9 @@
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
 
     <string name="activity_or_fragment_title_vitals">App Vitals</string>
-    <string name="activity_or_fragment_title_create_account">Create a Cacophony account</string>
-    <string name="activity_or_fragment_title_sign_in">Sign in to your Cacophony Account</string>
-    <string name="activity_or_fragment_title_create_or_choose_group">Create or choose a group</string>
+    <string name="activity_or_fragment_title_create_account">Create Account</string>
+    <string name="activity_or_fragment_title_sign_in">Sign In</string>
+    <string name="activity_or_fragment_title_create_or_choose_group">Create/Choose Group</string>
 
     <string name="activity_or_fragment_title_gps_location">GPS Location</string>
 
@@ -46,7 +46,7 @@
     <string name="help_text_settings_for_testing">App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point.</string>
     <string name="help_text_manage_recordings">Normally you will not need to \’Manage Recordings\’ as the app will automatically upload your recordings to the server.\n\nHowever, if you have been using the phone without an internet connection (perhaps you have been for a walk or have just re-established an internet connection after leaving your phone to make recordings in a location without out internet access) you can now use this screen to upload all the recordings on the phone to the server.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed and should change to zero if all the recordings are successfully uploaded.\n\nIf you prefer, you can delete all the recordings on the phone – perhaps you didn’t realize you had been making recordings! Careful with this option – you can’t get them back.</string>
 
-    <string name="help_text_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it say Disabled. \n\nMessages displays any extra information. \n\nThe REFRESH button will attempt to reconnect with the server to check that a connection can still be established.</string>
+    <string name="help_text_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it say Disabled. \n\nMessages displays any extra information.</string>
 
     <string name="help_text_walking">Walking mode is designed for using when you are out for a walk!  If you are just going to leave the phone in a fixed location, walking mode should be set to OFF.  \n\nIn walking mode, the phone will automatically do the following: make a recording every 15 minutes, periodically update the GPS location,  it will not attempt to upload the recordings to the server, will keep recording when the battery is getting low and attempt to make a warning sound (an external microphone and/or other phone settings may mute this feature). \n\nSee the Upload Files screen for when you have finished your walk.</string>
 
@@ -164,7 +164,7 @@
     <string name="register_title_unregistered">Please Register your phone.</string>
     <string name="register_title_registered">Great - your phone has been registered. Swipe to the next step or press the \'UN-REGISTER\' button to register with a different group or name.</string>
 
-    <string name="group_name_unregistered">Enter the group name (that your have already created) in the box below.</string>
+    <string name="group_name_unregistered">Enter the group name.</string>
     <string name="group_name_registered">Group name is: </string>
     <string name="device_name_unregistered">Make up any name of at least 4 characters that you like for your device and enter it below (you do not create this name on the server).</string>
     <string name="device_name_registered">Device name is: </string>

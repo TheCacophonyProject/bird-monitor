@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.alert));
+            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
             ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAccent));

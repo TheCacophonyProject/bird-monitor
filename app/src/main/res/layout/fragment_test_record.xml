@@ -63,7 +63,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-
         android:text="Finished"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -79,14 +78,16 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-
-
         android:text="@string/test_record_link_to_server_recordings2"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColorLink="@color/testRecordLinkifyLink"
         app:layout_constraintBottom_toTopOf="@+id/btnFinished"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMessages" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

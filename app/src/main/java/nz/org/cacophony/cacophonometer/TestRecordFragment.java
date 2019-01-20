@@ -58,17 +58,18 @@ public class TestRecordFragment extends Fragment {
         // and
         // https://android-developers.googleblog.com/2008/03/linkify-your-text.html
 
+        // Note also used the following to set the color of the url link using the xml method
+        // https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
+
+
+
         tvServerLink = (TextView) view.findViewById(R.id.tvServerLink);
 
         Prefs prefs = new Prefs(getActivity());
         String tvServerLinkText = tvServerLink.getText() + " " + prefs.getBrowseRecordingsServerUrl();
         tvServerLink.setText(tvServerLinkText);
-        //   Pattern cacophonyServerMatcher = Pattern.compile("Cacophony Server");
 
-        //  String browseRecordingsServerUrl = prefs.getBrowseRecordingsServerUrl();
-        // LinkifyCompat.addLinks(tvServerLink, cacophonyServerMatcher, browseRecordingsServerUrl);
         LinkifyCompat.addLinks(tvServerLink, Linkify.ALL);
-
 
         return view;
     }

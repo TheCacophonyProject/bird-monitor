@@ -5,12 +5,14 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,13 +24,17 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.text.util.Linkify;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1155,7 +1161,7 @@ Prefs prefs = new Prefs(context);
         thread.start();
     }
 
-    public static void displayHelp(Context context, String activityOrFragmentName){
+    public static void displayHelp(final Context context, String activityOrFragmentName){
 
         String dialogMessage = "";
 
@@ -1203,7 +1209,9 @@ Prefs prefs = new Prefs(context);
         // Make any urls 'clickable'
         //https://stackoverflow.com/questions/9204303/android-is-it-possible-to-add-a-clickable-link-into-a-string-resource
         final SpannableString s = new SpannableString(dialogMessage);
+
         Linkify.addLinks(s, Linkify.ALL);
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         // Add the buttons
@@ -1213,13 +1221,54 @@ Prefs prefs = new Prefs(context);
             }
         });
 
+
+
         builder.setMessage(s)
                 .setTitle(activityOrFragmentName);
-        AlertDialog dialog = builder.create();
-        dialog.show();
 
-        // Make the textview clickable. Must be called after show()
+
+
+        // https://stackoverflow.com/questions/15909672/how-to-set-font-size-for-text-of-dialog-buttons
+        final AlertDialog  dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                btnPositive.setTextSize(24);
+                int oKButtonColor = ResourcesCompat.getColor(context.getResources(), R.color.dialogButtonText, null);
+                btnPositive.setTextColor(oKButtonColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                //https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                int linkColorInt = ResourcesCompat.getColor(context.getResources(), R.color.linkToServerInHelp, null);
+                textView.setLinkTextColor(linkColorInt);
+                textView.setTextSize(22);
+               // textView.setMovementMethod(new ScrollingMovementMethod());
+                //this.getListView().setScrollbarFadingEnabled(false);
+
+            }
+        });
+
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+
+        dialog.show();
+       // dialog.getListView().setScrollbarFadingEnabled(false);
+
+        // Indicate that the dialog is scrollable ie show scroll bar
+        // but doesn't work
+        // https://stackoverflow.com/questions/1564867/adding-a-vertical-scrollbar-to-an-alertdialog-in-android/6231188
+//        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+//        textView.setScroller(new Scroller(context));
+//        textView.setVerticalScrollBarEnabled(true);
+//        textView.setMovementMethod(new ScrollingMovementMethod());
+
+
+
+        // Make the textview clickable. Must be called after show(). Need for URL to work
         ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 
     static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context){

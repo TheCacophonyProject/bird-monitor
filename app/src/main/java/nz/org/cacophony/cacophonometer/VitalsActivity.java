@@ -223,41 +223,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         return allPermissionsAlreadyGranted;
     }
 
-//    /**
-//     * UI button to refresh vitals
-//     * @param v View
-//     */
-//    public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
-//        refreshVitals();
-//    }
 
-    /**
-     * Check the vitals again and update the UI.
-     */
-//    private void refreshVitals() {
-//        findViewById(R.id.refreshVitals).setEnabled(false);
-//
-//       // Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
-//        tvMessages.setText("About to update vitals - please wait a moment");
-//        try {
-//
-//            Thread server = new Thread() {
-//                @Override
-//                public void run() {
-//                    Looper.prepare();
-//                    Server.updateServerConnectionStatus(getApplicationContext());
-//                    Looper.loop();
-//                }
-//            };
-//            server.start();
-//        }catch (Exception ex){
-//            //Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
-//            tvMessages.setText("Error refreshing vitals");
-//            Log.e(TAG, ex.getLocalizedMessage());
-//            findViewById(R.id.refreshVitals).setEnabled(true);
-//
-//        }
-//    }
 
 
     @Override
