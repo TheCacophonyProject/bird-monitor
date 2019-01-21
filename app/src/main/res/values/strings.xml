@@ -162,11 +162,11 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."</string>
     <string name="register_title_unregistered">Please Register your phone.</string>
-    <string name="register_title_registered">Great - your phone has been registered. Swipe to the next step or press the \'UN-REGISTER\' button to register with a different group or name.</string>
+    <string name="register_title_registered">Great - your phone has been registered.</string>
 
-    <string name="group_name_unregistered">Enter the group name.</string>
+    <string name="group_name_unregistered">Group name.</string>
     <string name="group_name_registered">Group name is: </string>
-    <string name="device_name_unregistered">Make up any name of at least 4 characters that you like for your device and enter it below (you do not create this name on the server).</string>
+    <string name="device_name_unregistered">Device name..</string>
     <string name="device_name_registered">Device name is: </string>
     <string name="username_or_email_address_message">Enter your Cacophony username or email address.</string>
     <string name="password_message">Enter your Cacophony password.</string>

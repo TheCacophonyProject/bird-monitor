@@ -220,6 +220,7 @@ public class SignInFragment extends Fragment {
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
 
                         prefs.setUserSignedIn(true);
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
                         btnSignIn.setEnabled(false);
@@ -324,6 +325,8 @@ public class SignInFragment extends Fragment {
       //  Prefs prefs = new Prefs(getActivity().getApplicationContext());
        // prefs.setUsername(null);
         Util.signOutUser(getActivity().getApplicationContext());
+        ((SetupWizardActivity) getActivity()).setNumberOfPagesForNotSigned();
+
         tvMessages.setText("You have been signed out from this phone");
         btnSignIn.setEnabled(true);
         btnSignOutUser.setEnabled(false);

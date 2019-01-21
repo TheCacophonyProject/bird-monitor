@@ -503,8 +503,14 @@ class Server {
                 String message = joRes.getString("message");
                 registered = false;
                 jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
-               // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not register " + deviceName + " as it is already being used");
+              //  jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
+                if (message.startsWith("group")){
+                    message = message.substring("group".length() + 2);
+                }else{
+                    message = "Sorry could not register " + deviceName + " as it is already being used";
+                }
+                jsonObjectMessageToBroadcast.put("messageToDisplay", message);
+              //  jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not register " + deviceName + " as it is already being used");
                 Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
 
             } else { // response code not 200 or 422 - left this here from Cameron's code as it

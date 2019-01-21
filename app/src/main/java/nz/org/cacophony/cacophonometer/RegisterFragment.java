@@ -1,6 +1,7 @@
 package nz.org.cacophony.cacophonometer;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,9 +10,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -62,12 +67,12 @@ public class RegisterFragment extends Fragment {
         });
 
         tvTitleMessage = (TextView) view.findViewById(R.id.tvTitleMessage);
-        tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
+       tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
         tvDeviceName = (TextView) view.findViewById(R.id.tvDeviceName);
-
 
         return view;
     }
+
 
     @Override
     public void setUserVisibleHint(final boolean visible) {
@@ -84,7 +89,6 @@ public class RegisterFragment extends Fragment {
             if (group != null){
                 etGroupNameInput.setText(group);
             }
-
 
             displayOrHideGUIObjects();
 
@@ -117,6 +121,8 @@ public class RegisterFragment extends Fragment {
 
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
+//                            ((SetupWizardActivity) getActivity()).addLastPages();
+                            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
 
                             tvMessages.setText(messageToDisplay);
 
@@ -167,6 +173,7 @@ public class RegisterFragment extends Fragment {
         } else {
             // Phone is NOT registered
             //Input fields to be visible
+
             etGroupNameInput.setVisibility(View.VISIBLE);
             etDeviceNameInput.setVisibility(View.VISIBLE);
 
@@ -200,34 +207,26 @@ public class RegisterFragment extends Fragment {
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
-        // if (prefs.getOffLineMode()){
         if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
-          //  Util.getToast(getActivity().getApplicationContext(), "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true).show();
             tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
             return;
         }
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
-          //  Util.getToast(getActivity().getApplicationContext(), "The phone is not currently connected to the internet - please fix and try again", true).show();
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
         if (prefs.getGroupName() != null) {
-         //   Util.getToast(getActivity().getApplicationContext(), "Already registered - press UNREGISTER first (if you really want to change group)", true).show();
             tvMessages.setText("Already registered - press UNREGISTER first (if you really want to change group)");
             return;
         }
         // Check that the group name is valid, at least 4 characters.
         String group = etGroupNameInput.getText().toString();
         if (group.length() < 1) {
-           // Util.getToast(getActivity().getApplicationContext(), "Please enter a group name of at least 4 characters (no spaces)", true).show();
             tvMessages.setText("Please enter a group name of at least 4 characters (no spaces)");
             return;
         } else if (group.length() < 4) {
-          //  Log.i(TAG, "Invalid group name: " + group);
-
-           // Util.getToast(getActivity().getApplicationContext(), group + " is not a valid group name. Please use at least 4 characters (no spaces)", true).show();
             tvMessages.setText(group + " is not a valid group name. Please use at least 4 characters (no spaces)");
             return;
         }
@@ -235,17 +234,13 @@ public class RegisterFragment extends Fragment {
         // Check that the device name is valid, at least 4 characters.
         String deviceName = ((EditText)  getView().findViewById(R.id.etDeviceNameInput)).getText().toString();
         if (deviceName.length() < 1) {
-          //  Util.getToast(getActivity().getApplicationContext(), "Please enter a device name of at least 4 characters (no spaces)", true).show();
             tvMessages.setText("Please enter a device name of at least 4 characters (no spaces)");
             return;
         } else if (deviceName.length() < 4) {
-           // Log.i(TAG, "Invalid device name: " + deviceName);
-          //  Util.getToast(getActivity().getApplicationContext(), deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)", true).show();
             tvMessages.setText(deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)");
             return;
         }
 
-        //Util.getToast(getActivity().getApplicationContext(), "Attempting to register with server - please wait", false).show();
         tvMessages.setText("Attempting to register with server - please wait");
 
         // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
@@ -257,7 +252,6 @@ public class RegisterFragment extends Fragment {
         String groupName = prefs.getGroupName();
         if (groupName != null && groupName.equals(group)) {
             // Try to login with username and password.
-            //Util.getToast(getActivity().getApplicationContext(), "Already registered with that group", true).show();
             tvMessages.setText("Already registered with that group");
             return;
         }
@@ -291,7 +285,6 @@ public class RegisterFragment extends Fragment {
             @Override
             public void run() {
                 Server.register(group, deviceName, context);
-                ;
             }
         };
         registerThread.start();
@@ -301,7 +294,6 @@ public class RegisterFragment extends Fragment {
     public void unregisterButtonPressed() {
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
-          //  Util.getToast(getActivity().getApplicationContext(), "Not currently registered - so can not unregister :-(", true).show();
             tvMessages.setText("Not currently registered - so can not unregister :-(");
             return;
         }
@@ -319,7 +311,28 @@ public class RegisterFragment extends Fragment {
         });
         builder.setMessage("Are you sure?")
                 .setTitle("Un-register this phone");
-        AlertDialog dialog = builder.create();
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                btnPositive.setTextSize(24);
+                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+                btnPositive.setTextColor(btnPositiveColor);
+
+                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+                btnNegative.setTextSize(24);
+                int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+                btnNegative.setTextColor(btnNegativeColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                textView.setTextSize(22);
+            }
+        });
+
         dialog.show();
 
 
@@ -327,14 +340,12 @@ public class RegisterFragment extends Fragment {
 
     private void unregister() {
 
-
         try {
-
             Util.unregisterPhone(getActivity().getApplicationContext());
-
-          //  Util.getToast(getActivity().getApplicationContext(), "Success - Device is no longer registered", false).show();
+            ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
             tvMessages.setText("Success - Device is no longer registered");
             etGroupNameInput.setText("");
+            etDeviceNameInput.setText("");
 
             displayOrHideGUIObjects();
 
@@ -348,10 +359,8 @@ public class RegisterFragment extends Fragment {
         try {
             Util.disableFlightMode(getActivity().getApplicationContext());
 
-
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
-          //  Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
             tvMessages.setText("Error disabling flight mode");
         }
     }

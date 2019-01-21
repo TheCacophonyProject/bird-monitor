@@ -14,6 +14,8 @@ import java.util.List;
 public class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = "SectionsStatePagerAdapt";
 
+    private int numberOfPages = 7;
+
 private final List<Fragment> mfragmentList = new ArrayList<>();
     private final List<String> mfragmentTitleList = new ArrayList<>();
 
@@ -24,17 +26,44 @@ private final List<Fragment> mfragmentList = new ArrayList<>();
     public void addFragment(Fragment fragment, String title){
         mfragmentList.add(fragment);
         mfragmentTitleList.add(title);
+
+
     }
 
-//    public void removeLastFragment(){
-//       try {
+    public void setNumberOfPagesForNotSignedIn(){
+        numberOfPages = 3;
+    }
+
+    public void setNumberOfPages(int numberOfPages){
+        this.numberOfPages = numberOfPages;
+    }
+
+
+
+    public void removeLastPages(){
+       try {
+           numberOfPages = mfragmentList.size() - 2;
 //           int mfragmentListSize = mfragmentList.size();
 //           mfragmentList.remove(mfragmentListSize - 1);
 //           mfragmentTitleList.remove(mfragmentListSize - 1);
-//       }catch(Exception ex){
-//           Log.e(TAG, ex.getLocalizedMessage());
-//       }
-//    }
+//
+//            mfragmentListSize = mfragmentList.size();
+//           mfragmentList.remove(mfragmentListSize - 1);
+//           mfragmentTitleList.remove(mfragmentListSize - 1);
+
+       }catch(Exception ex){
+           Log.e(TAG, ex.getLocalizedMessage());
+       }
+    }
+
+    public void addLastPages(){
+        try {
+            numberOfPages = mfragmentList.size();
+
+        }catch(Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
 
     @Override
     public Fragment getItem(int position) {
@@ -43,7 +72,9 @@ private final List<Fragment> mfragmentList = new ArrayList<>();
 
     @Override
     public int getCount() {
-        return mfragmentList.size();
+
+        //return mfragmentList.size();
+        return numberOfPages;
     }
 
     @Override
