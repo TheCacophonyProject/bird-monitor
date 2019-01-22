@@ -26,6 +26,7 @@ public class TestRecordFragment extends Fragment {
     private Button btnNext;
     private Button btnRecordNow;
     private TextView tvServerLink;
+    private TextView tvTitleMessage;
     private TextView tvMessages;
 
     @Override
@@ -34,9 +35,10 @@ public class TestRecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_test_record, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+        tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
+        tvMessages = view.findViewById(R.id.tvMessages);
 
-        btnNext = (Button) view.findViewById(R.id.btnFinished);
+        btnNext = view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,21 +87,31 @@ public class TestRecordFragment extends Fragment {
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
-            TextView tvMessages = getView().findViewById(R.id.tvMessages);
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-            if (prefs.getIsDisabled()) {
-                getView().findViewById(R.id.btnRecordNow).setEnabled(false);
-                tvMessages.setText("Recording is currently disabled on this phone");
-            } else if (RecordAndUpload.isRecording) {
-                getView().findViewById(R.id.btnRecordNow).setEnabled(false);
-                tvMessages.setText("Can not record, as a recording is already in progress");
-            } else {
-                getView().findViewById(R.id.btnRecordNow).setEnabled(true);
-                tvMessages.setText("");
-            }
+            displayOrHideGUIObjects();
+
+
 
         } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+        }
+    }
+
+    void displayOrHideGUIObjects(){
+
+//        TextView tvMessages = getView().findViewById(R.id.tvMessages);
+        Prefs prefs = new Prefs(getActivity().getApplicationContext());
+        if (prefs.getIsDisabled()) {
+            getView().findViewById(R.id.btnRecordNow).setEnabled(false);
+            tvTitleMessage.setText("Recording is currently disabled on this phone. Enable recording from the main screen if you want to perform a test recording.");
+            btnRecordNow.setVisibility(View.INVISIBLE);
+        } else if (RecordAndUpload.isRecording) {
+            getView().findViewById(R.id.btnRecordNow).setEnabled(false);
+            tvTitleMessage.setText("Can not record, as a recording is already in progress");
+            btnRecordNow.setVisibility(View.INVISIBLE);
+        } else {
+            getView().findViewById(R.id.btnRecordNow).setEnabled(true);
+            tvTitleMessage.setText("Press the RECORD NOW button to check that your phone has been setup correctly.");
+            btnRecordNow.setVisibility(View.VISIBLE);
         }
     }
 
@@ -128,7 +140,7 @@ public class TestRecordFragment extends Fragment {
             if (getView() == null) {
                 return;
             }
-            TextView tvMessages = getView().findViewById(R.id.tvMessages);
+//            TextView tvMessages = getView().findViewById(R.id.tvMessages);
             try {
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");

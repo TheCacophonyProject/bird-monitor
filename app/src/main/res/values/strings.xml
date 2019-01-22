@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="test_record_link_to_server_recordings">Now check that your recording is on the server\n\nbrowse.cacophony.org.nz/</string>
-    <string name="test_record_link_to_server_recordings2">Now check that your recording is on the Cacophony Server</string>
+
+    <string name="test_record_link_to_server_recordings2">Visit the following page to listen to your recordings on the Cacophony Server</string>
     <string name="app_name">Cacophonometer</string>
     <string name="app_icon_name">Cacophony</string>
 

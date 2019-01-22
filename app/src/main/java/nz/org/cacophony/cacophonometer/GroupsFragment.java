@@ -41,6 +41,7 @@ public class GroupsFragment extends Fragment {
         etNewGroupInput = (EditText) view.findViewById(R.id.etNewGroupInput);
         btnCreateGroup = (Button) view.findViewById(R.id.btnCreateGroup);
         lvGroups = (ListView) view.findViewById(R.id.lvGroups);
+        tvMessages = view.findViewById(R.id.tvMessages);
       //  arrayListGroups = Util.getGroupsStoredOnPhone(getActivity());
 
         //adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayListGroups);

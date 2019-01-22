@@ -73,7 +73,7 @@ if (isRecording){
      jsonObjectMessageToBroadcast = new JSONObject();
     try {
         jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
-        jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress");
+        jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress.");
     } catch (JSONException e) {
         e.printStackTrace();
     }
@@ -114,14 +114,16 @@ if (isRecording){
         // uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
        //  uploadingIdlingResource.decrement();
-             if (!uploadedFilesSuccessfully) {
+             if (uploadedFilesSuccessfully) {
+                 prefs.setDateTimeLastUpload(now);
+             }else{
                  returnValue = "recorded BUT did not upload";
                  Log.e(TAG, "Files failed to upload");
                  String messageToDisplay = "";
                  jsonObjectMessageToBroadcast = new JSONObject();
                  try {
                      jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
-                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
+                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server.");
                  } catch (JSONException e) {
                      e.printStackTrace();
                  }
@@ -355,7 +357,7 @@ try {
             File recordingsFolder = Util.getRecordingsFolder(context);
             if (recordingsFolder == null){
 
-                Log.e(TAG,"Error getting recordings folder" );
+                Log.e(TAG,"Error getting recordings folder." );
                 return false;
             }
             File recordingFiles[] = recordingsFolder.listFiles();
@@ -422,7 +424,7 @@ try {
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

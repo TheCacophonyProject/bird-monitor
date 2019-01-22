@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -40,7 +41,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = VitalsActivity.class.getName();
-    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
+   // private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
 
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
     private static final int PERMISSION_RECORD_AUDIO = 1;
@@ -51,8 +52,10 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(intentAction);
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(intentAction);
+        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 
     @Override
@@ -349,50 +352,79 @@ try {
     }
 
 
-    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
+//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//        // broadcast notification coming from ??
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            try {
+//                String action = intent.getAction();
+//                if (action.equals("server.updateServerConnectionStatus") || action.equals("server.login")) {
+//                    String messageType = intent.getStringExtra("message");
+//                    if (messageType != null) {
+//
+////                        if (messageType.equalsIgnoreCase("enable_vitals_button")) {
+////                            findViewById(R.id.refreshVitals).setEnabled(true);
+////                        }
+//                        if (messageType.equalsIgnoreCase("tick_logged_in_to_server")) {
+//                            TextView loggedInText = findViewById(R.id.loggedInText);
+//                            loggedInText.setText(getString(R.string.logged_in_to_server_true));
+//                        } else if (messageType.equalsIgnoreCase("untick_logged_in_to_server")) {
+//                            TextView loggedInText = findViewById(R.id.loggedInText);
+//                            loggedInText.setText(getString(R.string.logged_in_to_server_false));
+//                        } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
+//                            refreshVitalsDisplayedText();
+//                        } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
+//                          //  TextView messageView = findViewById(R.id.messageText);
+//                         //   if (messageView != null) {
+//                          //      messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+//                                tvMessages.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+//                         //   }
+//                        } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
+//                            Prefs prefs = new Prefs(context);
+//                            updateGpsDisplay(prefs);
+//                        } else if (messageType.equalsIgnoreCase("recording_finished")) {
+//                            refreshVitalsDisplayedText();
+//                        } else if (messageType.equalsIgnoreCase("alarms_updated")) {
+//                            refreshVitalsDisplayedText();
+//                        }
+//
+//                    }
+//                }
+//
+//            }catch (Exception ex){
+//                Log.e(TAG,ex.getLocalizedMessage());
+//            }
+//        }
+//    };
 
-        // broadcast notification coming from ??
+    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
             try {
-                String action = intent.getAction();
-                if (action.equals("server.updateServerConnectionStatus") || action.equals("server.login")) {
-                    String messageType = intent.getStringExtra("message");
-                    if (messageType != null) {
 
-//                        if (messageType.equalsIgnoreCase("enable_vitals_button")) {
-//                            findViewById(R.id.refreshVitals).setEnabled(true);
-//                        }
-                        if (messageType.equalsIgnoreCase("tick_logged_in_to_server")) {
-                            TextView loggedInText = findViewById(R.id.loggedInText);
-                            loggedInText.setText(getString(R.string.logged_in_to_server_true));
-                        } else if (messageType.equalsIgnoreCase("untick_logged_in_to_server")) {
-                            TextView loggedInText = findViewById(R.id.loggedInText);
-                            loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                        } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
-                            refreshVitalsDisplayedText();
-                        } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
-                          //  TextView messageView = findViewById(R.id.messageText);
-                         //   if (messageView != null) {
-                          //      messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-                                tvMessages.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-                         //   }
-                        } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
-                            Prefs prefs = new Prefs(context);
-                            updateGpsDisplay(prefs);
-                        } else if (messageType.equalsIgnoreCase("recording_finished")) {
-                            refreshVitalsDisplayedText();
-                        } else if (messageType.equalsIgnoreCase("alarms_updated")) {
-                            refreshVitalsDisplayedText();
-                        }
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
+                if (jsonStringMessage != null) {
+
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageType = joMessage.getString("messageType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                     if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
+                        refreshVitalsDisplayedText();
                     }
                 }
 
-            }catch (Exception ex){
-                Log.e(TAG,ex.getLocalizedMessage());
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getLocalizedMessage());
+                tvMessages.setText("Could not record");
+
             }
+
         }
     };
 

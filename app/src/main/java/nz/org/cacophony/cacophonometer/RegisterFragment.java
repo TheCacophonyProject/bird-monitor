@@ -122,7 +122,7 @@ public class RegisterFragment extends Fragment {
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
 //                            ((SetupWizardActivity) getActivity()).addLastPages();
-                            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
+//                            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
 
                             tvMessages.setText(messageToDisplay);
 
@@ -153,6 +153,7 @@ public class RegisterFragment extends Fragment {
         String groupName = prefs.getGroupName();
         String deviceName = prefs.getDeviceName();
         if (groupName != null && deviceName != null) {
+            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
             // Phone is registered
             // Phone is NOT registered
             //Input fields to be INVISIBLE
@@ -173,6 +174,7 @@ public class RegisterFragment extends Fragment {
         } else {
             // Phone is NOT registered
             //Input fields to be visible
+            ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
             etGroupNameInput.setVisibility(View.VISIBLE);
             etDeviceNameInput.setVisibility(View.VISIBLE);
