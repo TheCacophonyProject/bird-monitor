@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -27,6 +28,9 @@ public class SignInFragment extends Fragment {
     private TextView tvMessages;
     private EditText etUserNameOrPasswordInput;
     private EditText etPasswordInput;
+    private TextInputLayout tilUserNameOrPassword;
+    private TextInputLayout tilPassword;
+    private TextView tvTitleMessage;
    // private TextInputLayout tilPassword;
 
 
@@ -39,6 +43,10 @@ public class SignInFragment extends Fragment {
         setUserVisibleHint(false);
         etUserNameOrPasswordInput = (EditText)view.findViewById(R.id.etUserNameOrPasswordInput);
         etPasswordInput = (EditText)view.findViewById(R.id.etPasswordInput);
+        tilUserNameOrPassword =  view.findViewById(R.id.tilUserNameOrPassword);
+        tilPassword =  view.findViewById(R.id.tilPassword);
+        tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
+
        // tilPassword =(TextInputLayout)view.findViewById(R.id.tilPassword);
         btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
         btnSignOutUser = (Button) view.findViewById(R.id.btnSignOutUser);
@@ -58,6 +66,8 @@ public class SignInFragment extends Fragment {
             }
         });
 
+
+
         btnSignOutUser.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -73,9 +83,12 @@ public class SignInFragment extends Fragment {
         });
 
         //tilPassword.setPasswordVisibilityToggleEnabled(true);
+        displayOrHideGUIObjects();
 
          return view;
     }
+
+
 
     private void login(){
         disableFlightMode();
@@ -132,54 +145,38 @@ public class SignInFragment extends Fragment {
         boolean signedIn = prefs.getUserSignedIn();
         String userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
         if (signedIn) {
-            etUserNameOrPasswordInput.setText("");
-            etUserNameOrPasswordInput.setEnabled(false);
-            etPasswordInput.setText("");
-            etPasswordInput.setEnabled(false);
+            //etUserNameOrPasswordInput.setText("");
+           // etUserNameOrPasswordInput.setEnabled(false);
+           // etUserNameOrPasswordInput.setVisibility(View.INVISIBLE);
+            tilUserNameOrPassword.setVisibility(View.INVISIBLE);
+            tilPassword.setVisibility(View.INVISIBLE);
+          //  etPasswordInput.setText("");
+          //  etPasswordInput.setEnabled(false);
+          //  etPasswordInput.setVisibility(View.INVISIBLE);
+            tvTitleMessage.setText("Signed In");
+            btnSignIn.setVisibility(View.INVISIBLE);
            tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
-            btnSignIn.setEnabled(false);
+         //   btnSignIn.setEnabled(false);
             btnSignOutUser.setEnabled(true);
             btnSignOutUser.requestFocus();
         }else{
+            tvTitleMessage.setText("Enter your Cacophony Username and password");
+            tilUserNameOrPassword.setVisibility(View.VISIBLE);
+            tilPassword.setVisibility(View.VISIBLE);
+
+           // etUserNameOrPasswordInput.setVisibility(View.VISIBLE);
             if (userNameOrEmailAddress == null){
+
                 etUserNameOrPasswordInput.requestFocus();
             }else{
                 etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                 etPasswordInput.requestFocus();
             }
-            btnSignIn.setEnabled(true);
-            btnSignOutUser.setEnabled(false);
-
-
-//        if (prefs.getUsername() == null && prefs.getUserNameOrEmailAddress() == null){
-//           // Show normal signin page
-//            btnSignIn.setEnabled(true);
-//            btnSignOutUser.setEnabled(false);
-//            etUserNameOrPasswordInput.setText("");
-//            etPasswordInput.setText("");
-//
-//        }else{
-//
-//            if (prefs.getUserSignedIn()){
-//                String userNameOrEmailAddress = "";
-//                if (prefs.getUserNameOrEmailAddress()!= null){
-//                    userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
-//                }else if (prefs.getUsername()!= null){
-//                    userNameOrEmailAddress = prefs.getUsername();
-//                }
-//                tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
-//                btnSignIn.setEnabled(false);
-//                btnSignOutUser.setEnabled(true);
-//                etUserNameOrPasswordInput.setEnabled(false);
-//                etPasswordInput.setEnabled(false);
-//            }else{
-//                // try to signin
-//                // next if on broadcast receiver
-//                tvMessages.setText("Signing in to your account");
-//                btnSignIn.setEnabled(true);
-//                btnSignOutUser.setEnabled(true);
-//                login();
-//            }
+         //   etPasswordInput.setVisibility(View.VISIBLE);
+         //   btnSignIn.setEnabled(true);
+            btnSignIn.setVisibility(View.VISIBLE);
+         //   btnSignOutUser.setEnabled(false);
+            btnSignOutUser.setVisibility(View.INVISIBLE);
 
 
         }
@@ -219,17 +216,28 @@ public class SignInFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
 
-                        prefs.setUserSignedIn(true);
+                        boolean isItSignedIn = prefs.getUserSignedIn();
+                        Log.e(TAG, "isItSignedIn" + isItSignedIn);
+
+                      //  prefs.setUserSignedIn(true);
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+                        tvTitleMessage.setText("Signed In");
                         btnSignIn.setEnabled(false);
+                        btnSignIn.setVisibility(View.INVISIBLE);
                         btnSignOutUser.setEnabled(true);
+                        btnSignOutUser.setVisibility(View.VISIBLE);
                         btnSignOutUser.requestFocus();
-                        etUserNameOrPasswordInput.setText("");
-                        etUserNameOrPasswordInput.setEnabled(false);
+                        tilUserNameOrPassword.setVisibility(View.INVISIBLE);
+                        tilPassword.setVisibility(View.INVISIBLE);
+
+//                        etUserNameOrPasswordInput.setText("");
+//                        etUserNameOrPasswordInput.setEnabled(false);
+//                        etUserNameOrPasswordInput.setVisibility(View.INVISIBLE);
                         etPasswordInput.setText("");
-                        etPasswordInput.setEnabled(false);
+//                        etPasswordInput.setEnabled(false);
+//                        etPasswordInput.setVisibility(View.INVISIBLE);
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
                        // ((SetupWizardActivity) getActivity()).nextPageView();
                     } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
@@ -328,11 +336,18 @@ public class SignInFragment extends Fragment {
         ((SetupWizardActivity) getActivity()).setNumberOfPagesForNotSigned();
 
         tvMessages.setText("You have been signed out from this phone");
-        btnSignIn.setEnabled(true);
-        btnSignOutUser.setEnabled(false);
+        tilUserNameOrPassword.setVisibility(View.VISIBLE);
+        tilPassword.setVisibility(View.VISIBLE);
 
-        etUserNameOrPasswordInput.setEnabled(true);
-        etPasswordInput.setEnabled(true);
+        btnSignIn.setEnabled(true);
+        btnSignIn.setVisibility(View.VISIBLE);
+        btnSignOutUser.setEnabled(false);
+        btnSignOutUser.setVisibility(View.INVISIBLE);
+
+//        etUserNameOrPasswordInput.setEnabled(true);
+//        etUserNameOrPasswordInput.setVisibility(View.VISIBLE);
+//        etPasswordInput.setEnabled(true);
+//        etPasswordInput.setVisibility(View.VISIBLE);
 
     //    prefs.setUserSignedIn(false);
 

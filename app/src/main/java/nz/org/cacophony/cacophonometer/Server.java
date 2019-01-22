@@ -282,6 +282,10 @@ class Server {
                     String userToken = joRes.getString("token");
                     prefs.setUserToken(userToken);
                     prefs.setTokenLastRefreshed(new Date().getTime());
+                    prefs.setUserSignedIn(true);
+
+                    boolean isItSignedIn = prefs.getUserSignedIn();
+                    Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
                     messageToDisplay = "Success, you have successfully signed in";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);

@@ -121,6 +121,8 @@ public class GroupsFragment extends Fragment {
         }
     }
 
+
+
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
         //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
