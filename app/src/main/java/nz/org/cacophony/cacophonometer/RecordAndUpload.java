@@ -237,9 +237,45 @@ try {
     // Setup audio recording settings.
     MediaRecorder mRecorder = new MediaRecorder();
 
+    ;
+
     // Try to prepare recording.
     try {
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+       // mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+
+        // Automatic gain control setting
+        String audioSource = prefs.getAudioSource();
+
+        switch (audioSource)
+        {
+            case "CAMCORDER":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+            break;
+
+            case "DEFAULT":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                break;
+
+            case "MIC":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                break;
+
+            case "UNPROCESSED":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+                break;
+
+            case "VOICE_COMMUNICATION":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+                break;
+
+            case "VOICE_RECOGNITION":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+                break;
+            default:
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        }
+
+
         mRecorder.setOutputFile(filePath);
 
             // Sampling configuration

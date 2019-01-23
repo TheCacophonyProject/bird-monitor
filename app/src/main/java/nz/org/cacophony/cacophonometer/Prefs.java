@@ -111,6 +111,7 @@ class Prefs {
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
+    private static final String AUDIO_SOURCE_KEY = "AUDIO_SOURCE";
     private static final String DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
     private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
@@ -703,6 +704,18 @@ class Prefs {
 
     void setInternetConnectionMode(String internetConnectionMode){
         setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
+    }
+
+    String getAudioSource(){
+        String audioSource = getString(AUDIO_SOURCE_KEY);
+                if (audioSource == null){
+                    audioSource = "MIC";
+                }
+        return audioSource;
+    }
+
+    void setAudioSource(String audioSource){
+        setString(AUDIO_SOURCE_KEY, audioSource);
     }
 
     void setIsDisabled(boolean isDisabled) {

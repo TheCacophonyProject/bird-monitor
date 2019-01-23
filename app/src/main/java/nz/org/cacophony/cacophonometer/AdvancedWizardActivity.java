@@ -63,6 +63,18 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         }
     }
 
+    public void setNumberOfPagesForAdvanced(){
+        mSectionsStatePagerAdapter.setNumberOfPages(6);
+        mSectionsStatePagerAdapter.notifyDataSetChanged();
+    }
+
+
+
+    public void setNumberOfPagesForVeryAdvanced(){
+        mSectionsStatePagerAdapter.setNumberOfPages(8);
+        mSectionsStatePagerAdapter.notifyDataSetChanged();
+    }
+
     private void setupViewPager(ViewPager viewPager){
 
         mSectionsStatePagerAdapter.addFragment(new ManageRecordingsFragment(), getResources().getString(R.string.activity_or_fragment_title_manage_recordings));
@@ -72,9 +84,16 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new FrequencyFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_frequency));
         mSectionsStatePagerAdapter.addFragment(new RootedFragment(), getResources().getString(R.string.activity_or_fragment_title_rooted));
 
+        // And for Very Advanced
+        mSectionsStatePagerAdapter.addFragment(new AudioSourceSettingsFragment(),  getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source));
+        mSectionsStatePagerAdapter.addFragment(new TestingFragment(),  getResources().getString(R.string.activity_or_fragment_title_settings_for_testing));
+
+
         Prefs prefs = new Prefs(this);
         if (prefs.getSettingsForTestServerEnabled()){
-            mSectionsStatePagerAdapter.addFragment(new TestingFragment(),  getResources().getString(R.string.activity_or_fragment_title_settings_for_testing));
+            setNumberOfPagesForVeryAdvanced();
+        }else{
+            setNumberOfPagesForAdvanced();
         }
 
         viewPager.setAdapter(mSectionsStatePagerAdapter);

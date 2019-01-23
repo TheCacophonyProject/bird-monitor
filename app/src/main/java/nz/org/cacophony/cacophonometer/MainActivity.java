@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
+            prefs.setAudioSource("MIC");
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);

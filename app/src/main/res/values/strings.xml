@@ -20,6 +20,7 @@
     <string name="activity_or_fragment_title_activity_ignore_low_battery">Ignore Low Battery</string>
     <string name="activity_or_fragment_title_activity_frequency">Frequency</string>
     <string name="activity_or_fragment_title_settings_for_testing">Settings for Testing</string>
+    <string name="activity_or_fragment_title_settings_for_audio_source">Settings for Audio Source</string>
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
 
     <string name="activity_or_fragment_title_vitals">App Vitals</string>
@@ -60,6 +61,8 @@
 
     <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - No more recordings will be made (even after a restart).</string>
     <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'</string>
+
+    <string name="choose_the_audio_source_setting">Choose MediaRecorder.AudioSource setting</string>
 
 
     <string name="required_permissions">Required Permissions: ?</string>
@@ -175,10 +178,12 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="action_settings">Settings</string>
-     <string name="fragment_create_account_intro_text">Create a Cacophony account (or swipe to skip this step if you already have an account).</string>
+    <string name="fragment_create_account_intro_text">Create a Cacophony account (or swipe to skip this step if you already have an account).</string>
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>
+
+    
 
 
 </resources>
