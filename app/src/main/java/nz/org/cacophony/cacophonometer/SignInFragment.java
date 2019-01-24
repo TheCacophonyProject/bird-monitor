@@ -220,7 +220,7 @@ public class SignInFragment extends Fragment {
                         Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
                       //  prefs.setUserSignedIn(true);
-                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegisteredFromSignInScreen();
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
                         tvTitleMessage.setText("Signed In");

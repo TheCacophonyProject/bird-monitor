@@ -32,6 +32,7 @@ public class GroupsFragment extends Fragment {
     private TextView tvMessages;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -72,10 +73,11 @@ public class GroupsFragment extends Fragment {
                    // if(arrayListGroups.contains(newGroup)){
                         if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
                       //  Util.getToast(getActivity(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
-                            tvMessages.setText("Sorry, can NOT add \" + newGroup + \" as it already exists.");
+                            tvMessages.setText("Sorry, can NOT add that group as it already exists.");
                         return;
                     }
                     ((SetupWizardActivity) getActivity()).setGroup(newGroup);
+
                     Util.addGroupToServer(getActivity(), newGroup);
                     adapter.add(newGroup);
                     ((EditText) view.findViewById(R.id.etNewGroupInput)).setText("");
@@ -149,7 +151,7 @@ public class GroupsFragment extends Fragment {
                      //   Util.getToast(getActivity(), messageToDisplay, false).show();
                         tvMessages.setText(messageToDisplay);
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
-                        // Need to note this group for Register Phone screen
+
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
                     } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {

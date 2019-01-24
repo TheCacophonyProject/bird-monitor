@@ -22,7 +22,8 @@ public class SetupWizardActivity extends AppCompatActivity {
 
     private String group = ""; // to be used to pass the name of the selected group between fragments
 
-
+    boolean numberOfPagesForSignedInNotRegistered = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
+    boolean numberOfPagesForRegisterd = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
 
 
     @Override
@@ -112,48 +113,44 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
     public void setNumberOfPagesForNotSigned(){
-        mSectionsStatePagerAdapter.setNumberOfPages(3);
-        mSectionsStatePagerAdapter.notifyDataSetChanged();
+            mSectionsStatePagerAdapter.setNumberOfPages(3);
+            mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
     public void setNumberOfPagesForSignedInNotRegistered(){
+        numberOfPagesForSignedInNotRegistered = !numberOfPagesForSignedInNotRegistered;
+        if (numberOfPagesForSignedInNotRegistered) {
         mSectionsStatePagerAdapter.setNumberOfPages(5);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    public void setNumberOfPagesForSignedInNotRegisteredFromSignInScreen(){
+
+            mSectionsStatePagerAdapter.setNumberOfPages(5);
+            mSectionsStatePagerAdapter.notifyDataSetChanged();
+
     }
 
 
 
     public void setNumberOfPagesForRegisterd(){
-        mSectionsStatePagerAdapter.setNumberOfPages(7);
-        mSectionsStatePagerAdapter.notifyDataSetChanged();
+        numberOfPagesForRegisterd = !numberOfPagesForRegisterd;
+        if (numberOfPagesForRegisterd) {
+            mSectionsStatePagerAdapter.setNumberOfPages(7);
+            mSectionsStatePagerAdapter.notifyDataSetChanged();
+        }
+
     }
 
 
 
-//    public void addLastPages(){
-//        mSectionsStatePagerAdapter.addLastPages();
-//        mSectionsStatePagerAdapter.notifyDataSetChanged();
-//
-////        mSectionsStatePagerAdapter.addFragment(new GPSFragment(), getResources().getString(R.string.activity_or_fragment_title_gps_location));
-////        mSectionsStatePagerAdapter.addFragment(new TestRecordFragment(),  getResources().getString(R.string.activity_or_fragment_title_test_record));
-////        mSectionsStatePagerAdapter.notifyDataSetChanged();
-//    }
-
-//    public void removePages(){
-//        mSectionsStatePagerAdapter.removeLastPages();
-//        mSectionsStatePagerAdapter.notifyDataSetChanged();
-//
-////        // Check that the pages are there before trying to remove them - this situation shouldn't occur
-////        int numberOfPages = mSectionsStatePagerAdapter.getCount();
-////        if (numberOfPages == 7 ){
-////            mSectionsStatePagerAdapter.removeLastPages();
-////            mSectionsStatePagerAdapter.notifyDataSetChanged();
-////        }
-//    }
 
 
 
-    private void setupViewPager(ViewPager viewPager){
+
+    private void setupViewPager(ViewPager viewPager) {
 
         mSectionsStatePagerAdapter.addFragment(new WelcomeFragment(), getResources().getString(R.string.activity_or_fragment_title_welcome));
         Prefs prefs = new Prefs(this);
@@ -163,10 +160,10 @@ public class SetupWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new GroupsFragment(), getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group));
         mSectionsStatePagerAdapter.addFragment(new RegisterFragment(), getResources().getString(R.string.activity_or_fragment_title_register_phone));
 
-       // if (prefs.getGroupName() != null){
-            mSectionsStatePagerAdapter.addFragment(new GPSFragment(), getResources().getString(R.string.activity_or_fragment_title_gps_location));
-            mSectionsStatePagerAdapter.addFragment(new TestRecordFragment(),  getResources().getString(R.string.activity_or_fragment_title_test_record));
-      //  }
+        // if (prefs.getGroupName() != null){
+        mSectionsStatePagerAdapter.addFragment(new GPSFragment(), getResources().getString(R.string.activity_or_fragment_title_gps_location));
+        mSectionsStatePagerAdapter.addFragment(new TestRecordFragment(), getResources().getString(R.string.activity_or_fragment_title_test_record));
+        //  }
 
         viewPager.setAdapter(mSectionsStatePagerAdapter);
 
@@ -176,31 +173,39 @@ public class SetupWizardActivity extends AppCompatActivity {
             registered = true;
         }
 
-        if (!signedIn){
-            setNumberOfPagesForNotSigned();
+        if (!signedIn) {
+            mSectionsStatePagerAdapter.setNumberOfPages(3);
             mSectionsStatePagerAdapter.notifyDataSetChanged();
-        }else if (!registered){
-            setNumberOfPagesForSignedInNotRegistered();
-        }else{
-            setNumberOfPagesForRegisterd();
+        } else if (!registered) {
+            mSectionsStatePagerAdapter.setNumberOfPages(5);
+            mSectionsStatePagerAdapter.notifyDataSetChanged();
+        } else {
+            mSectionsStatePagerAdapter.setNumberOfPages(7);
+            mSectionsStatePagerAdapter.notifyDataSetChanged();
         }
 
-//        if (prefs.getGroupName() == null) {
-//            removePages();
-//        }
-
     }
-
-//    public void setPageView(int page){
-//        mViewPager.setCurrentItem(page);
-//    }
 
 
     public String getGroup() {
+        if (group != null){
+            if (group.equals("")){
+                group = null;
+            }
+        }
+
+
         return group;
     }
 
+
     public void setGroup(String group) {
+        if (group != null){
+            if (group.equals("")){
+                group = null;
+            }
+        }
+
         this.group = group;
     }
 

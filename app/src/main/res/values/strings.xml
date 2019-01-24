@@ -20,7 +20,7 @@
     <string name="activity_or_fragment_title_activity_ignore_low_battery">Ignore Low Battery</string>
     <string name="activity_or_fragment_title_activity_frequency">Frequency</string>
     <string name="activity_or_fragment_title_settings_for_testing">Settings for Testing</string>
-    <string name="activity_or_fragment_title_settings_for_audio_source">Settings for Audio Source</string>
+    <string name="activity_or_fragment_title_settings_for_audio_source">Audio Source</string>
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
 
     <string name="activity_or_fragment_title_vitals">App Vitals</string>
@@ -183,7 +183,7 @@
     <string name="Yes">Yes</string>
     <string name="No">No</string>
 
-    
+
 
 
 </resources>

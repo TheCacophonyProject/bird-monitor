@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
-        prefs.setUserSignedIn(false);
+       // prefs.setUserSignedIn(false);
 
 
         boolean isFirstTime = prefs.getIsFirstTime();
