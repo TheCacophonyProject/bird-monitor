@@ -22,8 +22,8 @@ public class SetupWizardActivity extends AppCompatActivity {
 
     private String group = ""; // to be used to pass the name of the selected group between fragments
 
-    boolean numberOfPagesForSignedInNotRegistered = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
-    boolean numberOfPagesForRegisterd = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
+//    boolean numberOfPagesForSignedInNotRegistered = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
+//    boolean numberOfPagesForRegisterd = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
 
 
     @Override
@@ -118,31 +118,14 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
     public void setNumberOfPagesForSignedInNotRegistered(){
-        numberOfPagesForSignedInNotRegistered = !numberOfPagesForSignedInNotRegistered;
-        if (numberOfPagesForSignedInNotRegistered) {
         mSectionsStatePagerAdapter.setNumberOfPages(5);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
-        }
-
     }
-
-    public void setNumberOfPagesForSignedInNotRegisteredFromSignInScreen(){
-
-            mSectionsStatePagerAdapter.setNumberOfPages(5);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
-
-    }
-
-
 
     public void setNumberOfPagesForRegisterd(){
-        numberOfPagesForRegisterd = !numberOfPagesForRegisterd;
-        if (numberOfPagesForRegisterd) {
             mSectionsStatePagerAdapter.setNumberOfPages(7);
             mSectionsStatePagerAdapter.notifyDataSetChanged();
-        }
-
-    }
+     }
 
 
 
@@ -174,14 +157,11 @@ public class SetupWizardActivity extends AppCompatActivity {
         }
 
         if (!signedIn) {
-            mSectionsStatePagerAdapter.setNumberOfPages(3);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
+            setNumberOfPagesForNotSigned();
         } else if (!registered) {
-            mSectionsStatePagerAdapter.setNumberOfPages(5);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
+            setNumberOfPagesForSignedInNotRegistered();
         } else {
-            mSectionsStatePagerAdapter.setNumberOfPages(7);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
+            setNumberOfPagesForRegisterd();
         }
 
     }

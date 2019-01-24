@@ -86,8 +86,16 @@ public class RegisterFragment extends Fragment {
 //            if (group != null){
 //                etGroupNameInput.setText(group);
 //            }
+        // Set next pages
+            Prefs prefs = new Prefs(getActivity());
+            String groupNameFromPrefs = prefs.getGroupName();
+            String deviceNameFromPrefs = prefs.getDeviceName();
+            if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
+                ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
+            }
 
             displayOrHideGUIObjects();
+
 
         }else{
 
@@ -119,12 +127,12 @@ public class RegisterFragment extends Fragment {
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS") ) {
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-                            displayOrHideGUIObjects();
+                           // displayOrHideGUIObjects();
 
                         }else if (messageType.equalsIgnoreCase("REGISTER_FAIL")){
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-                            displayOrHideGUIObjects();
+                          //  displayOrHideGUIObjects();
                         }
 
                     }
@@ -134,12 +142,15 @@ public class RegisterFragment extends Fragment {
                 Log.e(TAG, ex.getLocalizedMessage());
 
                 tvMessages.setText("Oops, your phone did not register - not sure why");
-                displayOrHideGUIObjects();
+                displayOrHideGUIObjects(true);
             }
         }
     };
-
     void displayOrHideGUIObjects() {
+
+        displayOrHideGUIObjects(false);
+    }
+    void displayOrHideGUIObjects(boolean callSetNumberOfPages) {
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         String groupNameFromPrefs = prefs.getGroupName();
@@ -153,7 +164,10 @@ public class RegisterFragment extends Fragment {
             // Phone is not registerd
             btnRegister.setVisibility(View.VISIBLE);
             btnUnRegister.setVisibility(View.INVISIBLE);
-            ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+            if (callSetNumberOfPages){
+                ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+            }
+
             if (groupNameFromGroupsActivity == null){
                 // User did not enter a group on Groups screen
                 // Display default register screen
@@ -191,9 +205,9 @@ public class RegisterFragment extends Fragment {
 
                 if (deviceNameFromPrefs != null){
                     // This means that the phone has already been registered so disable the input fields, hide the register button and display the unregister button.
-
-                    ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-
+                    if (callSetNumberOfPages) {
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
+                    }
 
                     etDeviceNameInput.setText(deviceNameFromPrefs);
                     tvTitleMessage.setText(getString(R.string.register_title_registered));
@@ -205,7 +219,9 @@ public class RegisterFragment extends Fragment {
 
                 }else {
                     // This means that the phone is not registered so make sure input fields are enabled and only register button is displayed
-                    ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                    if (callSetNumberOfPages) {
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                    }
                     etGroupNameInput.setEnabled(true);
                     etDeviceNameInput.setEnabled(true);
                     btnRegister.setVisibility(View.VISIBLE);
@@ -216,7 +232,9 @@ public class RegisterFragment extends Fragment {
 
             }else {
                 // User has entered a new group so display this new one in the group field
-                ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                if (callSetNumberOfPages) {
+                    ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                }
                 etGroupNameInput.setEnabled(true);
                 etDeviceNameInput.setEnabled(true);
                 //etGroupNameInput.setText(groupNameFromPrefs);
@@ -461,7 +479,7 @@ public class RegisterFragment extends Fragment {
             etGroupNameInput.setText("");
             etDeviceNameInput.setText("");
 
-            displayOrHideGUIObjects();
+            displayOrHideGUIObjects(true);
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");

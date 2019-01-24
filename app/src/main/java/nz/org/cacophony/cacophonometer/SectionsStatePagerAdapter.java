@@ -41,7 +41,8 @@ private final List<Fragment> mfragmentList = new ArrayList<>();
 
     @Override
     public Fragment getItem(int position) {
-        return mfragmentList.get(position);
+       return mfragmentList.get(position);
+
     }
 
     @Override
