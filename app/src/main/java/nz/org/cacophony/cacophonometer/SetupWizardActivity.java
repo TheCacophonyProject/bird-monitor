@@ -1,14 +1,20 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -188,6 +194,40 @@ public class SetupWizardActivity extends AppCompatActivity {
 
         this.group = group;
     }
+
+    public void displayOKDialogMessage(String title, String messageToDisplay){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                return;
+            }
+        });
+
+        builder.setMessage(messageToDisplay)
+                .setTitle(title);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                    Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                    btnPositive.setTextSize(24);
+                    int btnPositiveColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
+                    btnPositive.setTextColor(btnPositiveColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                textView.setTextSize(22);
+            }
+        });
+
+        dialog.show();
+    }
+
 
 
 }

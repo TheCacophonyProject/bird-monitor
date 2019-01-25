@@ -84,7 +84,7 @@
             android:layout_weight="1"
             android:checked="true"
             android:padding="@dimen/fab_margin_small"
-            android:text="MIC" />
+            android:text="MIC (Cacophony default)" />
 
         <View
             android:id="@+id/divider4"

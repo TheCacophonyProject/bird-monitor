@@ -39,13 +39,11 @@ public class GroupsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_groups, container, false);
         setUserVisibleHint(false);
 
-        etNewGroupInput = (EditText) view.findViewById(R.id.etNewGroupInput);
-        btnCreateGroup = (Button) view.findViewById(R.id.btnCreateGroup);
-        lvGroups = (ListView) view.findViewById(R.id.lvGroups);
+        etNewGroupInput =  view.findViewById(R.id.etNewGroupInput);
+        btnCreateGroup =  view.findViewById(R.id.btnCreateGroup);
+        lvGroups =  view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
-      //  arrayListGroups = Util.getGroupsStoredOnPhone(getActivity());
 
-        //adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayListGroups);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
 
@@ -58,30 +56,27 @@ public class GroupsFragment extends Fragment {
 
                     // Check a group was entered
                     if (newGroup == null){
-                       // Util.getToast(getActivity(), "Please enter a group name." , true).show();
-                        tvMessages.setText("Please enter a group name.");
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name.");
                         return;
                     }
                     // Check group name is at least 4 characters long
                     if (newGroup.length() < 4){
-                      //  Util.getToast(getActivity(), "Please enter a group name of at least 4 characters." , true).show();
-                        tvMessages.setText("Please enter a group name of at least 4 characters.");
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name of at least 4 characters.");
                         return;
                     }
 
                     // Check if this group already exists
-                   // if(arrayListGroups.contains(newGroup)){
+
                         if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
-                      //  Util.getToast(getActivity(), "Sorry, can NOT add " + newGroup + " as it already exists." , true).show();
-                            tvMessages.setText("Sorry, can NOT add that group as it already exists.");
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Sorry, can NOT add that group as it already exists.");
                         return;
                     }
                     ((SetupWizardActivity) getActivity()).setGroup(newGroup);
-
+                    tvMessages.setText("Adding group to server");
                     Util.addGroupToServer(getActivity(), newGroup);
                     adapter.add(newGroup);
                     ((EditText) view.findViewById(R.id.etNewGroupInput)).setText("");
-                   // ((SetupWizardActivity) getActivity()).setGroup(newGroup);
+
 
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -112,6 +107,7 @@ public class GroupsFragment extends Fragment {
             return;
         }
         if (visible) {
+            tvMessages.setText("");
             adapter.clear();
             adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
             adapter.notifyDataSetChanged();
@@ -156,7 +152,8 @@ public class GroupsFragment extends Fragment {
 
                     } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                        // Util.getToast(getActivity(), messageToDisplay, true).show();
-                        tvMessages.setText(messageToDisplay);
+                       // tvMessages.setText(messageToDisplay);
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
 
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
@@ -171,11 +168,11 @@ public class GroupsFragment extends Fragment {
 
                     }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
                        // Util.getToast(getActivity(), messageToDisplay, true).show();
-                        tvMessages.setText(messageToDisplay);
+                        //tvMessages.setText(messageToDisplay);
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                 }
 
                 }
-
 
 
             } catch (Exception ex) {

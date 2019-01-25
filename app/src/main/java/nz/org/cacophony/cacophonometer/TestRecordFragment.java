@@ -47,7 +47,7 @@ public class TestRecordFragment extends Fragment {
             }
         });
 
-        btnRecordNow = (Button) view.findViewById(R.id.btnRecordNow);
+        btnRecordNow =  view.findViewById(R.id.btnRecordNow);
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,11 +103,11 @@ public class TestRecordFragment extends Fragment {
         if (prefs.getIsDisabled()) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
             tvTitleMessage.setText("Recording is currently disabled on this phone. Enable recording from the main screen if you want to perform a test recording.");
-            btnRecordNow.setVisibility(View.INVISIBLE);
+            btnRecordNow.setVisibility(View.GONE);
         } else if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
             tvTitleMessage.setText("Can not record, as a recording is already in progress");
-            btnRecordNow.setVisibility(View.INVISIBLE);
+            btnRecordNow.setVisibility(View.GONE);
         } else {
             getView().findViewById(R.id.btnRecordNow).setEnabled(true);
             tvTitleMessage.setText("Press the RECORD NOW button to check that your phone has been setup correctly.");
@@ -120,7 +120,7 @@ public class TestRecordFragment extends Fragment {
         // recordNowIdlingResource.increment();
 
 
-        getView().findViewById(R.id.btnRecordNow).setEnabled(false);
+        btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
@@ -140,7 +140,7 @@ public class TestRecordFragment extends Fragment {
             if (getView() == null) {
                 return;
             }
-//            TextView tvMessages = getView().findViewById(R.id.tvMessages);
+
             try {
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");

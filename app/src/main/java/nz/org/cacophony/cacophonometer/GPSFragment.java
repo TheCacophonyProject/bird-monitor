@@ -27,6 +27,9 @@ public class GPSFragment extends Fragment {
 
     private Button btnGetGPSLocation;
     private TextView tvMessages;
+    private TextView tvSearching;
+    private TextView latitudeDisplay;
+    private TextView longitudeDisplay;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,8 +37,12 @@ public class GPSFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_gps, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        btnGetGPSLocation = (Button) view.findViewById(R.id.btnGetGPSLocation);
+        tvMessages =  view.findViewById(R.id.tvMessages);
+        tvSearching = view.findViewById(R.id.tvSearching);
+        latitudeDisplay = view.findViewById(R.id.tvLatitude);
+        longitudeDisplay = view.findViewById(R.id.tvLongitude);
+
+        btnGetGPSLocation =  view.findViewById(R.id.btnGetGPSLocation);
         btnGetGPSLocation.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -77,7 +84,7 @@ public class GPSFragment extends Fragment {
         longitudeDisplay.setText(getString(R.string.longitude) );
 
 
-        TextView tvSearching = getView().findViewById(R.id.tvSearching);
+       // TextView tvSearching = getView().findViewById(R.id.tvSearching);
         tvSearching.setVisibility(View.VISIBLE);
         Util.updateGPSLocation(getActivity().getApplicationContext());
     }
@@ -104,7 +111,9 @@ public class GPSFragment extends Fragment {
                         } else {
                             String messageToDisplay = joMessage.getString("messageToDisplay");
 //                            Util.getToast(context, messageToDisplay, true).show();
-                            tvMessages.setText(messageToDisplay);
+//                            tvMessages.setText(messageToDisplay);
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
+                            tvSearching.setVisibility(View.GONE);
                         }
 
                     }
@@ -136,7 +145,8 @@ public class GPSFragment extends Fragment {
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("error_do_not_have_root")) {
 //                            Util.getToast(getActivity().getApplicationContext(), "It looks like you have incorrectly indicated in settings that this phone has been rooted", true).show();
-                            tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "It looks like you have incorrectly indicated in settings that this phone has been rooted");
+                           // tvMessages.setText("It looks like you have incorrectly indicated in settings that this phone has been rooted");
                         }
                     }
                 }
@@ -151,11 +161,12 @@ public class GPSFragment extends Fragment {
         try {
 
             Prefs prefs = new Prefs(context);
-            TextView latitudeDisplay = getView().findViewById(R.id.tvLatitude);
-            TextView longitudeDisplay = getView().findViewById(R.id.tvLongitude);
+            tvMessages.setText("");
+            latitudeDisplay = getView().findViewById(R.id.tvLatitude);
+            longitudeDisplay = getView().findViewById(R.id.tvLongitude);
 
-            TextView tvSearching = getView().findViewById(R.id.tvSearching);
-            tvSearching.setVisibility(View.INVISIBLE);
+            //TextView tvSearching = getView().findViewById(R.id.tvSearching);
+            tvSearching.setVisibility(View.GONE);
 
             double lat = prefs.getLatitude();
             double lon = prefs.getLongitude();

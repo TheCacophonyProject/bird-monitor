@@ -300,10 +300,25 @@ class Server {
                 }
 
             } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
+                String message = "Sorry could not sign in.";
+                try {
+                    String errorType = joRes.getString("errorType");
+                    if (errorType != null){
+                        if (errorType.equals("validation")){
+                            message = joRes.getString("message");
+                            if (message.startsWith("_error:")){
+                               message = message.substring("_error:".length() + 1);
+                            }
+                        }
+                    }
+
+                } catch (Exception ex){
+                    Log.w(TAG, ex.getLocalizedMessage());
+                }
 
             jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
             // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not sign in.");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", message);
             Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
         } else {

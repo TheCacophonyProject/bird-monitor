@@ -230,8 +230,19 @@ public class RegisterFragment extends Fragment {
                     etDeviceNameInput.setText("");
                 }
 
-            }else {
-                // User has entered a new group so display this new one in the group field
+            }else { // groupNameFromPrefs and groupNameFromGroupsActivity are not null
+
+
+                if (groupNameFromPrefs.equals(groupNameFromGroupsActivity)){
+                    // Phone is still registered and the user isn't trying to change groups
+                    tvTitleMessage.setText(getString(R.string.register_title_registered)); // Might not need this, but being safe
+
+                }else{
+                    // User has entered a new group in the previous group screen
+                    // Need to tell the user that they need to first unregister if they want to change groups
+                    tvTitleMessage.setText("The phone is currently registered to group " + groupNameFromPrefs + ". You need to un-register before changing groups.");
+                }
+
                 if (callSetNumberOfPages) {
                     ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
                 }
@@ -257,6 +268,7 @@ public class RegisterFragment extends Fragment {
                     btnRegister.setVisibility(View.VISIBLE);
                     btnUnRegister.setVisibility(View.INVISIBLE);
                 }
+
 
 
             }
@@ -495,6 +507,39 @@ public class RegisterFragment extends Fragment {
             Log.e(TAG, ex.getLocalizedMessage());
             tvMessages.setText("Error disabling flight mode");
         }
+    }
+
+    public void displayOKDialogMessage(String title, String messageToDisplay){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Add the buttons
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                return;
+            }
+        });
+
+        builder.setMessage(messageToDisplay)
+                .setTitle(title);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                btnPositive.setTextSize(24);
+                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+                btnPositive.setTextColor(btnPositiveColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                textView.setTextSize(22);
+            }
+        });
+
+        dialog.show();
     }
 
 

@@ -57,7 +57,7 @@
     <string name="use_the_test_server">Use the test server?</string>
     <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone</string>
 
-    <string name="text_1_welcome_fragment">\'Swipe\' the screen to move through the setup process.  Each screen has extra information available from the help icon.</string>
+    <string name="text_1_welcome_fragment">\'Swipe\' the screen to move through the setup process.\n\nEach screen has extra information available from the help icon (top right).</string>
 
     <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - No more recordings will be made (even after a restart).</string>
     <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'</string>
