@@ -45,16 +45,16 @@ public class SignInFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_sign_in, container, false);
         setUserVisibleHint(false);
-        etUserNameOrPasswordInput = (EditText)view.findViewById(R.id.etUserNameOrPasswordInput);
-        etPasswordInput = (EditText)view.findViewById(R.id.etPasswordInput);
+        etUserNameOrPasswordInput = view.findViewById(R.id.etUserNameOrPasswordInput);
+        etPasswordInput = view.findViewById(R.id.etPasswordInput);
         tilUserNameOrPassword =  view.findViewById(R.id.tilUserNameOrPassword);
         tilPassword =  view.findViewById(R.id.tilPassword);
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
 
-       // tilPassword =(TextInputLayout)view.findViewById(R.id.tilPassword);
-        btnSignIn = (Button) view.findViewById(R.id.btnSignIn);
-        btnSignOutUser = (Button) view.findViewById(R.id.btnSignOutUser);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+
+        btnSignIn =  view.findViewById(R.id.btnSignIn);
+        btnSignOutUser =  view.findViewById(R.id.btnSignOutUser);
+        tvMessages =  view.findViewById(R.id.tvMessages);
 
         btnSignIn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -86,7 +86,7 @@ public class SignInFragment extends Fragment {
             }
         });
 
-        //tilPassword.setPasswordVisibilityToggleEnabled(true);
+
         displayOrHideGUIObjects();
 
          return view;
@@ -122,7 +122,7 @@ public class SignInFragment extends Fragment {
 
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
 
-            //tvMessages.setText("Error disabling flight mode");
+
         }
     }
 
@@ -151,18 +151,13 @@ public class SignInFragment extends Fragment {
         boolean signedIn = prefs.getUserSignedIn();
         String userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
         if (signedIn) {
-            //etUserNameOrPasswordInput.setText("");
-           // etUserNameOrPasswordInput.setEnabled(false);
-           // etUserNameOrPasswordInput.setVisibility(View.INVISIBLE);
+
             tilUserNameOrPassword.setVisibility(View.GONE);
             tilPassword.setVisibility(View.GONE);
-          //  etPasswordInput.setText("");
-          //  etPasswordInput.setEnabled(false);
-          //  etPasswordInput.setVisibility(View.INVISIBLE);
             tvTitleMessage.setText("Signed In");
             btnSignIn.setVisibility(View.GONE);
-           tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
-         //   btnSignIn.setEnabled(false);
+            tvMessages.setText("You are signed in as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+
             btnSignOutUser.setVisibility(View.VISIBLE);
             btnSignOutUser.setEnabled(true);
             btnSignOutUser.requestFocus();
@@ -171,20 +166,15 @@ public class SignInFragment extends Fragment {
             tilUserNameOrPassword.setVisibility(View.VISIBLE);
             tilPassword.setVisibility(View.VISIBLE);
 
-           // etUserNameOrPasswordInput.setVisibility(View.VISIBLE);
             if (userNameOrEmailAddress == null){
                 etUserNameOrPasswordInput.requestFocus();
             }else{
                 etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                 etPasswordInput.requestFocus();
             }
-         //   etPasswordInput.setVisibility(View.VISIBLE);
-         //   btnSignIn.setEnabled(true);
+
             btnSignIn.setVisibility(View.VISIBLE);
-         //   btnSignOutUser.setEnabled(false);
             btnSignOutUser.setVisibility(View.GONE);
-
-
         }
     }
 
@@ -210,11 +200,9 @@ public class SignInFragment extends Fragment {
                     return;
                 }
 
-
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
                 if (jsonStringMessage != null) {
-
 
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
                     String messageType = joMessage.getString("messageType");
@@ -226,7 +214,6 @@ public class SignInFragment extends Fragment {
                         boolean isItSignedIn = prefs.getUserSignedIn();
                         Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
-                      //  prefs.setUserSignedIn(true);
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
                         tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
@@ -235,33 +222,24 @@ public class SignInFragment extends Fragment {
                         btnSignIn.setVisibility(View.GONE);
                         btnSignOutUser.setEnabled(true);
                         btnSignOutUser.setVisibility(View.GONE);
-                        //btnSignOutUser.requestFocus();
                         tilUserNameOrPassword.setVisibility(View.GONE);
                         tilPassword.setVisibility(View.GONE);
-
-//                        etUserNameOrPasswordInput.setText("");
-//                        etUserNameOrPasswordInput.setEnabled(false);
-//                        etUserNameOrPasswordInput.setVisibility(View.INVISIBLE);
                         etPasswordInput.setText("");
-//                        etPasswordInput.setEnabled(false);
-//                        etPasswordInput.setVisibility(View.INVISIBLE);
+
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
-                       // ((SetupWizardActivity) getActivity()).nextPageView();
+
                     } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
-                       // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
-                      //  tvMessages.setText(messageToDisplay);
+
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         return;
                     }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
-                            // Util.getToast(getActivity().getApplicationContext(),messageToDisplay, true ).show();
-                           // tvMessages.setText(messageToDisplay);
+
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                             etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                             return;
                     }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
 
-                   // tvMessages.setText(messageToDisplay);
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                     etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                     return;
@@ -272,7 +250,6 @@ public class SignInFragment extends Fragment {
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
 
-                //tvMessages.setText("Could not login.");
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
             }
         }
@@ -283,13 +260,13 @@ public class SignInFragment extends Fragment {
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
             if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-            // tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
+
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered.");
                 return;
             }
 
             if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-               // tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
+
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The phone is not currently connected to the internet - please fix and try again.");
                 return;
             }
@@ -297,13 +274,12 @@ public class SignInFragment extends Fragment {
             // Check that the user name is valid, at least 5 characters.
             String usernameOrEmailAddress = ((EditText) getView().findViewById(R.id.etUserNameOrPasswordInput)).getText().toString();
             if (usernameOrEmailAddress.length() < 1){
-               // tvMessages.setText("Please enter a username of at least 5 characters (no spaces)");
+
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a username of at least 5 characters (no spaces).");
                 return;
             }else if (usernameOrEmailAddress.length() < 5 && !usernameOrEmailAddress.contains("@")) {
                 Log.i(TAG, "Invalid usernameOrEmailAddress: "+usernameOrEmailAddress);
 
-               // tvMessages.setText(usernameOrEmailAddress + " is not a valid username or email address.");
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Invalid usernameOrEmailAddress: " + usernameOrEmailAddress);
                 return;
             }
@@ -311,11 +287,11 @@ public class SignInFragment extends Fragment {
             // Check that the password is valid, at least 8 characters.
             String password = ((EditText) getView().findViewById(R.id.etPasswordInput)).getText().toString();
             if (password.length() < 1){
-               //tvMessages.setText("Please enter a password of at least 8 characters (no spaces)");
+
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a password of at least 8 characters (no spaces)");
                 return;
             }else if (password.length() < 5) {
-                //tvMessages.setText("Please use at least 8 characters (no spaces)");
+
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please use at least 8 characters (no spaces)");
                 return;
             }
@@ -348,8 +324,7 @@ public class SignInFragment extends Fragment {
     }
 
     public void signOutUserButtonPressed() {
-      //  Prefs prefs = new Prefs(getActivity().getApplicationContext());
-       // prefs.setUsername(null);
+
         Util.signOutUser(getActivity().getApplicationContext());
         ((SetupWizardActivity) getActivity()).setNumberOfPagesForNotSigned();
 
@@ -362,47 +337,11 @@ public class SignInFragment extends Fragment {
         btnSignOutUser.setEnabled(false);
         btnSignOutUser.setVisibility(View.INVISIBLE);
 
-//        etUserNameOrPasswordInput.setEnabled(true);
-//        etUserNameOrPasswordInput.setVisibility(View.VISIBLE);
-//        etPasswordInput.setEnabled(true);
-//        etPasswordInput.setVisibility(View.VISIBLE);
 
-    //    prefs.setUserSignedIn(false);
 
         displayOrHideGUIObjects();
     }
 
-//    public void displayOKDialogMessage(String title, String messageToDisplay){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        // Add the buttons
-//
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                return;
-//            }
-//        });
-//
-//        builder.setMessage(messageToDisplay)
-//                .setTitle(title);
-//
-//        final AlertDialog dialog = builder.create();
-//
-//        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//            @Override
-//            public void onShow(DialogInterface dialogInterface) {
-//
-//                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-//                btnPositive.setTextSize(24);
-//                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-//                btnPositive.setTextColor(btnPositiveColor);
-//
-//                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-//                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-//                textView.setTextSize(22);
-//            }
-//        });
-//
-//        dialog.show();
-//    }
+
 
 }
