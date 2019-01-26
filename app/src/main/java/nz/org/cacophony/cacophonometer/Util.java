@@ -1165,9 +1165,10 @@ Prefs prefs = new Prefs(context);
 
         String dialogMessage = "";
 
-        if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))){
+
+        if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.app_icon_name))){
             dialogMessage = context.getString(R.string.help_text_welcome);
-        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.app_icon_name))){
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))){
             dialogMessage = context.getString(R.string.help_text_welcome);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_account))){
             dialogMessage = context.getString(R.string.help_text_create_account);

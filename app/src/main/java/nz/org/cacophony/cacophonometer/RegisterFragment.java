@@ -82,10 +82,7 @@ public class RegisterFragment extends Fragment {
             IntentFilter iff = new IntentFilter("SERVER_REGISTER");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
-//            String group = ((SetupWizardActivity) getActivity()).getGroup();
-//            if (group != null){
-//                etGroupNameInput.setText(group);
-//            }
+
         // Set next pages
             Prefs prefs = new Prefs(getActivity());
             String groupNameFromPrefs = prefs.getGroupName();
@@ -268,74 +265,8 @@ public class RegisterFragment extends Fragment {
                     btnRegister.setVisibility(View.VISIBLE);
                     btnUnRegister.setVisibility(View.INVISIBLE);
                 }
-
-
-
             }
         }
-
-//        if (groupNameFromPrefs == null && groupNameFromGroupsActivity == null){
-//            // First time user and hasn't filled in Groups screen as they alredy had a group on the server
-//            // Don't change anything, They will enter the group name that they entered on the server
-//
-//        }else if (groupNameFromGroupsActivity != groupNameFromPrefs){
-//            // First time user selected either selected group from list or entered a new one
-//
-//        }
-
-
-
-
-//        if (groupNameFromPrefs != null && deviceNameFromPrefs != null) {
-//            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-//            // Phone is registered
-//            // Phone is NOT registered
-//            //Input fields to be INVISIBLE
-//            etGroupNameInput.setVisibility(View.INVISIBLE);
-//            etDeviceNameInput.setVisibility(View.INVISIBLE);
-//
-//            //Set appropriate messages
-//
-//            tvTitleMessage.setText(getString(R.string.register_title_registered));
-//            tvGroupName.setText(getString(R.string.group_name_registered) + prefs.getGroupName());
-//            tvDeviceName.setText(getString(R.string.device_name_registered) + prefs.getDeviceName());
-//
-//            //Only unregister button is visible
-//            btnRegister.setVisibility(View.INVISIBLE);
-//            btnUnRegister.setVisibility(View.VISIBLE);
-//
-//
-//        } else {
-//            // Phone is NOT registered
-//            //Input fields to be visible
-//            ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-//
-//            etGroupNameInput.setVisibility(View.VISIBLE);
-//            etDeviceNameInput.setVisibility(View.VISIBLE);
-//
-//            //Set appropriate messages
-//
-//            tvTitleMessage.setText(getString(R.string.register_title_unregistered));
-//            tvGroupName.setText(getString(R.string.group_name_unregistered));
-//            tvDeviceName.setText(getString(R.string.device_name_unregistered));
-//
-//            //Only register button is visible
-//            btnRegister.setVisibility(View.VISIBLE);
-//            btnUnRegister.setVisibility(View.INVISIBLE);
-//
-//            //Nudge user to Enter Group Name box
-//            tvGroupName.requestFocus();
-//
-//        }
-//
-//
-//        if (prefs.getGroupName() != null) {
-//            tvGroupName.setText("Group - " + prefs.getGroupName());
-//        }
-//        if (prefs.getDeviceName() != null) {
-//            tvDeviceName.setText("Device Name - " + prefs.getDeviceName());
-//
-//        }
     }
 
     public void registerButtonPressed() {

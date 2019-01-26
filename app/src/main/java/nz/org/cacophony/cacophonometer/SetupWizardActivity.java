@@ -28,9 +28,6 @@ public class SetupWizardActivity extends AppCompatActivity {
 
     private String group = ""; // to be used to pass the name of the selected group between fragments
 
-//    boolean numberOfPagesForSignedInNotRegistered = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
-//    boolean numberOfPagesForRegisterd = true; // Used to stop continuous loop when pages change and calls displayOrHideGUIObjects()
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,35 +46,9 @@ public class SetupWizardActivity extends AppCompatActivity {
 
         setupViewPager(mViewPager);
 
-//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//
-//            // This method will be invoked when a new page becomes selected.
-//            @Override
-//            public void onPageSelected(int position) {
-//                if (mViewPager.getCurrentItem() == 5){
-//                    Log.e(TAG, "onPageSelected " + mViewPager.getCurrentItem());
-//                }
-//
-//            }
-//
-//            // This method will be invoked when the current page is scrolled
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                if (mViewPager.getCurrentItem() == 5){
-//                    Log.e(TAG, "onPageScrolled " + mViewPager.getCurrentItem());
-//                }
-//            }
-//
-//            // Called when the scroll state changes:
-//            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                if (mViewPager.getCurrentItem() == 5){
-//                    Log.e(TAG, "onPageScrolled " + mViewPager.getCurrentItem());
-//                }
-//            }
-//        });
+
     }
+
 
 
 

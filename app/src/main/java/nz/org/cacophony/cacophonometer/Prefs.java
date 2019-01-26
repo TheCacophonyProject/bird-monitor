@@ -585,15 +585,6 @@ class Prefs {
         return getBoolean(IGNORE_LOW_BATTERY_KEY);
     }
 
-//    boolean getOffLineMode() {
-//        return getBoolean(OFFLINE_MODE_KEY);
-//    }
-//
-//    void setIsOffLineMode(boolean isOffLineMode){
-//        setBoolean(OFFLINE_MODE_KEY, isOffLineMode);
-//    }
-
-
     boolean getOnLineMode() {
         return getBoolean(ONLINE_MODE_KEY);
     }
@@ -630,13 +621,6 @@ class Prefs {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-//    void setOffLineMode(boolean offLineMode) {
-//        setBoolean(OFFLINE_MODE_KEY, offLineMode);
-//    }
-//
-//    void setOnLineMode(boolean onLineMode) {
-//        setBoolean(ONLINE_MODE_KEY, onLineMode);
-//    }
 
     void setPlayWarningSound(boolean playWarningSound) {
         setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);

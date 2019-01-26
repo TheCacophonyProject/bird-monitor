@@ -56,7 +56,7 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         currentItem++;
         if (currentItem < mViewPager.getAdapter().getCount()){
             mViewPager.setCurrentItem(currentItem);
-            // Set the toolbar title
+
 
         }else{
             finish();

@@ -1,6 +1,7 @@
 package nz.org.cacophony.cacophonometer;
 
 import android.annotation.SuppressLint;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -68,12 +70,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         prefs.setTimeBetweenFrequentUploadsSeconds();
         prefs.setBatteryLevelCutoffRepeatingRecordings();
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
-       // prefs.setUserSignedIn(false);
-
 
         boolean isFirstTime = prefs.getIsFirstTime();
 
-        if (prefs.getIsFirstTime()) {
+        if (isFirstTime) {
+//            if (true) {
+
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
@@ -81,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
-            Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
-            prefs.setIsFirstTimeFalse();
+
+          //  prefs.setIsFirstTimeFalse(); // Now do this in WelcomeFragment after Help is displayed for the first time
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
@@ -107,13 +109,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     if (timeBetweenDownAndUp > 5000){
                         if (prefs.getSettingsForTestServerEnabled()){
                             advancedButton.setText("Advanced");
-                           // Util.getToast(getApplicationContext(),"Settings for Test Server have been DISABLED", false).show();
                             prefs.setSettingsForTestServerEnabled(false);
 
 
                         }else{
                             advancedButton.setText("Very Advanced");
-                           // Util.getToast(getApplicationContext(),"Settings for Test Server Enabled", false).show();
                             prefs.setSettingsForTestServerEnabled(true);
 
                         }
@@ -140,13 +140,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
        // for testing setup wizard, set isFirstTime to true, but comment out next line after testing setup wizard
-        isFirstTime = true;
+      //  isFirstTime = true;
 
-        if (isFirstTime){
-//            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+       if (isFirstTime){
+       //     if(true){
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
-
 
     }
 
@@ -162,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         super.onResume();
         Prefs prefs = new Prefs(this.getApplicationContext());
 
+
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
             ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
@@ -172,7 +172,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+
+
     }
+
+
+
 
     @Override
     protected void onStop() {
