@@ -13,7 +13,7 @@
     <string name="activity_or_fragment_title_rooted">Rooted?</string>
     <string name="activity_or_fragment_title_gps">GPS Location</string>
     <string name="activity_or_fragment_title_walking">Walking?</string>
-    <string name="activity_or_fragment_title_manage_recordings">Manage Recordings</string>
+    <string name="activity_or_fragment_title_manage_recordings">Recordings</string>
     <string name="activity_or_fragment_title_test_record">Test Record</string>
     <string name="activity_or_fragment_title_internet_connection">Internet Connection</string>
     <string name="activity_or_fragment_title_warning_sound">Warning Sound</string>
@@ -57,9 +57,9 @@
     <string name="has_your_phone_been_rooted">Has your phone been rooted?</string>
     <string name="play_a_warning_sound">Play a warning sound before a recording starts.</string>
     <string name="use_the_test_server">Use the test server?</string>
-    <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone</string>
+    <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone or swipe to next screen when ready.</string>
 
-    <string name="text_1_welcome_fragment">\'Swipe\' the screen to move through the setup process.\n\nEach screen has extra information available from the help icon (top right).</string>
+    <string name="text_1_welcome_fragment">\'Swipe\' the screen (left or right) to move through the setup wizard. You can exit the wizard at any stage by pressing your phone\'s back button.\n\nEach screen has extra information available from the help icon (top right).</string>
 
     <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - No more recordings will be made (even after a restart).</string>
     <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'</string>
