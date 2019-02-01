@@ -122,14 +122,16 @@ public class RegisterFragment extends Fragment {
                     if (messageType != null) {
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS") ) {
-                            tvMessages.setText(messageToDisplay);
+                            tvMessages.setText(messageToDisplay + " Swipe to next screen.");
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-                           // displayOrHideGUIObjects();
+                            etGroupNameInput.setEnabled(false);
+                            etDeviceNameInput.setEnabled(false);
 
                         }else if (messageType.equalsIgnoreCase("REGISTER_FAIL")){
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-                          //  displayOrHideGUIObjects();
+                            etGroupNameInput.setEnabled(true);
+                            etDeviceNameInput.setEnabled(true);
                         }
 
                     }
@@ -305,6 +307,12 @@ public class RegisterFragment extends Fragment {
             return;
         } else if (deviceName.length() < 4) {
             tvMessages.setText(deviceName + " is not a valid device name. Please use at least 4 characters (no spaces)");
+            return;
+        }
+
+        // Don't allow . (dots) in the device name
+        if (deviceName.contains(".")){
+            tvMessages.setText(deviceName + " is not a valid device name. Full stops . are not allowed.");
             return;
         }
 

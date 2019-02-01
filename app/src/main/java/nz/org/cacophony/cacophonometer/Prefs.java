@@ -106,6 +106,7 @@ class Prefs {
     private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
 
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
+    private static final String DISPLAY_HELP_ON_STARTUP_KEY = "DISPLAY_HELP_ON_STARTUP";
 
     private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
@@ -196,7 +197,16 @@ class Prefs {
         return preferences.getBoolean(key, false);
     }
 
-    private boolean getBooleanDefaultTrue() {  // used to determine first time app runs after install
+    private boolean getBooleanDefaultTrue(String key) {  // used to determine first time app runs after install
+        if (context == null) {
+            Log.e(TAG, "Context was null when trying to get preferences.");
+            return false;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, true);
+    }
+
+    private boolean getDisplayWelcomeHelpDefaultTrue() {  // used to determine first time app runs after install
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return false;
@@ -666,12 +676,12 @@ class Prefs {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
 
-    void setIsFirstTimeFalse() {
-        setBoolean(FIRST_TIME_KEY, false);
+    boolean getIsFirstTime() {
+        return getBooleanDefaultTrue(FIRST_TIME_KEY);
     }
 
-    boolean getIsFirstTime() {
-        return getBooleanDefaultTrue();
+        void setIsFirstTimeFalse() {
+        setBoolean(FIRST_TIME_KEY, false);
     }
 
     long getTimeThatLastRecordingHappened(){

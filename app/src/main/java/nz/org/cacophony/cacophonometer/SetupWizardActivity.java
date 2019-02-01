@@ -46,7 +46,10 @@ public class SetupWizardActivity extends AppCompatActivity {
 
         setupViewPager(mViewPager);
 
-
+        final Prefs prefs = new Prefs(this.getApplicationContext());
+        if (prefs.getDeviceName() == null){
+            Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
+        }
     }
 
 

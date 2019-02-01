@@ -177,7 +177,9 @@ public class TestRecordFragment extends Fragment {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         tvMessages.setText(messageToDisplay);
-                        getView().findViewById(R.id.btnRecordNow).setEnabled(true);
+                        //getView().findViewById(R.id.btnRecordNow).setEnabled(true);
+                        btnRecordNow.setEnabled(true);
+                        btnRecordNow.setVisibility(View.VISIBLE);
                     }
                 }
 

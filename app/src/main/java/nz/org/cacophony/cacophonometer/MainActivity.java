@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         boolean isFirstTime = prefs.getIsFirstTime();
 
         if (isFirstTime) {
-//            if (true) {
 
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
 
-          //  prefs.setIsFirstTimeFalse(); // Now do this in WelcomeFragment after Help is displayed for the first time
+           prefs.setIsFirstTimeFalse();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
@@ -139,11 +138,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createCreateAlarms(getApplicationContext());
         Util.setUpLocationUpdateAlarm(getApplicationContext());
 
-       // for testing setup wizard, set isFirstTime to true, but comment out next line after testing setup wizard
-      //  isFirstTime = true;
 
-       if (isFirstTime){
-       //     if(true){
+// Open the Setup wizard if the app does not yet have device name
+       if (prefs.getDeviceName() == null){
+
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 

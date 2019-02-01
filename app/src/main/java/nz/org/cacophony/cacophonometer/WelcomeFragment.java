@@ -36,18 +36,15 @@ public class WelcomeFragment extends Fragment {
         if (getActivity() == null){
             return;
         }
-        if (visible) {
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-            boolean isFirstTime = prefs.getIsFirstTime();
-            if (isFirstTime) {
-
-                Util.displayHelp(getActivity(), getResources().getString(R.string.app_icon_name));
-            }
-
-            prefs.setIsFirstTimeFalse(); // this is important -stops help being displayed every time, and stops default settings being reapplied every time
-
-
-        }
+//        if (visible) {
+//            Prefs prefs = new Prefs(getActivity().getApplicationContext());
+//            boolean displayWelcomeHelp = prefs.getDisplayHelpOnStartup();
+//            if (displayWelcomeHelp){
+//
+//                Util.displayHelp(getActivity(), getResources().getString(R.string.app_icon_name));
+//            }
+//
+//        }
     }
 
 }

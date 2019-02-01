@@ -287,7 +287,7 @@ class Server {
                     boolean isItSignedIn = prefs.getUserSignedIn();
                     Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
-                    messageToDisplay = "Success, you have successfully signed in";
+                    messageToDisplay = "You have successfully signed in as ";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                     Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
@@ -523,8 +523,10 @@ class Server {
                 registered = false;
                 jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
               //  jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
-                if (message.startsWith("group")){
+                if (message.startsWith("group")) {
                     message = message.substring("group".length() + 2);
+                } else if (message.startsWith("devicename: invalid name")) {
+                    message = "Sorry could not register as " + deviceName + " is an invalid name.";
                 }else{
                     message = "Sorry could not register " + deviceName + " as it is already being used";
                 }

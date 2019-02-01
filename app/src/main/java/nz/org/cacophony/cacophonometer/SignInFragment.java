@@ -212,11 +212,11 @@ public class SignInFragment extends Fragment {
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
 
                         boolean isItSignedIn = prefs.getUserSignedIn();
-                        Log.e(TAG, "isItSignedIn" + isItSignedIn);
+                       // Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
-                        tvMessages.setText(messageToDisplay + " as " + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
+                        tvMessages.setText(messageToDisplay  + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
                         tvTitleMessage.setText("Signed In");
                         btnSignIn.setEnabled(false);
                         btnSignIn.setVisibility(View.GONE);
