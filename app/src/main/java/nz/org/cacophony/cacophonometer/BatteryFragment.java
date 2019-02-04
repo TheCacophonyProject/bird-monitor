@@ -50,6 +50,7 @@ public class BatteryFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Prefs prefs = new Prefs(getActivity());
                 prefs.setIgnoreLowBattery(swIgnoreLowBattery.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -70,6 +71,11 @@ public class BatteryFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swIgnoreLowBattery.setChecked(prefs.getIgnoreLowBattery());
+        if (prefs.getIgnoreLowBattery()){
+            swIgnoreLowBattery.setText("Record with low battery is ON");
+        }else{
+            swIgnoreLowBattery.setText("Record with low battery is OFF");
+        }
     }
 
 }

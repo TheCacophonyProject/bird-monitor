@@ -37,9 +37,6 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
-
-
     <Switch
         android:id="@+id/swUseTestServer"
         style="@style/SwitchAndRadioButtonCompatTheme"
@@ -47,17 +44,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:showText="true"
         android:text="Test Server (You will need to register)"
-        android:textOff="NO"
-        android:textOn="YES"
+        android:textOff=""
+        android:textOn=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Switch
         android:id="@+id/swUseVeryFrequentRecordings"
@@ -70,8 +67,8 @@
         android:layout_marginRight="8dp"
         android:showText="true"
         android:text="Very Frequent Recordings"
-        android:textOff="NO"
-        android:textOn="YES"
+        android:textOff=""
+        android:textOn=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,8 +98,8 @@
         android:layout_marginRight="8dp"
         android:showText="true"
         android:text="Use Short Recordings"
-        android:textOff="No"
-        android:textOn="Yes"
+        android:textOff=""
+        android:textOn=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,5 +137,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/swShortRecordings" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="(You will need to regresiter your phone)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
 </android.support.constraint.ConstraintLayout>

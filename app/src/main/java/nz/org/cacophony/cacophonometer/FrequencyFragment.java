@@ -53,6 +53,7 @@ public class FrequencyFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Util.setUseFrequentRecordings(getActivity().getApplicationContext(), swRecordMoreOften.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -61,6 +62,7 @@ public class FrequencyFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Util.setUseFrequentUploads(getActivity().getApplicationContext(), swUseFrequentUploads.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -69,6 +71,7 @@ public class FrequencyFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Util.setPeriodicallyUpdateGPS(getActivity().getApplicationContext(), swPeriodicallyUpdateGPS.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -90,8 +93,29 @@ public class FrequencyFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swRecordMoreOften.setChecked(prefs.getUseFrequentRecordings());
+        if (prefs.getUseFrequentRecordings()){
+            swRecordMoreOften.setText("Record more often is ON");
+        }else{
+            swRecordMoreOften.setText("Record more often is OFF");
+        }
+
+
+
         swUseFrequentUploads.setChecked(prefs.getUseFrequentUploads());
+
+        if (prefs.getUseFrequentUploads()){
+            swUseFrequentUploads.setText("Upload after every recording is ON");
+        }else{
+            swUseFrequentUploads.setText("Upload after every recording is OFF");
+        }
+
+
        swPeriodicallyUpdateGPS.setChecked(prefs.getPeriodicallyUpdateGPS());
+        if (prefs.getPeriodicallyUpdateGPS()){
+            swPeriodicallyUpdateGPS.setText("Periodically update GPS is ON");
+        }else{
+            swPeriodicallyUpdateGPS.setText("Periodically update GPS is OFF");
+        }
     }
 
 }

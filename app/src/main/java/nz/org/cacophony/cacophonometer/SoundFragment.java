@@ -50,6 +50,7 @@ public class SoundFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Prefs prefs = new Prefs(getActivity());
                 prefs.setPlayWarningSound(swPlayWarningSound.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -70,6 +71,11 @@ public class SoundFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swPlayWarningSound.setChecked(prefs.getPlayWarningSound());
+        if (prefs.getPlayWarningSound()){
+            swPlayWarningSound.setText("Warning sound is ON");
+        }else{
+            swPlayWarningSound.setText("Warning sound is OFF");
+        }
     }
 
 }

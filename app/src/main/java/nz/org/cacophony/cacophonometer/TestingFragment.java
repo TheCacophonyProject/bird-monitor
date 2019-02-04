@@ -27,11 +27,11 @@ public class TestingFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_testing, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        btnFinished = (Button) view.findViewById(R.id.btnFinished);
-        swUseTestServer = (Switch) view.findViewById(R.id.swUseTestServer);
-        swUseVeryFrequentRecordings =  (Switch) view.findViewById(R.id.swUseVeryFrequentRecordings);
-        swShortRecordings =  (Switch) view.findViewById(R.id.swShortRecordings);
+        tvMessages =  view.findViewById(R.id.tvMessages);
+        btnFinished =  view.findViewById(R.id.btnFinished);
+        swUseTestServer =  view.findViewById(R.id.swUseTestServer);
+        swUseVeryFrequentRecordings =   view.findViewById(R.id.swUseVeryFrequentRecordings);
+        swShortRecordings =  view.findViewById(R.id.swShortRecordings);
 
 
         displayOrHideGUIObjects();
@@ -54,22 +54,20 @@ public class TestingFragment extends Fragment {
 
                 Util.setUseTestServer(getActivity().getApplicationContext(), isChecked);
 
-                final Switch swUseShortRecordings = getView().findViewById(R.id.swShortRecordings);
-                swUseShortRecordings.setEnabled(isChecked);
-
-                final Switch swUseVeryFrequentRecordings = getView().findViewById(R.id.swUseVeryFrequentRecordings);
-                swUseVeryFrequentRecordings.setEnabled(isChecked);
+//                swShortRecordings.setEnabled(isChecked);
+//                swUseVeryFrequentRecordings.setEnabled(isChecked);
 
                 if (!isChecked){
                     Prefs prefs = new Prefs(getActivity().getApplicationContext());
                     prefs.setUseShortRecordings(false);
-                    swUseShortRecordings.setChecked(false);
-                    swUseShortRecordings.setEnabled(false);
+//                    swShortRecordings.setChecked(false);
+//                    swShortRecordings.setEnabled(false);
 
                     prefs.setUseVeryFrequentRecordings(false);
-                    swUseVeryFrequentRecordings.setChecked(false);
-                    swUseVeryFrequentRecordings.setEnabled(false);
+//                    swUseVeryFrequentRecordings.setChecked(false);
+//                    swUseVeryFrequentRecordings.setEnabled(false);
                 }
+                displayOrHideGUIObjects();
 
             }
         });
@@ -82,6 +80,7 @@ public class TestingFragment extends Fragment {
                     return;
                 }
                 Util.setUseVeryFrequentRecordings(getActivity().getApplicationContext(), isChecked);
+                displayOrHideGUIObjects();
             }
         });
 
@@ -94,6 +93,7 @@ public class TestingFragment extends Fragment {
                 }
                 Prefs prefs = new Prefs(getActivity().getApplicationContext());
                 prefs.setUseShortRecordings(isChecked);
+                displayOrHideGUIObjects();
             }
         });
 
@@ -119,16 +119,42 @@ public class TestingFragment extends Fragment {
 
         boolean useTestServer = prefs.getUseTestServer();
         swUseTestServer.setChecked(useTestServer);
+        if (prefs.getUseTestServer()){
+            swUseTestServer.setText("Use Test Server is ON");
+            swShortRecordings.setEnabled(true);
+            swUseVeryFrequentRecordings.setEnabled(true);
+
+        }else{
+            swUseTestServer.setText("Use Test Server is OFF");
+
+            swShortRecordings.setChecked(false);
+            swShortRecordings.setEnabled(false);
+
+            swUseVeryFrequentRecordings.setChecked(false);
+            swUseVeryFrequentRecordings.setEnabled(false);
+        }
+
 
         boolean useVeryFrequentRecordings = prefs.getUseVeryFrequentRecordings();
 
         swUseVeryFrequentRecordings.setChecked(useVeryFrequentRecordings);
         swUseVeryFrequentRecordings.setEnabled(useTestServer);// only enabled if using test server
+        if (prefs.getUseVeryFrequentRecordings()){
+            swUseVeryFrequentRecordings.setText("Very frequent recordings is ON");
+        }else{
+            swUseVeryFrequentRecordings.setText("Very frequent recordings is OFF");
+        }
+
 
         boolean useShortRecordings = prefs.getUseShortRecordings();
 
         swShortRecordings.setChecked(useShortRecordings);
         swShortRecordings.setEnabled(useTestServer); // only enabled if using test server
+        if (prefs.getUseShortRecordings()){
+            swShortRecordings.setText("Short recordings is ON");
+        }else{
+            swShortRecordings.setText("Short recordings is OFF");
+        }
     }
 
 

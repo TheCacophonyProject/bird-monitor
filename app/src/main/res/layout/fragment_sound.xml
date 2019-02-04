@@ -34,10 +34,10 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:showText="true"
-        android:text="Play Sound"
+        android:text="Warning sound is"
 
-        android:textOff="No"
-        android:textOn="Yes"
+        android:textOff=""
+        android:textOn=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

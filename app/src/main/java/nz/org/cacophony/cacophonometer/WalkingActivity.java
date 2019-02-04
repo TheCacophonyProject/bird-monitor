@@ -13,6 +13,7 @@ import android.widget.Switch;
 
 public class WalkingActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = WalkingActivity.class.getName();
+    private Switch switchWalking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,18 +24,19 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        final Switch switchWalking = findViewById(R.id.swWalking2);
+        switchWalking = findViewById(R.id.swWalking2);
         switchWalking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (switchWalking.isShown()) { // Listener was firing each time activity loaded - https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
                     Util.setWalkingMode(getApplicationContext(), isChecked);
-                   // findViewById(R.id.btnUploadFiles).setEnabled(!isChecked);
+                    displayOrHideGUIObjects();
                 }
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,6 +47,11 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
     @Override
     public void onResume() {
         super.onResume();
+        displayOrHideGUIObjects();
+    }
+
+
+    void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getApplicationContext());
 
         boolean walkingMode = true; // if any of the following are false, then change walking mode to false
@@ -66,31 +73,16 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
 
         }
 
-        final Switch switchWalking = findViewById(R.id.swWalking2);
         switchWalking.setChecked(walkingMode);
 
-//        // Now enable or disable Upload files button
-//        findViewById(R.id.btnUploadFiles).setEnabled(!walkingMode);
+        if (walkingMode){
+            switchWalking.setText("Walking is ON");
+        }else{
+            switchWalking.setText("Walking is OFF");
+        }
     }
 
 
-
-
-
-
-
-//    public void next(@SuppressWarnings("UnusedParameters") View v) {
-//
-//        try {
-//            Intent intent = new Intent(this, UploadFilesActivity.class);
-//            startActivity(intent);
-//
-//            finish();
-//
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
-//    }
 
     public void finished(@SuppressWarnings("UnusedParameters") View v) {
 

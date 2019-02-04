@@ -7,13 +7,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class DisableActivity extends AppCompatActivity {
     private static final String TAG = DisableActivity.class.getName();
+
+    private Switch switchDisable;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +31,8 @@ public class DisableActivity extends AppCompatActivity {
 
         final Prefs prefs = new Prefs(getApplicationContext());
 
-        final Switch switchDisable = findViewById(R.id.swDisable);
+        switchDisable = findViewById(R.id.swDisable);
+
         switchDisable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -34,6 +40,7 @@ public class DisableActivity extends AppCompatActivity {
                     return;
                 }
                 prefs.setIsDisabled(!isChecked);
+                displayOrHideGUIObjects();
 
             }
         });
@@ -49,12 +56,25 @@ public class DisableActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        displayOrHideGUIObjects();
+
+
+
+
+
+    }
+
+    void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getApplicationContext());
         boolean isDisabled = prefs.getIsDisabled();
 
-        final Switch switchDisable = findViewById(R.id.swDisable);
         switchDisable.setChecked(!isDisabled);
 
+        if (isDisabled){
+            switchDisable.setText("Recording is OFF");
+        }else{
+            switchDisable.setText("Recording is ON");
+        }
     }
 
 

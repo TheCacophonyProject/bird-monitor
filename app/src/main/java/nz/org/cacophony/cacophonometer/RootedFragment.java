@@ -61,6 +61,7 @@ public class RootedFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Prefs prefs = new Prefs(getActivity());
                 prefs.setHasRootAccess(swRooted.isChecked());
+                displayOrHideGUIObjects();
             }
         });
 
@@ -81,6 +82,12 @@ public class RootedFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swRooted.setChecked(prefs.getHasRootAccess());
+
+        if (prefs.getHasRootAccess()){
+            swRooted.setText("YES");
+        }else{
+            swRooted.setText("NO");
+        }
 
         if (prefs.getSettingsForTestServerEnabled()){
             btnFinished.setVisibility(View.INVISIBLE);
