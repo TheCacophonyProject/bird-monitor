@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.cacophonometer.Util.getBatteryLevelByIntent;
 
@@ -30,9 +33,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
-        if (prefs.getIsDisabled()){
-            return;  // Don't do anything if Turn Off has been enabled.
-        }
+
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         if (powerManager == null){
             Log.e(TAG, "PowerManger is null");
@@ -46,11 +47,39 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "alarms_updated");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "alarms_updated");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
+          //  Util.broadcastAMessage(context, "alarms_updated");
+
+            if (prefs.getIsDisabled()){
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
+                Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+                return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
+            }
+
             if (!Util.checkPermissionsForRecording(context)) {
                 Log.e(TAG, "Don't have proper permissions to record");
 
                 // Need to enable record button
-                Util.broadcastAMessage(context, "no_permission_to_record");
+                 messageToDisplay = "";
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                try {
+                    jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+               // Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }
 

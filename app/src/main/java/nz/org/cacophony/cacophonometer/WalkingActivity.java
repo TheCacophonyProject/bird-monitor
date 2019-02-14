@@ -1,101 +1,93 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.ToggleButton;
 
-public class WalkingActivity extends AppCompatActivity {
+public class WalkingActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
     private static final String TAG = WalkingActivity.class.getName();
-    private boolean walkingStateWhenActivityDisplays;
+    private Switch switchWalking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walking);
+
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+        switchWalking = findViewById(R.id.swWalking2);
+        switchWalking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (switchWalking.isShown()) { // Listener was firing each time activity loaded - https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
+                    Util.setWalkingMode(getApplicationContext(), isChecked);
+                    displayOrHideGUIObjects();
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_help, menu);
+        return true;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        displayOrHideGUIObjects();
+    }
+
+
+    void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getApplicationContext());
 
-//        String modeStr = prefs.getMode();
-//        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
-//        if (modeStr.equalsIgnoreCase("walking")) {
-//            toggleButtonMode.setChecked(true);
-//        } else
-//            toggleButtonMode.setChecked(false);
-
         boolean walkingMode = true; // if any of the following are false, then change walking mode to false
-        walkingStateWhenActivityDisplays = true;
-        //if (!prefs.getOffLineMode()){
+
         if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if(!prefs.getUseFrequentRecordings()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if (!prefs.getIgnoreLowBattery()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if (!prefs.getPlayWarningSound()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if (!prefs.getPeriodicallyUpdateGPS()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if (!prefs.getIsDisableDawnDuskRecordings()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
         }else if (prefs.getUseFrequentUploads()){
             walkingMode = false;
-            walkingStateWhenActivityDisplays = false;
+
         }
 
-//        final ToggleButton toggleButtonMode = findViewById(R.id.tgbWalking);
-//        toggleButtonMode.setChecked(walkingMode);
+        switchWalking.setChecked(walkingMode);
 
-        final Switch switchWalking = findViewById(R.id.swWalking2);
-        switchWalking.setChecked(prefs.getIsDisabled());
+        if (walkingMode){
+            switchWalking.setText("Walking is ON");
+        }else{
+            switchWalking.setText("Walking is OFF");
+        }
     }
 
 
 
-    void setWalking(){
-        // will check to see if mode has changed before changing prefs values etc
-        final Switch switchWalking = findViewById(R.id.swWalking2);
-        boolean isWalking = switchWalking.isChecked();
-        if (walkingStateWhenActivityDisplays == isWalking){
-            // User hasn't changed the state so don't do anything
-            return;
-        }
-        Util.setWalkingMode(getApplicationContext(),isWalking);
-
-    }
-
-//    void setWalking(){
-//        // will check to see if mode has changed before changing prefs values etc
-//        final ToggleButton toggleButtonWalking = findViewById(R.id.tgbWalking);
-//        boolean checked = ( toggleButtonWalking).isChecked();
-//        if (walkingStateWhenActivityDisplays == checked){
-//            // User hasn't changed the state so don't do anything
-//            return;
-//        }
-//        Util.setWalkingMode(getApplicationContext(),checked);
-//
-//    }
-
-    public void next(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-            setWalking();
-//            Intent intent = new Intent(this, MainActivity2.class);
-//            startActivity(intent);
+
             finish();
 
         } catch (Exception ex) {
@@ -103,17 +95,28 @@ public class WalkingActivity extends AppCompatActivity {
         }
     }
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_walking));
+                return true;
 
-        try {
-            setWalking();
-            Intent intent = new Intent(this, GPSActivity.class);
-            startActivity(intent);
-
-            finish();
-
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    public CountingIdlingResource getIdlingResource() {
+        return registerIdlingResource;
+    }
+
+    @SuppressWarnings("SameReturnValue")
+    public CountingIdlingResource getRecordNowIdlingResource() {
+        return recordNowIdlingResource;
     }
 }

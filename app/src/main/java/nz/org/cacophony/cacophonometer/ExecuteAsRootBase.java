@@ -3,6 +3,9 @@ package nz.org.cacophony.cacophonometer;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -123,24 +126,57 @@ abstract class ExecuteAsRootBase
                 catch (Exception ex)
                 {
                     Log.e("ROOT", "Error executing root action", ex);
-                    Util.broadcastAMessage(context, "error_do_not_have_root");
+                    String messageToDisplay = "";
+                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                    jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+                    Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+                  //  Util.broadcastAMessage(context, "error_do_not_have_root");
                 }
             }
         }
         catch (IOException ex)
         {
             Log.w("ROOT", "Can't get root access", ex);
-            Util.broadcastAMessage(context, "error_do_not_have_root");
+
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+            //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (SecurityException ex)
         {
             Log.w("ROOT", "Can't get root access", ex);
-            Util.broadcastAMessage(context, "error_do_not_have_root");
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+           // Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (Exception ex)
         {
             Log.w("ROOT", "Error executing internal operation", ex);
-            Util.broadcastAMessage(context, "error_do_not_have_root");
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+            //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
 
         return returnValue;

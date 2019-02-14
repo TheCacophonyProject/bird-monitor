@@ -27,20 +27,16 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
 
     <application
         android:allowBackup="false"
+
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_icon_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
-
         <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -56,42 +52,36 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:screenOrientation="portrait"
+            android:label="@string/app_icon_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".VitalsActivity"
-            android:label="@string/title_activity_vitals"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="nz.org.cacophony.cacophonometer.MainActivity" />
-        </activity>
-
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".RootedActivity" />
+            android:screenOrientation="portrait"
+            android:label="@string/activity_or_fragment_title_vitals" />
         <activity
-            android:name=".GPSActivity"
-            android:label="@string/title_activity_gps"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".WalkingActivity" />
-        <activity android:name=".TestRecordActivity" />
-        <activity android:name=".InternetConnectionActivity" />
-        <activity android:name=".SoundActivity" />
-        <activity android:name=".BatteryActivity" />
-        <activity android:name=".FrequencyActivity" />
-        <activity android:name=".TestingActivity" />
-        <activity android:name=".DisableActivity"></activity>
+            android:name=".WalkingActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/activity_or_fragment_title_walking" />
+
+        <activity
+            android:name=".DisableActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/activity_or_fragment_title_turn_off_or_on" />
+        <activity
+            android:name=".SetupWizardActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:label="@string/activity_or_fragment_title_setup" />
+        <activity android:name=".AdvancedWizardActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:label="@string/activity_or_fragment_title_advanced_setup" />
     </application>
 
 </manifest>

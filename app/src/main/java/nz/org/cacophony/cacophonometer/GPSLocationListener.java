@@ -7,6 +7,9 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  * The app has the ability to save the current GPS location.  When the app asks the Android OS
@@ -30,6 +33,7 @@ class GPSLocationListener implements LocationListener {
 
        try {
            Log.d(TAG, "onLocationChanged 1");
+
            double lat = location.getLatitude();
            lat = Math.round(lat*1000000.0)/1000000.0;
            double lon = location.getLongitude();
@@ -39,16 +43,15 @@ class GPSLocationListener implements LocationListener {
            prefs.setLatitude(lat);
            prefs.setLongitude(lon);
 
-           // Tell SetupActivity to resume.
-           Util.getToast(context, "New Location saved", false).show();
+           JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+           try {
+               jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_SUCCESS");
+           } catch (JSONException e) {
+               e.printStackTrace();
+           }
+           Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
 
-           // send a broadcast for SetupActivity to update gps location text
-
-           Util.broadcastAMessage(context, "refresh_gps_coordinates");
-
-           Log.d(TAG, "onLocationChanged 2");
        }catch (Exception ex){
-
            Log.e(TAG, ex.getLocalizedMessage());
        }
 

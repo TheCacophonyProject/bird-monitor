@@ -7,8 +7,20 @@
     tools:context="nz.org.cacophony.cacophonometer.MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <Button
         android:id="@+id/btnSetup"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -17,50 +29,55 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:onClick="launchSetupActivity"
-        android:text="Setup"
+        android:text="Basic Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
     <Button
-        android:id="@+id/btnTestRecord"
+        android:id="@+id/btnWalking"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:onClick="launchTestRecordActivity"
-        android:text="Test Record"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnSetup"
-        app:layout_constraintStart_toStartOf="@+id/btnSetup"
-        app:layout_constraintTop_toBottomOf="@+id/btnSetup" />
-
-    <Button
-        android:id="@+id/btnStatistics"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="launchVitalsActivity"
-        android:text="Vitals"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnTestRecord"
-        app:layout_constraintStart_toStartOf="@+id/btnTestRecord"
-        app:layout_constraintTop_toBottomOf="@+id/btnTestRecord" />
-
-    <Button
-        android:id="@+id/btnAdvanced"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="launchAdvancedActivity"
-        android:text="Advanced"
+        android:onClick="launchWalkingActivity"
+        android:text="Walking Setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="@+id/btnStatistics"
         app:layout_constraintStart_toStartOf="@+id/btnStatistics"
         app:layout_constraintTop_toBottomOf="@+id/btnStatistics" />
 
     <Button
+        android:id="@+id/btnStatistics"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:onClick="launchVitalsActivity"
+        android:text="Vitals"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toEndOf="@+id/btnSetup"
+        app:layout_constraintStart_toStartOf="@+id/btnSetup"
+        app:layout_constraintTop_toBottomOf="@+id/btnSetup" />
+
+    <Button
+        android:id="@+id/btnAdvanced"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+
+        android:text="Advanced"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toEndOf="@+id/btnWalking"
+        app:layout_constraintStart_toStartOf="@+id/btnWalking"
+        app:layout_constraintTop_toBottomOf="@+id/btnWalking" />
+
+    <Button
         android:id="@+id/btnDisable"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -74,4 +91,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnAdvanced" />
+
 </android.support.constraint.ConstraintLayout>

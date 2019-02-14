@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.util.Arrays;
-import java.util.Date;
-
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
@@ -20,37 +17,47 @@ class Prefs {
 
     private static final String PREFS_NAME = "CacophonyPrefs";
 
-    private static final String PRODUCTION_SERVER_URL = "https://api.cacophony.org.nz";       // Production Server URL
-    // private static final String PRODUCTION_SERVER_URL_HTTP = "http://103.16.20.22";       // Non HTTPS Server URL
+    private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
+    private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
 
-    private static final String TEST_SERVER_URL = "https://api-test.cacophony.org.nz";       // Test Server URL
+    private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
+    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
+
+    private static final String SCHEME = "https";
 
 
-    private static final String PASSWORD_KEY = "PASSWORD";
+    private static final String DEVICE_PASSWORD_KEY = "PASSWORD";
+    private static final String USERNAME_PASSWORD_KEY = "USERNAME_PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
+    private static final String USERNAME_KEY = "USERNAME";
     private static final String GROUP_NAME_KEY = "GROUP_NAME";
-    private static final String TOKEN_KEY = "TOKEN";
-    private static final long TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
-    private static final String TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
+    private static final String DEVICE_TOKEN_KEY = "TOKEN";
+    private static final String USER_TOKEN_KEY = "USER_TOKEN";
+    private static final long DEVICE_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
+    private static final String DEVICE_TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
+    private static final long USER_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
+    private static final String USER_TOKEN_LAST_REFRESHED_KEY = "USERNAME_TOKEN_LAST_REFRESHED";
+    private static final String EMAIL_ADDRESS_KEY = "EMAIL_ADDRESS";
+    private static final String USERNAME_OR_EMAIL_ADDRESS_KEY = "USERNAME_OR_EMAIL_ADDRESS";
+
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
     private static final String DEVICE_ID = "UNKNOWN";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
-//private static final double RECORDING_DURATION_SECONDS = 1; // for testing Walking mode
 
     private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
     private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
 
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
-    //private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 60*3;  // 2 minutes for testing walking mode
+
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
 
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
-    //  private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 60; // 1 minute for testing
+
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
@@ -86,7 +93,6 @@ class Prefs {
     private static final String IGNORE_LOW_BATTERY_KEY = "IGNORE_LOW_BATTERY";
 
     private static final String USE_TEST_SERVER_KEY = "USE_TEST_SERVER";
-    private static final String OFFLINE_MODE_KEY = "OFFLINE_MODE";
     private static final String ONLINE_MODE_KEY = "ONLINE_MODE";
     private static final String PLAY_WARNING_SOUND_KEY = "PLAY_WARNING_SOUND";
 
@@ -98,16 +104,23 @@ class Prefs {
     private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
 
     private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
-    private static final String MODE_KEY = "MODE";
 
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
+    private static final String DISPLAY_HELP_ON_STARTUP_KEY = "DISPLAY_HELP_ON_STARTUP";
 
     private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
+    private static final String AUDIO_SOURCE_KEY = "AUDIO_SOURCE";
     private static final String DISABLED_KEY = "DISABLED";
-    private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED";
+    private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
+    private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
+    private static final String BUTTON_DEFAULT_BACKGROUND_COLOR_KEY = "BUTTON_DEFAULT_BACKGROUND_COLOR";
+
+    private static final String GROUPS_KEY = "GROUPS";
+
+    private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
 
 
 
@@ -115,8 +128,8 @@ class Prefs {
         this.context = context;
     }
 
-    public static long getTokenTimeoutSeconds() {
-        return TOKEN_TIMEOUT_SECONDS;
+    public static long getDeviceTokenTimeoutSeconds() {
+        return DEVICE_TOKEN_TIMEOUT_SECONDS;
     }
 
 
@@ -184,7 +197,16 @@ class Prefs {
         return preferences.getBoolean(key, false);
     }
 
-    private boolean getBooleanDefaultTrue() {  // used to determine first time app runs after install
+    private boolean getBooleanDefaultTrue(String key) {  // used to determine first time app runs after install
+        if (context == null) {
+            Log.e(TAG, "Context was null when trying to get preferences.");
+            return false;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, true);
+    }
+
+    private boolean getDisplayWelcomeHelpDefaultTrue() {  // used to determine first time app runs after install
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return false;
@@ -202,53 +224,101 @@ class Prefs {
         preferences.edit().putBoolean(key, val).apply();
     }
 
-    String getServerUrl() {
+    String getBrowseRecordingsServerUrl() {
         if (getBoolean(USE_TEST_SERVER_KEY)) {
-            return TEST_SERVER_URL;
+            return TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS;
         } else {
-            return PRODUCTION_SERVER_URL;
+            return PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS;
         }
     }
 
-    String getPassword() {
-        return getString(PASSWORD_KEY);
+    String getServerUrl() {
+        if (getBoolean(USE_TEST_SERVER_KEY)) {
+            return SCHEME + "://" + TEST_SERVER_HOST;
+        } else {
+            return SCHEME + "://" + PRODUCTION_SERVER_HOST;
+        }
     }
 
-    void setPassword(String password) {
-        setString(PASSWORD_KEY, password);
+    String getServerScheme(){
+        return SCHEME;
+    }
+
+    String getServerHost(){
+        if (getBoolean(USE_TEST_SERVER_KEY)) {
+           return TEST_SERVER_HOST;
+        } else {
+            return PRODUCTION_SERVER_HOST;
+        }
+    }
+
+    String getDevicePassword() {
+        return getString(DEVICE_PASSWORD_KEY);
+    }
+
+
+    void setDevicePassword(String devicePassword) {
+        setString(DEVICE_PASSWORD_KEY, devicePassword);
     }
 
     public String getDeviceName() {
         return getString(DEVICE_NAME_KEY);
     }
 
-//    String getMode() {
-//        String mode = getString(MODE_KEY);
-//        if (mode == null) {
-//            mode = "off";
-//        }
-//        return mode;
-//    }
+    String getUsernamePassword() {
+        return getString(USERNAME_PASSWORD_KEY);
+    }
 
-//    void setMode(String mode) {
-//        setString(MODE_KEY, mode);
-//    }
+    void setUsernamePassword(String usernamePassword) {
+        setString(USERNAME_PASSWORD_KEY, usernamePassword);
+    }
+
+    void setUsername(String username) {
+        setString(USERNAME_KEY, username);
+    }
+
+    String getUsername() {
+        return getString(USERNAME_KEY);
+    }
+
+    String getEmailAddress() {
+        return getString(EMAIL_ADDRESS_KEY);
+    }
+
+    void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
+        setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
+    }
+
+
+    String getUserNameOrEmailAddress() {
+        return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
+    }
+
+    void setEmailAddress(String emailAddress) {
+        setString(EMAIL_ADDRESS_KEY, emailAddress);
+    }
+
+
+
+
 
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
 
-    void setToken(String token) {
-        setString(TOKEN_KEY, token);
+    void setDeviceToken(String deviceToken) {
+        setString(DEVICE_TOKEN_KEY, deviceToken);
     }
 
-//    void setTheNextSingleStandardAlarmUsingDelay(long delayInMillisecs){
-//        // need to covert this delay into unix time
-//        Date date = new Date();
-//        long currentUnixTime = date.getTime();
-//        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
-//        setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
-//    }
+    void setUserToken(String userToken) {
+        setString(USER_TOKEN_KEY, userToken);
+    }
+
+    String getUserToken() {
+        return getString(USER_TOKEN_KEY);
+    }
+
+
 
     void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
         setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
@@ -332,15 +402,19 @@ class Prefs {
     }
 
     String getToken() {
-        return getString(TOKEN_KEY);
+        return getString(DEVICE_TOKEN_KEY);
     }
 
     long getTokenLastRefreshed() {
-        return getLong(TOKEN_LAST_REFRESHED_KEY);
+        return getLong(DEVICE_TOKEN_LAST_REFRESHED_KEY);
     }
 
     void setTokenLastRefreshed(long timeTokenLastRefreshed) {
-        setLong(TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
+        setLong(DEVICE_TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
+    }
+
+    void setUserTokenLastRefreshed(long timeUserTokenLastRefreshed) {
+        setLong(USER_TOKEN_LAST_REFRESHED_KEY, timeUserTokenLastRefreshed);
     }
 
     String getGroupName() {
@@ -521,15 +595,6 @@ class Prefs {
         return getBoolean(IGNORE_LOW_BATTERY_KEY);
     }
 
-//    boolean getOffLineMode() {
-//        return getBoolean(OFFLINE_MODE_KEY);
-//    }
-//
-//    void setIsOffLineMode(boolean isOffLineMode){
-//        setBoolean(OFFLINE_MODE_KEY, isOffLineMode);
-//    }
-
-
     boolean getOnLineMode() {
         return getBoolean(ONLINE_MODE_KEY);
     }
@@ -566,13 +631,6 @@ class Prefs {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-//    void setOffLineMode(boolean offLineMode) {
-//        setBoolean(OFFLINE_MODE_KEY, offLineMode);
-//    }
-//
-//    void setOnLineMode(boolean onLineMode) {
-//        setBoolean(ONLINE_MODE_KEY, onLineMode);
-//    }
 
     void setPlayWarningSound(boolean playWarningSound) {
         setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);
@@ -618,12 +676,12 @@ class Prefs {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
 
-    void setIsFirstTime() {
-        setBoolean(FIRST_TIME_KEY, false);
+    boolean getIsFirstTime() {
+        return getBooleanDefaultTrue(FIRST_TIME_KEY);
     }
 
-    boolean getIsFirstTime() {
-        return getBooleanDefaultTrue();
+        void setIsFirstTimeFalse() {
+        setBoolean(FIRST_TIME_KEY, false);
     }
 
     long getTimeThatLastRecordingHappened(){
@@ -642,8 +700,20 @@ class Prefs {
         setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
     }
 
+    String getAudioSource(){
+        String audioSource = getString(AUDIO_SOURCE_KEY);
+                if (audioSource == null){
+                    audioSource = "MIC";
+                }
+        return audioSource;
+    }
+
+    void setAudioSource(String audioSource){
+        setString(AUDIO_SOURCE_KEY, audioSource);
+    }
+
     void setIsDisabled(boolean isDisabled) {
-        setBoolean(DISABLED_KEY, isDisabled);
+       setBoolean(DISABLED_KEY, isDisabled);
     }
 
     boolean getIsDisabled() {
@@ -656,5 +726,45 @@ class Prefs {
 
     boolean getIsDisableDawnDuskRecordings() {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
+    }
+
+    void setSettingsForTestServerEnabled(boolean isEnabled){
+        setBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY, isEnabled);
+    }
+
+    boolean getSettingsForTestServerEnabled(){
+        return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
+    }
+
+    void setDefaultButtonBackgroundColor(int color){
+        long colorLong = (long)color;
+        setLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY, colorLong);
+    }
+
+    int getDefaultButtonBackgroundColor(){
+        long colorLong = getLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY);
+        try{
+            int colorInt = (int)colorLong;
+            return colorInt;
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+            return 0;
+        }
+    }
+
+    void setGroups(String groups){
+        setString(GROUPS_KEY, groups);
+    }
+
+      String getGroups(){
+        return getString(GROUPS_KEY);
+    }
+
+    void setUserSignedIn(boolean userSignedIn) {
+        setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
+    }
+
+    boolean getUserSignedIn() {
+       return getBoolean(USER_SIGNED_IN_KEY);
     }
 }
