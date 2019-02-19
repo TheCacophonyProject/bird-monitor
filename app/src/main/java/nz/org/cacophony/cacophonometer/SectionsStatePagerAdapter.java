@@ -26,29 +26,19 @@ private final List<Fragment> mfragmentList = new ArrayList<>();
     public void addFragment(Fragment fragment, String title){
         mfragmentList.add(fragment);
         mfragmentTitleList.add(title);
-
-
     }
-
-
 
     public void setNumberOfPages(int numberOfPages){
         this.numberOfPages = numberOfPages;
     }
 
-
-
-
     @Override
     public Fragment getItem(int position) {
        return mfragmentList.get(position);
-
     }
 
     @Override
     public int getCount() {
-
-        //return mfragmentList.size();
         return numberOfPages;
     }
 

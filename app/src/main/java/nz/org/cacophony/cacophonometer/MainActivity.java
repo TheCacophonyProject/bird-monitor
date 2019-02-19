@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                             advancedButton.setText("Advanced");
                             prefs.setSettingsForTestServerEnabled(false);
 
-
                         }else{
                             advancedButton.setText("Very Advanced");
                             prefs.setSettingsForTestServerEnabled(true);
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
                     }else{
-                       // launchAdvancedActivity(null);
                         startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
                     break;
@@ -141,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 // Open the Setup wizard if the app does not yet have device name
        if (prefs.getDeviceName() == null){
-
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
@@ -210,8 +207,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-           // startActivity(new Intent(this, WelcomeActivity.class));
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -258,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             try {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-
 
                 }
 

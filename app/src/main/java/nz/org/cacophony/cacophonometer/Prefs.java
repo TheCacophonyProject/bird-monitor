@@ -12,20 +12,13 @@ import android.util.Log;
 class Prefs {
 
     private static final String TAG = Prefs.class.getName();
-    //    private static Context context = null;
     private final Context context;
-
     private static final String PREFS_NAME = "CacophonyPrefs";
-
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
-
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
     private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
-
     private static final String SCHEME = "https";
-
-
     private static final String DEVICE_PASSWORD_KEY = "PASSWORD";
     private static final String USERNAME_PASSWORD_KEY = "USERNAME_PASSWORD";
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME";
@@ -122,8 +115,6 @@ class Prefs {
 
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
 
-
-
     public Prefs(Context context) {
         this.context = context;
     }
@@ -206,14 +197,6 @@ class Prefs {
         return preferences.getBoolean(key, true);
     }
 
-    private boolean getDisplayWelcomeHelpDefaultTrue() {  // used to determine first time app runs after install
-        if (context == null) {
-            Log.e(TAG, "Context was null when trying to get preferences.");
-            return false;
-        }
-        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return preferences.getBoolean(Prefs.FIRST_TIME_KEY, true);
-    }
 
     private void setBoolean(String key, boolean val) {
         if (context == null) {
@@ -293,15 +276,9 @@ class Prefs {
     String getUserNameOrEmailAddress() {
         return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
     }
-
     void setEmailAddress(String emailAddress) {
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
-
-
-
-
-
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
@@ -324,25 +301,6 @@ class Prefs {
         setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
     }
 
-//    void addDawnDuskAlarm(long alarmInUnixTime){
-//        // First Ignore it if this time has already passed
-//        Date now = new Date();
-//        if (alarmInUnixTime < now.getTime()){
-//            return;
-//        }
-//
-//        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
-//        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
-//        if (currentAlarms == null){
-//            currentAlarms = alarmInUnixTimeStr;
-//        }else {
-//            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
-//        }
-//
-//
-//        setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
-//    }
-
     String getDawnDuskAlarms() {
         return getString(DAWN_DUSK_ALARMS_KEY);
     }
@@ -355,47 +313,9 @@ class Prefs {
         setString(DAWN_DUSK_ALARMS_KEY, null);
     }
 
-//    long getNextAlarm(){
-//        long nextAlarm = getNextSingleStandardAlarm();
-//        long[] dawnDuskAlarms = getDawnDuskAlarmList();
-//        if (dawnDuskAlarms != null){
-//            Date now = new Date();
-//            for (long dawnDuskAlarm: dawnDuskAlarms) {
-//                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()){
-//                    nextAlarm = dawnDuskAlarm;
-//                }
-//            }
-//        }
-//
-//        return nextAlarm;
-//    }
-
-//    long[] getDawnDuskAlarmList() {
-//        String alarmsString = getString(DAWN_DUSK_ALARMS_KEY);
-//        if (alarmsString == null){
-//            return null;
-//        }
-//        String[] tempArray;
-//
-//        /* delimiter */
-//        String delimiter = ",";
-//
-//        /* given string will be split by the argument delimiter provided. */
-//        tempArray = alarmsString.split(delimiter);
-//        Arrays.sort(tempArray);
-//
-//        long[] alarmTimes = new long [tempArray.length];
-//        for (int i = 0; i < tempArray.length; i++) {
-//            alarmTimes[i] =  Long.parseLong(tempArray[i]);
-//        }
-//
-//        return alarmTimes;
-//    }
-
     String getAlarmString() {
         return getString(DAWN_DUSK_ALARMS_KEY);
     }
-
 
     long getNextSingleStandardAlarm() {
         return getLong(NEXT_ALARM_KEY);
@@ -445,10 +365,6 @@ class Prefs {
         setString(DEVICE_ID, deviceID);
     }
 
-//    String getDeviceId(){
-//        return getString(DEVICE_ID);
-//    }
-
     double getRecordingDuration() {
         return getDouble(RECORDING_DURATION_SECONDS_KEY);
     }
@@ -465,14 +381,6 @@ class Prefs {
         } else {
             return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
         }
-    }
-
-    double getNormalTimeBetweenRecordingsSeconds() {
-        return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
-    }
-
-    double getTimeBetweenFrequentRecordingsSeconds() {
-        return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
     void setNormalTimeBetweenRecordingsSeconds() {
@@ -631,7 +539,6 @@ class Prefs {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-
     void setPlayWarningSound(boolean playWarningSound) {
         setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);
     }
@@ -734,22 +641,6 @@ class Prefs {
 
     boolean getSettingsForTestServerEnabled(){
         return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
-    }
-
-    void setDefaultButtonBackgroundColor(int color){
-        long colorLong = (long)color;
-        setLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY, colorLong);
-    }
-
-    int getDefaultButtonBackgroundColor(){
-        long colorLong = getLong(BUTTON_DEFAULT_BACKGROUND_COLOR_KEY);
-        try{
-            int colorInt = (int)colorLong;
-            return colorInt;
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-            return 0;
-        }
     }
 
     void setGroups(String groups){

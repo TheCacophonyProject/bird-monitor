@@ -144,17 +144,13 @@ public class GroupsFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
                         // update the list of groups from server
-                     //   Util.getToast(getActivity(), messageToDisplay, false).show();
                         tvMessages.setText(messageToDisplay);
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
 
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
                     } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
-                       // Util.getToast(getActivity(), messageToDisplay, true).show();
-                       // tvMessages.setText(messageToDisplay);
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
@@ -167,8 +163,6 @@ public class GroupsFragment extends Fragment {
                         adapter.notifyDataSetChanged();
 
                     }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
-                       // Util.getToast(getActivity(), messageToDisplay, true).show();
-                        //tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                 }
 

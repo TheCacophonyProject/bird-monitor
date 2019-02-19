@@ -63,16 +63,11 @@ public class TestRecordFragment extends Fragment {
         // Note also used the following to set the color of the url link using the xml method
         // https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
 
-
-
         tvServerLink = (TextView) view.findViewById(R.id.tvServerLink);
-
         Prefs prefs = new Prefs(getActivity());
         String tvServerLinkText = tvServerLink.getText() + " " + prefs.getBrowseRecordingsServerUrl();
         tvServerLink.setText(tvServerLinkText);
-
         LinkifyCompat.addLinks(tvServerLink, Linkify.ALL);
-
         return view;
     }
 
@@ -86,19 +81,13 @@ public class TestRecordFragment extends Fragment {
         if (visible) {
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
             displayOrHideGUIObjects();
-
-
-
         } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
 
     void displayOrHideGUIObjects(){
-
-//        TextView tvMessages = getView().findViewById(R.id.tvMessages);
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getIsDisabled()) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);

@@ -35,9 +35,6 @@ public class SignInFragment extends Fragment {
     private TextInputLayout tilUserNameOrPassword;
     private TextInputLayout tilPassword;
     private TextView tvTitleMessage;
-   // private TextInputLayout tilPassword;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +48,6 @@ public class SignInFragment extends Fragment {
         tilPassword =  view.findViewById(R.id.tilPassword);
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
 
-
         btnSignIn =  view.findViewById(R.id.btnSignIn);
         btnSignOutUser =  view.findViewById(R.id.btnSignOutUser);
         tvMessages =  view.findViewById(R.id.tvMessages);
@@ -59,40 +55,30 @@ public class SignInFragment extends Fragment {
         btnSignIn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
                 // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 if (imm != null){
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
-
                 signinButtonPressed();
             }
         });
 
-
-
         btnSignOutUser.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
                 // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 if (imm != null){
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
-
                 signOutUserButtonPressed();
             }
         });
 
-
         displayOrHideGUIObjects();
-
          return view;
     }
-
-
 
     private void login(){
         disableFlightMode();
@@ -115,14 +101,9 @@ public class SignInFragment extends Fragment {
     private void disableFlightMode(){
         try {
             Util.disableFlightMode(getActivity().getApplicationContext());
-
-
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
-
-
         }
     }
 
@@ -133,14 +114,10 @@ public class SignInFragment extends Fragment {
             return;
         }
         if (visible) {
-
             IntentFilter iff = new IntentFilter("SERVER_USER_LOGIN");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
             displayOrHideGUIObjects();
-
         }else{
-
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
@@ -172,7 +149,6 @@ public class SignInFragment extends Fragment {
                 etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                 etPasswordInput.requestFocus();
             }
-
             btnSignIn.setVisibility(View.VISIBLE);
             btnSignOutUser.setVisibility(View.GONE);
         }
@@ -185,7 +161,6 @@ public class SignInFragment extends Fragment {
         // broadcast notification coming from ??
         @Override
         public void onReceive(Context context, Intent intent) {
-
              Prefs prefs = new Prefs(context);
             tvMessages.setText("");
 
@@ -211,9 +186,6 @@ public class SignInFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")){
 
-                        boolean isItSignedIn = prefs.getUserSignedIn();
-                       // Log.e(TAG, "isItSignedIn" + isItSignedIn);
-
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
                         tvMessages.setText(messageToDisplay  + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
@@ -229,15 +201,15 @@ public class SignInFragment extends Fragment {
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
 
                     } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
-
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         return;
-                    }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
 
+                    }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                             etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                             return;
+
                     }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
 
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
@@ -249,7 +221,6 @@ public class SignInFragment extends Fragment {
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
-
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
             }
         }
@@ -331,17 +302,11 @@ public class SignInFragment extends Fragment {
         tvMessages.setText("You have been signed out from this phone");
         tilUserNameOrPassword.setVisibility(View.VISIBLE);
         tilPassword.setVisibility(View.VISIBLE);
-
         btnSignIn.setEnabled(true);
         btnSignIn.setVisibility(View.VISIBLE);
         btnSignOutUser.setEnabled(false);
         btnSignOutUser.setVisibility(View.INVISIBLE);
 
-
-
         displayOrHideGUIObjects();
     }
-
-
-
 }

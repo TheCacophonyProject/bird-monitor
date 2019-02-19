@@ -24,9 +24,7 @@ public class WelcomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
-
         setUserVisibleHint(true);
-
         return view;
     }
 
@@ -36,15 +34,5 @@ public class WelcomeFragment extends Fragment {
         if (getActivity() == null){
             return;
         }
-//        if (visible) {
-//            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-//            boolean displayWelcomeHelp = prefs.getDisplayHelpOnStartup();
-//            if (displayWelcomeHelp){
-//
-//                Util.displayHelp(getActivity(), getResources().getString(R.string.app_icon_name));
-//            }
-//
-//        }
     }
-
 }

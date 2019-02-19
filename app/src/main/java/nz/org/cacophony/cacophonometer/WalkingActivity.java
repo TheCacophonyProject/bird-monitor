@@ -82,14 +82,9 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         }
     }
 
-
-
     public void finished(@SuppressWarnings("UnusedParameters") View v) {
-
         try {
-
             finish();
-
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }

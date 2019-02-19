@@ -35,8 +35,6 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
 
-    //boolean deleteRecordings = false;  // Used by dialog as if call deleteAllRecordings() directly, the dialog blocks the broadcast reciever
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -84,15 +82,7 @@ public class ManageRecordingsFragment extends Fragment {
             return;
         }
         if (visible) {
-
-//            IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
-//            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
             displayOrHideGUIObjects();
-
-        }else{
-
-//            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
 
         }
     }
@@ -117,14 +107,12 @@ public class ManageRecordingsFragment extends Fragment {
     public void uploadRecordings(){
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-           // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null){
-           // Util.getToast(getActivity().getApplicationContext(),"You need to register this phone before you can upload", true ).show();
             tvMessages.setText("You need to register this phone before you can upload");
             return;
         }
@@ -134,12 +122,10 @@ public class ManageRecordingsFragment extends Fragment {
         int numberOfFilesToUpload = recordingFiles.length;
 
         if (getNumberOfRecordings() > 0){ // should be as button should be disabled if no recordings
-           // Util.getToast(getActivity().getApplicationContext(), "About to upload " + numberOfFilesToUpload + " recordings.", false).show();
             tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
         }else{
-          //  Util.getToast(getActivity().getApplicationContext(), "There are no recordings on the phone to upload.", true).show();
             tvMessages.setText("There are no recordings on the phone to upload.");
         }
     }

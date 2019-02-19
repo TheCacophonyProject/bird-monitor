@@ -79,8 +79,6 @@ class Util {
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
 
-    // private static boolean logbackConfigured = false;
-
     static {
         BasicLogcatConfigurator.configureDefaultContext();
     }
@@ -88,8 +86,6 @@ class Util {
     // For airplane mode
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
-
-
 
     /**
      * Make sure user has given permission to record.
@@ -109,10 +105,7 @@ class Util {
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
                 boolean locationPermission =
                         ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
                 permissionForRecording = (storagePermission && microphonePermission && locationPermission);
-
-
             }
 
         }catch (Exception ex){
@@ -152,7 +145,6 @@ class Util {
             canCreateFile = canCreateFile(sDCardAvailable);
         }
 
-
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
 
         try {
@@ -182,24 +174,12 @@ class Util {
                         return null;
                     }
                 }
-
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return appDataFolder;
     }
-
-
-//    /**
-//     * Returns the subfolder for storing the recordings
-//     * @param context
-//     * @return
-//     */
-//    static File getRecordingsFolder(Context context){
-//        return getLocalFolder(context);
-//    }
-
 
     /**
      * Returns the folder for storing recordings on the phone.
@@ -208,11 +188,9 @@ class Util {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
      public static File getRecordingsFolder(Context context) {
-    //private static File getLocalFolder(Context context) {
 
         File localFolderFile;
         try {
-
             File appDataFolder = getAppDataFolder(context);
             if (appDataFolder == null){
 
@@ -265,16 +243,6 @@ class Util {
         return jObject.getString("id");
     }
 
-//    static String getDeviceName(String webToken) throws Exception {
-//        if (webToken == null){
-//            return "";
-//        }
-//
-//        String webTokenBody = Util.decoded(webToken);
-//        JSONObject jObject = new JSONObject(webTokenBody);
-//        return jObject.getString("deviceName");
-//    }
-
     /**
      * Extracts the webtoken from the actual token
      * @param JWTEncoded
@@ -288,7 +256,6 @@ class Util {
             webTokenBody = getJson(split[1]);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Error decoding JWT");
-
         }
         return webTokenBody;
     }
@@ -551,7 +518,6 @@ class Util {
                             return ;
                         }
 
-//                        if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
                         if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {  // Don't try to turn on aerial if set to be offline
                             return ;
                         }
@@ -592,8 +558,6 @@ class Util {
         if (onlineMode){
             return; // don't try to enable airplane mode
         }
-
-
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
 
@@ -646,8 +610,6 @@ private static void executeCommandTim(Context context, String command){
         executeAsRootBaseTim.execute(context);
     }catch (Exception ex){
         Log.e(TAG, ex.getLocalizedMessage());
-      //  Util.broadcastAMessage(context, "error_do_not_have_root");
-        String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "error_do_not_have_root");
@@ -723,9 +685,6 @@ private static void executeCommandTim(Context context, String command){
         return toast;
     }
 
-
-
-    //static void broadcastAMessage(Context context, JSONObject message){
         static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
@@ -733,8 +692,6 @@ private static void executeCommandTim(Context context, String command){
         intent.putExtra("jsonStringMessage", jsonStringMessage.toString());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
-
-
 
 //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
    private static String isRemovableSDCardAvailable(Context context) {
@@ -793,11 +750,9 @@ private static void executeCommandTim(Context context, String command){
             fos.close();
 
         } catch (Exception e) {
-
             return null;
         } finally {
             if (tempFile != null && tempFile.exists() && tempFile.isFile()) {
-
                 //noinspection UnusedAssignment
                 tempFile = null;
             }
@@ -816,7 +771,6 @@ private static void executeCommandTim(Context context, String command){
        if ((currentTimeMilliSeconds-tokenLastRefreshedMilliSeconds) > tokenTimeOutMilliSeconds){
            prefs.setDeviceToken(null);
            Log.d(TAG, "Web token out of date and so set to null");
-          // Server.loggedIn = false;
            return false;
        }else{
            return true;
@@ -824,8 +778,7 @@ private static void executeCommandTim(Context context, String command){
     }
 
     public static void createCreateAlarms(Context context){ // Because each alarm now creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
-      //  Log.e(TAG, "createCreateAlarms");
-             Intent myIntent = new Intent(context, StartRecordingReceiver.class);
+        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type","repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
@@ -834,18 +787,15 @@ private static void executeCommandTim(Context context, String command){
 
         }catch (Exception e){
             Log.e(TAG, e.getLocalizedMessage());
-
         }
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,0);
-
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null){
             Log.e(TAG, "alarmManager is null");
             return;
         }
-
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY,pendingIntent);
 
@@ -865,11 +815,9 @@ private static void executeCommandTim(Context context, String command){
      *     *
      */
     public static void createTheNextSingleStandardAlarm(Context context){ // Standard repeating as apposed to Dawn or Dusk
-      //  Log.e(TAG, "createTheNextSingleStandardAlarm");
 Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
     myIntent.putExtra("callingCode", "tim"); // for debugging
-
 
         try {
             myIntent.putExtra("type","repeating");
@@ -901,24 +849,20 @@ Prefs prefs = new Prefs(context);
 
     }else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-//    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
     }else  {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
         alarmManager.setExactAndAllowWhileIdle (AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
 
     }
-//    prefs.setTheNextSingleStandardAlarmUsingDelay(delay);
         setTheNextSingleStandardAlarmUsingDelay(context, delay);
     }
 
     public static void setUpLocationUpdateAlarm(Context context){
     Prefs prefs = new Prefs(context);
-
         if (prefs.getPeriodicallyUpdateGPS()){
                     createLocationUpdateAlarm(context);
                 }else{
                     deleteLocationUpdateAlarm(context);
                 }
-
     }
 
     public static void createLocationUpdateAlarm(Context context){
@@ -949,7 +893,6 @@ Prefs prefs = new Prefs(context);
         }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
         }
-     //   prefs.setNextAlarm(startWindowTimeForLocationUpdate);
     }
 
     private static void deleteLocationUpdateAlarm(Context context){
@@ -965,8 +908,6 @@ Prefs prefs = new Prefs(context);
     }
 
     public static void updateGPSLocation(Context context){
-
-      //  Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null){
             Log.e(TAG, "locationManager is null");
@@ -975,8 +916,6 @@ Prefs prefs = new Prefs(context);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-
-          //  Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
@@ -1046,14 +985,12 @@ Prefs prefs = new Prefs(context);
         }
 
         String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
-//        String currentAlarms = getString(DAWN_DUSK_ALARMS_KEY);
         String currentAlarms = prefs.getDawnDuskAlarms();
         if (currentAlarms == null){
             currentAlarms = alarmInUnixTimeStr;
         }else {
             currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
         }
-        //setString(DAWN_DUSK_ALARMS_KEY, currentAlarms);
         prefs.saveDawnDuskAlarms(currentAlarms);
     }
 
@@ -1229,8 +1166,6 @@ Prefs prefs = new Prefs(context);
         builder.setMessage(s)
                 .setTitle(activityOrFragmentName);
 
-
-
         // https://stackoverflow.com/questions/15909672/how-to-set-font-size-for-text-of-dialog-buttons
         final AlertDialog  dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -1247,8 +1182,6 @@ Prefs prefs = new Prefs(context);
                 int linkColorInt = ResourcesCompat.getColor(context.getResources(), R.color.linkToServerInHelp, null);
                 textView.setLinkTextColor(linkColorInt);
                 textView.setTextSize(22);
-               // textView.setMovementMethod(new ScrollingMovementMethod());
-                //this.getListView().setScrollbarFadingEnabled(false);
 
             }
         });
@@ -1257,21 +1190,9 @@ Prefs prefs = new Prefs(context);
         dialog.setCanceledOnTouchOutside(true);
 
         dialog.show();
-       // dialog.getListView().setScrollbarFadingEnabled(false);
-
-        // Indicate that the dialog is scrollable ie show scroll bar
-        // but doesn't work
-        // https://stackoverflow.com/questions/1564867/adding-a-vertical-scrollbar-to-an-alertdialog-in-android/6231188
-//        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-//        textView.setScroller(new Scroller(context));
-//        textView.setVerticalScrollBarEnabled(true);
-//        textView.setMovementMethod(new ScrollingMovementMethod());
-
-
 
         // Make the textview clickable. Must be called after show(). Need for URL to work
         ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-
     }
 
     static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context){
@@ -1287,17 +1208,14 @@ Prefs prefs = new Prefs(context);
                     }
 
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-
                     if (getNumberOfRecordings(context) == 0){
                         jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
-
                     }else{
                         jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
                     }
                     Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -1318,7 +1236,6 @@ Prefs prefs = new Prefs(context);
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-
     public static void setGroups(Context context, ArrayList<String> groupsArrayList){
         try {
             JSONArray groupsArrayJSON = new JSONArray();
@@ -1332,10 +1249,6 @@ Prefs prefs = new Prefs(context);
             String groupsAsJsonString = jsonGroups.toString();
             Prefs prefs = new Prefs(context);
             prefs.setGroups(groupsAsJsonString);
-
-            // Broadcast that groups have been updated
-
-
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
@@ -1396,9 +1309,7 @@ Prefs prefs = new Prefs(context);
             @Override
             public void run() {
                 try {
-
                    Server.addGroupToServer(context, groupName);
-
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
@@ -1436,14 +1347,6 @@ Prefs prefs = new Prefs(context);
         try {
             Prefs prefs = new Prefs(context);
             prefs.setUserSignedIn(false);
-
-//            prefs.setEmailAddress(null);
-//            prefs.setDeviceId(null);
-//            prefs.setGroups(null);
-//            prefs.setUserNameOrEmailAddress(null);
-//            prefs.setUsernamePassword(null);
-//            prefs.setUsername(null);
-
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering user.");
         }
