@@ -123,7 +123,7 @@ class SignInUser {
         boolean userSignedIn = prefs.getUserSignedIn();
 
         assertEquals(userSignedIn, true);
-
+        onView(withId(R.id.tvTitleMessage)).
     }
 
 
