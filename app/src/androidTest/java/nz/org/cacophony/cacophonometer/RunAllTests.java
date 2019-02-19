@@ -20,7 +20,8 @@ import org.junit.runners.Suite;
 //        RunModeTestsInSpecifiedOrder.class,
 //        //  RunRegisterDeviceOnProductionServerTests.class,
 //        RunRegisterDeviceOnTestServerTests.class,
-       RunRecordNowTests.class,
+        RunSignInUser.class,
+      // RunRecordNowTests.class,
 
 })
 public class RunAllTests {

@@ -199,19 +199,19 @@ class RecordNow {
     }
 
     private static void signIn(){
-//        prefs.setUsername("timhot");
-//        prefs.setUsernamePassword("Pppother1");
 
-      //  onView(withId(R.id.etUserNameOrEmailInput)).perform(scrollTo(), click());
+        try {
         onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
 
-       // onView(withId(R.id.tilPassword)).perform(scrollTo(), click());
         onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+        onView(withId(R.id.btnSignIn)).perform(click());
 
-        onView(withId(R.id.btnSignIn)).perform(scrollTo(), click());
+        }catch (Exception ex){
+    Log.e("RecordNow", ex.getLocalizedMessage());
+}
 
 
-
+        Log.e("RecordNow", "Finished");
 
     }
 

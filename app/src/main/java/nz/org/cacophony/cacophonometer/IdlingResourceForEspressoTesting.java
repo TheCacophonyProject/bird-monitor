@@ -15,7 +15,7 @@ interface IdlingResourceForEspressoTesting {
 //     CountingIdlingResource uploadingIdlingResource = new CountingIdlingResource("UPLOADING");
 //      CountingIdlingResource toggleAirplaneModeIdlingResource = new CountingIdlingResource("TOGGLE_AIRPLANE_MODE");
 
-
+    CountingIdlingResource signInIdlingResource = new CountingIdlingResource("SIGNIN");
     CountingIdlingResource recordIdlingResource = new CountingIdlingResource("RECORD");
 
 }

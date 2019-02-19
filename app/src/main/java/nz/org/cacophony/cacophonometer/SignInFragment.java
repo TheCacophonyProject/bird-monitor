@@ -21,6 +21,7 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
     private static final String TAG = "SignInFragment";
@@ -78,14 +79,15 @@ public class SignInFragment extends Fragment {
          return view;
     }
 
-    private void login(){
+    private void signInUser(){
+        signInIdlingResource.increment();
 
         disableFlightMode();
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)){
             Log.e(TAG, "Failed to disable airplane mode");
-            recordIdlingResource.decrement();
+            signInIdlingResource.decrement();
             return ;
         }
 
@@ -200,24 +202,25 @@ public class SignInFragment extends Fragment {
                         etPasswordInput.setText("");
 
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
+                        signInIdlingResource.decrement();
 
                     } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
-                        recordIdlingResource.decrement();
+                        signInIdlingResource.decrement();
                         return;
 
                     }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                             etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
-                        recordIdlingResource.decrement();
+                        signInIdlingResource.decrement();
                             return;
 
                     }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
 
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                     etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
-                        recordIdlingResource.decrement();
+                        signInIdlingResource.decrement();
                     return;
                 }
 
@@ -226,14 +229,14 @@ public class SignInFragment extends Fragment {
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
-                recordIdlingResource.decrement();
+                signInIdlingResource.decrement();
             }
         }
     };
     public void signinButtonPressed() {
 
         try {
-            recordIdlingResource.increment();
+
 
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
@@ -291,7 +294,8 @@ public class SignInFragment extends Fragment {
             prefs.setUserNameOrEmailAddress(usernameOrEmailAddress);
             prefs.setUsernamePassword(password);
 
-            login();
+
+            signInUser();
 
 
         } catch (Exception ex) {

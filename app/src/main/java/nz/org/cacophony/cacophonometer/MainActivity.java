@@ -272,6 +272,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 //        IdlingRegistry.getInstance().register(recordNowIdlingResource);
 //        IdlingRegistry.getInstance().register(uploadingIdlingResource);
 //        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
+        IdlingRegistry.getInstance().register(recordIdlingResource);
+
     }
     /**
      * Only used by testing code
@@ -285,6 +287,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 //        if (toggleAirplaneModeIdlingResource != null) {
 //            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
 //        }
+
+        IdlingRegistry.getInstance().unregister(recordIdlingResource);
     }
 
 }
