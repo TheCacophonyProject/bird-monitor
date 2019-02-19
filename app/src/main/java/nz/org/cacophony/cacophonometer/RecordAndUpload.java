@@ -39,6 +39,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting{
     }
 
 static String doRecord(Context context, String typeOfRecording) {
+    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
     String returnValue;
@@ -53,55 +54,30 @@ static String doRecord(Context context, String typeOfRecording) {
     Prefs prefs = new Prefs(context);
 
     long   recordTimeSeconds = (long) prefs.getRecordingDuration();
-//    boolean playWarningBeeps = false;
 
-//    String mode = prefs.getMode();
-//    switch(mode) {
-//        case "off":
-//            if (prefs.getUseShortRecordings()) {
-//                recordTimeSeconds = 1;
-//            }
-//            if (prefs.getPlayWarningSound()){
-//                playWarningBeeps = true;
-//            }
-//
-//            break;
-//        case "normal":
-//            playWarningBeeps = false;
-//            break;
-//        case "normalOnline":
-//            playWarningBeeps = false;
-//            break;
-//        case "walking":
-//            playWarningBeeps = true;
-//            break;
-//    }
 
 
             if (prefs.getUseShortRecordings()) {
                 recordTimeSeconds = 1;
             }
-//            if (prefs.getPlayWarningSound()){
-//                playWarningBeeps = true;
-//            }else {
-//                playWarningBeeps = false;
-//            }
-
-
-
 
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
         recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
         Log.d(TAG, "typeOfRecording is dawn or dusk");
-
     } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
         recordTimeSeconds += 1; // help to recognise recordNowButton recordings
-
         prefs.setDateTimeLastRepeatingAlarmFiredToZero(); // Helped when testing, but probably don't need when app is running normally
-
     }
 
 if (isRecording){
+     jsonObjectMessageToBroadcast = new JSONObject();
+    try {
+        jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
+        jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress.");
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
    return "isRecording";
 }else{
 
@@ -110,13 +86,19 @@ if (isRecording){
     returnValue = "recorded successfully";
 }
 
-    if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
-        Util.broadcastAMessage(context, "recordNowButton_finished");
-    }
+
 
 // Checked that it has a webToken before trying to upload
     if (prefs.getToken() == null) {
         returnValue =  "not logged in";
+        jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "The Phone is NOT registered - could not upload the files.");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
     }else {
         // only upload recordings if sufficient time has passed since last upload
         long dateTimeLastUpload = prefs.getDateTimeLastUpload();
@@ -129,16 +111,49 @@ if (isRecording){
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
          if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
-         uploadingIdlingResource.increment();
+        // uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
-         uploadingIdlingResource.decrement();
-                if (uploadedFilesSuccessfully) {
-                    returnValue = "recorded and uploaded successfully";
-                    prefs.setDateTimeLastUpload(now);
-                } else {
-                    returnValue = "recorded BUT did not upload";
-                    Log.e(TAG, "Files failed to upload");
-                }
+       //  uploadingIdlingResource.decrement();
+             if (uploadedFilesSuccessfully) {
+                 prefs.setDateTimeLastUpload(now);
+             }else{
+                 returnValue = "recorded BUT did not upload";
+                 Log.e(TAG, "Files failed to upload");
+                 String messageToDisplay = "";
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                 try {
+                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server.");
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 }
+                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+             }
+//                if (uploadedFilesSuccessfully) {
+//                    returnValue = "recorded and uploaded successfully";
+//                    prefs.setDateTimeLastUpload(now);
+//
+//                     jsonObjectMessageToBroadcast = new JSONObject();
+//                    try {
+//                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
+//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been uploaded");
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+//                } else {
+//                    returnValue = "recorded BUT did not upload";
+//                    Log.e(TAG, "Files failed to upload");
+//                    String messageToDisplay = "";
+//                     jsonObjectMessageToBroadcast = new JSONObject();
+//                    try {
+//                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+//                }
             }
         }
 
@@ -150,7 +165,16 @@ if (isRecording){
 
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
        isRecording = true;
-        Util.broadcastAMessage(context, "update_record_now_button");
+        String messageToDisplay = "";
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "GETTING_READY_TO_RECORD");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Getting ready to record.");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        //Util.broadcastAMessage(context, "update_record_now_button");
 try {
 
 
@@ -213,14 +237,46 @@ try {
     // Setup audio recording settings.
     MediaRecorder mRecorder = new MediaRecorder();
 
+    ;
+
     // Try to prepare recording.
     try {
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+       // mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+
+        // Automatic gain control setting
+        String audioSource = prefs.getAudioSource();
+
+        switch (audioSource)
+        {
+            case "CAMCORDER":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+            break;
+
+            case "DEFAULT":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                break;
+
+            case "MIC":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                break;
+
+            case "UNPROCESSED":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+                break;
+
+            case "VOICE_COMMUNICATION":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+                break;
+
+            case "VOICE_RECOGNITION":
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+                break;
+            default:
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        }
+
+
         mRecorder.setOutputFile(filePath);
-
-//
-      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){ // HONEYCOMB / Android version 3 / API 11
-
 
             // Sampling configuration
             mRecorder.setAudioChannels(1);
@@ -230,12 +286,6 @@ try {
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
             mRecorder.setAudioEncodingBitRate(256000);
-            //mRecorder.setAudioEncodingBitRate(131072);
-
-//        } else {
-//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);  // AMR_WB added in API level 10
-//        }
 
         mRecorder.prepare();
 
@@ -249,7 +299,7 @@ try {
 
        if (playWarningBeeps) {
 
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
         try {
             Thread.sleep(2000);
@@ -261,7 +311,16 @@ try {
     // Start recording.
     try {
         mRecorder.start();
-        Util.broadcastAMessage(context, "recording_started");
+         messageToDisplay = "";
+         jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has started");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        //Util.broadcastAMessage(context, "recording_started");
     } catch (Exception e) {
 
         Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
@@ -305,20 +364,36 @@ try {
     Log.e(TAG, ex.getLocalizedMessage());
 }finally {
     isRecording = false;
-    Util.broadcastAMessage(context, "update_record_now_button");
+     jsonObjectMessageToBroadcast = new JSONObject();
+    try {
+        jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 }
 
     }
 
     public static boolean uploadFiles(Context context){
+        String messageToDisplay = "";
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading recordings");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
-        Util.broadcastAMessage(context, "about_to_upload_files");
+       // Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
             if (recordingsFolder == null){
 
-                Log.e(TAG,"Error getting recordings folder" );
+                Log.e(TAG,"Error getting recordings folder." );
                 return false;
             }
             File recordingFiles[] = recordingsFolder.listFiles();
@@ -345,18 +420,13 @@ try {
                 if ((prefs.getToken() == null) || !tokenIsCurrent) {
 
                     if (!Server.login(context)) {
-//                        logger.warn("sendFile: no JWT. Aborting upload");
                         Log.w(TAG, "sendFile: no JWT. Aborting upload");
                         return false; // Can't upload without JWT, login/register device to get JWT.
                     }
                 }
 
-                int numberOfFilesUploaded = 0;  // put a limit on the number of file uploads as if there are too many I think it may be timing out
+
                 for (File aFile : recordingFiles) {
-//                    if (numberOfFilesUploaded > 9){
-                    if (numberOfFilesUploaded > 19){ // increased as 10 may not be enough for longer intervals between uploads
-                        break;
-                    }
 
                     if (sendFile(context, aFile)) {
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
@@ -382,11 +452,20 @@ try {
                         Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
-                    numberOfFilesUploaded++;
+
                 }
             }
             if (returnValue){
-                Util.broadcastAMessage(context, "files_successfully_uploaded");
+                 messageToDisplay = "";
+                 jsonObjectMessageToBroadcast = new JSONObject();
+                try {
+                    jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+              //  Util.broadcastAMessage(context, "files_successfully_uploaded");
             }
             return returnValue;
         }catch (Exception ex){

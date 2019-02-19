@@ -94,7 +94,7 @@ class RegisterWithServer {
 
         onView(withId(R.id.setupGroupNameInput)).perform(scrollTo(), replaceText("tim1"), closeSoftKeyboard());
         final String devicename = RandomStringUtils.random(20, true, true);
-        onView(withId(R.id.setupDeviceNameInput)).perform(scrollTo(), replaceText(devicename), closeSoftKeyboard());
+        onView(withId(R.id.etDeviceNameInput)).perform(scrollTo(), replaceText(devicename), closeSoftKeyboard());
         onView(withId(R.id.setupGroupNameInput)).perform(pressImeActionButton());
 
         // Check still online

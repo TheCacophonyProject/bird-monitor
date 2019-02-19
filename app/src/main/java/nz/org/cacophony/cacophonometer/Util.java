@@ -5,11 +5,14 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,13 +24,25 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
+import android.text.util.Linkify;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Scroller;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -39,6 +54,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,8 +89,6 @@ class Util {
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
-
-    // --Commented out by Inspection (12-Jun-17 2:21 PM):private final static String COMMAND_FLIGHT_MODE_3 = "settings put global airplane_mode_on";
 
 
     /**
@@ -142,7 +156,7 @@ class Util {
         //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
 
         try {
-            String appName = context.getResources().getString(R.string.main_activity_name);
+            String appName = context.getResources().getString(R.string.activity_or_fragment_title_main);
 
             if (canCreateFile != null){
                 // Use the sdcard
@@ -251,15 +265,15 @@ class Util {
         return jObject.getString("id");
     }
 
-    static String getDeviceName(String webToken) throws Exception {
-        if (webToken == null){
-            return "";
-        }
-
-        String webTokenBody = Util.decoded(webToken);
-        JSONObject jObject = new JSONObject(webTokenBody);
-        return jObject.getString("deviceName");
-    }
+//    static String getDeviceName(String webToken) throws Exception {
+//        if (webToken == null){
+//            return "";
+//        }
+//
+//        String webTokenBody = Util.decoded(webToken);
+//        JSONObject jObject = new JSONObject(webTokenBody);
+//        return jObject.getString("deviceName");
+//    }
 
     /**
      * Extracts the webtoken from the actual token
@@ -566,67 +580,14 @@ class Util {
         };
         thread.start();
 
-
-
     }
 
-//    static void disableFlightMode(Context context) {
-//        try {
-//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-//                // API 17 onwards.
-//                // Must be a rooted device
-//                Prefs prefs = new Prefs(context);
-//                if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
-//                    return ;
-//                }
-//
-//                if (prefs.getOffLineMode()) {  // Don't try to turn on aerial if set to be offline
-//                    return ;
-//                }
-//
-//                // Set Airplane / Flight mode using su commands.
-//                String command = COMMAND_FLIGHT_MODE_1 + " " + "0";
-//                executeCommandTim(context, command);
-//                command = COMMAND_FLIGHT_MODE_2 + " " + "false";
-//                executeCommandTim(context, command);
-//
-//            } else {
-//                // API 16 and earlier.
-//
-//                //noinspection deprecation
-//                Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
-//                Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//                intent.putExtra("state", false);
-//                context.sendBroadcast(intent);
-//            }
-//
-//        }catch (Exception ex){
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
-//    }
 
     static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
-//        String mode = prefs.getMode();
-//
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // don't change offline mode
-//                break;
-//            case "normal":
-//                // don't change offline mode
-//                break;
-//
-//            case "normalOnline":
-//                onlineMode = true;
-//                break;
-//
-//            case "walking":
-//                // don't change offline mode
-//                break;
-//        }
+
 
         if (onlineMode){
             return; // don't try to enable airplane mode
@@ -676,64 +637,6 @@ class Util {
 
     }
 
-//    static void enableFlightMode(Context context) {
-//        Prefs prefs = new Prefs(context);
-//
-//        boolean onlineMode = prefs.getOnLineMode();
-//        String mode = prefs.getMode();
-//
-//        switch(mode) { // mode determined earlier
-//            case "off":
-//                // don't change offline mode
-//                break;
-//            case "normal":
-//                // don't change offline mode
-//                break;
-//
-//            case "normalOnline":
-//                onlineMode = true;
-//                break;
-//
-//            case "walking":
-//                // don't change offline mode
-//                break;
-//        }
-//
-//        if (onlineMode){
-//            return; // don't try to enable airplane mode
-//        }
-//
-//
-//
-//
-//
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
-//
-//            // API 17 onwards.
-//            // Must be a rooted device
-//
-//            if (!prefs.getHasRootAccess()) {
-//                Log.e(TAG, "Do NOT have required ROOT access");
-//                return;
-//            }
-//
-//
-//            // Set Airplane / Flight mode using su commands.
-//            String command = COMMAND_FLIGHT_MODE_1 + " " + "1";
-//            executeCommandTim(context, command);
-//            command = COMMAND_FLIGHT_MODE_2 + " " + "true";
-//            executeCommandTim(context, command);
-//
-//        } else {
-//
-//            //noinspection deprecation
-//            Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
-//            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-//            intent.putExtra("state", true);
-//            context.sendBroadcast(intent);
-//        }
-//    }
-
 
 
 private static void executeCommandTim(Context context, String command){
@@ -743,10 +646,19 @@ private static void executeCommandTim(Context context, String command){
         executeAsRootBaseTim.execute(context);
     }catch (Exception ex){
         Log.e(TAG, ex.getLocalizedMessage());
-        Util.broadcastAMessage(context, "error_do_not_have_root");
+      //  Util.broadcastAMessage(context, "error_do_not_have_root");
+        String messageToDisplay = "";
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        try {
+            jsonObjectMessageToBroadcast.put("messageType", "error_do_not_have_root");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
+            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
-
 
 
     static String getSimStateAsString(int simState) {
@@ -803,9 +715,9 @@ private static void executeCommandTim(Context context, String command){
 
         @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         if (standOut){
-            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         }else{
-            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
+            toast.getView().setBackgroundColor(context.getResources().getColor(R.color.green));
         }
 
         return toast;
@@ -813,14 +725,13 @@ private static void executeCommandTim(Context context, String command){
 
 
 
-    static void broadcastAMessage(Context context, String message){
+    //static void broadcastAMessage(Context context, JSONObject message){
+        static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage){
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
-        Intent intent = new Intent("event");
-        // You can also include some extra data.
-        intent.putExtra("message", message);
+        Intent intent = new Intent(action);
+        intent.putExtra("jsonStringMessage", jsonStringMessage.toString());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
     }
 
 
@@ -900,10 +811,10 @@ private static void executeCommandTim(Context context, String command){
        }
        long currentTimeMilliSeconds = new Date().getTime();
        long tokenLastRefreshedMilliSeconds = prefs.getTokenLastRefreshed();
-       long tokenTimeOutSeconds = Prefs.getTokenTimeoutSeconds();
+       long tokenTimeOutSeconds = Prefs.getDeviceTokenTimeoutSeconds();
        long tokenTimeOutMilliSeconds = tokenTimeOutSeconds * 1000;
        if ((currentTimeMilliSeconds-tokenLastRefreshedMilliSeconds) > tokenTimeOutMilliSeconds){
-           prefs.setToken(null);
+           prefs.setDeviceToken(null);
            Log.d(TAG, "Web token out of date and so set to null");
           // Server.loggedIn = false;
            return false;
@@ -977,24 +888,6 @@ Prefs prefs = new Prefs(context);
         return;
     }
         long timeBetweenRecordingsSeconds  = (long)prefs.getAdjustedTimeBetweenRecordingsSeconds();
-
-//    String mode = prefs.getMode();
-//    switch(mode) {
-//        case "off":
-//            // don't change
-//            break;
-//        case "normal":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-//            break;
-//        case "normalOnline":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getNormalTimeBetweenRecordingsSeconds();
-//            break;
-//
-//        case "walking":
-//            timeBetweenRecordingsSeconds  =  (long)prefs.getTimeBetweenFrequentRecordingsSeconds();
-//            break;
-//    }
-
         long delay = 1000 * timeBetweenRecordingsSeconds ;
 
     long currentElapsedRealTime = SystemClock.elapsedRealtime();
@@ -1019,27 +912,6 @@ Prefs prefs = new Prefs(context);
 
     public static void setUpLocationUpdateAlarm(Context context){
     Prefs prefs = new Prefs(context);
-//    String mode = prefs.getMode();
-//
-//        switch(mode) {
-//            case "off":
-//                if (prefs.getPeriodicallyUpdateGPS()){
-//                    createLocationUpdateAlarm(context);
-//                }else{
-//                    deleteLocationUpdateAlarm(context);
-//                }
-//                break;
-//            case "normal":
-//                deleteLocationUpdateAlarm(context);
-//                break;
-//            case "normalOnline":
-//                deleteLocationUpdateAlarm(context);
-//                break;
-//
-//            case "walking":
-//                   createLocationUpdateAlarm(context);
-//                break;
-//        }
 
         if (prefs.getPeriodicallyUpdateGPS()){
                     createLocationUpdateAlarm(context);
@@ -1094,7 +966,7 @@ Prefs prefs = new Prefs(context);
 
     public static void updateGPSLocation(Context context){
 
-        Util.getToast(context,"Getting new Location...", false ).show();
+      //  Util.getToast(context,"Getting new Location...", false ).show();
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null){
             Log.e(TAG, "locationManager is null");
@@ -1103,15 +975,27 @@ Prefs prefs = new Prefs(context);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
+
+          //  Util.broadcastAMessage(context, "turn_on_gps_and_try_again");
+            String messageToDisplay = "";
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_FAILED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
             return;
         }
 
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
+
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
+
         }
     }
 
@@ -1195,6 +1079,9 @@ Prefs prefs = new Prefs(context);
     }
 
     static String convertUnixTimeToString(long unixTimeToConvert){
+        if (unixTimeToConvert < 1){
+            return "";
+        }
         Date date = new Date(unixTimeToConvert);
         Locale nzLocale = new Locale("nz");
         DateFormat fileFormat = new SimpleDateFormat("EEE, d MMM yyyy 'at' HH:mm:ss", nzLocale);
@@ -1220,6 +1107,7 @@ Prefs prefs = new Prefs(context);
             prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
         }else{
             prefs.setInternetConnectionMode("normal");
+            prefs.setIsDisabled(!walkingMode); // I thought it best to disable recording when user exits walking mode, but don't enable just because they turn on walking mode
         }
 
         prefs.setUseFrequentRecordings(walkingMode);
@@ -1239,4 +1127,325 @@ Prefs prefs = new Prefs(context);
         createTheNextSingleStandardAlarm(context);
     }
 
+    static void setUseFrequentUploads(Context context, boolean useFrequentUploads){
+        Prefs prefs = new Prefs(context);
+        prefs.setUseFrequentUploads(useFrequentUploads);
+
+    }
+
+    static void uploadFilesUsingUploadButton(final Context context){
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
+
+                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                    if (uploadedSuccessfully){
+
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
+
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
+                    }
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+    public static void displayHelp(final Context context, String activityOrFragmentName){
+
+        String dialogMessage = "";
+
+
+        if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.app_icon_name))){
+            dialogMessage = context.getString(R.string.help_text_welcome);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))){
+            dialogMessage = context.getString(R.string.help_text_welcome);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_account))){
+            dialogMessage = context.getString(R.string.help_text_create_account);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_sign_in))){
+            dialogMessage = context.getString(R.string.help_text_sign_in);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group))){
+            dialogMessage = context.getString(R.string.help_text_create_or_choose_group);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_register_phone))){
+            dialogMessage = context.getString(R.string.help_text_register_phone);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_gps_location))){
+            dialogMessage = context.getString(R.string.help_text_gps_location);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_test_record))){
+            dialogMessage = context.getString(R.string.help_text_test_record);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_vitals))){
+            dialogMessage = context.getString(R.string.help_text_vitals);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_walking))){
+            dialogMessage = context.getString(R.string.help_text_walking);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery))){
+            dialogMessage = context.getString(R.string.help_text_battery);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_warning_sound))){
+            dialogMessage = context.getString(R.string.help_text_warning_sound);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_manage_recordings))){
+            dialogMessage = context.getString(R.string.help_text_manage_recordings);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_internet_connection))){
+            dialogMessage = context.getString(R.string.help_text_internet_connection);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_frequency))){
+            dialogMessage = context.getString(R.string.help_text_frequency);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_rooted))){
+            dialogMessage = context.getString(R.string.help_text_rooted);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_testing))){
+            dialogMessage = context.getString(R.string.help_text_settings_for_testing);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on))){
+            dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source))){
+            dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
+
+        }else {
+            dialogMessage = "Still to fix in Util.displayHelp";
+        }
+
+        // Make any urls 'clickable'
+        //https://stackoverflow.com/questions/9204303/android-is-it-possible-to-add-a-clickable-link-into-a-string-resource
+        final SpannableString s = new SpannableString(dialogMessage);
+
+        Linkify.addLinks(s, Linkify.ALL);
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        // Add the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                return;
+            }
+        });
+
+
+
+        builder.setMessage(s)
+                .setTitle(activityOrFragmentName);
+
+
+
+        // https://stackoverflow.com/questions/15909672/how-to-set-font-size-for-text-of-dialog-buttons
+        final AlertDialog  dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                btnPositive.setTextSize(24);
+                int oKButtonColor = ResourcesCompat.getColor(context.getResources(), R.color.dialogButtonText, null);
+                btnPositive.setTextColor(oKButtonColor);
+
+                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                //https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
+                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                int linkColorInt = ResourcesCompat.getColor(context.getResources(), R.color.linkToServerInHelp, null);
+                textView.setLinkTextColor(linkColorInt);
+                textView.setTextSize(22);
+               // textView.setMovementMethod(new ScrollingMovementMethod());
+                //this.getListView().setScrollbarFadingEnabled(false);
+
+            }
+        });
+
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+
+        dialog.show();
+       // dialog.getListView().setScrollbarFadingEnabled(false);
+
+        // Indicate that the dialog is scrollable ie show scroll bar
+        // but doesn't work
+        // https://stackoverflow.com/questions/1564867/adding-a-vertical-scrollbar-to-an-alertdialog-in-android/6231188
+//        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+//        textView.setScroller(new Scroller(context));
+//        textView.setVerticalScrollBarEnabled(true);
+//        textView.setMovementMethod(new ScrollingMovementMethod());
+
+
+
+        // Make the textview clickable. Must be called after show(). Need for URL to work
+        ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
+    }
+
+    static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context){
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    File recordingsFolder = Util.getRecordingsFolder(context);
+
+                    for (File file : recordingsFolder.listFiles()){
+                        file.delete();
+                    }
+
+                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+
+                    if (getNumberOfRecordings(context) == 0){
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
+
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
+                    }
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+    static int getNumberOfRecordings(Context context){
+        File recordingsFolder = Util.getRecordingsFolder(context);
+        File recordingFiles[] = recordingsFolder.listFiles();
+        return recordingFiles.length;
+    }
+
+    //https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
+     public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+
+    public static void setGroups(Context context, ArrayList<String> groupsArrayList){
+        try {
+            JSONArray groupsArrayJSON = new JSONArray();
+            for (String group : groupsArrayList) {
+                groupsArrayJSON.put(group);
+            }
+
+            JSONObject jsonGroups = new JSONObject();
+            jsonGroups.put("groups", groupsArrayJSON);
+
+            String groupsAsJsonString = jsonGroups.toString();
+            Prefs prefs = new Prefs(context);
+            prefs.setGroups(groupsAsJsonString);
+
+            // Broadcast that groups have been updated
+
+
+
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+    }
+
+    public static void addGroup(Context context, String groupName){
+        ArrayList<String> localGroups = getGroupsStoredOnPhone(context);
+        if (!localGroups.contains(groupName)) {
+            localGroups.add(groupName);
+        }
+        setGroups(context, localGroups);
+    }
+
+    public static  ArrayList<String> getGroupsStoredOnPhone(Context context){
+        Prefs prefs = new Prefs(context);
+        ArrayList<String> groups  = new ArrayList<String>();
+        String groupsString = prefs.getGroups();
+        if (groupsString != null) {
+            try {
+                JSONObject jsonGroups = new JSONObject(groupsString);
+                JSONArray groupsArrayJSON = jsonGroups.getJSONArray("groups");
+                if (groupsArrayJSON != null) {
+                    for (int i = 0; i < groupsArrayJSON.length(); i++) {
+                        groups.add(groupsArrayJSON.getString(i));
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return groups;
+    }
+
+    static void getGroupsFromServer(final Context context){
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    ArrayList<String> groupsFromServer = Server.getGroups(context);
+                    setGroups( context, groupsFromServer);
+
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+    static void addGroupToServer(final Context context, final String groupName){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                   Server.addGroupToServer(context, groupName);
+
+                }
+                catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+        };
+        thread.start();
+    }
+
+   static void setUseTestServer(final Context context, boolean useTestServer) {
+        Prefs prefs = new Prefs(context);
+        prefs.setUseTestServer(useTestServer);
+        // Need to un register phone and remove groups, account
+        unregisterPhone(context);
+        signOutUser(context);
+        prefs.setGroups(null);
+    }
+
+    static void unregisterPhone(final Context context) {
+        try {
+            Prefs prefs = new Prefs(context);
+
+            prefs.setGroupName(null);
+            prefs.setDevicePassword(null);
+            prefs.setDeviceName(null);
+            prefs.setDeviceToken(null);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Error Un-registering device.");
+        }
+
+    }
+
+    static void signOutUser(final Context context) {
+        try {
+            Prefs prefs = new Prefs(context);
+            prefs.setUserSignedIn(false);
+
+//            prefs.setEmailAddress(null);
+//            prefs.setDeviceId(null);
+//            prefs.setGroups(null);
+//            prefs.setUserNameOrEmailAddress(null);
+//            prefs.setUsernamePassword(null);
+//            prefs.setUsername(null);
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Error Un-registering user.");
+        }
+    }
 }

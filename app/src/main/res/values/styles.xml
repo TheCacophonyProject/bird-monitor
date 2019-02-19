@@ -1,9 +1,71 @@
 <resources>
 
+    <style name="HeaderBar">
+        <item name="android:background">#303F9F</item>
+    </style>
+
     <!-- Base application theme. -->
 
 
     <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- To find source of Theme - https://stackoverflow.com/questions/26583780/where-can-i-find-the-default-styles-for-theme-appcompat-light -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+
+
+        <item name="android:windowBackground">@color/windowBackground</item>
+
+
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:colorForeground">@color/colorForeground</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+
+
+
+
+        <item name="colorSwitchThumbNormal">@color/colorSwitchThumbNormal</item>
+        <item name="colorBackgroundFloating">@color/colorBackgroundFloating</item>
+        <item name="colorButtonNormal">@color/colorButtonNormal</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="textAppearanceListItem">@color/textAppearanceListItem</item>
+        <item name="android:textColorTertiary">@color/textColorTertiary</item>
+        <item name="android:textAppearance">@color/textAppearance</item>
+
+        <item name="android:listDivider">@color/listDivider</item>
+
+
+
+
+    </style>
+
+    <style name="SwitchAndRadioButtonCompatTheme" >
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+        <item name="android:switchTextAppearance">@style/TextAppearance.AppCompat.Display1</item>
+
+    </style>
+
+
+
+
+
+    <style name="Cacophony.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Cacophony.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+
+
 </resources>

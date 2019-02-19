@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,15 +20,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -45,17 +41,27 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = VitalsActivity.class.getName();
-    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
+   // private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
 
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
     private static final int PERMISSION_RECORD_AUDIO = 1;
     private static final int PERMISSION_LOCATION = 2;
 
+    private TextView tvMessages;
+
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(intentAction);
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(intentAction);
+        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_help, menu);
+        return true;
     }
 
     @Override
@@ -71,33 +77,12 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
 
+        tvMessages = (TextView) findViewById(R.id.tvMessages);
 
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        //https://developer.android.com/training/appbar/setting-up#java
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setLogo(R.mipmap.ic_launcher);
-        } else {
-            Log.w(TAG, "ActionBar ab is null");
-
-        }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_vitals, menu);
-
-        return true;
-    }
-
-
-
 
     private void disableFlightMode(){
         try {
@@ -124,7 +109,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-            Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+          //  Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
+            tvMessages.setText("Error disabling flight mode");
+
         }
     }
     /**
@@ -140,7 +127,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             Log.e(TAG, "Error calling super.onResume");
         }
 
-     //   disableFlightMode();
         checkPermissions();
         refreshVitalsDisplayedText();
 
@@ -149,7 +135,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNameText = findViewById(R.id.tvAppVersion);
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
-       // versionNameText.setText(getString(R.string.version) + " " + versionName);
         versionNameText.setText(versionNameTextToDisplay);
 
         // listens for events broadcast from ?
@@ -189,7 +174,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
 
-        Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
+     //   Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
+        tvMessages.setText(missingPermissionMessage);
 
         Log.w(TAG, missingPermissionMessage);
 
@@ -240,40 +226,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         return allPermissionsAlreadyGranted;
     }
 
-    /**
-     * UI button to refresh vitals
-     * @param v View
-     */
-    public void refreshButton(@SuppressWarnings("UnusedParameters") View v) {
-        refreshVitals();
-    }
 
-    /**
-     * Check the vitals again and update the UI.
-     */
-    private void refreshVitals() {
-        findViewById(R.id.refreshVitals).setEnabled(false);
-
-        Util.getToast(getApplicationContext(),"About to update vitals - please wait a moment", false ).show();
-        try {
-
-            Thread server = new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Server.updateServerConnectionStatus(getApplicationContext());
-                    Looper.loop();
-                }
-            };
-            server.start();
-        }catch (Exception ex){
-            Util.getToast(getApplicationContext(), "Error refreshing vitals", true).show();
-
-            Log.e(TAG, ex.getLocalizedMessage());
-            findViewById(R.id.refreshVitals).setEnabled(true);
-
-        }
-    }
 
 
     @Override
@@ -285,9 +238,11 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
 
-                Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
+               // Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
+                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
             } else {
-                Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
+              //  Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
+                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
             }
         }
 
@@ -296,9 +251,11 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
 
-                Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
+             //   Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
+                tvMessages.setText("RECORD_AUDIO permission granted");
             } else {
-                Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
+             //   Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
+                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
             }
         }
 
@@ -321,7 +278,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 // Check the age of the webToken
         boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
-//        if (Server.loggedIn && webTokenIsCurrent)
+
         if ( webTokenIsCurrent)
             loggedInText.setText(getString(R.string.logged_in_to_server_true));
         else
@@ -343,11 +300,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 String deviceNameToDisplay = getString(R.string.device_name_colon) + " " + testServerPrefix + prefs.getDeviceName();
                 deviceNameText.setText(deviceNameToDisplay);
 
-
             } catch (Exception e) {
-
                 Log.e(TAG, "Device Name not available");
-//            Log.e(TAG, "Device ID not available");
             }
 
         }
@@ -359,8 +313,14 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         // Update time of next recording
         TextView tvNextRecording = findViewById(R.id.tvNextRecording);
-        String nextAlarm = Util.getNextAlarm(getApplicationContext());
-        tvNextRecording.setText("Next Recording: " + nextAlarm);
+
+        if (prefs.getIsDisabled()){
+            tvNextRecording.setText("Next Recording: Disabled - no next recording");
+        }else{
+            String nextAlarm = Util.getNextAlarm(getApplicationContext());
+            tvNextRecording.setText("Next Recording: " + nextAlarm);
+        }
+
 
 
         // GPS text.
@@ -392,46 +352,83 @@ try {
     }
 
 
-    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
+//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+//
+//        // broadcast notification coming from ??
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            try {
+//                String action = intent.getAction();
+//                if (action.equals("server.updateServerConnectionStatus") || action.equals("server.login")) {
+//                    String messageType = intent.getStringExtra("message");
+//                    if (messageType != null) {
+//
+////                        if (messageType.equalsIgnoreCase("enable_vitals_button")) {
+////                            findViewById(R.id.refreshVitals).setEnabled(true);
+////                        }
+//                        if (messageType.equalsIgnoreCase("tick_logged_in_to_server")) {
+//                            TextView loggedInText = findViewById(R.id.loggedInText);
+//                            loggedInText.setText(getString(R.string.logged_in_to_server_true));
+//                        } else if (messageType.equalsIgnoreCase("untick_logged_in_to_server")) {
+//                            TextView loggedInText = findViewById(R.id.loggedInText);
+//                            loggedInText.setText(getString(R.string.logged_in_to_server_false));
+//                        } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
+//                            refreshVitalsDisplayedText();
+//                        } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
+//                          //  TextView messageView = findViewById(R.id.messageText);
+//                         //   if (messageView != null) {
+//                          //      messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+//                                tvMessages.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
+//                         //   }
+//                        } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
+//                            Prefs prefs = new Prefs(context);
+//                            updateGpsDisplay(prefs);
+//                        } else if (messageType.equalsIgnoreCase("recording_finished")) {
+//                            refreshVitalsDisplayedText();
+//                        } else if (messageType.equalsIgnoreCase("alarms_updated")) {
+//                            refreshVitalsDisplayedText();
+//                        }
+//
+//                    }
+//                }
+//
+//            }catch (Exception ex){
+//                Log.e(TAG,ex.getLocalizedMessage());
+//            }
+//        }
+//    };
 
-        // broadcast notification coming from ??
+    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
             try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
 
-                    if (message.equalsIgnoreCase("enable_vitals_button")) {
-                        findViewById(R.id.refreshVitals).setEnabled(true);
+                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
-                    }else if (message.equalsIgnoreCase("tick_logged_in_to_server")){
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_true));
-                    }else if (message.equalsIgnoreCase("untick_logged_in_to_server")){
-                        TextView loggedInText = findViewById(R.id.loggedInText);
-                        loggedInText.setText(getString(R.string.logged_in_to_server_false));
-                    }else if (message.equalsIgnoreCase("refresh_vitals_displayed_text")){
+                if (jsonStringMessage != null) {
+
+                    JSONObject joMessage = new JSONObject(jsonStringMessage);
+                    String messageType = joMessage.getString("messageType");
+                    String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                     if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         refreshVitalsDisplayedText();
-                    }else if (message.equalsIgnoreCase("can_not_toggle_airplane_mode")){
-                        TextView messageView = findViewById(R.id.messageText);
-                        if (messageView != null){
-                            messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-                        }
-                    }else if(message.equalsIgnoreCase("refresh_gps_coordinates")){
-                        Prefs prefs = new Prefs(context);
-                        updateGpsDisplay(prefs);
                     }
-
                 }
 
-            }catch (Exception ex){
-                Log.e(TAG,ex.getLocalizedMessage());
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getLocalizedMessage());
+                tvMessages.setText("Could not record");
+
             }
+
         }
     };
 
-    public void back(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
         try {
 //            Intent intent = new Intent(this, MainActivity2.class);
 //            startActivity(intent);
@@ -441,6 +438,19 @@ try {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_vitals));
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 
 
