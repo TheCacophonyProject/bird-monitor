@@ -133,7 +133,7 @@ class RegisterPhone {
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Your phone has been registered with the server :-)" + " Swipe to next screen.")));
 
-       
+
 
     }
 
