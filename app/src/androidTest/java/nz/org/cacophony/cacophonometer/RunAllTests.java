@@ -21,6 +21,7 @@ import org.junit.runners.Suite;
 //        //  RunRegisterDeviceOnProductionServerTests.class,
 //        RunRegisterDeviceOnTestServerTests.class,
         RunSignInUser.class,
+        RunRegisterPhone.class,
       // RunRecordNowTests.class,
 
 })

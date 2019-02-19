@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
@@ -45,7 +44,7 @@ public class SignInFragment extends Fragment {
         etPasswordInput = view.findViewById(R.id.etPasswordInput);
         tilUserNameOrPassword =  view.findViewById(R.id.tilUserNameOrEmail);
         tilPassword =  view.findViewById(R.id.tilPassword);
-        tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
+        tvTitleMessage = view.findViewById(R.id.tvTitleMessageSignIn);
 
         btnSignIn =  view.findViewById(R.id.btnSignIn);
         btnSignOutUser =  view.findViewById(R.id.btnSignOutUser);

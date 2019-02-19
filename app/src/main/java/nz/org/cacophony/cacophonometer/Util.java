@@ -1351,4 +1351,15 @@ Prefs prefs = new Prefs(context);
             Log.e(TAG, "Error Un-registering user.");
         }
     }
+
+    static boolean isPhoneRegistered(final Context context){
+        Prefs prefs = new Prefs(context);
+        String groupNameFromPrefs = prefs.getGroupName();
+        String deviceNameFromPrefs = prefs.getDeviceName();
+        if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

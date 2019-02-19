@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.util.regex.Pattern;
-
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
