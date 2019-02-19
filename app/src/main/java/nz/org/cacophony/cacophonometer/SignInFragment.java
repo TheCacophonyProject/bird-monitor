@@ -1,18 +1,14 @@
 package nz.org.cacophony.cacophonometer;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
+
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
 
 public class SignInFragment extends Fragment {
     private static final String TAG = "SignInFragment";
@@ -42,9 +40,9 @@ public class SignInFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_sign_in, container, false);
         setUserVisibleHint(false);
-        etUserNameOrPasswordInput = view.findViewById(R.id.etUserNameOrPasswordInput);
+        etUserNameOrPasswordInput = view.findViewById(R.id.etUserNameOrEmailInput);
         etPasswordInput = view.findViewById(R.id.etPasswordInput);
-        tilUserNameOrPassword =  view.findViewById(R.id.tilUserNameOrPassword);
+        tilUserNameOrPassword =  view.findViewById(R.id.tilUserNameOrEmail);
         tilPassword =  view.findViewById(R.id.tilPassword);
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
 
@@ -81,11 +79,13 @@ public class SignInFragment extends Fragment {
     }
 
     private void login(){
+
         disableFlightMode();
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)){
             Log.e(TAG, "Failed to disable airplane mode");
+            recordIdlingResource.decrement();
             return ;
         }
 
@@ -179,6 +179,7 @@ public class SignInFragment extends Fragment {
 
                 if (jsonStringMessage != null) {
 
+
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
                     String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
@@ -203,17 +204,20 @@ public class SignInFragment extends Fragment {
                     } else  if (messageType.equalsIgnoreCase("NETWORK_ERROR")){
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                        recordIdlingResource.decrement();
                         return;
 
                     }else  if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")){
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                             etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                        recordIdlingResource.decrement();
                             return;
 
                     }else  if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")){
 
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                     etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
+                        recordIdlingResource.decrement();
                     return;
                 }
 
@@ -222,12 +226,15 @@ public class SignInFragment extends Fragment {
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
+                recordIdlingResource.decrement();
             }
         }
     };
     public void signinButtonPressed() {
 
         try {
+            recordIdlingResource.increment();
+
             Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
             if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
@@ -243,7 +250,7 @@ public class SignInFragment extends Fragment {
             }
 
             // Check that the user name is valid, at least 5 characters.
-            String usernameOrEmailAddress = ((EditText) getView().findViewById(R.id.etUserNameOrPasswordInput)).getText().toString();
+            String usernameOrEmailAddress = ((EditText) getView().findViewById(R.id.etUserNameOrEmailInput)).getText().toString();
             if (usernameOrEmailAddress.length() < 1){
 
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a username of at least 5 characters (no spaces).");

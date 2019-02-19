@@ -34,6 +34,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -175,6 +177,7 @@ class Server {
     }
 
     static void loginUser(Context context) {
+
         final Prefs prefs = new Prefs(context);
 
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -193,6 +196,7 @@ class Server {
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
 
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
+
                 return;
             }
 
@@ -213,6 +217,7 @@ class Server {
                 messageToDisplay = "Error: Username/email address or password can not be missing";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
+
                 return;
             }
 

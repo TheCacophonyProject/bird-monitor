@@ -17,6 +17,8 @@ import java.io.File;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -121,6 +123,8 @@ class RecordNow {
         useTestServerAndShortRecordings();
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen
+        signIn();
+
 
 //        // Open settings
 //        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
@@ -195,16 +199,19 @@ class RecordNow {
     }
 
     private static void signIn(){
-        prefs.setUsername("timhot");
-        prefs.setUsernamePassword("Pppother1");
+//        prefs.setUsername("timhot");
+//        prefs.setUsernamePassword("Pppother1");
 
-        Thread loginThread = new Thread() {
-            @Override
-            public void run() {
-                Server.loginUser(targetContext);
-            }
-        };
-        loginThread.start();
+      //  onView(withId(R.id.etUserNameOrEmailInput)).perform(scrollTo(), click());
+        onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
+
+       // onView(withId(R.id.tilPassword)).perform(scrollTo(), click());
+        onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+
+        onView(withId(R.id.btnSignIn)).perform(scrollTo(), click());
+
+
+
 
     }
 

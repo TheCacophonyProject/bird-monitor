@@ -78,30 +78,30 @@ public class Signin {
         viewPager2.perform(swipeLeft());
 
         ViewInteraction textInputEditText = onView(
-                allOf(withId(R.id.etUserNameOrPasswordInput),
+                allOf(withId(R.id.etUserNameOrEmailInput),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.tilUserNameOrPassword),
+                                        withId(R.id.tilUserNameOrEmail),
                                         0),
                                 0),
                         isDisplayed()));
         textInputEditText.perform(click());
 
         ViewInteraction textInputEditText2 = onView(
-                allOf(withId(R.id.etUserNameOrPasswordInput),
+                allOf(withId(R.id.etUserNameOrEmailInput),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.tilUserNameOrPassword),
+                                        withId(R.id.tilUserNameOrEmail),
                                         0),
                                 0),
                         isDisplayed()));
         textInputEditText2.perform(replaceText("timhot"), closeSoftKeyboard());
 
         ViewInteraction textInputEditText3 = onView(
-                allOf(withId(R.id.etUserNameOrPasswordInput), withText("timhot"),
+                allOf(withId(R.id.etUserNameOrEmailInput), withText("timhot"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.tilUserNameOrPassword),
+                                        withId(R.id.tilUserNameOrEmail),
                                         0),
                                 0),
                         isDisplayed()));

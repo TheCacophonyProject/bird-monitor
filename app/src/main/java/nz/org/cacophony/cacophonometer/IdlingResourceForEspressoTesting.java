@@ -10,10 +10,12 @@ import android.support.test.espresso.idling.CountingIdlingResource;
  */
 
 interface IdlingResourceForEspressoTesting {
-    CountingIdlingResource registerIdlingResource = new CountingIdlingResource("REGISTER");
-      CountingIdlingResource recordNowIdlingResource = new CountingIdlingResource("RECORD_NOW");
-     CountingIdlingResource uploadingIdlingResource = new CountingIdlingResource("UPLOADING");
-      CountingIdlingResource toggleAirplaneModeIdlingResource = new CountingIdlingResource("TOGGLE_AIRPLANE_MODE");
+//    CountingIdlingResource registerIdlingResource = new CountingIdlingResource("REGISTER");
+//      CountingIdlingResource recordNowIdlingResource = new CountingIdlingResource("RECORD_NOW");
+//     CountingIdlingResource uploadingIdlingResource = new CountingIdlingResource("UPLOADING");
+//      CountingIdlingResource toggleAirplaneModeIdlingResource = new CountingIdlingResource("TOGGLE_AIRPLANE_MODE");
 
+
+    CountingIdlingResource recordIdlingResource = new CountingIdlingResource("RECORD");
 
 }

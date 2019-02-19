@@ -267,20 +267,20 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
      */
     public void registerEspressoIdlingResources() {
         // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
-        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
-        IdlingRegistry.getInstance().register(registerIdlingResource);
-        IdlingRegistry.getInstance().register(recordNowIdlingResource);
-        IdlingRegistry.getInstance().register(uploadingIdlingResource);
-        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
+//        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
+//        IdlingRegistry.getInstance().register(registerIdlingResource);
+//        IdlingRegistry.getInstance().register(recordNowIdlingResource);
+//        IdlingRegistry.getInstance().register(uploadingIdlingResource);
+//        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
     }
     /**
      * Only used by testing code
      */
     public void unRegisterEspressoIdlingResources() {
-        IdlingRegistry.getInstance().unregister(registerIdlingResource);
-        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+//        IdlingRegistry.getInstance().unregister(registerIdlingResource);
+//        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
+//        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
+//        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
 
 //        if (toggleAirplaneModeIdlingResource != null) {
 //            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
