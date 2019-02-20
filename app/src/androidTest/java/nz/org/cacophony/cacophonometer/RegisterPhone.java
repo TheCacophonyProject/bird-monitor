@@ -78,8 +78,12 @@ class RegisterPhone {
 
 
         Util.unregisterPhone(targetContext);
+        Util.signOutUser(targetContext);
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
+
+        // Need to sign in
+
         nowSwipeLeft(); // takes you to Groups screen
 
 
@@ -129,7 +133,8 @@ class RegisterPhone {
 
         boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
 
-        assertEquals(phoneRegistered, true);
+//        assertEquals(phoneRegistered, true);
+        assertEquals(true, phoneRegistered);
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Your phone has been registered with the server :-)" + " Swipe to next screen.")));
 

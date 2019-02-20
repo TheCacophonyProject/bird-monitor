@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
@@ -80,6 +81,7 @@ public class SignInFragment extends Fragment {
 
     private void signInUser(){
         signInIdlingResource.increment();
+        getGroupsIdlingResource.increment();
 
         disableFlightMode();
 

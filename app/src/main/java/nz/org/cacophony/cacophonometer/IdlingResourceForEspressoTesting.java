@@ -16,8 +16,9 @@ interface IdlingResourceForEspressoTesting {
 //      CountingIdlingResource toggleAirplaneModeIdlingResource = new CountingIdlingResource("TOGGLE_AIRPLANE_MODE");
 
     CountingIdlingResource signInIdlingResource = new CountingIdlingResource("SIGNIN");
+    CountingIdlingResource getGroupsIdlingResource = new CountingIdlingResource("GET_GROUPS");
     CountingIdlingResource registerPhoneIdlingResource = new CountingIdlingResource("REGISTER_PHONE");
-
+    CountingIdlingResource createAccountIdlingResource = new CountingIdlingResource("CREATE_ACCOUNT");
 
 
     CountingIdlingResource recordIdlingResource = new CountingIdlingResource("RECORD");

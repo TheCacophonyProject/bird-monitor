@@ -22,6 +22,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
+
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
 
@@ -155,15 +157,18 @@ public class GroupsFragment extends Fragment {
 
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
+                        getGroupsIdlingResource.decrement();
                     }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
                       adapter.clear();
                         //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
+                        getGroupsIdlingResource.decrement();
 
                     }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
                             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                        getGroupsIdlingResource.decrement();
                 }
 
                 }
@@ -172,6 +177,7 @@ public class GroupsFragment extends Fragment {
             } catch (Exception ex) {
 
                 Log.e(TAG, ex.getLocalizedMessage());
+                getGroupsIdlingResource.decrement();
             }
         }
     };

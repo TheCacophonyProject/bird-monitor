@@ -28,14 +28,18 @@ public class HelperCode {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
 
-        Util.setUseTestServer(targetContext, true);
-        prefs.setUseShortRecordings(true);
+        if (!prefs.getUseTestServer()){
+            Util.setUseTestServer(targetContext, true);
+            prefs.setUseShortRecordings(true);
+        }
+
+
     }
 
     public static void signOutUser(Prefs prefs, Context targetContext){
 
-        prefs.setUsername("");
-        prefs.setUsernamePassword("");
+        prefs.setUsername(null);
+        prefs.setUsernamePassword(null);
         prefs.setUserSignedIn(false);
     }
 

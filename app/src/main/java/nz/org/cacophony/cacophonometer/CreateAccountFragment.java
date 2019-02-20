@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.createAccountIdlingResource;
+
 public class CreateAccountFragment extends Fragment {
     private static final String TAG = "CreateAccountFragment";
 
@@ -61,7 +63,7 @@ public class CreateAccountFragment extends Fragment {
          etPassword2 = (TextInputEditText) view.findViewById(R.id.etPassword2);
         btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
       //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+        tvMessages = (TextView) view.findViewById(R.id.tvMessagesCreateAccount);
 
         setUserVisibleHint(false);
 
@@ -167,6 +169,8 @@ public class CreateAccountFragment extends Fragment {
 
         tvMessages.setText("Attempting to create user - please wait");
 
+        createAccountIdlingResource.increment();
+
         signUp(username, emailAddress, etPassword1, getActivity().getApplicationContext());
     }
 
@@ -238,6 +242,7 @@ public class CreateAccountFragment extends Fragment {
 
                       // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
                         tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
+                        createAccountIdlingResource.decrement();
 
                     } else {
                         tilUsername.setVisibility(View.VISIBLE);
@@ -246,6 +251,7 @@ public class CreateAccountFragment extends Fragment {
                         tilPassword2.setVisibility(View.VISIBLE);
                         tvMessages.setText("");
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay) ;
+                        createAccountIdlingResource.decrement();
                         }
 
                     }
@@ -260,6 +266,7 @@ public class CreateAccountFragment extends Fragment {
                 tilEmail.setVisibility(View.VISIBLE);
                 tilPassword1.setVisibility(View.VISIBLE);
                 tilPassword2.setVisibility(View.VISIBLE);
+                createAccountIdlingResource.decrement();
             }
         }
     };

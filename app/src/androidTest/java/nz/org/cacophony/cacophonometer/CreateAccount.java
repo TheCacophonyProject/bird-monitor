@@ -4,9 +4,8 @@ import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import junit.framework.AssertionFailedError;
-
 import java.io.File;
+import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -15,7 +14,6 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -29,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  */
 
 @SuppressWarnings("unused")
-class SignInUser {
+class CreateAccount {
 
     private static Context targetContext;
     private static Prefs prefs;
@@ -37,17 +35,17 @@ class SignInUser {
 
 
 
-    public static void signInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void createAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
 
 
-        setUpForSignInUser(mActivityTestRule);
+        setUpForCreateAccount(mActivityTestRule);
 
-        signIn();
+        create();
 
-        tearDownForSignInUser(mActivityTestRule);
+        tearDownForCreateAccount(mActivityTestRule);
     }
 
-    private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule){
 
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
@@ -64,52 +62,47 @@ class SignInUser {
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
-       // HelperCode.signOutUser(prefs, targetContext);
-
+        HelperCode.signOutUser(prefs, targetContext);
         HelperCode.useTestServerAndShortRecordings(prefs, targetContext);
-        nowSwipeLeft();
-        nowSwipeLeft(); // takes you to Sign In screen
+        nowSwipeLeft();// takes you to Create Account screen
+
 
     }
 
-    private static void tearDownForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
+    private static void tearDownForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-         mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
 
 
-    private static void signIn(){
-
-
-
-            try {
-                onView(withId(R.id.btnSignOutUser)).perform(click());
-            } catch (Exception e) {
-                // View not displayed
-            }
-
+    private static void create(){
 
         try {
+            // Create a uniqueish username
+            Date now = new Date();
+            String deviceName = Long.toString(now.getTime()/1000);
+            deviceName.substring(deviceName.length() - 8);
+            onView(withId(R.id.etUsername)).perform(replaceText(deviceName), closeSoftKeyboard());
+            onView(withId(R.id.etEmail)).perform(replaceText(deviceName + "@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etPassword1)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+            onView(withId(R.id.etPassword2)).perform(replaceText("Pppother1"), closeSoftKeyboard());
 
-
-            onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
-
-            onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
-            onView(withId(R.id.btnSignIn)).perform(click());
+            onView(withId(R.id.btnSignUp)).perform(click());
 
         }catch (Exception ex){
-            Log.e("SignInUser", ex.getLocalizedMessage());
+            Log.e("CreateAccount", ex.getLocalizedMessage());
         }
 
 
-        Log.e("SignInUser", "Finished");
+        Log.e("CreateAccount", "Finished");
 
-        boolean userSignedIn = prefs.getUserSignedIn();
+     //   boolean userSignedIn = prefs.getUserSignedIn();
 
-        assertEquals(userSignedIn, true);
-        onView(withId(R.id.tvTitleMessageSignIn)).check(matches(withText("Signed In")));
-
+      //  assertEquals(userSignedIn, true);
+        String successMessage = "Success, you have successfully created a new user account\n\nSwipe to next screen to sign in.";
+        onView(withId(R.id.tvMessagesCreateAccount)).check(matches(withText(successMessage)));
+       // nowSwipeLeft();
     }
 
 

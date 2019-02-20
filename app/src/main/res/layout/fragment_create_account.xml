@@ -146,7 +146,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tilPassword2" />
 
     <TextView
-        android:id="@+id/tvMessages"
+        android:id="@+id/tvMessagesCreateAccount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
