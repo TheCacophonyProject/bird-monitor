@@ -151,6 +151,15 @@ public class GroupsFragment extends Fragment {
 
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
+                        // Refresh groups list (added as automated testing sometimes tried to get group before they were showing
+
+                        tvMessages.setText("");
+                        adapter.clear();
+                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
+                        adapter.notifyDataSetChanged();
+
+                        getGroupsIdlingResource.decrement();
+
                     } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);

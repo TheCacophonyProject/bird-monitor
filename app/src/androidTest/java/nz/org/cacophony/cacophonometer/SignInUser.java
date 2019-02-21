@@ -81,29 +81,8 @@ class SignInUser {
 
     private static void signIn(){
 
+        HelperCode.signIn(prefs);
 
-
-            try {
-                onView(withId(R.id.btnSignOutUser)).perform(click());
-            } catch (Exception e) {
-                // View not displayed
-            }
-
-
-        try {
-
-
-            onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
-
-            onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
-            onView(withId(R.id.btnSignIn)).perform(click());
-
-        }catch (Exception ex){
-            Log.e("SignInUser", ex.getLocalizedMessage());
-        }
-
-
-        Log.e("SignInUser", "Finished");
 
         boolean userSignedIn = prefs.getUserSignedIn();
 

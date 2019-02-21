@@ -6,10 +6,14 @@ import android.util.Log;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertEquals;
 
 public class HelperCode {
 
@@ -49,6 +53,33 @@ public class HelperCode {
         }catch (Exception ex){
             Log.e("HelperCode", ex.getLocalizedMessage());
         }
+    }
+
+    public static void signIn(Prefs prefs){
+
+
+
+//        try {
+//            onView(withId(R.id.btnSignOutUser)).perform(click());
+//        } catch (Exception e) {
+//            // View not displayed
+//        }
+
+
+        try {
+
+            Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
+            onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
+
+            onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+            onView(withId(R.id.btnSignIn)).perform(click());
+
+        }catch (Exception ex){
+            Log.e("SignInUser", ex.getLocalizedMessage());
+        }
+
+
+
     }
 
 

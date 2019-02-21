@@ -83,7 +83,12 @@ class RegisterPhone {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
+        HelperCode.signIn(prefs);
+try {
+    Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+}catch (Exception ex){
 
+}
         nowSwipeLeft(); // takes you to Groups screen
 
 
@@ -92,6 +97,7 @@ class RegisterPhone {
 
     private static void tearDownForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
+        Util.signOutUser(targetContext);
         mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
@@ -100,6 +106,7 @@ class RegisterPhone {
     private static void registerPhone(){
 
         try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 
             DataInteraction appCompatTextView = onData(anything())
                     .inAdapterView(allOf(withId(R.id.lvGroups),
