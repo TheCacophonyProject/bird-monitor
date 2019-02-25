@@ -140,6 +140,7 @@ if (isRecording){
     }
 
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
+        recordIdlingResource.increment();
        isRecording = true;
         String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();

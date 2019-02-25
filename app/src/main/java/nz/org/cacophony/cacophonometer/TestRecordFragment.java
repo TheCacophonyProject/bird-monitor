@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
@@ -158,6 +160,7 @@ public class TestRecordFragment extends Fragment {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORD_AND_UPLOAD_FAILED")) {
                         tvMessages.setText(messageToDisplay);
+                        recordIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED_NOT_REGISTERED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
@@ -167,6 +170,7 @@ public class TestRecordFragment extends Fragment {
                         //getView().findViewById(R.id.btnRecordNow).setEnabled(true);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
+                        recordIdlingResource.decrement();
                     }
                 }
 

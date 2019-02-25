@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
  */
 
 @SuppressWarnings("unused")
-class RegisterPhone {
+class Record {
 
     private static Context targetContext;
     private static Prefs prefs;
@@ -48,17 +48,17 @@ class RegisterPhone {
 
 
 
-    public static void registerPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void Record(ActivityTestRule<MainActivity> mActivityTestRule) {
 
 
-        setUpForRegisterPhone(mActivityTestRule);
+        setUpForRecord(mActivityTestRule);
 
-        registerPhone();
+        record();
 
-        tearDownForRegisterPhone(mActivityTestRule);
+        tearDownForRecord(mActivityTestRule);
     }
 
-    private static void setUpForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
 
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
@@ -74,43 +74,51 @@ class RegisterPhone {
         }
 
 
-
         Util.unregisterPhone(targetContext);
         Util.signOutUser(targetContext);
+
+
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
         HelperCode.signIn(prefs);
-try {
-    Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-}catch (Exception ex){
+        try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+        }catch (Exception ex){
 
-}
+        }
         nowSwipeLeft(); // takes you to Groups screen
 
+        HelperCode.registerPhone(prefs);
 
+        nowSwipeLeft(); // takes you to GPS
+        nowSwipeLeft(); // takes you to Test Record
+
+        // Need to put phone into offline mode so it doesn't try to upload the recording
+        prefs.setInternetConnectionMode("offline");
 
     }
 
-    private static void tearDownForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    private static void tearDownForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
 
+        prefs.setInternetConnectionMode("normal");
         Util.signOutUser(targetContext);
         mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
 
 
-    private static void registerPhone(){
+    private static void record(){
 
-        HelperCode.registerPhone(prefs);
+        int numberOfRecordingsBeforeTestRecord = Util.getNumberOfRecordings(targetContext);
 
-        boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
+        onView(withId(R.id.btnRecordNow)).perform(click());
 
-//        assertEquals(phoneRegistered, true);
-        assertEquals(true, phoneRegistered);
+        int numberOfRecordingsAfterTestRecord = Util.getNumberOfRecordings(targetContext);
 
-        onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Your phone has been registered with the server :-)" + " Swipe to next screen.")));
+        assertEquals(numberOfRecordingsBeforeTestRecord + 1, numberOfRecordingsAfterTestRecord);
+
 
     }
 

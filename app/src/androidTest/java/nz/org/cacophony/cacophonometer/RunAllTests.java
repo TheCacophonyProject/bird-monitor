@@ -23,6 +23,7 @@ import org.junit.runners.Suite;
         RunCreateAccount.class,
         RunSignInUser.class,
         RunRegisterPhone.class,
+        RunRecord.class,
 
       // RunRecordNowTests.class,
 

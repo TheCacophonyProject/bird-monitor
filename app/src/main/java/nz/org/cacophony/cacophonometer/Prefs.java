@@ -115,6 +115,9 @@ class Prefs {
 
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
 
+
+    private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
+
     public Prefs(Context context) {
         this.context = context;
     }
@@ -657,5 +660,14 @@ class Prefs {
 
     boolean getUserSignedIn() {
        return getBoolean(USER_SIGNED_IN_KEY);
+    }
+
+
+    String getLastDeviceNameUsedForTesting() {
+        return getString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY);
+    }
+
+    void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
+        setString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY, lastDeviceNameUsedForTesting);
     }
 }

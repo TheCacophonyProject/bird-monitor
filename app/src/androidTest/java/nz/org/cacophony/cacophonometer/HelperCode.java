@@ -3,7 +3,10 @@ package nz.org.cacophony.cacophonometer;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.Date;
+
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -12,7 +15,9 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
 public class HelperCode {
@@ -58,14 +63,6 @@ public class HelperCode {
     public static void signIn(Prefs prefs){
 
 
-
-//        try {
-//            onView(withId(R.id.btnSignOutUser)).perform(click());
-//        } catch (Exception e) {
-//            // View not displayed
-//        }
-
-
         try {
 
             Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
@@ -78,6 +75,31 @@ public class HelperCode {
             Log.e("SignInUser", ex.getLocalizedMessage());
         }
 
+    }
+
+
+    public static void registerPhone(Prefs prefs){
+
+        try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+
+            onData(allOf(is(instanceOf(String.class)), is("tim1"))).perform(click());
+
+            // App automatically moves to Register Phone screen
+            // Now enter the device name
+
+            // Create a unique device name
+            Date now = new Date();
+
+            String deviceName = Long.toString(now.getTime()/1000);
+            prefs.setLastDeviceNameUsedForTesting(deviceName); // save the device name so can find recordings for it later
+
+            onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());
+            onView(withId(R.id.btnRegister)).perform(click());
+
+        }catch (Exception ex){
+            Log.e("RegisterPhone", ex.getLocalizedMessage());
+        }
 
 
     }
