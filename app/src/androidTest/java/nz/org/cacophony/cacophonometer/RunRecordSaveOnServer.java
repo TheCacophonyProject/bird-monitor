@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RunRecord {
+public class RunRecordSaveOnServer {
 
 
     @Rule
@@ -32,21 +32,23 @@ public class RunRecord {
         // let espresso know to synchronize with background tasks
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
     }
 
     @After
     public void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
     }
 
 
+
+
     @Test
-    public void record() {
+    public void recordAndSaveOnServer() {
 
-        Record.Record(mActivityTestRule);
-
-
+        Record.RecordAndSaveOnServer(mActivityTestRule);
     }
 
 

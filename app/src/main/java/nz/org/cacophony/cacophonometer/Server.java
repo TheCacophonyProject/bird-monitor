@@ -35,6 +35,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 
 /**
@@ -644,13 +645,15 @@ class Server {
 
 
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
+        uploadFilesIdlingResource.increment();
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
 
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageType", "already_uploading");
+                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, can not record as a recording is already in progress");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -425,6 +425,7 @@ try {
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

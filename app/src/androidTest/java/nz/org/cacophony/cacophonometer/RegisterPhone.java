@@ -63,6 +63,7 @@ class RegisterPhone {
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
+        prefs.setInternetConnectionMode("normal");
 
         if (prefs.getDeviceName() == null){
             // Welcome Dialog WILL be displayed - and SetupWizard will be running

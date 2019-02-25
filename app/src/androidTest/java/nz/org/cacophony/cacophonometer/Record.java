@@ -2,7 +2,6 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -12,20 +11,14 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.io.File;
-import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.hasEntry;
@@ -48,12 +41,22 @@ class Record {
 
 
 
-    public static void Record(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void RecordAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
 
         setUpForRecord(mActivityTestRule);
 
-        record();
+        recordAndSaveOnPhone();
+
+        tearDownForRecord(mActivityTestRule);
+    }
+
+    public static void RecordAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
+
+
+        setUpForRecord(mActivityTestRule);
+
+        recordAndSaveOnServer();
 
         tearDownForRecord(mActivityTestRule);
     }
@@ -63,6 +66,7 @@ class Record {
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
+        prefs.setInternetConnectionMode("normal");
 
         if (prefs.getDeviceName() == null){
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
@@ -93,10 +97,9 @@ class Record {
         HelperCode.registerPhone(prefs);
 
         nowSwipeLeft(); // takes you to GPS
-        nowSwipeLeft(); // takes you to Test Record
+        nowSwipeLeft(); // takes you to Test RecordAndSaveOnPhone
 
-        // Need to put phone into offline mode so it doesn't try to upload the recording
-        prefs.setInternetConnectionMode("offline");
+
 
     }
 
@@ -109,7 +112,9 @@ class Record {
     }
 
 
-    private static void record(){
+    private static void recordAndSaveOnPhone(){
+        // Need to put phone into offline mode so it doesn't try to upload the recording
+        prefs.setInternetConnectionMode("offline");
 
         int numberOfRecordingsBeforeTestRecord = Util.getNumberOfRecordings(targetContext);
 
@@ -118,8 +123,24 @@ class Record {
         int numberOfRecordingsAfterTestRecord = Util.getNumberOfRecordings(targetContext);
 
         assertEquals(numberOfRecordingsBeforeTestRecord + 1, numberOfRecordingsAfterTestRecord);
+    }
+
+    private static void recordAndSaveOnServer(){
+        // Need to put phone into normal mode so it uploads the recording
+        prefs.setInternetConnectionMode("normal");
+        File recordingsFolder = Util.getRecordingsFolder(targetContext);
+
+        for (File file : recordingsFolder.listFiles()){
+            file.delete();
+        }
+
+        prefs.setLastRecordIdReturnedFromServer(-1);
+
+        onView(withId(R.id.btnRecordNow)).perform(click());
 
 
+        long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
+        assertTrue(lastRecordingIdFromServer >-1); // Don't know what the recording ID will be, so just check it exists
     }
 
 

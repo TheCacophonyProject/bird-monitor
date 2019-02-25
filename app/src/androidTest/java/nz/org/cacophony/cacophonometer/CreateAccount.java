@@ -50,7 +50,7 @@ class CreateAccount {
         mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
-
+        prefs.setInternetConnectionMode("normal");
 
 
         if (prefs.getDeviceName() == null){

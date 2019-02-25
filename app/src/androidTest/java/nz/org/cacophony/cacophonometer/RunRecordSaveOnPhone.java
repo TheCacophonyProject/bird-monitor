@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RunRecordNowButtonAndSaveOnPhone {
+public class RunRecordSaveOnPhone {
 
 
     @Rule
@@ -30,27 +30,24 @@ public class RunRecordNowButtonAndSaveOnPhone {
     @Before
     public void registerIdlingResource() {
         // let espresso know to synchronize with background tasks
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
+
     }
 
     @After
     public void unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
+
     }
 
 
     @Test
-    public void recordNowButtonAndSaveOnPhone() {
-        // Assumptions for intitial conditions
-        // 1) Device is registerd with test server and Use test server is checked
+    public void recordAndSaveOnPhone() {
 
-        // 3) Root access is checked
+        Record.RecordAndSaveOnPhone(mActivityTestRule);
 
-        // 6) Online mode is probably checked to allow remote control software (AirDroid) to be used
-        // 7) Choose Mode is OFF
-
-
-        RecordNow.recordNowButtonAndSaveOnPhone(mActivityTestRule);
     }
 
 
