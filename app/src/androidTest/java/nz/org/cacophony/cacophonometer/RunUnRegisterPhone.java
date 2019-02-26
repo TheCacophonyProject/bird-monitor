@@ -32,14 +32,12 @@ public class RunUnRegisterPhone {
         // let espresso know to synchronize with background tasks
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
-
     }
 
     @After
     public void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
-
     }
 
 

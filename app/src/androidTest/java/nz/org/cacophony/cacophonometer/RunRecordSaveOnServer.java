@@ -35,7 +35,6 @@ public class RunRecordSaveOnServer {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
-//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
     @After
@@ -45,7 +44,6 @@ public class RunRecordSaveOnServer {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
-//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
 
