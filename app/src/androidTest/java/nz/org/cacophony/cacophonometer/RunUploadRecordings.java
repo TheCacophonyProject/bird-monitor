@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RunSignInUser {
+public class RunUploadRecordings {
 
 
     @Rule
@@ -30,10 +30,10 @@ public class RunSignInUser {
     @Before
     public void registerIdlingResource() {
         // let espresso know to synchronize with background tasks
-        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
-        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
-
-//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
 //        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
 
@@ -41,20 +41,19 @@ public class RunSignInUser {
 
     @After
     public void unregisterIdlingResource() {
-        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
-        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
-
-//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
 //        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
 
     @Test
-    public void signInButtonPressed() {
+    public void uploadRecordings() {
 
-        SignInUser.signInUser(mActivityTestRule);
-
+        UploadRecordings.uploadRecordings(mActivityTestRule);
 
     }
 

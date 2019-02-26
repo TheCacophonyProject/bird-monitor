@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RunSignInUser {
+public class RunUnRegisterPhone {
 
 
     @Rule
@@ -33,10 +33,6 @@ public class RunSignInUser {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
 
-//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
-        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
-//        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
-
     }
 
     @After
@@ -44,18 +40,12 @@ public class RunSignInUser {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
 
-//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
-        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
-//        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
 
     @Test
-    public void signInButtonPressed() {
-
-        SignInUser.signInUser(mActivityTestRule);
-
-
+    public void unRegisterPhone() {
+        RegisterPhone.unRegisterPhone(mActivityTestRule);
     }
 
 

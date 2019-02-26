@@ -22,9 +22,12 @@ import org.junit.runners.Suite;
 //        RunRegisterDeviceOnTestServerTests.class,
         RunCreateAccount.class,
         RunSignInUser.class,
+        RunUnRegisterPhone.class,
         RunRegisterPhone.class,
         RunRecordSaveOnPhone.class,
         RunRecordSaveOnServer.class,
+        RunDeleteRecordings.class,
+        RunUploadRecordings.class,
 
       // RunRecordNowTests.class,
 

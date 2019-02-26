@@ -21,6 +21,7 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInGUIIdlingResource;
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
@@ -117,6 +118,7 @@ public class SignInFragment extends Fragment {
             return;
         }
         if (visible) {
+          //  signInGUIIdlingResource.increment();
             IntentFilter iff = new IntentFilter("SERVER_USER_LOGIN");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
             displayOrHideGUIObjects();
@@ -128,6 +130,7 @@ public class SignInFragment extends Fragment {
     void displayOrHideGUIObjects(){
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
+
         boolean signedIn = prefs.getUserSignedIn();
         String userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
         if (signedIn) {
@@ -151,10 +154,12 @@ public class SignInFragment extends Fragment {
             }else{
                 etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                 etPasswordInput.requestFocus();
+              //  signInGUIIdlingResource.decrement();
             }
             btnSignIn.setVisibility(View.VISIBLE);
             btnSignOutUser.setVisibility(View.GONE);
         }
+
     }
 
 

@@ -31,16 +31,26 @@ public class RunCreateAccount {
     public void registerIdlingResource() {
         // let espresso know to synchronize with background tasks
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+
+
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
     @After
     public void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+
+
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
 
     @Test
-    public void registerPhone() {
+    public void createAccount() {
 
         CreateAccount.createAccount(mActivityTestRule);
 

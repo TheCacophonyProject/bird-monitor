@@ -2,7 +2,6 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -12,20 +11,16 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.io.File;
-import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.hasEntry;
@@ -49,21 +44,24 @@ class RegisterPhone {
 
 
     public static void registerPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
-
-
         setUpForRegisterPhone(mActivityTestRule);
-
         registerPhone();
-
         tearDownForRegisterPhone(mActivityTestRule);
+    }
+
+    public static void unRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+        setUpForUnRegisterPhone(mActivityTestRule);
+        unRegisterPhone();
+        tearDownForUnRegisterPhone(mActivityTestRule);
     }
 
     private static void setUpForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        mActivityTestRule.getActivity().registerEspressoIdlingResources();
+     //   mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
+        prefs.setIsDisabled(false);
 
         if (prefs.getDeviceName() == null){
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
@@ -78,11 +76,12 @@ class RegisterPhone {
 
         Util.unregisterPhone(targetContext);
         Util.signOutUser(targetContext);
+
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signIn(prefs);
+        HelperCode.signInUserTimhot(prefs);
 try {
     Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 }catch (Exception ex){
@@ -94,10 +93,54 @@ try {
 
     }
 
+    private static void setUpForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+
+        targetContext = getInstrumentation().getTargetContext();
+        prefs = new Prefs(targetContext);
+        prefs.setInternetConnectionMode("normal");
+        prefs.setIsDisabled(false);
+
+        if (prefs.getDeviceName() == null){
+            // Welcome Dialog WILL be displayed - and SetupWizard will be running
+            HelperCode.dismissWelcomeDialog();
+        }else{
+            // Main menu will be showing
+
+            onView(withId(R.id.btnSetup)).perform(click());
+        }
+
+        Util.unregisterPhone(targetContext);
+        Util.signOutUser(targetContext);
+        nowSwipeLeft();
+        nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
+
+        // Need to sign in
+        HelperCode.signInUserTimhot(prefs);
+        try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+        }catch (Exception ex){
+
+        }
+        nowSwipeLeft(); // takes you to Groups screen
+
+        registerPhone();
+
+        nowSwipeLeft(); // need to go to next screen and back so that Un-register button displays
+        nowSwipeRight();
+
+    }
+
     private static void tearDownForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         Util.signOutUser(targetContext);
-        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+        prefs.setIsDisabled(true);
+
+    }
+
+    private static void tearDownForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+
+        Util.signOutUser(targetContext);
+        prefs.setIsDisabled(true);
 
     }
 
@@ -115,13 +158,28 @@ try {
 
     }
 
+    private static void unRegisterPhone(){
+
+
+        HelperCode.unRegisterPhone(prefs);
+
+        boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
+
+//        assertEquals(phoneRegistered, true);
+        assertEquals(false, phoneRegistered);
+
+        onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Device is no longer registered")));
+
+
+    }
 
 
     private static void nowSwipeLeft(){
-
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
+    }
 
-
+    private static void nowSwipeRight(){
+        onView(withId(R.id.SetUpWizard)).perform(swipeRight());
     }
 
     private static Matcher<View> childAtPosition(

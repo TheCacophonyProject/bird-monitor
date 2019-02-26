@@ -47,7 +47,7 @@ class CreateAccount {
 
     private static void setUpForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        mActivityTestRule.getActivity().registerEspressoIdlingResources();
+      //  mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -71,7 +71,7 @@ class CreateAccount {
 
     private static void tearDownForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-        mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+      //  mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
 

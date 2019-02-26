@@ -25,6 +25,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+
 public class ManageRecordingsFragment extends Fragment {
 
     private static final String TAG = "ManageRecordFragment";
@@ -44,7 +46,7 @@ public class ManageRecordingsFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+        tvMessages = (TextView) view.findViewById(R.id.tvMessagesManageRecordings);
         btnUploadFiles = (Button) view.findViewById(R.id.btnUploadFiles);
         btnUploadFiles.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -209,6 +211,7 @@ public class ManageRecordingsFragment extends Fragment {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
                             tvMessages.setText(messageToDisplay);
+                            uploadFilesIdlingResource.decrement();
                         }
 
                         displayOrHideGUIObjects();

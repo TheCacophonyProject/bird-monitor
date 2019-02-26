@@ -12,7 +12,6 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -60,12 +59,21 @@ public class HelperCode {
         }
     }
 
-    public static void signIn(Prefs prefs){
+    public static void dismissDialogWithYes(){
+        try{
+            onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(),click());
+        }catch (Exception ex){
+            Log.e("HelperCode", ex.getLocalizedMessage());
+        }
+    }
+
+    public static void signInUserTimhot(Prefs prefs){
 
 
         try {
 
             Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
+
             onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
 
             onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
@@ -97,6 +105,20 @@ public class HelperCode {
             onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());
             onView(withId(R.id.btnRegister)).perform(click());
 
+        }catch (Exception ex){
+            Log.e("RegisterPhone", ex.getLocalizedMessage());
+        }
+
+
+    }
+
+    public static void unRegisterPhone(Prefs prefs){
+
+        try {
+            Thread.sleep(1000);
+            onView(withId(R.id.btnUnRegister)).perform(click());
+            Thread.sleep(1000);
+            dismissDialogWithYes();
         }catch (Exception ex){
             Log.e("RegisterPhone", ex.getLocalizedMessage());
         }

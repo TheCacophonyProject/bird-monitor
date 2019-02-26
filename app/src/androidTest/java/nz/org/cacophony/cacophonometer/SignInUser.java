@@ -2,20 +2,11 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
-
-import junit.framework.AssertionFailedError;
-
-import java.io.File;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -49,10 +40,11 @@ class SignInUser {
 
     private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        mActivityTestRule.getActivity().registerEspressoIdlingResources();
+     //   mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
+        prefs.setUserSignedIn(false);
 
 
 
@@ -68,6 +60,7 @@ class SignInUser {
        // HelperCode.signOutUser(prefs, targetContext);
 
         HelperCode.useTestServerAndShortRecordings(prefs, targetContext);
+
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen
 
@@ -75,14 +68,14 @@ class SignInUser {
 
     private static void tearDownForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-         mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
+        // mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
 
     }
 
 
     private static void signIn(){
 
-        HelperCode.signIn(prefs);
+        HelperCode.signInUserTimhot(prefs);
 
 
         boolean userSignedIn = prefs.getUserSignedIn();

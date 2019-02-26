@@ -17,6 +17,7 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertTrue;
  */
 
 @SuppressWarnings("unused")
-class Record {
+class DeleteRecordings {
 
     private static Context targetContext;
     private static Prefs prefs;
@@ -42,29 +43,20 @@ class Record {
 
 
 
-    public static void RecordAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void deleteRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-
-        setUpForRecord(mActivityTestRule);
-
-        recordAndSaveOnPhone();
-
-        tearDownForRecord(mActivityTestRule);
+        setUpForDeleteAllRecordings(mActivityTestRule);
+        deleteAllRecordings();
+        tearDownForDeleteAllRecordings(mActivityTestRule);
     }
 
-    public static void RecordAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
 
 
-        setUpForRecord(mActivityTestRule);
 
-        recordAndSaveOnServer();
 
-        tearDownForRecord(mActivityTestRule);
-    }
+    private static void setUpForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule){
 
-    private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
-
-       // mActivityTestRule.getActivity().registerEspressoIdlingResources();
+        // mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -78,10 +70,8 @@ class Record {
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
-
         Util.unregisterPhone(targetContext);
         Util.signOutUser(targetContext);
-
 
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
@@ -98,59 +88,45 @@ class Record {
         HelperCode.registerPhone(prefs);
 
         nowSwipeLeft(); // takes you to GPS
-        prefs.setIsDisabled(false);
         nowSwipeLeft(); // takes you to Test RecordAndSaveOnPhone
 
-
-
-    }
-
-    private static void tearDownForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
-
-        prefs.setInternetConnectionMode("normal");
-        Util.signOutUser(targetContext);
-        prefs.setIsDisabled(false);
-
-    }
-
-
-    private static void recordAndSaveOnPhone(){
         // Need to put phone into offline mode so it doesn't try to upload the recording
         prefs.setInternetConnectionMode("offline");
 
         int numberOfRecordingsBeforeTestRecord = Util.getNumberOfRecordings(targetContext);
 
-
         onView(withId(R.id.btnRecordNow)).perform(click());
+
+        // Need to stop app trying to make more recordings as this stuffs up the upload files idling resource count
         prefs.setIsDisabled(true);
 
-        int numberOfRecordingsAfterTestRecord = Util.getNumberOfRecordings(targetContext);
+        onView(withId(R.id.btnFinished)).perform(click());
 
-        assertEquals(numberOfRecordingsBeforeTestRecord + 1, numberOfRecordingsAfterTestRecord);
+        onView(withId(R.id.btnAdvanced)).perform(click());
+
     }
 
-    private static void recordAndSaveOnServer(){
-        // Need to put phone into normal mode so it uploads the recording
+
+
+    private static void tearDownForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
         prefs.setInternetConnectionMode("normal");
-        File recordingsFolder = Util.getRecordingsFolder(targetContext);
-
-        for (File file : recordingsFolder.listFiles()){
-            file.delete();
-        }
-
-        prefs.setLastRecordIdReturnedFromServer(-1);
-
-        onView(withId(R.id.btnRecordNow)).perform(click());
-        prefs.setIsDisabled(true);
-        try {
-            Thread.sleep(1000); // seemed to need this, because of code to disable airplane mode
-        }catch (Exception ex){
-            Log.e("Record", ex.getLocalizedMessage());
-        }
+        Util.signOutUser(targetContext);
+        prefs.setIsDisabled(false);
+    }
 
 
-        long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
-        assertTrue(lastRecordingIdFromServer >-1); // Don't know what the recording ID will be, so just check it exists
+    private static void deleteAllRecordings(){
+
+        int numberOfRecordingsBeforeDelete = Util.getNumberOfRecordings(targetContext);
+        assertEquals(true, numberOfRecordingsBeforeDelete > 0);
+
+        onView(withId(R.id.btnDeleteAllRecordings)).perform(click());
+        HelperCode.dismissDialogWithYes();
+
+        int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
+        assertEquals(true, numberOfRecordingsAfterDelete == 0);
+
+        onView(withId(R.id.tvMessagesManageRecordings)).check(matches(withText("All recordings on the phone have been deleted.")));
     }
 
 
@@ -159,22 +135,4 @@ class Record {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
-    }
 }

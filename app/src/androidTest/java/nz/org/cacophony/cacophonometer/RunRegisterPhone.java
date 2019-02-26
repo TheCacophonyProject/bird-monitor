@@ -30,12 +30,16 @@ public class RunRegisterPhone {
     @Before
     public void registerIdlingResource() {
         // let espresso know to synchronize with background tasks
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
     }
 
+
     @After
     public void unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+
     }
 
 
@@ -43,7 +47,6 @@ public class RunRegisterPhone {
     public void registerPhone() {
 
         RegisterPhone.registerPhone(mActivityTestRule);
-
 
     }
 
