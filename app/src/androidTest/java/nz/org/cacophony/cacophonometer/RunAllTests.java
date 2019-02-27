@@ -28,8 +28,7 @@ import org.junit.runners.Suite;
         RunRecordSaveOnServer.class,
         RunDeleteRecordings.class,
         RunUploadRecordings.class,
-
-      // RunRecordNowTests.class,
+        RunGuiControls.class,
 
 })
 public class RunAllTests {
