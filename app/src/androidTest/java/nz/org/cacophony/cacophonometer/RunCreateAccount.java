@@ -40,7 +40,7 @@ public class RunCreateAccount {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
-        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
+       // IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
     }
 
 

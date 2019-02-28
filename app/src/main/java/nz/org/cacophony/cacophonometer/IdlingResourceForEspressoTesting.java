@@ -26,4 +26,6 @@ interface IdlingResourceForEspressoTesting {
 
     CountingIdlingResource signInGUIIdlingResource = new CountingIdlingResource("SIGNIN_GUI");
 
+    CountingIdlingResource rootedIdlingResource = new CountingIdlingResource("ROOT");
+
 }

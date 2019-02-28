@@ -65,6 +65,7 @@ import java.util.Map;
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
 import static android.content.Context.ALARM_SERVICE;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.rootedIdlingResource;
 
 
 /**
@@ -501,6 +502,9 @@ class Util {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         @SuppressWarnings("UnnecessaryLocalVariable") boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+//        if (!rootedIdlingResource.isIdleNow()){
+//            rootedIdlingResource.decrement();
+//        }
         return isConnected;
     }
 
@@ -544,6 +548,7 @@ class Util {
 
             }
         };
+       // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
         thread.start();
 
     }
@@ -581,6 +586,7 @@ class Util {
                         executeCommandTim(context, command);
                         command = COMMAND_FLIGHT_MODE_2 + " " + "true";
                         executeCommandTim(context, command);
+                   //     rootedIdlingResource.decrement();
 
                     } else {
 
@@ -590,15 +596,18 @@ class Util {
                         intent.putExtra("state", true);
                         context.sendBroadcast(intent);
                     }
+
                 }
+
                 catch (Exception e) {
                             Log.e(TAG, "Error disabling flight mode");
+
                 }
+
             }
         };
+
         thread.start();
-
-
     }
 
 

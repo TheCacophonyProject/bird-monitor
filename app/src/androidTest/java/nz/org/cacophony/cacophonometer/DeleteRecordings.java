@@ -61,6 +61,7 @@ class DeleteRecordings {
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
 
+
         if (prefs.getDeviceName() == null){
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
@@ -88,6 +89,7 @@ class DeleteRecordings {
         HelperCode.registerPhone(prefs);
 
         nowSwipeLeft(); // takes you to GPS
+        prefs.setIsDisabled(false);
         nowSwipeLeft(); // takes you to Test RecordAndSaveOnPhone
 
         // Need to put phone into offline mode so it doesn't try to upload the recording

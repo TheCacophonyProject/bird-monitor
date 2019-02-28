@@ -20,6 +20,7 @@ import org.junit.runners.Suite;
 //        RunModeTestsInSpecifiedOrder.class,
 //        //  RunRegisterDeviceOnProductionServerTests.class,
 //        RunRegisterDeviceOnTestServerTests.class,
+        RunRooted.class,
         RunCreateAccount.class,
         RunSignInUser.class,
         RunUnRegisterPhone.class,

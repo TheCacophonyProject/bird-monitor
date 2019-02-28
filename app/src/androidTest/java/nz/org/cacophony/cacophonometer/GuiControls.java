@@ -399,6 +399,8 @@ class GuiControls {
 
     }
 
+
+
     private static boolean areAllPrefsForWalkingSet(){
         boolean walkingMode = true; // if any of the following are false, then change walking mode to false
 

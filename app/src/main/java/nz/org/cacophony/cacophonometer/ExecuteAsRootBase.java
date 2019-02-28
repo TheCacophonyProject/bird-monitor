@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.rootedIdlingResource;
 
 /**
  * The app is designed to run on rooted phones so that it can toggle airplane/flight mode on and off
