@@ -2,18 +2,14 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -25,11 +21,7 @@ class SignInUser {
     private static Context targetContext;
     private static Prefs prefs;
 
-
-
-
     public static void signInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
-
 
         setUpForSignInUser(mActivityTestRule);
 
@@ -40,13 +32,10 @@ class SignInUser {
 
     private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule){
 
-     //   mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setUserSignedIn(false);
-
-
 
         if (prefs.getDeviceName() == null){
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
@@ -57,8 +46,6 @@ class SignInUser {
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
-       // HelperCode.signOutUser(prefs, targetContext);
-
         HelperCode.useTestServerAndShortRecordings(prefs, targetContext);
 
         nowSwipeLeft();
@@ -68,15 +55,12 @@ class SignInUser {
 
     private static void tearDownForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-        // mActivityTestRule.getActivity().unRegisterEspressoIdlingResources();
-
     }
 
 
     private static void signIn(){
 
         HelperCode.signInUserTimhot(prefs);
-
 
         boolean userSignedIn = prefs.getUserSignedIn();
 
@@ -85,12 +69,9 @@ class SignInUser {
 
     }
 
-
-
     private static void nowSwipeLeft(){
 
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
-
 
     }
 }

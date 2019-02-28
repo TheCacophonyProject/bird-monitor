@@ -17,13 +17,7 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,9 +32,6 @@ class Record {
     private static Prefs prefs;
     private static File recordingsFolder;
     private static File[] recordingFiles;
-
-
-
 
     public static void RecordAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
@@ -64,7 +55,6 @@ class Record {
 
     private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
 
-       // mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -74,7 +64,6 @@ class Record {
             HelperCode.dismissWelcomeDialog();
         }else{
             // Main menu will be showing
-
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
@@ -148,7 +137,6 @@ class Record {
             Log.e("Record", ex.getLocalizedMessage());
         }
 
-
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
         assertTrue(lastRecordingIdFromServer >-1); // Don't know what the recording ID will be, so just check it exists
     }
@@ -159,22 +147,4 @@ class Record {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
     }
-}

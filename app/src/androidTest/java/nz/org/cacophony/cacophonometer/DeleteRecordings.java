@@ -2,31 +2,15 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
 import java.io.File;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -41,22 +25,14 @@ class DeleteRecordings {
     private static File[] recordingFiles;
 
 
-
-
     public static void deleteRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
-
         setUpForDeleteAllRecordings(mActivityTestRule);
         deleteAllRecordings();
         tearDownForDeleteAllRecordings(mActivityTestRule);
     }
 
-
-
-
-
     private static void setUpForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        // mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -67,7 +43,6 @@ class DeleteRecordings {
             HelperCode.dismissWelcomeDialog();
         }else{
             // Main menu will be showing
-
             onView(withId(R.id.btnSetup)).perform(click());
         }
 

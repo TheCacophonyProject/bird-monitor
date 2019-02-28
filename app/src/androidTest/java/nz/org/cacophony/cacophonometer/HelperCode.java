@@ -2,9 +2,7 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.util.Log;
-
 import java.util.Date;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -17,21 +15,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 
 public class HelperCode {
 
-    public static void signInViaBackDoor(Prefs prefs, Context targetContext){
-        // This does not test the normal sigin process, it just sets up app for other tests
-
-        prefs.setUserSignedIn(true);
-        prefs.setUsername("timhot");
-        prefs.setUsernamePassword("Pppother1");
-
-
-    }
-
-    public static void useTestServerAndShortRecordings(Prefs prefs, Context targetContext){
+   public static void useTestServerAndShortRecordings(Prefs prefs, Context targetContext){
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
@@ -40,8 +27,6 @@ public class HelperCode {
             Util.setUseTestServer(targetContext, true);
             prefs.setUseShortRecordings(true);
         }
-
-
     }
 
     public static void signOutUser(Prefs prefs, Context targetContext){
@@ -69,7 +54,6 @@ public class HelperCode {
 
     public static void signInUserTimhot(Prefs prefs){
 
-
         try {
 
             Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
@@ -82,7 +66,6 @@ public class HelperCode {
         }catch (Exception ex){
             Log.e("SignInUser", ex.getLocalizedMessage());
         }
-
     }
 
 
@@ -108,8 +91,6 @@ public class HelperCode {
         }catch (Exception ex){
             Log.e("RegisterPhone", ex.getLocalizedMessage());
         }
-
-
     }
 
     public static void unRegisterPhone(Prefs prefs){
@@ -122,9 +103,5 @@ public class HelperCode {
         }catch (Exception ex){
             Log.e("RegisterPhone", ex.getLocalizedMessage());
         }
-
-
     }
-
-
 }

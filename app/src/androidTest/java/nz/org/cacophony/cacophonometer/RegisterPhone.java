@@ -17,16 +17,10 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -40,9 +34,6 @@ class RegisterPhone {
     private static File recordingsFolder;
     private static File[] recordingFiles;
 
-
-
-
     public static void registerPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
         setUpForRegisterPhone(mActivityTestRule);
         registerPhone();
@@ -55,24 +46,20 @@ class RegisterPhone {
         tearDownForUnRegisterPhone(mActivityTestRule);
     }
 
-    private static void setUpForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-     //   mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setIsDisabled(false);
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
-
             onView(withId(R.id.btnSetup)).perform(click());
         }
-
-
 
         Util.unregisterPhone(targetContext);
         Util.signOutUser(targetContext);
@@ -82,30 +69,27 @@ class RegisterPhone {
 
         // Need to sign in
         HelperCode.signInUserTimhot(prefs);
-try {
-    Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-}catch (Exception ex){
+        try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+        } catch (Exception ex) {
 
-}
+        }
         nowSwipeLeft(); // takes you to Groups screen
-
-
 
     }
 
-    private static void setUpForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setIsDisabled(false);
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
-
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
@@ -118,7 +102,7 @@ try {
         HelperCode.signInUserTimhot(prefs);
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -145,59 +129,38 @@ try {
     }
 
 
-    private static void registerPhone(){
+    private static void registerPhone() {
 
         HelperCode.registerPhone(prefs);
 
         boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
 
-//        assertEquals(phoneRegistered, true);
         assertEquals(true, phoneRegistered);
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Your phone has been registered with the server :-)" + " Swipe to next screen.")));
 
     }
 
-    private static void unRegisterPhone(){
+    private static void unRegisterPhone() {
 
 
         HelperCode.unRegisterPhone(prefs);
 
         boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
 
-//        assertEquals(phoneRegistered, true);
         assertEquals(false, phoneRegistered);
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Device is no longer registered")));
 
-
     }
 
 
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
-    private static void nowSwipeRight(){
+    private static void nowSwipeRight() {
         onView(withId(R.id.SetUpWizard)).perform(swipeRight());
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
-    }
 }

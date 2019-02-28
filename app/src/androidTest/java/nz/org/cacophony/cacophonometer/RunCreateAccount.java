@@ -1,7 +1,5 @@
 package nz.org.cacophony.cacophonometer;
 
-
-
 import android.support.test.espresso.IdlingRegistry;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -40,7 +38,7 @@ public class RunCreateAccount {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
-       // IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInGUIIdlingResource);
+
     }
 
 

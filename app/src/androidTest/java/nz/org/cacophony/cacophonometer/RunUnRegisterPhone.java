@@ -1,7 +1,5 @@
 package nz.org.cacophony.cacophonometer;
 
-
-
 import android.support.test.espresso.IdlingRegistry;
 import android.test.suitebuilder.annotation.LargeTest;
 

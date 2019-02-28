@@ -1,7 +1,5 @@
 package nz.org.cacophony.cacophonometer;
 
-
-
 import android.support.test.espresso.IdlingRegistry;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -22,7 +20,6 @@ import org.junit.runner.RunWith;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RunUploadRecordings {
-
 
     @Rule
     public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);

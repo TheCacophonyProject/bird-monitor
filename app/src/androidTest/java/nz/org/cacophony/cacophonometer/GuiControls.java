@@ -19,16 +19,9 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -42,9 +35,6 @@ class GuiControls {
     private static File recordingsFolder;
     private static File[] recordingFiles;
 
-
-
-
     public static void guiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
         setUpForGuiControls(mActivityTestRule);
 
@@ -56,8 +46,6 @@ class GuiControls {
 
 
     private static void setUpForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule){
-
-        //   mActivityTestRule.getActivity().registerEspressoIdlingResources();
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -67,10 +55,7 @@ class GuiControls {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
         }
-
     }
-
-
 
     private static void tearDownForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
 
@@ -78,8 +63,6 @@ class GuiControls {
         prefs.setIsDisabled(true);
 
     }
-
-
 
 
     private static void guiControls(){
@@ -399,8 +382,6 @@ class GuiControls {
 
     }
 
-
-
     private static boolean areAllPrefsForWalkingSet(){
         boolean walkingMode = true; // if any of the following are false, then change walking mode to false
 
@@ -418,15 +399,10 @@ class GuiControls {
             walkingMode = false;
         }else if (prefs.getUseFrequentUploads()){
             walkingMode = false;
-
         }
 
         return walkingMode;
     }
-
-
-
-
 
     private static void nowSwipeLeft(){
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
@@ -435,6 +411,5 @@ class GuiControls {
     private static void nowSwipeRight(){
         onView(withId(R.id.SetUpWizard)).perform(swipeRight());
     }
-
 
 }
