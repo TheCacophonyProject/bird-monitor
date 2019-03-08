@@ -9,24 +9,6 @@ repositories {
 
 
 android {
-    signingConfigs {
-        //https://stackoverflow.com/questions/25585434/android-studio-0-8-6-change-default-build-variant/25628789#25628789
-        // https://github.com/shaohui10086/android-best-practices-1#gradle-configuration
-        release {
-            try {
-                storeFile file(STORE_FILE)
-                storePassword KEYSTORE_PASSWORD
-                keyAlias KEY_ALIAS
-                keyPassword KEY_PASSWORD
-            }
-            catch (ignored) {
-
-                throw new Exception("Missing keystore values.  Open the file gradle.propertiesForGradleHomeDir and follow directions.")
-            }
-
-        }
-    }
-
     compileSdkVersion 27
     defaultConfig {
         applicationId "nz.org.cacophonoy.cacophonometer"
@@ -48,7 +30,6 @@ android {
             debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         debug {
             applicationIdSuffix '.dev'
