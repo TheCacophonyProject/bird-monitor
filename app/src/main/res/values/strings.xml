@@ -3,7 +3,7 @@
 
     <string name="test_record_link_to_server_recordings2">Visit the following page to listen to your recordings on the Cacophony Server</string>
     <string name="app_name">Cacophonometer</string>
-    <string name="app_icon_name">Cacophony</string>
+    <string name="app_icon_name">Cacophonometer</string>
 
     <string name="activity_or_fragment_title_welcome">Welcome</string>
     <string name="activity_or_fragment_title_setup">Setup</string>
