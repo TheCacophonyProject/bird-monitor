@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                             advancedButton.setText("Advanced");
                             prefs.setSettingsForTestServerEnabled(false);
 
-
                         }else{
                             advancedButton.setText("Very Advanced");
                             prefs.setSettingsForTestServerEnabled(true);
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
                     }else{
-                       // launchAdvancedActivity(null);
                         startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
                     break;
@@ -141,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 // Open the Setup wizard if the app does not yet have device name
        if (prefs.getDeviceName() == null){
-
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
@@ -210,8 +207,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-           // startActivity(new Intent(this, WelcomeActivity.class));
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -259,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 String message = intent.getStringExtra("message");
                 if (message != null) {
 
-
                 }
 
             } catch (Exception ex) {
@@ -271,26 +265,30 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     /**
      * Only used by testing code
      */
-    public void registerEspressoIdlingResources() {
-        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
-        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
-        IdlingRegistry.getInstance().register(registerIdlingResource);
-        IdlingRegistry.getInstance().register(recordNowIdlingResource);
-        IdlingRegistry.getInstance().register(uploadingIdlingResource);
-        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
-    }
-    /**
-     * Only used by testing code
-     */
-    public void unRegisterEspressoIdlingResources() {
-        IdlingRegistry.getInstance().unregister(registerIdlingResource);
-        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-
-//        if (toggleAirplaneModeIdlingResource != null) {
-//            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-//        }
-    }
+//    public void registerEspressoIdlingResources() {
+//        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
+////        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
+////        IdlingRegistry.getInstance().register(registerIdlingResource);
+////        IdlingRegistry.getInstance().register(recordNowIdlingResource);
+////        IdlingRegistry.getInstance().register(uploadingIdlingResource);
+////        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
+//        IdlingRegistry.getInstance().register(recordIdlingResource);
+//
+//    }
+//    /**
+//     * Only used by testing code
+//     */
+//    public void unRegisterEspressoIdlingResources() {
+////        IdlingRegistry.getInstance().unregister(registerIdlingResource);
+////        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
+////        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
+////        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+//
+////        if (toggleAirplaneModeIdlingResource != null) {
+////            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
+////        }
+//
+//        IdlingRegistry.getInstance().unregister(recordIdlingResource);
+//    }
 
 }

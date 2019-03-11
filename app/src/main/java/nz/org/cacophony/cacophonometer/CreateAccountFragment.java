@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.createAccountIdlingResource;
+
 public class CreateAccountFragment extends Fragment {
     private static final String TAG = "CreateAccountFragment";
 
@@ -61,7 +63,7 @@ public class CreateAccountFragment extends Fragment {
          etPassword2 = (TextInputEditText) view.findViewById(R.id.etPassword2);
         btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
       //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
+        tvMessages = (TextView) view.findViewById(R.id.tvMessagesCreateAccount);
 
         setUserVisibleHint(false);
 
@@ -72,35 +74,15 @@ public class CreateAccountFragment extends Fragment {
             }
         });
 
-//        btnForgetUser.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                forgetUser();
-//            }
-//        });
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-      //  displayOrHideGUIObjects();
+
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//     //   Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onSTART", true ).show();
-//    }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//      //  Util.getToast(getActivity().getApplicationContext(),"Create Account Fragment onPAUSE", true ).show();
-//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-//
-//    }
 
     @Override
     public void setUserVisibleHint(final boolean visible) {
@@ -128,46 +110,32 @@ public class CreateAccountFragment extends Fragment {
             tilPassword2.setVisibility(View.VISIBLE);
 
         btnSignUp.setVisibility(View.VISIBLE);
-
         tvMessages.setText("");
-
-
-
-
     }
 
 
 
     private void createUserButtonPressed(){
 
-
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
          if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-          //  Util.getToast(getActivity().getApplicationContext(),"The internet connection (in Advanced) has been set 'offline' - so this device can not be registered", true ).show();
-             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered") ;
-            // tvMessages.setText("The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered") ;
             return;
         }
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-           // Util.getToast(getActivity().getApplicationContext(),"The phone is not currently connected to the internet - please fix and try again", true ).show();
-            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The phone is not currently connected to the internet - please fix and try again\"") ;
-          //  tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
+           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The phone is not currently connected to the internet - please fix and try again\"") ;
             return;
         }
 
         // Check that the username is valid, at least 5 characters.
         String username = etUsername.getText().toString();
         if (username.length() < 1){
-           // Util.getToast(getActivity().getApplicationContext(),"Please enter a Username of at least 5 characters (no spaces)", true ).show();
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a Username of at least 5 characters (no spaces)");
-          //  tvMessages.setText("Please enter a Username of at least 5 characters (no spaces)");
             return;
         }else if (username.length() < 5) {
-           //    Util.getToast(getActivity().getApplicationContext(),username + " is not a valid username. Please use at least 5 characters (no spaces)", true ).show();
-            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", username + " is not a valid username. Please use at least 5 characters (no spaces)");
-           // tvMessages.setText(username + " is not a valid username. Please use at least 5 characters (no spaces)");
+           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", username + " is not a valid username. Please use at least 5 characters (no spaces)");
             return;
         }
 
@@ -175,30 +143,22 @@ public class CreateAccountFragment extends Fragment {
         String emailAddress = etEmail.getText().toString();
 
         if (emailAddress.length() < 1) {
-           // Util.getToast(getActivity().getApplicationContext(), "Please enter an email address", true).show();
-            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter an email address");
-          //  tvMessages.setText("Please enter an email address");
+           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter an email address");
             return;
         } else if (!Util.isValidEmail(emailAddress)){
-           // Util.getToast(getActivity().getApplicationContext(),emailAddress + " is not a valid email address.", true ).show();
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", emailAddress + " is not a valid email address.");
-           // tvMessages.setText(emailAddress + " is not a valid email address.");
             return;
         }
 
         //Check password is valid
         String etPassword1 = ((EditText) getView().findViewById(R.id.etPassword1)).getText().toString();
         if (etPassword1.length() < 8){
-            //Util.getToast(getActivity().getApplicationContext(),"Minimum password length is 8 characters.", true ).show();
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Minimum password length is 8 characters.");
-           // tvMessages.setText("Minimum password length is 8 characters.");
             return;
         }
         String etPassword2 = ((EditText) getView().findViewById(R.id.etPassword2)).getText().toString();
         if (!etPassword1.equals(etPassword2)){
-          //  Util.getToast(getActivity().getApplicationContext(),"Passwords must match.", true ).show();
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Passwords must match.");
-           // tvMessages.setText("Passwords must match.");
             return;
         }
 
@@ -208,6 +168,8 @@ public class CreateAccountFragment extends Fragment {
         tilPassword2.setVisibility(View.GONE);
 
         tvMessages.setText("Attempting to create user - please wait");
+
+        createAccountIdlingResource.increment();
 
         signUp(username, emailAddress, etPassword1, getActivity().getApplicationContext());
     }
@@ -239,9 +201,7 @@ public class CreateAccountFragment extends Fragment {
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-//            Util.getToast(getActivity().getApplicationContext(), "Error disabling flight mode", true).show();
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
-           // tvMessages.setText("Error disabling flight mode.");
         }
     }
 
@@ -282,6 +242,7 @@ public class CreateAccountFragment extends Fragment {
 
                       // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
                         tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
+                        createAccountIdlingResource.decrement();
 
                     } else {
                         tilUsername.setVisibility(View.VISIBLE);
@@ -290,6 +251,7 @@ public class CreateAccountFragment extends Fragment {
                         tilPassword2.setVisibility(View.VISIBLE);
                         tvMessages.setText("");
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay) ;
+                        createAccountIdlingResource.decrement();
                         }
 
                     }
@@ -304,42 +266,10 @@ public class CreateAccountFragment extends Fragment {
                 tilEmail.setVisibility(View.VISIBLE);
                 tilPassword1.setVisibility(View.VISIBLE);
                 tilPassword2.setVisibility(View.VISIBLE);
+                createAccountIdlingResource.decrement();
             }
         }
     };
 
-//    private void displayDialogMessage(String title, String messageToDisplay){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        // Add the buttons
-//
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                return;
-//            }
-//        });
-//
-//        builder.setMessage(messageToDisplay)
-//                .setTitle(title);
-//
-//        final AlertDialog dialog = builder.create();
-//
-//        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//            @Override
-//            public void onShow(DialogInterface dialogInterface) {
-//                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-//                btnPositive.setTextSize(24);
-//                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-//                btnPositive.setTextColor(btnPositiveColor);
-//
-//
-//
-//                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-//                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-//                textView.setTextSize(22);
-//            }
-//        });
-//
-//        dialog.show();
-//    }
 
 }

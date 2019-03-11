@@ -46,12 +46,9 @@ public class RootedFragment extends Fragment {
 
         displayOrHideGUIObjects();
 
-
-
             btnFinished.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-
                     ((AdvancedWizardActivity)getActivity()).nextPageView();
                 }
             });

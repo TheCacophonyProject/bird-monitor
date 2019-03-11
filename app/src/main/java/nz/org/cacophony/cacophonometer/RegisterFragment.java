@@ -11,12 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -25,6 +22,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
+
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
@@ -44,7 +44,7 @@ public class RegisterFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        tvMessages =  view.findViewById(R.id.tvMessages);
+        tvMessages =  view.findViewById(R.id.tvMessagesRegister);
         etGroupNameInput =  view.findViewById(R.id.etGroupNameInput);
         etDeviceNameInput =  view.findViewById(R.id.etDeviceNameInput);
 
@@ -66,7 +66,6 @@ public class RegisterFragment extends Fragment {
 
         tvTitleMessage =  view.findViewById(R.id.tvTitleMessage);
 
-
         return view;
     }
 
@@ -84,10 +83,15 @@ public class RegisterFragment extends Fragment {
 
 
         // Set next pages
-            Prefs prefs = new Prefs(getActivity());
-            String groupNameFromPrefs = prefs.getGroupName();
-            String deviceNameFromPrefs = prefs.getDeviceName();
-            if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
+
+//            Prefs prefs = new Prefs(getActivity());
+//            String groupNameFromPrefs = prefs.getGroupName();
+//            String deviceNameFromPrefs = prefs.getDeviceName();
+//            if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
+//                ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
+//            }
+
+            if (Util.isPhoneRegistered(getActivity())){
                 ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
             }
 
@@ -126,12 +130,14 @@ public class RegisterFragment extends Fragment {
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
                             etGroupNameInput.setEnabled(false);
                             etDeviceNameInput.setEnabled(false);
+                            registerPhoneIdlingResource.decrement();
 
                         }else if (messageType.equalsIgnoreCase("REGISTER_FAIL")){
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
                             etGroupNameInput.setEnabled(true);
                             etDeviceNameInput.setEnabled(true);
+                            registerPhoneIdlingResource.decrement();
                         }
 
                     }
@@ -142,6 +148,7 @@ public class RegisterFragment extends Fragment {
 
                 tvMessages.setText("Oops, your phone did not register - not sure why");
                 displayOrHideGUIObjects(true);
+                registerPhoneIdlingResource.decrement();
             }
         }
     };
@@ -363,7 +370,7 @@ public class RegisterFragment extends Fragment {
             Log.e(TAG, "Failed to disable airplane mode");
             return;
         }
-
+        registerPhoneIdlingResource.increment();
         Thread registerThread = new Thread() {
             @Override
             public void run() {
@@ -448,38 +455,6 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    public void displayOKDialogMessage(String title, String messageToDisplay){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Add the buttons
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                return;
-            }
-        });
-
-        builder.setMessage(messageToDisplay)
-                .setTitle(title);
-
-        final AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
-
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
-        });
-
-        dialog.show();
-    }
 
 
 }

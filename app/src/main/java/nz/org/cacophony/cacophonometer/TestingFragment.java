@@ -54,18 +54,10 @@ public class TestingFragment extends Fragment {
 
                 Util.setUseTestServer(getActivity().getApplicationContext(), isChecked);
 
-//                swShortRecordings.setEnabled(isChecked);
-//                swUseVeryFrequentRecordings.setEnabled(isChecked);
-
                 if (!isChecked){
                     Prefs prefs = new Prefs(getActivity().getApplicationContext());
                     prefs.setUseShortRecordings(false);
-//                    swShortRecordings.setChecked(false);
-//                    swShortRecordings.setEnabled(false);
-
                     prefs.setUseVeryFrequentRecordings(false);
-//                    swUseVeryFrequentRecordings.setChecked(false);
-//                    swUseVeryFrequentRecordings.setEnabled(false);
                 }
                 displayOrHideGUIObjects();
 
@@ -107,9 +99,7 @@ public class TestingFragment extends Fragment {
             return;
         }
         if (visible) {
-
             displayOrHideGUIObjects();
-
         }
     }
 
@@ -145,7 +135,6 @@ public class TestingFragment extends Fragment {
             swUseVeryFrequentRecordings.setText("Very frequent recordings is OFF");
         }
 
-
         boolean useShortRecordings = prefs.getUseShortRecordings();
 
         swShortRecordings.setChecked(useShortRecordings);
@@ -156,11 +145,4 @@ public class TestingFragment extends Fragment {
             swShortRecordings.setText("Short recordings is OFF");
         }
     }
-
-
-
-
-
-
-
 }

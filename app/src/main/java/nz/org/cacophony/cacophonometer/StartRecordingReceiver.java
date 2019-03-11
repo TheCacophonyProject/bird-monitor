@@ -47,7 +47,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
-            String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "alarms_updated");
@@ -56,7 +55,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
-          //  Util.broadcastAMessage(context, "alarms_updated");
 
             if (prefs.getIsDisabled()){
                  jsonObjectMessageToBroadcast = new JSONObject();
@@ -70,7 +68,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 Log.e(TAG, "Don't have proper permissions to record");
 
                 // Need to enable record button
-                 messageToDisplay = "";
+
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
@@ -79,7 +77,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                     e.printStackTrace();
                 }
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-               // Util.broadcastAMessage(context, "no_permission_to_record");
                 return;
             }
 
@@ -162,8 +159,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
                 }
                 context.startService(mainServiceIntent);
-
-
             }
 
         }catch (Exception ex){

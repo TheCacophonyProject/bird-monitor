@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.rootedIdlingResource;
 
 /**
  * The app is designed to run on rooted phones so that it can toggle airplane/flight mode on and off
@@ -35,7 +36,6 @@ abstract class ExecuteAsRootBase
             DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
 
             // https://developer.android.com/reference/java/io/DataInputStream
-           // DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
             BufferedReader osRes = new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
 
             //noinspection ConstantConditions
@@ -131,7 +131,6 @@ abstract class ExecuteAsRootBase
                     jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
                     Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-                  //  Util.broadcastAMessage(context, "error_do_not_have_root");
                 }
             }
         }
@@ -148,7 +147,6 @@ abstract class ExecuteAsRootBase
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-            //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (SecurityException ex)
         {
@@ -162,7 +160,6 @@ abstract class ExecuteAsRootBase
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-           // Util.broadcastAMessage(context, "error_do_not_have_root");
         }
         catch (Exception ex)
         {
@@ -176,7 +173,6 @@ abstract class ExecuteAsRootBase
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-            //Util.broadcastAMessage(context, "error_do_not_have_root");
         }
 
         return returnValue;

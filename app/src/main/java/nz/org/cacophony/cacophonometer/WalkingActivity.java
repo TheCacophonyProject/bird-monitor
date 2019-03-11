@@ -82,14 +82,9 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         }
     }
 
-
-
     public void finished(@SuppressWarnings("UnusedParameters") View v) {
-
         try {
-
             finish();
-
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -110,13 +105,13 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
     }
 
 
-    @SuppressWarnings("SameReturnValue")
-    public CountingIdlingResource getIdlingResource() {
-        return registerIdlingResource;
-    }
-
-    @SuppressWarnings("SameReturnValue")
-    public CountingIdlingResource getRecordNowIdlingResource() {
-        return recordNowIdlingResource;
-    }
+//    @SuppressWarnings("SameReturnValue")
+//    public CountingIdlingResource getIdlingResource() {
+//        return registerIdlingResource;
+//    }
+//
+//    @SuppressWarnings("SameReturnValue")
+//    public CountingIdlingResource getRecordNowIdlingResource() {
+//        return recordNowIdlingResource;
+//    }
 }

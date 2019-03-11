@@ -53,9 +53,6 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_help, menu);
@@ -107,12 +104,6 @@ public class SetupWizardActivity extends AppCompatActivity {
             mSectionsStatePagerAdapter.notifyDataSetChanged();
      }
 
-
-
-
-
-
-
     private void setupViewPager(ViewPager viewPager) {
 
         mSectionsStatePagerAdapter.addFragment(new WelcomeFragment(), getResources().getString(R.string.activity_or_fragment_title_welcome));
@@ -123,10 +114,8 @@ public class SetupWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new GroupsFragment(), getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group));
         mSectionsStatePagerAdapter.addFragment(new RegisterFragment(), getResources().getString(R.string.activity_or_fragment_title_register_phone));
 
-        // if (prefs.getGroupName() != null){
         mSectionsStatePagerAdapter.addFragment(new GPSFragment(), getResources().getString(R.string.activity_or_fragment_title_gps_location));
         mSectionsStatePagerAdapter.addFragment(new TestRecordFragment(), getResources().getString(R.string.activity_or_fragment_title_test_record));
-        //  }
 
         viewPager.setAdapter(mSectionsStatePagerAdapter);
 
@@ -143,9 +132,7 @@ public class SetupWizardActivity extends AppCompatActivity {
         } else {
             setNumberOfPagesForRegisterd();
         }
-
     }
-
 
     public String getGroup() {
         if (group != null){
@@ -153,11 +140,8 @@ public class SetupWizardActivity extends AppCompatActivity {
                 group = null;
             }
         }
-
-
         return group;
     }
-
 
     public void setGroup(String group) {
         if (group != null){
@@ -165,14 +149,12 @@ public class SetupWizardActivity extends AppCompatActivity {
                 group = null;
             }
         }
-
         this.group = group;
     }
 
     public void displayOKDialogMessage(String title, String messageToDisplay){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 return;

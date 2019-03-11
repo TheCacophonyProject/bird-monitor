@@ -52,16 +52,14 @@ class MainThread implements Runnable {
             }
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
-           // Util.broadcastAMessage(context, "no_permission_to_record");
-
             return;
         }
 
 
-        String recordAndUploadedSuccessfully;
+
         try {
 
-            recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, alarmIntentType );
+            RecordAndUpload.doRecord(context, alarmIntentType );
 
         }catch (Exception e){
             String messageToDisplay = "";
@@ -74,12 +72,8 @@ class MainThread implements Runnable {
             }
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
-          //  Util.broadcastAMessage(context, "recording_failed");
-
             return;
         }
-
-
 
         Looper.loop();
     }

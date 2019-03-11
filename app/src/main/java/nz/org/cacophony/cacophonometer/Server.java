@@ -34,6 +34,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
@@ -72,7 +75,6 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage());
         } finally {
 
-            String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "refresh_vitals_displayed_text");
@@ -80,7 +82,6 @@ class Server {
 
                 jsonObjectMessageToBroadcast.put("messageType", "enable_vitals_button");
                 Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
-
 
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
@@ -104,12 +105,9 @@ class Server {
             String devicePassword = prefs.getDevicePassword();
             String group = prefs.getGroupName();
 
-
             if (devicename == null || devicePassword == null || group == null) {
-
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
-
                 return false;
             }
 
@@ -154,8 +152,6 @@ class Server {
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
                     Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
-
-                    // Util.broadcastAMessage(context, "untick_logged_in_to_server");
                 }
 
             } else { // STATUS not OK
@@ -173,18 +169,16 @@ class Server {
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "SERVER_LOGIN", jsonObjectMessageToBroadcast);
-        // Util.broadcastAMessage(context, "refresh_vitals_displayed_text");
         //noinspection RedundantIfStatement
         if (prefs.getToken() == null) {
             return false;
         } else {
             return true;
         }
-
-
     }
 
     static void loginUser(Context context) {
+
         final Prefs prefs = new Prefs(context);
 
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -192,25 +186,18 @@ class Server {
         try {
             DataOutputStream os = null;
             BufferedReader serverAnswer = null;
-
-
-
-
             Util.disableFlightMode(context);
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
-
-
                 jsonObjectMessageToBroadcast.put("responseCode", -1);
-
                 jsonObjectMessageToBroadcast.put("messageType", "NETWORK_ERROR");
                 messageToDisplay = "Unable to get an internet connection";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
 
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-                // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
+
                 return;
             }
 
@@ -222,17 +209,16 @@ class Server {
                 usernameOrEmailAddress = userName;
             }
 
-
             if (usernameOrEmailAddress == null || userNamePassword == null) {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
                 jsonObjectMessageToBroadcast.put("messageType", "INVALID_CREDENTIALS");
                 jsonObjectMessageToBroadcast.put("responseCode", -1);
-               // jsonObjectMessageToBroadcast.put("activityName", "SigninActivity");
                 messageToDisplay = "Error: Username/email address or password can not be missing";
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
+
                 return;
             }
 
@@ -269,14 +255,8 @@ class Server {
 
             if (responseCode.equalsIgnoreCase("200")) {
                 //  Here you read any answer from server.
-               // serverAnswer = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-
-               // String responseLine;
-              //  responseLine = serverAnswer.readLine();
-
 
                 if (joRes.getBoolean("success")) {
-                  //  jsonObjectMessageToBroadcast.put("sender", "server.loginUser");
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
 
                     String userToken = joRes.getString("token");
@@ -317,21 +297,16 @@ class Server {
                 }
 
             jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-            // jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
             jsonObjectMessageToBroadcast.put("messageToDisplay", message);
             Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
         } else {
             JSONArray messages = joRes.getJSONArray("messages");
             String firstMessage = (String) messages.get(0);
-
             jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
             jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
             Util.broadcastAMessage(context,  "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-
         }
-
-
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -405,7 +380,6 @@ class Server {
 
     private static HttpURLConnection openHttpsURL(URL url) throws IOException {
         // Create connection
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
             return NetCipher.getHttpsURLConnection(url);
@@ -434,7 +408,6 @@ class Server {
 
         // https://stackoverflow.com/questions/42767249/android-post-request-with-json
         String registerUrl = prefs.getServerUrl() + REGISTER_URL;
-        //    URL cacophonyRegisterEndpoint = null;
         try {
             HttpURLConnection myConnection = openURL(registerUrl);
 
@@ -477,16 +450,13 @@ class Server {
             os.close();
             serverAnswer.close();
 
-
             myConnection.disconnect();
             String responseString = new String(responseLine);
 
-            String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             JSONObject joRes = new JSONObject(responseString);
 
             if (responseCode.equalsIgnoreCase("200")) {
-
 
                 if (joRes.getBoolean("success")) {
                     registered = true;
@@ -497,9 +467,7 @@ class Server {
                     // look at web token
 
                     String deviceID = Util.getDeviceID(prefs.getToken());
-                  //  prefs.setDeviceId(deviceID);
 
-                    //   prefs.setDeviceName(devicename);
                     prefs.setDeviceName(deviceName);
                     prefs.setGroupName(group);
                     prefs.setDevicePassword(password);
@@ -522,7 +490,6 @@ class Server {
                 String message = joRes.getString("message");
                 registered = false;
                 jsonObjectMessageToBroadcast.put("messageType", "REGISTER_FAIL");
-              //  jsonObjectMessageToBroadcast.put("messageToDisplay", message);  // For now message from server is not user friendly
                 if (message.startsWith("group")) {
                     message = message.substring("group".length() + 2);
                 } else if (message.startsWith("devicename: invalid name")) {
@@ -531,7 +498,6 @@ class Server {
                     message = "Sorry could not register " + deviceName + " as it is already being used";
                 }
                 jsonObjectMessageToBroadcast.put("messageToDisplay", message);
-              //  jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry could not register " + deviceName + " as it is already being used");
                 Util.broadcastAMessage(context,  "SERVER_REGISTER", jsonObjectMessageToBroadcast);
 
             } else { // response code not 200 or 422 - left this here from Cameron's code as it
@@ -605,7 +571,6 @@ class Server {
             JSONObject joResponseString = new JSONObject(responseString);
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            //  jsonObjectMessageToBroadcast.put("activityName", "SignupActivity");
 
             if (responseCode.equalsIgnoreCase("200")) {
 
@@ -634,7 +599,6 @@ class Server {
                     messageToDisplay = "Sorry - failed to sign up";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                     Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
-                    //Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
                 }
             } else if (responseCode.equalsIgnoreCase("422")) { // 422 error response
                 Log.w(TAG, "Signup Response from server is 422");
@@ -661,7 +625,6 @@ class Server {
                 }
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                 Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
-                //Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
             } else { // 422 error response
                 Log.w(TAG, "Signup Response from server is " + responseCode);
 
@@ -671,7 +634,6 @@ class Server {
                 messageToDisplay = "Unable to sign up (ErrorType is " + errorType + " Message is " + message; // needs improving, find out what the other error codes might be?
                 jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
                 Util.broadcastAMessage(context,  "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
-                // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
             }
 
         } catch (Exception e) {
@@ -683,18 +645,19 @@ class Server {
 
 
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
+        uploadFilesIdlingResource.increment();
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
-            String messageToDisplay = "";
+
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
-                jsonObjectMessageToBroadcast.put("messageType", "already_uploading");
+                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, can not record as a recording is already in progress");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context,  "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-            //Util.broadcastAMessage(context, "already_uploading");
             return false;
         }
         uploading = true;
@@ -726,12 +689,10 @@ class Server {
                         Log.e(TAG, "Error with recording id");
                     }
 
-
                     if (joRes.getBoolean("success")) {
                         uploadSuccess = true;
                         break;
                     }
-
                 }
 
             } catch (JSONException e) {
@@ -743,18 +704,9 @@ class Server {
         } finally {
             uploading = false;
         }
-        // uploading = false;
+
         return uploadSuccess;
     }
-
-
-//    private static void setErrorMessage(String errorMessage) {
-//        Server.errorMessage = errorMessage;
-//    }
-//
-//    static String getErrorMessage() {
-//        return errorMessage;
-//    }
 
     static ArrayList<String> getGroups(Context context) {
         final Prefs prefs = new Prefs(context);
@@ -840,17 +792,12 @@ class Server {
 
             OkHttpClient client = new OkHttpClient();
 
-//    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
-           // String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
-            //String url = "https://api-test.cacophony.org.nz/api/v1/groups";
-
             String groupsEndPoint = GROUPS_URL;
 
             HttpUrl url = new HttpUrl.Builder()
                     .scheme(prefs.getServerScheme())
                     .host(prefs.getServerHost())
                     .addPathSegments(groupsEndPoint)
-                   // .addQueryParameter("where", jsonSearchTermsString)
                     .build();
 
 
@@ -864,7 +811,6 @@ class Server {
                     .header("Authorization", authorization)
                     .post(formBody)
                     .build();
-            String responseBody = "";
 
             Log.e(TAG, url.toString());
 
@@ -873,9 +819,7 @@ class Server {
             //Set message to broadcast
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-
             jsonObjectMessageToBroadcast.put("responseCode", responseCode);
-
 
             if (responseCode == 200) {
                 jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_ADDED_GROUP");
@@ -890,65 +834,9 @@ class Server {
 
             jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
             Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
-            // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
-
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
     }
-
-//    static void addGroupToServer(Context context, String groupName) {
-//        final Prefs prefs = new Prefs(context);
-//        try {
-//
-//            OkHttpClient client = new OkHttpClient();
-//
-////    String url = "https://api-test.cacophony.org.nz/api/v1/groups?where={}";
-//            String url = "https://api-test.cacophony.org.nz/api/v1/groups?where=%7B%7D";
-//            //String url = "https://api-test.cacophony.org.nz/api/v1/groups";
-//            RequestBody formBody = new FormBody.Builder()
-//                    .add("groupname", groupName)
-//                    .build();
-//
-//            String authorization = prefs.getUserToken();
-//            Request request = new Request.Builder()
-//                    .url(url)
-//                    .header("Authorization", authorization)
-//                    .post(formBody)
-//                    .build();
-//            String responseBody = "";
-//
-//            Log.e(TAG, url.toString());
-//
-//            Response response = client.newCall(request).execute();
-//            int responseCode = response.code();
-//            //Set message to broadcast
-//            String messageToDisplay = "";
-//            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-//
-//            jsonObjectMessageToBroadcast.put("responseCode", responseCode);
-//
-//
-//            if (responseCode == 200) {
-//                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_ADDED_GROUP");
-//                messageToDisplay = "Success, the group " + groupName + " has been added to the server";
-//                // Now add it to local storage
-//                Util.addGroup(context, groupName);
-//
-//            } else {
-//                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_ADD_GROUP");
-//                messageToDisplay = "Sorry, the group " + groupName + " could not be added to the server";
-//            }
-//
-//            jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-//            Util.broadcastAMessage(context,  "SERVER_GROUPS", jsonObjectMessageToBroadcast);
-//            // Util.broadcastAMessage(context,jsonObjectMessageToBroadcast.toString());
-//
-//
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
-//    }
-
 }

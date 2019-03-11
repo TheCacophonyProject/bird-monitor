@@ -97,8 +97,6 @@ public class GPSFragment extends Fragment {
         latitudeDisplay.setText(getString(R.string.latitude));
         longitudeDisplay.setText(getString(R.string.longitude));
 
-
-        // TextView tvSearching = getView().findViewById(R.id.tvSearching);
         tvSearching.setVisibility(View.VISIBLE);
         Util.updateGPSLocation(getActivity().getApplicationContext());
     }

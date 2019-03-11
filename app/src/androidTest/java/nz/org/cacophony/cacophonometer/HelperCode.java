@@ -1,204 +1,107 @@
 package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.ViewInteraction;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.Checkable;
-
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
+import android.util.Log;
+import java.util.Date;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.is;
 
-/**
- * Created by Tim Hunt on 15-Mar-18.
- */
+public class HelperCode {
 
-@SuppressWarnings("unchecked")
-class HelperCode {
+   public static void useTestServerAndShortRecordings(Prefs prefs, Context targetContext){
 
-    public static void disableAirplaneMode(Context targetContext){
-      // Assume settings already open
-        checkRootAccessCheckBox();
-        checkOnLineModeCheckBox();
-        uncheckOfflineMode();
-        Util.disableFlightMode(targetContext);
+        targetContext = getInstrumentation().getTargetContext();
+        prefs = new Prefs(targetContext);
+
+        if (!prefs.getUseTestServer()){
+            Util.setUseTestServer(targetContext, true);
+            prefs.setUseShortRecordings(true);
+        }
     }
 
-    public static ViewAction setChecked(final boolean checked) {
-        // https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
-        return new ViewAction() {
-            @Override
-            public BaseMatcher<View> getConstraints() {
-                return new BaseMatcher<View>() {
-                    @Override
-                    public boolean matches(Object item) {
-                        return isA(Checkable.class).matches(item);
-                    }
+    public static void signOutUser(Prefs prefs, Context targetContext){
 
-                    @Override
-                    public void describeMismatch(Object item, Description mismatchDescription) {}
-
-                    @Override
-                    public void describeTo(Description description) {}
-                };
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                Checkable checkableView = (Checkable) view;
-                checkableView.setChecked(checked);
-
-            }
-        };
+        prefs.setUsername(null);
+        prefs.setUsernamePassword(null);
+        prefs.setUserSignedIn(false);
     }
 
-
-    public static void testCheckBox(int checkBoxId){
-
-        // First check the box. This is a two step process as setChecked does NOT cause onclick code to fire, so first uncheck it then click it.
-        onView(withId(checkBoxId)).perform(scrollTo(), HelperCode.setChecked(false));
-        onView(withId(checkBoxId)).perform(scrollTo(), click());
-
-        // Exit Settings screen, back to Main screen
-        onView(allOf(withContentDescription("Navigate up"))).perform(click());
-
-        // go back into settings to check that the box is checked
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
-        onView(allOf(withId(checkBoxId))).check(matches(isChecked())); // https://developer.android.com/training/testing/espresso/basics.html
-
-        // Now leave the app with the box unchecked
-        onView(withId(checkBoxId)).perform(scrollTo(), HelperCode.setChecked(true));
-        onView(withId(checkBoxId)).perform(scrollTo(), click());
-        onView(allOf(withId(checkBoxId))).check(matches(isNotChecked()));
+    public static void dismissWelcomeDialog(){
+        try{
+            onView(allOf(withId(android.R.id.button1), withText("OK"))).perform(scrollTo(),click());
+        }catch (Exception ex){
+            Log.e("HelperCode", ex.getLocalizedMessage());
+        }
     }
 
-//    public static void checkRootedCheckBoxAndDisableAirplaneMode(Context context){
-//        openSettingsActivity();
-//        checkRootAccessCheckBox();
-//        if (!Util.isNetworkConnected(context)){
-//            Util.disableFlightMode(context);
-//            Util.waitForNetworkConnection(context, true);
-//        }
-//        assertTrue(Util.isNetworkConnected(context));
-//
-//        // Go back to main screen
-//        returnToMainActivityScreen();
-//    }
-
-    public static void checkRootAccessCheckBox(){
-        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(false));
-        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
+    public static void dismissDialogWithYes(){
+        try{
+            onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(),click());
+        }catch (Exception ex){
+            Log.e("HelperCode", ex.getLocalizedMessage());
+        }
     }
 
-    public static void checkOnLineModeCheckBox(){
-        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), HelperCode.setChecked(false));
-        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), click());
-    }
+    public static void signInUserTimhot(Prefs prefs){
 
-    public static void unCheckOnLineModeCheckBox(){
-        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
-        onView(withId(R.id.cbOnLineMode)).perform(scrollTo(), click());
-    }
+        try {
 
-// --Commented out by Inspection START (30-May-18 5:19 PM):
-//    public static void unCheckRootAccessCheckBox(){
-//        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), HelperCode.setChecked(true));
-//        onView(withId(R.id.cbHasRootAccess)).perform(scrollTo(), click());
-//    }
-// --Commented out by Inspection STOP (30-May-18 5:19 PM)
+            Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
 
-    public static void openSettingsActivity(){
-        // Open settings
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Settings"))).perform(click());
-    }
+            onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
 
-    public static void openVitalsActivity(){
-        // Open settings
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(allOf(withId(R.id.title), withText("Vitals"))).perform(click());
+            onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+            onView(withId(R.id.btnSignIn)).perform(click());
+
+        }catch (Exception ex){
+            Log.e("SignInUser", ex.getLocalizedMessage());
+        }
     }
 
 
+    public static void registerPhone(Prefs prefs){
 
-    public static void returnToMainActivityScreen(){
+        try {
+            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.my_toolbar),
-                                        childAtPosition(
-                                                withId(R.id.top_relative_layout),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        appCompatImageButton.perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("tim1"))).perform(click());
+
+            // App automatically moves to Register Phone screen
+            // Now enter the device name
+
+            // Create a unique device name
+            Date now = new Date();
+
+            String deviceName = Long.toString(now.getTime()/1000);
+            prefs.setLastDeviceNameUsedForTesting(deviceName); // save the device name so can find recordings for it later
+
+            onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());
+            onView(withId(R.id.btnRegister)).perform(click());
+
+        }catch (Exception ex){
+            Log.e("RegisterPhone", ex.getLocalizedMessage());
+        }
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+    public static void unRegisterPhone(Prefs prefs){
 
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+        try {
+            Thread.sleep(1000);
+            onView(withId(R.id.btnUnRegister)).perform(click());
+            Thread.sleep(1000);
+            dismissDialogWithYes();
+        }catch (Exception ex){
+            Log.e("RegisterPhone", ex.getLocalizedMessage());
+        }
     }
-
-    public static boolean hasNetworkConnection(Context targetContext){
-        Util.waitForNetworkConnection(targetContext, true);
-        return Util.isNetworkConnected(targetContext);
-    }
-
-    public static boolean doesNOTHaveNetworkConnection(Context targetContext){
-        Util.waitForNetworkConnection(targetContext, false);
-        return !Util.isNetworkConnected(targetContext);
-    }
-
-    public static void uncheckOfflineMode(){
-//        openSettingsActivity();
-
-        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), HelperCode.setChecked(true));
-        onView(withId(R.id.cbOffLineMode)).perform(scrollTo(), click());
-
-        // Return to MainActivity screen
-//        returnToMainActivityScreen();
-
-    }
-
 }
