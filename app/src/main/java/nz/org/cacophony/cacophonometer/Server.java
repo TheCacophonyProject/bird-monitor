@@ -34,7 +34,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 
@@ -265,7 +265,6 @@ class Server {
                     prefs.setUserSignedIn(true);
 
                     boolean isItSignedIn = prefs.getUserSignedIn();
-                    Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
                     messageToDisplay = "You have successfully signed in as ";
                     jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
@@ -741,7 +740,7 @@ class Server {
 
             Response response = client.newCall(request).execute();
             int responseCode = response.code();
-            Log.e(TAG, "responseCode: " + responseCode);
+
 
             //Set message to broadcast
             String messageToDisplay = "";

@@ -12,6 +12,7 @@ import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -38,6 +39,14 @@ public class HelperCode {
 
     public static void dismissWelcomeDialog(){
         try{
+
+            try {
+                while (!recordIdlingResource.isIdleNow()) {
+                    recordIdlingResource.decrement();
+                }
+            }catch (Exception ex){
+                Log.e("Record", ex.getLocalizedMessage());
+            }
             onView(allOf(withId(android.R.id.button1), withText("OK"))).perform(scrollTo(),click());
         }catch (Exception ex){
             Log.e("HelperCode", ex.getLocalizedMessage());

@@ -3,13 +3,6 @@ package nz.org.cacophony.cacophonometer;
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import java.io.File;
 
@@ -20,6 +13,8 @@ import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -45,7 +40,6 @@ class Record {
 
     public static void RecordAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-
         setUpForRecord(mActivityTestRule);
 
         recordAndSaveOnServer();
@@ -54,6 +48,9 @@ class Record {
     }
 
     private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
+
+        // Seems sometimes particualar idling resources are not idle e.g. [RECORD]
+
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
@@ -98,6 +95,12 @@ class Record {
 
         prefs.setInternetConnectionMode("normal");
         Util.signOutUser(targetContext);
+
+        File recordingsFolder = Util.getRecordingsFolder(targetContext);
+        for (File file : recordingsFolder.listFiles()){
+            file.delete();
+        }
+
         prefs.setIsDisabled(false);
 
     }
@@ -121,8 +124,8 @@ class Record {
     private static void recordAndSaveOnServer(){
         // Need to put phone into normal mode so it uploads the recording
         prefs.setInternetConnectionMode("normal");
-        File recordingsFolder = Util.getRecordingsFolder(targetContext);
 
+        File recordingsFolder = Util.getRecordingsFolder(targetContext);
         for (File file : recordingsFolder.listFiles()){
             file.delete();
         }
@@ -132,7 +135,7 @@ class Record {
         onView(withId(R.id.btnRecordNow)).perform(click());
         prefs.setIsDisabled(true);
         try {
-            Thread.sleep(1000); // seemed to need this, because of code to disable airplane mode
+            Thread.sleep(10000); // Espresso says shouldn't do this, but I needed a way to wait for file to be uploaded.  Espresso only waits for counting resource to be idle IF/FOR simulated user interaction.
         }catch (Exception ex){
             Log.e("Record", ex.getLocalizedMessage());
         }
