@@ -50,7 +50,7 @@ public class BatteryFragment extends Fragment {
         Prefs prefs = new Prefs(getActivity());
         swIgnoreLowBattery.setChecked(prefs.getIgnoreLowBattery());
         if (prefs.getIgnoreLowBattery()){
-            swIgnoreLowBattery.setText("Record with low battery is ON");
+            swIgnoreLowBattery.setText(getString(R.string.Record_with_low_battery_is_ON));
         }else{
             swIgnoreLowBattery.setText("Record with low battery is OFF");
         }

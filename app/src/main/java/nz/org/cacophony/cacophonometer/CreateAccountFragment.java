@@ -164,7 +164,7 @@ public class CreateAccountFragment extends Fragment {
         tilPassword1.setVisibility(View.GONE);
         tilPassword2.setVisibility(View.GONE);
 
-        tvMessages.setText("Attempting to create user - please wait");
+        tvMessages.setText(getString(R.string.attempting_to_creat));
 
         createAccountIdlingResource.increment();
 

@@ -39,7 +39,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+        app:layout_constraintTop_toBottomOf="@+id/textView15"
+        tools:targetApi="lollipop" />
 
     <Switch
         android:id="@+id/swUseFrequentUploads"
@@ -57,7 +58,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider12" />
+        app:layout_constraintTop_toBottomOf="@+id/divider12"
+        tools:targetApi="lollipop" />
 
     <Switch
         android:id="@+id/swPeriodicallyUpdateGPS"
@@ -75,7 +77,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider13" />
+        app:layout_constraintTop_toBottomOf="@+id/divider13"
+        tools:targetApi="lollipop" />
 
     <View
         android:id="@+id/divider12"
