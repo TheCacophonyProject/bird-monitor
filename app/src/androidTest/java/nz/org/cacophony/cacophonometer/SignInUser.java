@@ -10,6 +10,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -18,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("unused")
 class SignInUser {
 
-    private static Context targetContext;
     private static Prefs prefs;
 
     public static void signInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -32,7 +32,7 @@ class SignInUser {
 
     private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        targetContext = getInstrumentation().getTargetContext();
+        Context targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setUserSignedIn(false);
@@ -46,7 +46,7 @@ class SignInUser {
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
-        HelperCode.useTestServerAndShortRecordings(prefs, targetContext);
+        HelperCode.useTestServerAndShortRecordings();
 
         nowSwipeLeft();
         nowSwipeLeft(); // takes you to Sign In screen
@@ -60,11 +60,11 @@ class SignInUser {
 
     private static void signIn(){
 
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
 
         boolean userSignedIn = prefs.getUserSignedIn();
 
-        assertEquals(userSignedIn, true);
+        assertTrue(userSignedIn);
         onView(withId(R.id.tvTitleMessageSignIn)).check(matches(withText("Signed In")));
 
     }

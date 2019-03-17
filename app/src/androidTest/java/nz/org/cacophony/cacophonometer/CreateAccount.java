@@ -21,22 +21,18 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 @SuppressWarnings("unused")
 class CreateAccount {
 
-    private static Context targetContext;
-    private static Prefs prefs;
-
     public static void createAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         setUpForCreateAccount(mActivityTestRule);
 
         create();
 
-        tearDownForCreateAccount(mActivityTestRule);
     }
 
     private static void setUpForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule){
 
-        targetContext = getInstrumentation().getTargetContext();
-        prefs = new Prefs(targetContext);
+        Context targetContext = getInstrumentation().getTargetContext();
+        Prefs prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
 
 
@@ -48,13 +44,9 @@ class CreateAccount {
             onView(withId(R.id.btnSetup)).perform(click());
         }
 
-        HelperCode.signOutUser(prefs, targetContext);
-        HelperCode.useTestServerAndShortRecordings(prefs, targetContext);
+        HelperCode.signOutUser(prefs);
+        HelperCode.useTestServerAndShortRecordings();
         nowSwipeLeft();// takes you to Create Account screen
-    }
-
-    private static void tearDownForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
-
     }
 
 

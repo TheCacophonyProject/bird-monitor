@@ -2,26 +2,21 @@ package nz.org.cacophony.cacophonometer;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class SetupWizardActivity extends AppCompatActivity {
     // https://www.youtube.com/watch?v=UqtsyhASW74
-
-    private static final String TAG = "SetupWizardActivity";
 
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
@@ -36,13 +31,13 @@ public class SetupWizardActivity extends AppCompatActivity {
 
 
 //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
         //https://www.youtube.com/watch?v=UqtsyhASW74
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
 
         setupViewPager(mViewPager);
 
@@ -176,7 +171,7 @@ public class SetupWizardActivity extends AppCompatActivity {
                     btnPositive.setTextColor(btnPositiveColor);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 textView.setTextSize(22);
             }
         });

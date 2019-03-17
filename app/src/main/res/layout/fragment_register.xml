@@ -47,7 +47,8 @@
         android:inputType="text"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvGroupName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvGroupName"
+        tools:ignore="Autofill" />
 
     <TextView
         android:id="@+id/tvDeviceName"
@@ -80,7 +81,8 @@
         android:hint="Enter Device Name Here"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDeviceName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDeviceName"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/btnRegister"

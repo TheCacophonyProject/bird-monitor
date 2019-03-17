@@ -184,8 +184,7 @@
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>
-
-
+    <string name="enter_a_new_group_here">Enter a new Group Here</string>
 
 
 </resources>

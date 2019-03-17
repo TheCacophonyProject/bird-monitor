@@ -13,6 +13,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -56,10 +57,10 @@ class UploadRecordings {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ex){
+        }catch (Exception ignored){
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -102,17 +103,18 @@ class UploadRecordings {
     private static void uploadAllRecordings(){
 
         int numberOfRecordingsBeforeUpload = Util.getNumberOfRecordings(targetContext);
-        assertEquals(true, numberOfRecordingsBeforeUpload > 0);
+        assertTrue(numberOfRecordingsBeforeUpload > 0);
         prefs.setInternetConnectionMode("normal");
 
         onView(withId(R.id.btnUploadFiles)).perform(click());
 
+
         int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
-        assertEquals(true, numberOfRecordingsAfterDelete == 0);
+        assertTrue(numberOfRecordingsAfterDelete == 0);
 
         long lastRecordIdReturnedFromServer = prefs.getLastRecordIdReturnedFromServer();
 
-        assertEquals(true, lastRecordIdReturnedFromServer > 0);
+        assertTrue(lastRecordIdReturnedFromServer > 0);
 
         onView(withId(R.id.tvMessagesManageRecordings)).check(matches(withText("Recordings have been uploaded to the server.")));
     }

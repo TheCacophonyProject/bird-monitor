@@ -24,7 +24,6 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
@@ -152,11 +151,11 @@ public class RegisterFragment extends Fragment {
             }
         }
     };
-    void displayOrHideGUIObjects() {
+    private void displayOrHideGUIObjects() {
 
         displayOrHideGUIObjects(false);
     }
-    void displayOrHideGUIObjects(boolean callSetNumberOfPages) {
+    private void displayOrHideGUIObjects(boolean callSetNumberOfPages) {
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         String groupNameFromPrefs = prefs.getGroupName();
@@ -278,7 +277,7 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    public void registerButtonPressed() {
+    private void registerButtonPressed() {
         //  registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
@@ -381,7 +380,7 @@ public class RegisterFragment extends Fragment {
     }
 
 
-    public void unregisterButtonPressed() {
+    private void unregisterButtonPressed() {
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
             tvMessages.setText("Not currently registered - so can not unregister :-(");
@@ -418,7 +417,7 @@ public class RegisterFragment extends Fragment {
                 btnNegative.setTextColor(btnNegativeColor);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 textView.setTextSize(22);
             }
         });

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInGUIIdlingResource;
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
@@ -96,7 +95,7 @@ public class SignInFragment extends Fragment {
         Thread loginThread = new Thread() {
             @Override
             public void run() {
-                Server.loginUser(getActivity().getApplicationContext());;
+                Server.loginUser(getActivity().getApplicationContext());
             }
         };
         loginThread.start();

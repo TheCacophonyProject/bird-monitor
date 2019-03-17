@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -74,10 +73,10 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
 
-        tvMessages = (TextView) findViewById(R.id.tvMessages);
+        tvMessages = findViewById(R.id.tvMessages);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
     }
 

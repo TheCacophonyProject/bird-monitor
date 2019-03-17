@@ -2,13 +2,6 @@ package nz.org.cacophony.cacophonometer;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 import java.io.File;
 
@@ -22,6 +15,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -86,7 +81,7 @@ class GuiControls {
 
         boolean allPrefsForWalkingSet = areAllPrefsForWalkingSet();
 
-       assertEquals(true, allPrefsForWalkingSet);
+        assertTrue(allPrefsForWalkingSet);
 
        // Now turn walking off
         onView(withId(R.id.btnWalking)).perform(click());
@@ -95,7 +90,7 @@ class GuiControls {
 
         allPrefsForWalkingSet = areAllPrefsForWalkingSet();
 
-        assertEquals(true, !allPrefsForWalkingSet);
+        assertTrue(!allPrefsForWalkingSet);
 
     }
 
@@ -107,7 +102,7 @@ class GuiControls {
 
         boolean isDisabled = prefs.getIsDisabled();
 
-        assertEquals(true, isDisabled);
+        assertTrue(isDisabled);
 
         // Now enable the app
         onView(withId(R.id.btnDisable)).perform(click());
@@ -116,7 +111,7 @@ class GuiControls {
 
         isDisabled = prefs.getIsDisabled();
 
-        assertEquals(true, !isDisabled);
+        assertTrue(!isDisabled);
 
     }
 
@@ -164,20 +159,20 @@ class GuiControls {
         onView(withId(R.id.swPlayWarningSound)).perform(click());  // to enable play warning sound
         onView(withId(R.id.swPlayWarningSound)).check(matches(isChecked())); // confirm it is checked
         boolean playWarningSound = prefs.getPlayWarningSound(); // check prefs now indicate to play a warning sound
-        assertEquals(true, playWarningSound);
+        assertTrue(playWarningSound);
         nowSwipeRight(); // leave page
         nowSwipeLeft();  // return to page
         // confirm that prefs and page are still correct
         onView(withId(R.id.swPlayWarningSound)).check(matches(isChecked()));
         playWarningSound = prefs.getPlayWarningSound();
-        assertEquals(true, playWarningSound);
+        assertTrue(playWarningSound);
 
 
         // Turn warning sound back off
         onView(withId(R.id.swPlayWarningSound)).perform(click()); // turn sound off
         onView(withId(R.id.swPlayWarningSound)).check(matches(isNotChecked())); // warning sound should be off
         playWarningSound = prefs.getPlayWarningSound();
-        assertEquals(false, playWarningSound);
+        assertFalse(playWarningSound);
 
         // Finished so leave warning sound off
     }
@@ -191,20 +186,20 @@ class GuiControls {
         onView(withId(R.id.swIgnoreLowBattery)).perform(click());  // to enable Ignore Low Battery
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isChecked())); // confirm it is checked
         boolean ignoreLowBattery = prefs.getIgnoreLowBattery(); // check prefs now indicate to Ignore Low Battery
-        assertEquals(true, ignoreLowBattery);
+        assertTrue(ignoreLowBattery);
         nowSwipeRight(); // leave page
         nowSwipeLeft();  // return to page
         // confirm that prefs and page are still correct
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isChecked()));
         ignoreLowBattery = prefs.getIgnoreLowBattery();
-        assertEquals(true, ignoreLowBattery);
+        assertTrue(ignoreLowBattery);
 
 
         // Turn Ignore Low Battery back off
         onView(withId(R.id.swIgnoreLowBattery)).perform(click()); // turn Ignore Low Battery off
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isNotChecked())); // Ignore Low Battery should be off
         ignoreLowBattery = prefs.getIgnoreLowBattery();
-        assertEquals(false, ignoreLowBattery);
+        assertFalse(ignoreLowBattery);
 
         // Finished so leave Ignore Low Battery off
     }
@@ -225,13 +220,13 @@ class GuiControls {
         onView(withId(R.id.swRecordMoreOften)).check(matches(isChecked())); // confirm it is checked
         // Check correct prefs variable was set and others were not set
         boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(true, recordMoreOften);
+        assertTrue(recordMoreOften);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(false, useFrequentUploads);
+        assertFalse(useFrequentUploads);
 
         boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(false, periodicallyUpdateGPS);
+        assertFalse(periodicallyUpdateGPS);
 
         // Now leave the screen and return then check correct radio buttons are still checked
 
@@ -244,13 +239,13 @@ class GuiControls {
 
         // and check prefs are still correct
          recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(true, recordMoreOften);
+        assertTrue(recordMoreOften);
 
          useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(false, useFrequentUploads);
+        assertFalse(useFrequentUploads);
 
          periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(false, periodicallyUpdateGPS);
+        assertFalse(periodicallyUpdateGPS);
 
         // Finished so leave all off
         onView(withId(R.id.swRecordMoreOften)).perform(click());
@@ -274,13 +269,13 @@ class GuiControls {
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isChecked())); // confirm it is checked
         // Check correct prefs variable was set and others were not set
         boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(false, recordMoreOften);
+        assertFalse(recordMoreOften);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(true, useFrequentUploads);
+        assertTrue(useFrequentUploads);
 
         boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(false, periodicallyUpdateGPS);
+        assertFalse(periodicallyUpdateGPS);
 
         // Now leave the screen and return then check correct radio buttons are still checked
 
@@ -293,13 +288,13 @@ class GuiControls {
 
         // and check prefs are still correct
         recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(false, recordMoreOften);
+        assertFalse(recordMoreOften);
 
         useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(true, useFrequentUploads);
+        assertTrue(useFrequentUploads);
 
         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(false, periodicallyUpdateGPS);
+        assertFalse(periodicallyUpdateGPS);
 
         // Finished so leave all off
         onView(withId(R.id.swUseFrequentUploads)).perform(click());
@@ -323,13 +318,13 @@ class GuiControls {
         onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isChecked())); // confirm it is checked
         // Check correct prefs variable was set and others were not set
         boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(false, recordMoreOften);
+        assertFalse(recordMoreOften);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(false, useFrequentUploads);
+        assertFalse(useFrequentUploads);
 
         boolean periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(true, periodicallyUpdateGPS);
+        assertTrue(periodicallyUpdateGPS);
 
         // Now leave the screen and return then check correct radio buttons are still checked
 
@@ -342,13 +337,13 @@ class GuiControls {
 
         // and check prefs are still correct
         recordMoreOften = prefs.getUseFrequentRecordings();
-        assertEquals(false, recordMoreOften);
+        assertFalse(recordMoreOften);
 
         useFrequentUploads = prefs.getUseFrequentUploads();
-        assertEquals(false, useFrequentUploads);
+        assertFalse(useFrequentUploads);
 
         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
-        assertEquals(true, periodicallyUpdateGPS);
+        assertTrue(periodicallyUpdateGPS);
 
         // Finished so leave all off
         onView(withId(R.id.swPeriodicallyUpdateGPS)).perform(click());
@@ -363,20 +358,20 @@ class GuiControls {
         onView(withId(R.id.swRooted)).perform(click());  // to enable play warning sound
         onView(withId(R.id.swRooted)).check(matches(isChecked())); // confirm it is checked
         boolean isRooted = prefs.getHasRootAccess();
-        assertEquals(true, isRooted);
+        assertTrue(isRooted);
         nowSwipeRight(); // leave page
         nowSwipeLeft();  // return to page
         // confirm that prefs and page are still correct
         onView(withId(R.id.swRooted)).check(matches(isChecked()));
         isRooted = prefs.getHasRootAccess();
-        assertEquals(true, isRooted);
+        assertTrue(isRooted);
 
 
         // Turn off
         onView(withId(R.id.swRooted)).perform(click()); // turn off
         onView(withId(R.id.swRooted)).check(matches(isNotChecked())); //  should be off
         isRooted = prefs.getHasRootAccess();
-        assertEquals(false, isRooted);
+        assertFalse(isRooted);
 
         // Finished so leave off
 

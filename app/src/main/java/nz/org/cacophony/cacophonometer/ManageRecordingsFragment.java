@@ -16,16 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.testUploadRecordingsIdlingResource;
 
 public class ManageRecordingsFragment extends Fragment {
 
@@ -34,7 +31,7 @@ public class ManageRecordingsFragment extends Fragment {
 
     private Button btnUploadFiles;
     private Button btnDeleteAllRecordings;
-    TextView tvNumberOfRecordings;
+    private TextView tvNumberOfRecordings;
     private TextView tvMessages;
 
     @Override
@@ -46,8 +43,8 @@ public class ManageRecordingsFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessagesManageRecordings);
-        btnUploadFiles = (Button) view.findViewById(R.id.btnUploadFiles);
+        tvMessages = view.findViewById(R.id.tvMessagesManageRecordings);
+        btnUploadFiles = view.findViewById(R.id.btnUploadFiles);
         btnUploadFiles.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -56,7 +53,7 @@ public class ManageRecordingsFragment extends Fragment {
             }
         });
 
-        btnDeleteAllRecordings = (Button) view.findViewById(R.id.btnDeleteAllRecordings);
+        btnDeleteAllRecordings = view.findViewById(R.id.btnDeleteAllRecordings);
         btnDeleteAllRecordings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -89,7 +86,7 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
-    void displayOrHideGUIObjects() {
+    private void displayOrHideGUIObjects() {
         int numberOfRecordings = getNumberOfRecordings();
         tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordings);
 
@@ -106,7 +103,7 @@ public class ManageRecordingsFragment extends Fragment {
 
 
 
-    public void uploadRecordings(){
+    private void uploadRecordings(){
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
@@ -126,6 +123,7 @@ public class ManageRecordingsFragment extends Fragment {
         if (getNumberOfRecordings() > 0){ // should be as button should be disabled if no recordings
             tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
+            testUploadRecordingsIdlingResource.increment();
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
         }else{
             tvMessages.setText("There are no recordings on the phone to upload.");
@@ -138,7 +136,7 @@ public class ManageRecordingsFragment extends Fragment {
         return recordingFiles.length;
     }
 
-    public void deleteAllRecordingsButton(){
+    private void deleteAllRecordingsButton(){
 
         // are you sure?
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -172,14 +170,14 @@ public class ManageRecordingsFragment extends Fragment {
                 btnNegative.setTextColor(btnNegativeColor);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 textView.setTextSize(22);
             }
         });
         dialog.show();
 
     }
-    public void deleteAllRecordings(){
+    private void deleteAllRecordings(){
 
         Util.deleteAllRecordingsOnPhoneUsingDeleteButton(getActivity().getApplicationContext());
 
@@ -207,11 +205,11 @@ public class ManageRecordingsFragment extends Fragment {
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
                             tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
+                        } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED_USING_UPLOAD_BUTTON")) {
                             tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
+                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
                             tvMessages.setText(messageToDisplay);
-                            uploadFilesIdlingResource.decrement();
+                            testUploadRecordingsIdlingResource.decrement();
                         }
 
                         displayOrHideGUIObjects();

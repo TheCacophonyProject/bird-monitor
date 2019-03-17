@@ -17,12 +17,12 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
-public class HelperCode {
+class HelperCode {
 
-   public static void useTestServerAndShortRecordings(Prefs prefs, Context targetContext){
+   public static void useTestServerAndShortRecordings(){
 
-        targetContext = getInstrumentation().getTargetContext();
-        prefs = new Prefs(targetContext);
+       Context targetContext = getInstrumentation().getTargetContext();
+       Prefs prefs = new Prefs(targetContext);
 
         if (!prefs.getUseTestServer()){
             Util.setUseTestServer(targetContext, true);
@@ -30,7 +30,7 @@ public class HelperCode {
         }
     }
 
-    public static void signOutUser(Prefs prefs, Context targetContext){
+    public static void signOutUser(Prefs prefs){
 
         prefs.setUsername(null);
         prefs.setUsernamePassword(null);
@@ -61,7 +61,7 @@ public class HelperCode {
         }
     }
 
-    public static void signInUserTimhot(Prefs prefs){
+    public static void signInUserTimhot(){
 
         try {
 
@@ -102,7 +102,7 @@ public class HelperCode {
         }
     }
 
-    public static void unRegisterPhone(Prefs prefs){
+    public static void unRegisterPhone(){
 
         try {
             Thread.sleep(1000);

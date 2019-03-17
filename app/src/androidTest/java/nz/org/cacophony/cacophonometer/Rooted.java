@@ -5,6 +5,8 @@ import android.support.test.rule.ActivityTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by Tim Hunt on 16-Mar-18.
  */
@@ -50,7 +52,7 @@ class Rooted {
 
         // Now check we have a network connection again
        boolean hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
-        assertEquals(true, hasNetworkConnection);
+        assertTrue(hasNetworkConnection);
 
         // To prevent other tests failing due to phone going into airplane mode, change hasRoot to no
         prefs.setHasRootAccess(false);
@@ -81,14 +83,14 @@ class Rooted {
 
             // Now check we do NOT have a network connection
             boolean doesNotHaveNetworkConnection = Util.waitForNetworkConnection(targetContext, false);
-            assertEquals(true, doesNotHaveNetworkConnection);
+            assertTrue(doesNotHaveNetworkConnection);
 
             // Turn off airplane mode
             Util.disableFlightMode(targetContext);
 
             // Now check we have a network connection again
             hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
-            assertEquals(true, hasNetworkConnection);
+            assertTrue(hasNetworkConnection);
 
         }else{ // did not have a network connection, so airplane mode is probably on
 
@@ -97,13 +99,13 @@ class Rooted {
 
             // Now check we have a network connection
             hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
-            assertEquals(true, hasNetworkConnection);
+            assertTrue(hasNetworkConnection);
 
             // Now check we can turn on airplane mode
             Util.enableFlightMode(targetContext);
             // Now check we do NOT have a network connection
             boolean doesNotHaveNetworkConnection = Util.waitForNetworkConnection(targetContext, false);
-            assertEquals(true, doesNotHaveNetworkConnection);
+            assertTrue(doesNotHaveNetworkConnection);
 
         }
     }

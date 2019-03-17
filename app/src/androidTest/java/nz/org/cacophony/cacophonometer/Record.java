@@ -14,8 +14,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
-
 /**
  * Created by Tim Hunt on 16-Mar-18.
  */
@@ -73,10 +71,10 @@ class Record {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ex){
+        }catch (Exception ignored){
 
         }
         nowSwipeLeft(); // takes you to Groups screen

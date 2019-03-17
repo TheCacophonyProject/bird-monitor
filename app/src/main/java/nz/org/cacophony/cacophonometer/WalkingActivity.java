@@ -1,6 +1,5 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +20,7 @@ public class WalkingActivity extends AppCompatActivity implements IdlingResource
         setContentView(R.layout.activity_walking);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         switchWalking = findViewById(R.id.swWalking2);

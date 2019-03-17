@@ -20,15 +20,12 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
 
     private EditText etNewGroupInput;
-    private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
@@ -42,11 +39,11 @@ public class GroupsFragment extends Fragment {
         setUserVisibleHint(false);
 
         etNewGroupInput =  view.findViewById(R.id.etNewGroupInput);
-        btnCreateGroup =  view.findViewById(R.id.btnCreateGroup);
+        Button btnCreateGroup = view.findViewById(R.id.btnCreateGroup);
         lvGroups =  view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {

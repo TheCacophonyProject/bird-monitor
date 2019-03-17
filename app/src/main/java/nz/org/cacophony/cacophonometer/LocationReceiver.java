@@ -30,8 +30,7 @@ public class LocationReceiver extends BroadcastReceiver {
             return;
         }
 
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "LocationReceiverWakelockTag");
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG + ":LocationReceiverWakelockTag");
 
         long timeout = 1000 * 60 * 2;
         wakeLock.acquire(timeout);
