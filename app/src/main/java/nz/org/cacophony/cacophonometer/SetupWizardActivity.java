@@ -2,26 +2,21 @@ package nz.org.cacophony.cacophonometer;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class SetupWizardActivity extends AppCompatActivity {
     // https://www.youtube.com/watch?v=UqtsyhASW74
-
-    private static final String TAG = "SetupWizardActivity";
 
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
@@ -36,13 +31,13 @@ public class SetupWizardActivity extends AppCompatActivity {
 
 
 //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
         //https://www.youtube.com/watch?v=UqtsyhASW74
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
 
         setupViewPager(mViewPager);
 
@@ -51,9 +46,6 @@ public class SetupWizardActivity extends AppCompatActivity {
             Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
         }
     }
-
-
-
 
 
     @Override
@@ -107,12 +99,6 @@ public class SetupWizardActivity extends AppCompatActivity {
             mSectionsStatePagerAdapter.notifyDataSetChanged();
      }
 
-
-
-
-
-
-
     private void setupViewPager(ViewPager viewPager) {
 
         mSectionsStatePagerAdapter.addFragment(new WelcomeFragment(), getResources().getString(R.string.activity_or_fragment_title_welcome));
@@ -123,10 +109,8 @@ public class SetupWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new GroupsFragment(), getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group));
         mSectionsStatePagerAdapter.addFragment(new RegisterFragment(), getResources().getString(R.string.activity_or_fragment_title_register_phone));
 
-        // if (prefs.getGroupName() != null){
         mSectionsStatePagerAdapter.addFragment(new GPSFragment(), getResources().getString(R.string.activity_or_fragment_title_gps_location));
         mSectionsStatePagerAdapter.addFragment(new TestRecordFragment(), getResources().getString(R.string.activity_or_fragment_title_test_record));
-        //  }
 
         viewPager.setAdapter(mSectionsStatePagerAdapter);
 
@@ -143,9 +127,7 @@ public class SetupWizardActivity extends AppCompatActivity {
         } else {
             setNumberOfPagesForRegisterd();
         }
-
     }
-
 
     public String getGroup() {
         if (group != null){
@@ -153,11 +135,8 @@ public class SetupWizardActivity extends AppCompatActivity {
                 group = null;
             }
         }
-
-
         return group;
     }
-
 
     public void setGroup(String group) {
         if (group != null){
@@ -165,14 +144,12 @@ public class SetupWizardActivity extends AppCompatActivity {
                 group = null;
             }
         }
-
         this.group = group;
     }
 
     public void displayOKDialogMessage(String title, String messageToDisplay){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 return;
@@ -194,7 +171,7 @@ public class SetupWizardActivity extends AppCompatActivity {
                     btnPositive.setTextColor(btnPositiveColor);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 textView.setTextSize(22);
             }
         });

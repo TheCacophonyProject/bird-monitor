@@ -20,7 +20,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        tools:ignore="UnknownIdInLayout" />
 
     <Button
         android:id="@+id/btnUploadFiles"
@@ -63,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btnUploadFiles" />
 
     <TextView
-        android:id="@+id/tvMessages"
+        android:id="@+id/tvMessagesManageRecordings"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

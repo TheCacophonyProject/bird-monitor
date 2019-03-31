@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -41,7 +40,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = VitalsActivity.class.getName();
-   // private static final String intentAction = "nz.org.cacophony.cacophonometerlite.VitalsActivity";
 
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
     private static final int PERMISSION_RECORD_AUDIO = 1;
@@ -52,8 +50,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     @Override
     protected void onStart() {
         super.onStart();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(intentAction);
         IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
@@ -77,10 +73,10 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vitals);
 
-        tvMessages = (TextView) findViewById(R.id.tvMessages);
+        tvMessages = findViewById(R.id.tvMessages);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
     }
 
@@ -95,13 +91,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                     {
                         public void run()
                         {
-//                            String message = Util.disableFlightMode(getApplicationContext());
-//
-//                            if (message != null){
-//                                ((TextView) findViewById(R.id.messageText)).setText("\n                                                                                                                " + message);
-//                            }
                             Util.disableFlightMode(getApplicationContext());
-
                         }
                     });
                 }
@@ -109,9 +99,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         }catch (Exception ex){
             Log.e(TAG, ex.getLocalizedMessage());
-          //  Util.getToast(getApplicationContext(), "Error disabling flight mode", true).show();
             tvMessages.setText("Error disabling flight mode");
-
         }
     }
     /**
@@ -173,12 +161,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         if (!locationPermission) missingPermissionList.add("Location");
 
         String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
-
-     //   Util.getToast(getApplicationContext(),missingPermissionMessage, false ).show();
         tvMessages.setText(missingPermissionMessage);
-
         Log.w(TAG, missingPermissionMessage);
-
     }
 
     private boolean requestPermissions(){
@@ -237,11 +221,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             // Request for camera permission.
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
-
-               // Util.getToast(this.getApplicationContext(), "WRITE_EXTERNAL_STORAGE permission granted", false).show();
                 tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
             } else {
-              //  Util.getToast(this.getApplicationContext(), "Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings", true).show();
                 tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
             }
         }
@@ -250,11 +231,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             // Request for camera permission.
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start recording
-
-             //   Util.getToast(this.getApplicationContext(), "RECORD_AUDIO permission granted", false).show();
                 tvMessages.setText("RECORD_AUDIO permission granted");
             } else {
-             //   Util.getToast(this.getApplicationContext(), "Do not have RECORD_AUDIO permission, You can NOT record", true).show();
                 tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
             }
         }
@@ -321,11 +299,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             tvNextRecording.setText("Next Recording: " + nextAlarm);
         }
 
-
-
         // GPS text.
         updateGpsDisplay(prefs);
-
     }
 
     private void updateGpsDisplay(Prefs prefs){
@@ -343,7 +318,6 @@ try {
         String latitude = getString(R.string.latitude);
         String longitude = getString(R.string.longitude);
         String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
-//        locationStatus.setText("Latitude: " + latStr + ", Longitude: " + lonStr);
         locationStatus.setText(locationStatusToDisplay);
          }
 }catch (Exception ex){
@@ -352,52 +326,7 @@ try {
     }
 
 
-//    private final BroadcastReceiver onNotice= new BroadcastReceiver() {
-//        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-//
-//        // broadcast notification coming from ??
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            try {
-//                String action = intent.getAction();
-//                if (action.equals("server.updateServerConnectionStatus") || action.equals("server.login")) {
-//                    String messageType = intent.getStringExtra("message");
-//                    if (messageType != null) {
-//
-////                        if (messageType.equalsIgnoreCase("enable_vitals_button")) {
-////                            findViewById(R.id.refreshVitals).setEnabled(true);
-////                        }
-//                        if (messageType.equalsIgnoreCase("tick_logged_in_to_server")) {
-//                            TextView loggedInText = findViewById(R.id.loggedInText);
-//                            loggedInText.setText(getString(R.string.logged_in_to_server_true));
-//                        } else if (messageType.equalsIgnoreCase("untick_logged_in_to_server")) {
-//                            TextView loggedInText = findViewById(R.id.loggedInText);
-//                            loggedInText.setText(getString(R.string.logged_in_to_server_false));
-//                        } else if (messageType.equalsIgnoreCase("refresh_vitals_displayed_text")) {
-//                            refreshVitalsDisplayedText();
-//                        } else if (messageType.equalsIgnoreCase("can_not_toggle_airplane_mode")) {
-//                          //  TextView messageView = findViewById(R.id.messageText);
-//                         //   if (messageView != null) {
-//                          //      messageView.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-//                                tvMessages.setText("Messages: \nTo save power the Cacophonometer is designed to automatically switch airplane mode on/off but the version of Android on this phone prevents this unless the phone has been ‘rooted’.  You can disregard this message if the phone is plugged into the mains power – See the website for more details.");
-//                         //   }
-//                        } else if (messageType.equalsIgnoreCase("refresh_gps_coordinates")) {
-//                            Prefs prefs = new Prefs(context);
-//                            updateGpsDisplay(prefs);
-//                        } else if (messageType.equalsIgnoreCase("recording_finished")) {
-//                            refreshVitalsDisplayedText();
-//                        } else if (messageType.equalsIgnoreCase("alarms_updated")) {
-//                            refreshVitalsDisplayedText();
-//                        }
-//
-//                    }
-//                }
-//
-//            }catch (Exception ex){
-//                Log.e(TAG,ex.getLocalizedMessage());
-//            }
-//        }
-//    };
+
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
 
@@ -405,14 +334,10 @@ try {
         public void onReceive(Context context, Intent intent) {
 
             try {
-
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-
                 if (jsonStringMessage != null) {
-
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
                     String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
 
                      if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         refreshVitalsDisplayedText();
@@ -422,7 +347,6 @@ try {
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
                 tvMessages.setText("Could not record");
-
             }
 
         }
@@ -430,8 +354,6 @@ try {
 
     public void finished(@SuppressWarnings("UnusedParameters") View v) {
         try {
-//            Intent intent = new Intent(this, MainActivity2.class);
-//            startActivity(intent);
             finish();
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

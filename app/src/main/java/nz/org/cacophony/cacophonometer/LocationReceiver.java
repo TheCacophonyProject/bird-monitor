@@ -14,7 +14,7 @@ import static android.content.Context.POWER_SERVICE;
  *
  * Because the time to obtain an new GPS location is
  * indeterminate, there was an issue of having the correct GPS location for each recording when
- * in walking mode.  A compromise was made that meant that involved just updating the GPS location
+ * in walking mode.  A compromise was made that meant / involved just updating the GPS location
  * every 5 minutes and so a recording could have a GPS location that was up to 5 minutes old - which
  * should not be a major issue when moving a typical walking speed.
  */
@@ -30,8 +30,7 @@ public class LocationReceiver extends BroadcastReceiver {
             return;
         }
 
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "LocationReceiverWakelockTag");
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG + ":LocationReceiverWakelockTag");
 
         long timeout = 1000 * 60 * 2;
         wakeLock.acquire(timeout);

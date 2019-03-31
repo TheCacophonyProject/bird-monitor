@@ -7,12 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 public class DisableActivity extends AppCompatActivity {
     private static final String TAG = DisableActivity.class.getName();
@@ -26,7 +22,7 @@ public class DisableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_disable);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         final Prefs prefs = new Prefs(getApplicationContext());
@@ -64,7 +60,7 @@ public class DisableActivity extends AppCompatActivity {
 
     }
 
-    void displayOrHideGUIObjects(){
+    private void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getApplicationContext());
         boolean isDisabled = prefs.getIsDisabled();
 

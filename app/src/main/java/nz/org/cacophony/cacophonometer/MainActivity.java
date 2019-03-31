@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.test.espresso.IdlingRegistry;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         setContentView(R.layout.activity_main2);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         // https://stackoverflow.com/questions/3488664/how-to-set-different-label-for-launcher-rather-than-activity-title
@@ -110,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                             advancedButton.setText("Advanced");
                             prefs.setSettingsForTestServerEnabled(false);
 
-
                         }else{
                             advancedButton.setText("Very Advanced");
                             prefs.setSettingsForTestServerEnabled(true);
@@ -121,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
                     }else{
-                       // launchAdvancedActivity(null);
                         startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
                     break;
@@ -141,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 // Open the Setup wizard if the app does not yet have device name
        if (prefs.getDeviceName() == null){
-
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
@@ -162,10 +158,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
+            findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
@@ -177,11 +173,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStop() {
         super.onStop();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -210,8 +208,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {
 
         try {
-
-           // startActivity(new Intent(this, WelcomeActivity.class));
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -259,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                 String message = intent.getStringExtra("message");
                 if (message != null) {
 
-
                 }
 
             } catch (Exception ex) {
@@ -268,29 +263,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             }
         }
     };
-    /**
-     * Only used by testing code
-     */
-    public void registerEspressoIdlingResources() {
-        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
-        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
-        IdlingRegistry.getInstance().register(registerIdlingResource);
-        IdlingRegistry.getInstance().register(recordNowIdlingResource);
-        IdlingRegistry.getInstance().register(uploadingIdlingResource);
-        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
-    }
-    /**
-     * Only used by testing code
-     */
-    public void unRegisterEspressoIdlingResources() {
-        IdlingRegistry.getInstance().unregister(registerIdlingResource);
-        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
 
-//        if (toggleAirplaneModeIdlingResource != null) {
-//            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-//        }
-    }
 
 }

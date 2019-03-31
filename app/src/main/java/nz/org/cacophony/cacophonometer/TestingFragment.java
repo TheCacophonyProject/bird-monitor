@@ -8,18 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
 
 public class TestingFragment extends Fragment {
-
-    private static final String TAG = "TestingFragment";
-
 
     private Switch swUseTestServer;
     private Switch swUseVeryFrequentRecordings;
     private Switch swShortRecordings;
-    private Button btnFinished;
-    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,8 +21,7 @@ public class TestingFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_testing, container, false);
 
         setUserVisibleHint(false);
-        tvMessages =  view.findViewById(R.id.tvMessages);
-        btnFinished =  view.findViewById(R.id.btnFinished);
+        Button btnFinished = view.findViewById(R.id.btnFinished);
         swUseTestServer =  view.findViewById(R.id.swUseTestServer);
         swUseVeryFrequentRecordings =   view.findViewById(R.id.swUseVeryFrequentRecordings);
         swShortRecordings =  view.findViewById(R.id.swShortRecordings);
@@ -54,18 +47,10 @@ public class TestingFragment extends Fragment {
 
                 Util.setUseTestServer(getActivity().getApplicationContext(), isChecked);
 
-//                swShortRecordings.setEnabled(isChecked);
-//                swUseVeryFrequentRecordings.setEnabled(isChecked);
-
                 if (!isChecked){
                     Prefs prefs = new Prefs(getActivity().getApplicationContext());
                     prefs.setUseShortRecordings(false);
-//                    swShortRecordings.setChecked(false);
-//                    swShortRecordings.setEnabled(false);
-
                     prefs.setUseVeryFrequentRecordings(false);
-//                    swUseVeryFrequentRecordings.setChecked(false);
-//                    swUseVeryFrequentRecordings.setEnabled(false);
                 }
                 displayOrHideGUIObjects();
 
@@ -107,9 +92,7 @@ public class TestingFragment extends Fragment {
             return;
         }
         if (visible) {
-
             displayOrHideGUIObjects();
-
         }
     }
 
@@ -145,7 +128,6 @@ public class TestingFragment extends Fragment {
             swUseVeryFrequentRecordings.setText("Very frequent recordings is OFF");
         }
 
-
         boolean useShortRecordings = prefs.getUseShortRecordings();
 
         swShortRecordings.setChecked(useShortRecordings);
@@ -156,11 +138,4 @@ public class TestingFragment extends Fragment {
             swShortRecordings.setText("Short recordings is OFF");
         }
     }
-
-
-
-
-
-
-
 }

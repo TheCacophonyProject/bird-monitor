@@ -1,8 +1,8 @@
 package nz.org.cacophony.cacophonometer;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
@@ -38,7 +38,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting{
 
     }
 
-static String doRecord(Context context, String typeOfRecording) {
+static void doRecord(Context context, String typeOfRecording) {
     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
     Log.d(TAG, "typeOfRecording is " + typeOfRecording);
@@ -48,7 +48,7 @@ static String doRecord(Context context, String typeOfRecording) {
         Log.e(TAG, "typeOfRecording is null");
 
         returnValue = "error";
-        return returnValue;
+        return;
     }
 
     Prefs prefs = new Prefs(context);
@@ -78,7 +78,7 @@ if (isRecording){
         e.printStackTrace();
     }
     Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-   return "isRecording";
+   return;
 }else{
 
     makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
@@ -111,15 +111,12 @@ if (isRecording){
  if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
          if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
-        // uploadingIdlingResource.increment();
                 uploadedFilesSuccessfully = uploadFiles(context);
-       //  uploadingIdlingResource.decrement();
              if (uploadedFilesSuccessfully) {
                  prefs.setDateTimeLastUpload(now);
              }else{
                  returnValue = "recorded BUT did not upload";
                  Log.e(TAG, "Files failed to upload");
-                 String messageToDisplay = "";
                  jsonObjectMessageToBroadcast = new JSONObject();
                  try {
                      jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
@@ -129,44 +126,19 @@ if (isRecording){
                  }
                  Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
              }
-//                if (uploadedFilesSuccessfully) {
-//                    returnValue = "recorded and uploaded successfully";
-//                    prefs.setDateTimeLastUpload(now);
-//
-//                     jsonObjectMessageToBroadcast = new JSONObject();
-//                    try {
-//                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
-//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been uploaded");
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-//                } else {
-//                    returnValue = "recorded BUT did not upload";
-//                    Log.e(TAG, "Files failed to upload");
-//                    String messageToDisplay = "";
-//                     jsonObjectMessageToBroadcast = new JSONObject();
-//                    try {
-//                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
-//                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server");
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-//                }
+
             }
         }
 
     }
 
 
-            return returnValue;
-    }
+}
 
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
+        recordIdlingResource.increment();
        isRecording = true;
-        String messageToDisplay = "";
-        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "GETTING_READY_TO_RECORD");
             jsonObjectMessageToBroadcast.put("messageToDisplay", "Getting ready to record.");
@@ -174,7 +146,6 @@ if (isRecording){
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-        //Util.broadcastAMessage(context, "update_record_now_button");
 try {
 
 
@@ -224,11 +195,7 @@ try {
     fileName += " " + latStr;
     fileName += " " + lonStr;
 
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { // HONEYCOMB / Android version 3 / API 11
-//        fileName += ".m4a";
-//    }else{
-//        fileName += ".3gp";
-//    }
+
     fileName += ".m4a";
 
     File file = new File(Util.getRecordingsFolder(context), fileName);
@@ -237,11 +204,8 @@ try {
     // Setup audio recording settings.
     MediaRecorder mRecorder = new MediaRecorder();
 
-    ;
-
     // Try to prepare recording.
     try {
-       // mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 
         // Automatic gain control setting
         String audioSource = prefs.getAudioSource();
@@ -261,7 +225,11 @@ try {
                 break;
 
             case "UNPROCESSED":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+                }else{
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                }
                 break;
 
             case "VOICE_COMMUNICATION":
@@ -311,7 +279,6 @@ try {
     // Start recording.
     try {
         mRecorder.start();
-         messageToDisplay = "";
          jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
@@ -320,7 +287,6 @@ try {
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-        //Util.broadcastAMessage(context, "recording_started");
     } catch (Exception e) {
 
         Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
@@ -355,7 +321,6 @@ try {
     try {
         Thread.sleep(1000);
     } catch (InterruptedException ex) {
-//            logger.error("Failed sleeping in recording thread." +  ex.getLocalizedMessage());
         Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
     }
 
@@ -377,7 +342,6 @@ try {
     }
 
     public static boolean uploadFiles(Context context){
-        String messageToDisplay = "";
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
@@ -386,8 +350,6 @@ try {
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-
-       // Util.broadcastAMessage(context, "about_to_upload_files");
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
@@ -447,7 +409,6 @@ try {
                             break;
                         }
                     } else {
-                       // returnValue = false;
 
                         Log.e(TAG, "Failed to upload file to server");
                         return false;
@@ -456,29 +417,25 @@ try {
                 }
             }
             if (returnValue){
-                 messageToDisplay = "";
+
                  jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-              //  Util.broadcastAMessage(context, "files_successfully_uploaded");
             }
             return returnValue;
         }catch (Exception ex){
-
-
             Log.e(TAG, ex.getLocalizedMessage());
             return false;
         }
-
     }
 
-
-
+    @SuppressLint("HardwareIds")
     private static boolean sendFile(Context context, File aFile) {
         Prefs prefs = new Prefs(context);
 
@@ -531,12 +488,10 @@ try {
         TimeZone tz = TimeZone.getDefault();
         Calendar cal = GregorianCalendar.getInstance(tz);
         int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-//        String offset = String.format("%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60));
         String offset = String.format(Locale.ENGLISH,"%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60)); // added in Locale.ENGLISH to stop Lint warning
         offset = (offsetInMillis >= 0 ? "+" : "-") + offset;
 
         String recordingDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second+offset;
-      //  String recordingTime = hour + ":" + minute + ":" + second; // 7/12/12 Agreed with Cameron to stop sending this
 
         try {
 

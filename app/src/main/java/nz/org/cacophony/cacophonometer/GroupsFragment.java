@@ -20,13 +20,12 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
 
     private EditText etNewGroupInput;
-    private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
@@ -40,11 +39,11 @@ public class GroupsFragment extends Fragment {
         setUserVisibleHint(false);
 
         etNewGroupInput =  view.findViewById(R.id.etNewGroupInput);
-        btnCreateGroup =  view.findViewById(R.id.btnCreateGroup);
+        Button btnCreateGroup = view.findViewById(R.id.btnCreateGroup);
         lvGroups =  view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
@@ -144,32 +143,38 @@ public class GroupsFragment extends Fragment {
 
                     if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
                         // update the list of groups from server
-                     //   Util.getToast(getActivity(), messageToDisplay, false).show();
                         tvMessages.setText(messageToDisplay);
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
 
                         ((SetupWizardActivity) getActivity()).nextPageView();
 
-                    } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
-                       // Util.getToast(getActivity(), messageToDisplay, true).show();
-                       // tvMessages.setText(messageToDisplay);
-                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                        // Refresh groups list (added as automated testing sometimes tried to get group before they were showing
 
+                        tvMessages.setText("");
+                        adapter.clear();
+                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
+                        adapter.notifyDataSetChanged();
+
+                        getGroupsIdlingResource.decrement();
+
+                    } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
+                        getGroupsIdlingResource.decrement();
                     }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
                       adapter.clear();
                         //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
+                        getGroupsIdlingResource.decrement();
 
                     }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
-                       // Util.getToast(getActivity(), messageToDisplay, true).show();
-                        //tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                        getGroupsIdlingResource.decrement();
                 }
 
                 }
@@ -178,6 +183,7 @@ public class GroupsFragment extends Fragment {
             } catch (Exception ex) {
 
                 Log.e(TAG, ex.getLocalizedMessage());
+                getGroupsIdlingResource.decrement();
             }
         }
     };

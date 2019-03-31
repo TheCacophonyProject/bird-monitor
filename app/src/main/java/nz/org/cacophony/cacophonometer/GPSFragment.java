@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -31,7 +30,6 @@ public class GPSFragment extends Fragment {
     private static final String TAG = "GPSFragment";
 
 
-    private Button btnGetGPSLocation;
     private TextView tvMessages;
     private TextView tvSearching;
     private TextView latitudeDisplay;
@@ -48,7 +46,7 @@ public class GPSFragment extends Fragment {
         latitudeDisplay = view.findViewById(R.id.tvLatitude);
         longitudeDisplay = view.findViewById(R.id.tvLongitude);
 
-        btnGetGPSLocation = view.findViewById(R.id.btnGetGPSLocation);
+        Button btnGetGPSLocation = view.findViewById(R.id.btnGetGPSLocation);
         btnGetGPSLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +80,7 @@ public class GPSFragment extends Fragment {
         }
     }
 
-    public void updateGPSLocationButtonPressed() {
+    private void updateGPSLocationButtonPressed() {
 
         // First check to see if Location service is available
         // https://stackoverflow.com/questions/25175522/how-to-enable-location-access-programmatically-in-android
@@ -97,8 +95,6 @@ public class GPSFragment extends Fragment {
         latitudeDisplay.setText(getString(R.string.latitude));
         longitudeDisplay.setText(getString(R.string.longitude));
 
-
-        // TextView tvSearching = getView().findViewById(R.id.tvSearching);
         tvSearching.setVisibility(View.VISIBLE);
         Util.updateGPSLocation(getActivity().getApplicationContext());
     }
@@ -152,11 +148,7 @@ public class GPSFragment extends Fragment {
 
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
                     String messageType = intent.getStringExtra("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("error_do_not_have_root")) {
                             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "It looks like you have incorrectly indicated in settings that this phone has been rooted");
@@ -200,7 +192,7 @@ public class GPSFragment extends Fragment {
         }
     }
 
-    public boolean canGetLocation() {
+    private boolean canGetLocation() {
 
         LocationManager lm = null;
         boolean gps_enabled = false;
@@ -212,7 +204,7 @@ public class GPSFragment extends Fragment {
         // exceptions will be thrown if provider is not permitted.
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
 
@@ -245,7 +237,7 @@ public class GPSFragment extends Fragment {
                 btnPositive.setTextColor(btnPositiveColor);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 textView.setTextSize(22);
             }
         });

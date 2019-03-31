@@ -1,39 +1,18 @@
 package nz.org.cacophony.cacophonometer;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
-
-import org.json.JSONObject;
-
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class FrequencyFragment extends Fragment {
-
-    private static final String TAG = "FrequencyFragment";
-
 
     private Switch swRecordMoreOften;
     private Switch swUseFrequentUploads;
     private Switch swPeriodicallyUpdateGPS;
-    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,10 +21,9 @@ public class FrequencyFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        swRecordMoreOften = (Switch) view.findViewById(R.id.swRecordMoreOften);
-        swUseFrequentUploads = (Switch) view.findViewById(R.id.swUseFrequentUploads);
-        swPeriodicallyUpdateGPS = (Switch) view.findViewById(R.id.swPeriodicallyUpdateGPS);
+        swRecordMoreOften = view.findViewById(R.id.swRecordMoreOften);
+        swUseFrequentUploads = view.findViewById(R.id.swUseFrequentUploads);
+        swPeriodicallyUpdateGPS = view.findViewById(R.id.swPeriodicallyUpdateGPS);
 
         displayOrHideGUIObjects();
 
@@ -90,7 +68,7 @@ public class FrequencyFragment extends Fragment {
     }
 
 
-    void displayOrHideGUIObjects() {
+    private void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swRecordMoreOften.setChecked(prefs.getUseFrequentRecordings());
         if (prefs.getUseFrequentRecordings()){

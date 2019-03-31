@@ -18,14 +18,13 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.util.regex.Pattern;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.recordIdlingResource;
+import static nz.org.cacophony.cacophonometer.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
-    private Button btnNext;
     private Button btnRecordNow;
-    private TextView tvServerLink;
     private TextView tvTitleMessage;
     private TextView tvMessages;
 
@@ -38,7 +37,7 @@ public class TestRecordFragment extends Fragment {
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
         tvMessages = view.findViewById(R.id.tvMessages);
 
-        btnNext = view.findViewById(R.id.btnFinished);
+        Button btnNext = view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,16 +62,11 @@ public class TestRecordFragment extends Fragment {
         // Note also used the following to set the color of the url link using the xml method
         // https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
 
-
-
-        tvServerLink = (TextView) view.findViewById(R.id.tvServerLink);
-
+        TextView tvServerLink = view.findViewById(R.id.tvServerLink);
         Prefs prefs = new Prefs(getActivity());
         String tvServerLinkText = tvServerLink.getText() + " " + prefs.getBrowseRecordingsServerUrl();
         tvServerLink.setText(tvServerLinkText);
-
         LinkifyCompat.addLinks(tvServerLink, Linkify.ALL);
-
         return view;
     }
 
@@ -86,19 +80,13 @@ public class TestRecordFragment extends Fragment {
         if (visible) {
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
             displayOrHideGUIObjects();
-
-
-
         } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
 
     void displayOrHideGUIObjects(){
-
-//        TextView tvMessages = getView().findViewById(R.id.tvMessages);
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getIsDisabled()) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
@@ -155,22 +143,26 @@ public class TestRecordFragment extends Fragment {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("ALREADY_RECORDING")) {
                         tvMessages.setText(messageToDisplay);
+                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("NO_PERMISSION_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED")) {
                         tvMessages.setText(messageToDisplay);
+                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FINISHED")) {
                         tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
-                        tvMessages.setText(messageToDisplay);
+                        uploadFilesIdlingResource.decrement();
+//                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
+//                        tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("GETTING_READY_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_UPLOADED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORD_AND_UPLOAD_FAILED")) {
                         tvMessages.setText(messageToDisplay);
+                        recordIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED_NOT_REGISTERED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
@@ -180,6 +172,7 @@ public class TestRecordFragment extends Fragment {
                         //getView().findViewById(R.id.btnRecordNow).setEnabled(true);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
+                        recordIdlingResource.decrement();
                     }
                 }
 

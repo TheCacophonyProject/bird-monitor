@@ -42,7 +42,6 @@ class MainThread implements Runnable {
         if (!Util.checkPermissionsForRecording(context)) {
             Log.e(TAG, "App does not have permission to record.");
 
-            String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "NO_PERMISSION_TO_RECORD");
@@ -52,19 +51,17 @@ class MainThread implements Runnable {
             }
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
-           // Util.broadcastAMessage(context, "no_permission_to_record");
-
             return;
         }
 
 
-        String recordAndUploadedSuccessfully;
+
         try {
 
-            recordAndUploadedSuccessfully =  RecordAndUpload.doRecord(context, alarmIntentType );
+            RecordAndUpload.doRecord(context, alarmIntentType );
 
         }catch (Exception e){
-            String messageToDisplay = "";
+
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageToType", "RECORD_AND_UPLOAD_FAILED");
@@ -74,12 +71,8 @@ class MainThread implements Runnable {
             }
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
 
-          //  Util.broadcastAMessage(context, "recording_failed");
-
             return;
         }
-
-
 
         Looper.loop();
     }
