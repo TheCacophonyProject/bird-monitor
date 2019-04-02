@@ -56,8 +56,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             }
             Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
 
-//            if (prefs.getIsDisabled()){
-
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null){
@@ -99,20 +97,6 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
                 return;
             }
-
-
-//            // need to determine the source of the intent ie Main UI or boot receiver
-//            Bundle bundle = intent.getExtras();
-//            if (bundle == null){
-//                Log.e(TAG, "bundle is null");
-//                return;
-//            }
-//            final String alarmIntentType = bundle.getString("type");
-//
-//            if (alarmIntentType == null) {
-//                Log.e(TAG, "Intent does not have a type");
-//                return;
-//            }
 
             // First check to see if battery level is sufficient to continue.
 
