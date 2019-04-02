@@ -56,7 +56,27 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             }
             Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
 
-            if (prefs.getIsDisabled()){
+//            if (prefs.getIsDisabled()){
+
+            // need to determine the source of the intent ie Main UI or boot receiver
+            Bundle bundle = intent.getExtras();
+            if (bundle == null){
+                Log.e(TAG, "bundle is null");
+                return;
+            }
+            final String alarmIntentType = bundle.getString("type");
+
+            if (alarmIntentType == null) {
+                Log.e(TAG, "Intent does not have a type");
+                return;
+            }
+
+            boolean recordButtonWasPressed = false;
+
+            if (alarmIntentType.equalsIgnoreCase("recordNowButton")){
+                recordButtonWasPressed = true;
+            }
+            if (prefs.getIsDisabled() && !recordButtonWasPressed){ // 
                  jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
@@ -81,18 +101,18 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             }
 
 
-            // need to determine the source of the intent ie Main UI or boot receiver
-            Bundle bundle = intent.getExtras();
-            if (bundle == null){
-                Log.e(TAG, "bundle is null");
-                return;
-            }
-            final String alarmIntentType = bundle.getString("type");
-
-            if (alarmIntentType == null) {
-                Log.e(TAG, "Intent does not have a type");
-                return;
-            }
+//            // need to determine the source of the intent ie Main UI or boot receiver
+//            Bundle bundle = intent.getExtras();
+//            if (bundle == null){
+//                Log.e(TAG, "bundle is null");
+//                return;
+//            }
+//            final String alarmIntentType = bundle.getString("type");
+//
+//            if (alarmIntentType == null) {
+//                Log.e(TAG, "Intent does not have a type");
+//                return;
+//            }
 
             // First check to see if battery level is sufficient to continue.
 
