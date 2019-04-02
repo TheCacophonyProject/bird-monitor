@@ -90,11 +90,12 @@ public class TestRecordFragment extends Fragment {
 
     void displayOrHideGUIObjects(){
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        if (prefs.getIsDisabled()) {
-            getView().findViewById(R.id.btnRecordNow).setEnabled(false);
-            tvTitleMessage.setText("Recording is currently disabled on this phone. Enable recording from the main screen if you want to perform a test recording.");
-            btnRecordNow.setVisibility(View.GONE);
-        } else if (RecordAndUpload.isRecording) {
+//        if (prefs.getIsDisabled()) {
+//            getView().findViewById(R.id.btnRecordNow).setEnabled(false);
+//            tvTitleMessage.setText("Recording is currently disabled on this phone. Enable recording from the main screen if you want to perform a test recording.");
+//            btnRecordNow.setVisibility(View.GONE);
+//        } else if (RecordAndUpload.isRecording) {
+        if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
             tvTitleMessage.setText("Can not record, as a recording is already in progress");
             btnRecordNow.setVisibility(View.GONE);
