@@ -76,7 +76,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             if (alarmIntentType.equalsIgnoreCase("recordNowButton")){
                 recordButtonWasPressed = true;
             }
-            if (prefs.getIsDisabled() && !recordButtonWasPressed){ // 
+            if (prefs.getIsDisabled() && !recordButtonWasPressed){ //
                  jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
