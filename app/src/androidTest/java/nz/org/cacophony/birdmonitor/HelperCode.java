@@ -13,16 +13,17 @@ import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
-public class HelperCode {
+class HelperCode {
 
-   public static void useTestServerAndShortRecordings(Prefs prefs, Context targetContext){
+   public static void useTestServerAndShortRecordings(){
 
-        targetContext = getInstrumentation().getTargetContext();
-        prefs = new Prefs(targetContext);
+       Context targetContext = getInstrumentation().getTargetContext();
+       Prefs prefs = new Prefs(targetContext);
 
         if (!prefs.getUseTestServer()){
             Util.setUseTestServer(targetContext, true);
@@ -30,7 +31,7 @@ public class HelperCode {
         }
     }
 
-    public static void signOutUser(Prefs prefs, Context targetContext){
+    public static void signOutUser(Prefs prefs){
 
         prefs.setUsername(null);
         prefs.setUsernamePassword(null);
@@ -39,6 +40,14 @@ public class HelperCode {
 
     public static void dismissWelcomeDialog(){
         try{
+
+            try {
+                while (!recordIdlingResource.isIdleNow()) {
+                    recordIdlingResource.decrement();
+                }
+            }catch (Exception ex){
+                Log.e("Record", ex.getLocalizedMessage());
+            }
             onView(allOf(withId(android.R.id.button1), withText("OK"))).perform(scrollTo(),click());
         }catch (Exception ex){
             Log.e("HelperCode", ex.getLocalizedMessage());
@@ -53,7 +62,7 @@ public class HelperCode {
         }
     }
 
-    public static void signInUserTimhot(Prefs prefs){
+    public static void signInUserTimhot(){
 
         try {
 
@@ -94,7 +103,7 @@ public class HelperCode {
         }
     }
 
-    public static void unRegisterPhone(Prefs prefs){
+    public static void unRegisterPhone(){
 
         try {
             Thread.sleep(1000);

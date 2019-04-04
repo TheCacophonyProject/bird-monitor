@@ -38,7 +38,6 @@ class Record {
 
     public static void RecordAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
 
-
         setUpForRecord(mActivityTestRule);
 
         recordAndSaveOnServer();
@@ -47,6 +46,9 @@ class Record {
     }
 
     private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
+
+        // Seems sometimes particualar idling resources are not idle e.g. [RECORD]
+
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
@@ -69,10 +71,10 @@ class Record {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ex){
+        }catch (Exception ignored){
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -91,6 +93,12 @@ class Record {
 
         prefs.setInternetConnectionMode("normal");
         Util.signOutUser(targetContext);
+
+        File recordingsFolder = Util.getRecordingsFolder(targetContext);
+        for (File file : recordingsFolder.listFiles()){
+            file.delete();
+        }
+
         prefs.setIsDisabled(false);
 
     }
@@ -114,8 +122,8 @@ class Record {
     private static void recordAndSaveOnServer(){
         // Need to put phone into normal mode so it uploads the recording
         prefs.setInternetConnectionMode("normal");
-        File recordingsFolder = Util.getRecordingsFolder(targetContext);
 
+        File recordingsFolder = Util.getRecordingsFolder(targetContext);
         for (File file : recordingsFolder.listFiles()){
             file.delete();
         }
@@ -125,7 +133,7 @@ class Record {
         onView(withId(R.id.btnRecordNow)).perform(click());
         prefs.setIsDisabled(true);
         try {
-            Thread.sleep(1000); // seemed to need this, because of code to disable airplane mode
+            Thread.sleep(10000); // Espresso says shouldn't do this, but I needed a way to wait for file to be uploaded.  Espresso only waits for counting resource to be idle IF/FOR simulated user interaction.
         }catch (Exception ex){
             Log.e("Record", ex.getLocalizedMessage());
         }

@@ -211,13 +211,13 @@ class Util {
 
             if (localFolderFile == null){
                 Log.e(TAG, "There is a problem writing to the memory - please fix");
-                getToast(context, "There is a problem writing to the memory - please fix", true).show();
+                getToast(context).show();
             }
 
             return localFolderFile;
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
-            getToast(context, "There is a problem writing to the memory - please fix", true).show();
+            getToast(context).show();
             return null;
         }
     }
@@ -260,7 +260,9 @@ class Util {
 
     private static String getJson(String strEncoded) throws UnsupportedEncodingException {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
-        return new String(decodedBytes, "UTF-8");
+
+        // https://www.tbray.org/ongoing/When/201x/2015/02/09/Silly-Java-Strings
+        return new String(decodedBytes, "UTF8");
     }
 
     static double getBatteryLevel(Context context) {
@@ -679,10 +681,10 @@ private static void executeCommandTim(Context context, String command){
     }
 
 
-    static Toast getToast(Context context, String message, boolean standOut){
+    static Toast getToast(Context context){
 
-        @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
-        if (standOut){
+        @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, "There is a problem writing to the memory - please fix", Toast.LENGTH_LONG);
+        if (true){
             toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         }else{
             toast.getView().setBackgroundColor(context.getResources().getColor(R.color.green));
@@ -922,7 +924,6 @@ Prefs prefs = new Prefs(context);
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_FAILED");
@@ -1082,16 +1083,17 @@ Prefs prefs = new Prefs(context);
             @Override
             public void run() {
                 try {
+//                    testUploadRecordingsIdlingResource.increment();
                     boolean uploadedSuccessfully =  RecordAndUpload.uploadFiles(context);
 
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                     if (uploadedSuccessfully){
 
-                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS");
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
 
                     }else{
-                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
                     }
                     Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
@@ -1184,7 +1186,7 @@ Prefs prefs = new Prefs(context);
 
                 //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
                 //https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                TextView textView = dialog.findViewById(android.R.id.message);
                 int linkColorInt = ResourcesCompat.getColor(context.getResources(), R.color.linkToServerInHelp, null);
                 textView.setLinkTextColor(linkColorInt);
                 textView.setTextSize(22);
@@ -1238,7 +1240,7 @@ Prefs prefs = new Prefs(context);
     }
 
     //https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
-     public final static boolean isValidEmail(CharSequence target) {
+     public static boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
@@ -1271,7 +1273,7 @@ Prefs prefs = new Prefs(context);
 
     public static  ArrayList<String> getGroupsStoredOnPhone(Context context){
         Prefs prefs = new Prefs(context);
-        ArrayList<String> groups  = new ArrayList<String>();
+        ArrayList<String> groups  = new ArrayList<>();
         String groupsString = prefs.getGroups();
         if (groupsString != null) {
             try {
@@ -1362,10 +1364,6 @@ Prefs prefs = new Prefs(context);
         Prefs prefs = new Prefs(context);
         String groupNameFromPrefs = prefs.getGroupName();
         String deviceNameFromPrefs = prefs.getDeviceName();
-        if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
-            return true;
-        }else {
-            return false;
-        }
+        return groupNameFromPrefs != null && deviceNameFromPrefs != null;
     }
 }

@@ -184,8 +184,9 @@
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>
-
-
+    <string name="enter_a_new_group_here">Enter a new Group Here</string>
+    <string name="attempting_to_creat">Attempting to create user - please wait</string>
+    <string name="Record_with_low_battery_is_ON">Record with low battery is ON</string>
 
 
 </resources>

@@ -8,20 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import nz.org.cacophony.birdmonitor.R;
 
 public class TestingFragment extends Fragment {
 
-    private static final String TAG = "TestingFragment";
-
-
     private Switch swUseTestServer;
     private Switch swUseVeryFrequentRecordings;
     private Switch swShortRecordings;
-    private Button btnFinished;
-    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,8 +23,7 @@ public class TestingFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_testing, container, false);
 
         setUserVisibleHint(false);
-        tvMessages =  view.findViewById(R.id.tvMessages);
-        btnFinished =  view.findViewById(R.id.btnFinished);
+        Button btnFinished = view.findViewById(R.id.btnFinished);
         swUseTestServer =  view.findViewById(R.id.swUseTestServer);
         swUseVeryFrequentRecordings =   view.findViewById(R.id.swUseVeryFrequentRecordings);
         swShortRecordings =  view.findViewById(R.id.swShortRecordings);

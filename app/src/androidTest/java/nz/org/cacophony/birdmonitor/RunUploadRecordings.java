@@ -1,7 +1,7 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.support.test.espresso.IdlingRegistry;
-import android.test.suitebuilder.annotation.LargeTest;
+import android.support.test.filters.LargeTest;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -28,15 +28,17 @@ public class RunUploadRecordings {
     public void registerIdlingResource() {
         // let espresso know to synchronize with background tasks
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
-        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+       // IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.testUploadRecordingsIdlingResource);
     }
 
     @After
     public void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
-        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+       // IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.testUploadRecordingsIdlingResource);
     }
 
 

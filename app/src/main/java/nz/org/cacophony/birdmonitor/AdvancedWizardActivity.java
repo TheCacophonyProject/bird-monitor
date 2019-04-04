@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import nz.org.cacophony.birdmonitor.R;
 
 public class AdvancedWizardActivity extends AppCompatActivity {
-    private static final String TAG = "AdvancedWizardActivity";
 
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
@@ -20,13 +19,13 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advance_wizard);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
         //https://www.youtube.com/watch?v=UqtsyhASW74
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
 
         setupViewPager(mViewPager);
     }
@@ -65,14 +64,14 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         }
     }
 
-    public void setNumberOfPagesForAdvanced(){
+    private void setNumberOfPagesForAdvanced(){
         mSectionsStatePagerAdapter.setNumberOfPages(6);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
 
 
-    public void setNumberOfPagesForVeryAdvanced(){
+    private void setNumberOfPagesForVeryAdvanced(){
         mSectionsStatePagerAdapter.setNumberOfPages(8);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }

@@ -1,6 +1,7 @@
 package nz.org.cacophony.birdmonitor;
 
-import android.test.suitebuilder.annotation.LargeTest;
+import android.support.test.filters.LargeTest;
+
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;

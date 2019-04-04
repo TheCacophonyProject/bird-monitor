@@ -26,9 +26,7 @@ import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uplo
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
-    private Button btnNext;
     private Button btnRecordNow;
-    private TextView tvServerLink;
     private TextView tvTitleMessage;
     private TextView tvMessages;
 
@@ -41,7 +39,7 @@ public class TestRecordFragment extends Fragment {
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
         tvMessages = view.findViewById(R.id.tvMessages);
 
-        btnNext = view.findViewById(R.id.btnFinished);
+        Button btnNext = view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +64,7 @@ public class TestRecordFragment extends Fragment {
         // Note also used the following to set the color of the url link using the xml method
         // https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
 
-        tvServerLink = (TextView) view.findViewById(R.id.tvServerLink);
+        TextView tvServerLink = view.findViewById(R.id.tvServerLink);
         Prefs prefs = new Prefs(getActivity());
         String tvServerLinkText = tvServerLink.getText() + " " + prefs.getBrowseRecordingsServerUrl();
         tvServerLink.setText(tvServerLinkText);

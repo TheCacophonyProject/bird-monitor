@@ -15,7 +15,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/textView18"
@@ -50,7 +51,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView18"
+        tools:targetApi="lollipop" />
 
     <Button
         android:id="@+id/btnFinished"

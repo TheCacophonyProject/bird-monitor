@@ -28,7 +28,6 @@ class Prefs {
     private static final String USER_TOKEN_KEY = "USER_TOKEN";
     private static final long DEVICE_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
     private static final String DEVICE_TOKEN_LAST_REFRESHED_KEY = "TOKEN_LAST_REFRESHED";
-    private static final long USER_TOKEN_TIMEOUT_SECONDS = 60 * 60 * 24 * 7; // 1 week
     private static final String USER_TOKEN_LAST_REFRESHED_KEY = "USERNAME_TOKEN_LAST_REFRESHED";
     private static final String EMAIL_ADDRESS_KEY = "EMAIL_ADDRESS";
     private static final String USERNAME_OR_EMAIL_ADDRESS_KEY = "USERNAME_OR_EMAIL_ADDRESS";
@@ -95,12 +94,8 @@ class Prefs {
     private static final String DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY = "DATE_TIME_LAST_CALCULATED_DAWN_DUSK";
     private static final String DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY = "DATE_TIME_LAST_REPEATING_ALARM_FIRED";
     private static final String LAST_RECORDING_ID_RETURNED_FROM_SERVER = "LAST_RECORDING_ID_RETURNED_FROM_SERVER";
-
     private static final String PERIODICALLY_UPDATE_GPS_KEY = "ALWAYS_UPDATE_GPS";
-
     private static final String FIRST_TIME_KEY = "FIRST_TIME";
-    private static final String DISPLAY_HELP_ON_STARTUP_KEY = "DISPLAY_HELP_ON_STARTUP";
-
     private static final String NEXT_ALARM_KEY = "NEXT_ALARM";
     private static final String DAWN_DUSK_ALARMS_KEY = "DAWN_DUSK_ALARMS";
     private static final String LAST_RECORDING_TIME_KEY = "LAST_RECORDING_TIME";
@@ -109,13 +104,8 @@ class Prefs {
     private static final String DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
     private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
-    private static final String BUTTON_DEFAULT_BACKGROUND_COLOR_KEY = "BUTTON_DEFAULT_BACKGROUND_COLOR";
-
     private static final String GROUPS_KEY = "GROUPS";
-
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
-
-
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
 
     public Prefs(Context context) {
@@ -191,13 +181,13 @@ class Prefs {
         return preferences.getBoolean(key, false);
     }
 
-    private boolean getBooleanDefaultTrue(String key) {  // used to determine first time app runs after install
+    private boolean getBooleanDefaultTrue() {  // used to determine first time app runs after install
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return false;
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return preferences.getBoolean(key, true);
+        return preferences.getBoolean(Prefs.FIRST_TIME_KEY, true);
     }
 
 
@@ -587,7 +577,7 @@ class Prefs {
     }
 
     boolean getIsFirstTime() {
-        return getBooleanDefaultTrue(FIRST_TIME_KEY);
+        return getBooleanDefaultTrue();
     }
 
         void setIsFirstTimeFalse() {
@@ -660,11 +650,6 @@ class Prefs {
 
     boolean getUserSignedIn() {
        return getBoolean(USER_SIGNED_IN_KEY);
-    }
-
-
-    String getLastDeviceNameUsedForTesting() {
-        return getString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY);
     }
 
     void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {

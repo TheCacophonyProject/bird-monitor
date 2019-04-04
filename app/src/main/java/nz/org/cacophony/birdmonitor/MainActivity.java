@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         setContentView(R.layout.activity_main2);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         // https://stackoverflow.com/questions/3488664/how-to-set-different-label-for-launcher-rather-than-activity-title
@@ -159,10 +159,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
         if (prefs.getIsDisabled()){
             ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
+            findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         }else{
             ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
-            ((Button)findViewById(R.id.btnDisable)).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
         // listens for events broadcast from ?
         IntentFilter iff = new IntentFilter("event");
@@ -174,11 +174,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onStop() {
         super.onStop();
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -262,33 +264,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             }
         }
     };
-    /**
-     * Only used by testing code
-     */
-//    public void registerEspressoIdlingResources() {
-//        // https://developer.android.com/reference/android/support/test/espresso/IdlingRegistry
-////        //https://www.programcreek.com/java-api-examples/index.php?api=android.support.test.espresso.IdlingRegistry
-////        IdlingRegistry.getInstance().register(registerIdlingResource);
-////        IdlingRegistry.getInstance().register(recordNowIdlingResource);
-////        IdlingRegistry.getInstance().register(uploadingIdlingResource);
-////        IdlingRegistry.getInstance().register(toggleAirplaneModeIdlingResource);
-//        IdlingRegistry.getInstance().register(recordIdlingResource);
-//
-//    }
-//    /**
-//     * Only used by testing code
-//     */
-//    public void unRegisterEspressoIdlingResources() {
-////        IdlingRegistry.getInstance().unregister(registerIdlingResource);
-////        IdlingRegistry.getInstance().unregister(recordNowIdlingResource);
-////        IdlingRegistry.getInstance().unregister(uploadingIdlingResource);
-////        IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-//
-////        if (toggleAirplaneModeIdlingResource != null) {
-////            IdlingRegistry.getInstance().unregister(toggleAirplaneModeIdlingResource);
-////        }
-//
-//        IdlingRegistry.getInstance().unregister(recordIdlingResource);
-//    }
+
 
 }

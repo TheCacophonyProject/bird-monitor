@@ -14,6 +14,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -61,10 +63,10 @@ class RegisterPhone {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -92,7 +94,7 @@ class RegisterPhone {
         nowSwipeLeft(); // takes you to Sign In screen, which should be showing that user is signed in
 
         // Need to sign in
-        HelperCode.signInUserTimhot(prefs);
+        HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
         } catch (Exception ex) {
@@ -128,7 +130,7 @@ class RegisterPhone {
 
         boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
 
-        assertEquals(true, phoneRegistered);
+        assertTrue(phoneRegistered);
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Your phone has been registered with the server :-)" + " Swipe to next screen.")));
 
@@ -137,11 +139,11 @@ class RegisterPhone {
     private static void unRegisterPhone() {
 
 
-        HelperCode.unRegisterPhone(prefs);
+        HelperCode.unRegisterPhone();
 
         boolean phoneRegistered = Util.isPhoneRegistered(targetContext);
 
-        assertEquals(false, phoneRegistered);
+        assertFalse(phoneRegistered);
 
         onView(withId(R.id.tvMessagesRegister)).check(matches(withText("Success - Device is no longer registered")));
 

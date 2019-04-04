@@ -50,18 +50,18 @@ public class CreateAccountFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
 
-        tvTitle = (TextView) view.findViewById(R.id.tvTitle);
-        tilUsername = (TextInputLayout) view.findViewById(R.id.tilUsername);
-        etUsername = (TextInputEditText) view.findViewById(R.id.etUsername);
-        tilEmail = (TextInputLayout) view.findViewById(R.id.tilEmail);
-        etEmail = (TextInputEditText) view.findViewById(R.id.etEmail);
-        tilPassword1 = (TextInputLayout) view.findViewById(R.id.tilPassword1);
-        etPassword1 = (TextInputEditText) view.findViewById(R.id.etPassword1);
-        tilPassword2 = (TextInputLayout) view.findViewById(R.id.tilPassword2);
-         etPassword2 = (TextInputEditText) view.findViewById(R.id.etPassword2);
-        btnSignUp = (Button) view.findViewById(R.id.btnSignUp);
+        tvTitle = view.findViewById(R.id.tvTitle);
+        tilUsername = view.findViewById(R.id.tilUsername);
+        etUsername = view.findViewById(R.id.etUsername);
+        tilEmail = view.findViewById(R.id.tilEmail);
+        etEmail = view.findViewById(R.id.etEmail);
+        tilPassword1 = view.findViewById(R.id.tilPassword1);
+        etPassword1 = view.findViewById(R.id.etPassword1);
+        tilPassword2 = view.findViewById(R.id.tilPassword2);
+         etPassword2 = view.findViewById(R.id.etPassword2);
+        btnSignUp = view.findViewById(R.id.btnSignUp);
       //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessagesCreateAccount);
+        tvMessages = view.findViewById(R.id.tvMessagesCreateAccount);
 
         setUserVisibleHint(false);
 
@@ -75,6 +75,7 @@ public class CreateAccountFragment extends Fragment {
         return view;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void onResume() {
         super.onResume();
@@ -99,7 +100,7 @@ public class CreateAccountFragment extends Fragment {
     }
 
 
-    void displayOrHideGUIObjects(){
+    private void displayOrHideGUIObjects(){
 
         tvTitle.setVisibility(View.VISIBLE);
         tilUsername.setVisibility(View.VISIBLE);
@@ -165,7 +166,7 @@ public class CreateAccountFragment extends Fragment {
         tilPassword1.setVisibility(View.GONE);
         tilPassword2.setVisibility(View.GONE);
 
-        tvMessages.setText("Attempting to create user - please wait");
+        tvMessages.setText(getString(R.string.attempting_to_creat));
 
         createAccountIdlingResource.increment();
 
@@ -185,7 +186,7 @@ public class CreateAccountFragment extends Fragment {
             @Override
             public void run() {
 
-                Server.signUp(username, emailAddress, password, context);;
+                Server.signUp(username, emailAddress, password, context);
             }
         };
         signUpThread.start();
