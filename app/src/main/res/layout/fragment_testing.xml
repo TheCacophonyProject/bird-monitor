@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nz.org.cacophony.cacophonometer.WelcomeFragment"
+    tools:context="nz.org.cacophony.birdmonitor.WelcomeFragment"
     tools:layout_editor_absoluteY="25dp">
 
 
@@ -30,6 +30,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:text="Finished"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -52,8 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        tools:targetApi="lollipop" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Switch
         android:id="@+id/swUseVeryFrequentRecordings"
@@ -71,8 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider6"
-        tools:targetApi="lollipop" />
+        app:layout_constraintTop_toBottomOf="@+id/divider6" />
 
 
 
@@ -103,8 +102,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider8"
-        tools:targetApi="lollipop" />
+        app:layout_constraintTop_toBottomOf="@+id/divider8" />
 
     <View
         android:id="@+id/divider6"
