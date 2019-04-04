@@ -87,12 +87,8 @@ public class TestRecordFragment extends Fragment {
     }
 
     void displayOrHideGUIObjects(){
-        Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        if (prefs.getIsDisabled()) {
-            getView().findViewById(R.id.btnRecordNow).setEnabled(false);
-            tvTitleMessage.setText("Recording is currently disabled on this phone. Enable recording from the main screen if you want to perform a test recording.");
-            btnRecordNow.setVisibility(View.GONE);
-        } else if (RecordAndUpload.isRecording) {
+
+        if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
             tvTitleMessage.setText("Can not record, as a recording is already in progress");
             btnRecordNow.setVisibility(View.GONE);
@@ -104,9 +100,6 @@ public class TestRecordFragment extends Fragment {
     }
 
     public void recordNowButtonPressed() {
-
-        // recordNowIdlingResource.increment();
-
 
         btnRecordNow.setEnabled(false);
 
@@ -154,8 +147,6 @@ public class TestRecordFragment extends Fragment {
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FINISHED")) {
                         tvMessages.setText(messageToDisplay);
                         uploadFilesIdlingResource.decrement();
-//                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
-//                        tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("GETTING_READY_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_UPLOADED")) {
@@ -169,7 +160,6 @@ public class TestRecordFragment extends Fragment {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         tvMessages.setText(messageToDisplay);
-                        //getView().findViewById(R.id.btnRecordNow).setEnabled(true);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
                         recordIdlingResource.decrement();
