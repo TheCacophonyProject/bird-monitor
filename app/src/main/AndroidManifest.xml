@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="nz.org.cacophony.cacophonometer">
+    package="nz.org.cacophony.birdmonitor">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -37,21 +37,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <receiver android:name=".BootReceiver">
+        <receiver android:name="nz.org.cacophony.birdmonitor.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".StartRecordingReceiver" />
+        <receiver android:name="nz.org.cacophony.birdmonitor.StartRecordingReceiver" />
         <receiver
-            android:name=".LocationReceiver"
+            android:name="nz.org.cacophony.birdmonitor.LocationReceiver"
             android:enabled="true"
             android:exported="false" />
 
-        <service android:name=".MainService" />
+        <service android:name="nz.org.cacophony.birdmonitor.MainService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="nz.org.cacophony.birdmonitor.MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_icon_name">
             <intent-filter>
@@ -61,24 +61,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VitalsActivity"
+            android:name="nz.org.cacophony.birdmonitor.VitalsActivity"
             android:screenOrientation="portrait"
             android:label="@string/activity_or_fragment_title_vitals" />
         <activity
-            android:name=".WalkingActivity"
+            android:name="nz.org.cacophony.birdmonitor.WalkingActivity"
             android:screenOrientation="portrait"
             android:label="@string/activity_or_fragment_title_walking" />
 
         <activity
-            android:name=".DisableActivity"
+            android:name="nz.org.cacophony.birdmonitor.DisableActivity"
             android:screenOrientation="portrait"
             android:label="@string/activity_or_fragment_title_turn_off_or_on" />
         <activity
-            android:name=".SetupWizardActivity"
+            android:name="nz.org.cacophony.birdmonitor.SetupWizardActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
             android:label="@string/activity_or_fragment_title_setup" />
-        <activity android:name=".AdvancedWizardActivity"
+        <activity android:name="nz.org.cacophony.birdmonitor.AdvancedWizardActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
             android:label="@string/activity_or_fragment_title_advanced_setup" />

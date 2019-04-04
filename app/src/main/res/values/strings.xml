@@ -2,13 +2,13 @@
 
 
     <string name="test_record_link_to_server_recordings2">Visit the following page to listen to your recordings on the Cacophony Server</string>
-    <string name="app_name">Cacophonometer</string>
-    <string name="app_icon_name">Cacophonometer</string>
+    <string name="app_name">Bird Monitor</string>
+    <string name="app_icon_name">Bird Monitor</string>
 
     <string name="activity_or_fragment_title_welcome">Welcome</string>
     <string name="activity_or_fragment_title_setup">Setup</string>
     <string name="activity_or_fragment_title_advanced_setup">Advanced Setup</string>
-    <string name="activity_or_fragment_title_main">Cacophonometer</string>
+    <string name="activity_or_fragment_title_main">Bird Monitor</string>
     <string name="activity_or_fragment_title_register_phone">Register Phone</string>
     <string name="activity_or_fragment_title_rooted">Rooted?</string>
     <string name="activity_or_fragment_title_gps">GPS Location</string>
@@ -30,8 +30,8 @@
 
     <string name="activity_or_fragment_title_gps_location">GPS Location</string>
 
-     <string name="help_text_welcome">Thank you for installing the Cacophonometer app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
-    <string name="help_text_create_account">The Cacophonometer is designed to work with an account on the Cacophony server.  Please fill in the form to create your account, or if you already have an account you can skip this step.</string>
+     <string name="help_text_welcome">Thank you for installing the Bird Monitor app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
+    <string name="help_text_create_account">The Bird Monitor is designed to work with an account on the Cacophony server.  Please fill in the form to create your account, or if you already have an account you can skip this step.</string>
     <string name="help_text_sign_in">Signing in, will enable you to create a group on the server, or select a group that you have previously created.\n\nIf you already know the group that you are going to use with this phone, you can skip this step.</string>
     <string name="help_text_create_or_choose_group">Your phone needs to be registered with a group on the server.  If you signed in on the previous page, you will see a list of groups associated with your account.\n\nYou can either select one of the groups or create a new group.</string>
     <string name="help_text_test_record">Using the Record Now button will allow you to get feedback on whether your phone has been setup correctly.  \n\nThe app will record for the normal length of one minute, so you will need to wait that long.  A series of messages are displayed to give you feedback on the progress of recording and uploading to the server.  \n\nThe Record Now button is disabled (greyed out) if a recording is already in progress, or if the app has been disabled.  You can enable the app from the Main\\Home screen.  Once the file(s) have been uploaded, you can confirm this by checking on the server page.</string>
@@ -61,7 +61,7 @@
 
     <string name="text_1_welcome_fragment">\'Swipe\' the screen (left or right) to move through the setup wizard. You can exit the wizard at any stage by pressing your phone\'s back button.\n\nEach screen has extra information available from the help icon (top right).</string>
 
-    <string name="turn_off_the_cacophonometer">Turn off the Cacophonometer - No more recordings will be made (even after a restart).</string>
+    <string name="turn_off_the_bird_monitor">Turn off the Bird Monitor - No more recordings will be made (even after a restart).</string>
     <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'.  Swipe to next screen when ready.</string>
 
     <string name="choose_the_audio_source_setting">Choose MediaRecorder.AudioSource setting</string>
@@ -84,7 +84,7 @@
     <string name="device_name_label">Device Name</string>
     <string name="to_register_title">To register this device</string>
 
-    <string name="to_register_instructions">(Choose Help from the menu for full instructions): \n\n1) Register on the Cacophonometer data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says - device (your device name) is registered in group (your group name). \n\nMultiple devices can be in the same group.</string>
+    <string name="to_register_instructions">(Choose Help from the menu for full instructions): \n\n1) Register on the Bird Monitor data server (https://browse.cacophony.org.nz/). \n\n2) Create a Group name on the data server, \n\n3) Enter the Group name in the field below and press Register button, \n\n4) Check that the text below says - device (your device name) is registered in group (your group name). \n\nMultiple devices can be in the same group.</string>
     <string name="register">Register</string>
     <string name="unregister">unregister</string>
     <string name="record_now">Record Now</string>
