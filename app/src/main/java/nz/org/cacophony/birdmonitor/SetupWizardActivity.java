@@ -2,6 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 
@@ -183,6 +184,12 @@ public class SetupWizardActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
 
 }

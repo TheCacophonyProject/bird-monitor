@@ -239,6 +239,16 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             }
         }
 
+        if (requestCode == PERMISSION_LOCATION) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+                tvMessages.setText("LOCATION permission granted");
+            } else {
+                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
+            }
+        }
+
         // END_INCLUDE(onRequestPermissionsResult)
     }
 
