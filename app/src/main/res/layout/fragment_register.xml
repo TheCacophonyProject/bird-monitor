@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nz.org.cacophony.cacophonometer.RegisterFragment"
+    tools:context="nz.org.cacophony.birdmonitor.RegisterFragment"
     tools:layout_editor_absoluteY="25dp">
 
 
