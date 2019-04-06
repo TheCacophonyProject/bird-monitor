@@ -1,13 +1,16 @@
 package nz.org.cacophony.birdmonitor;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +33,9 @@ public class ManageRecordingsFragment extends Fragment {
 
     private static final String TAG = "ManageRecordFragment";
 
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSION_RECORD_AUDIO = 1;
+    private static final int PERMISSION_LOCATION = 2;
 
     private Button btnUploadFiles;
     private Button btnDeleteAllRecordings;
@@ -101,10 +107,6 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
-
-
-
-
     public void uploadRecordings(){
 
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
@@ -132,6 +134,21 @@ public class ManageRecordingsFragment extends Fragment {
     }
 
     private int getNumberOfRecordings(){
+        int numberOfRecordings = -1;
+
+        boolean alreadyHavePermission =  haveAllPermissions(getActivity().getApplicationContext());
+
+        if (alreadyHavePermission){
+            numberOfRecordings = getNumberOfRecordingsNoPermissionCheck();
+        }else{
+            requestPermissions(getActivity().getApplicationContext());
+        }
+
+        return numberOfRecordings;
+    }
+
+    private int getNumberOfRecordingsNoPermissionCheck(){
+
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
         return recordingFiles.length;
@@ -222,5 +239,64 @@ public class ManageRecordingsFragment extends Fragment {
             }
         }
     };
+
+    private boolean requestPermissions(Context context){
+        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
+//        https://developer.android.com/training/permissions/requesting.html
+
+        boolean allPermissionsAlreadyGranted = true;
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
+
+            requestPermissions(new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
+
+        }
+
+        return allPermissionsAlreadyGranted;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
+            } else {
+                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
+            }
+        }
+
+
+        if (haveAllPermissions(getActivity().getApplicationContext())){
+            displayOrHideGUIObjects();
+        }
+
+        // END_INCLUDE(onRequestPermissionsResult)
+    }
+
+    private boolean haveAllPermissions(Context context){
+        boolean allPermissionsAlreadyGranted = true;
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+        }
+
+        return allPermissionsAlreadyGranted;
+
+    }
 
 }

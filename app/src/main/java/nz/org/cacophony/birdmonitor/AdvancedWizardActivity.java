@@ -101,6 +101,13 @@ public class AdvancedWizardActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
 
 
 }

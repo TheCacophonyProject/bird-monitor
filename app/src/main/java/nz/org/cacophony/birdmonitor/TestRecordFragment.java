@@ -1,11 +1,15 @@
 package nz.org.cacophony.birdmonitor;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
 import android.text.util.Linkify;
@@ -25,6 +29,10 @@ import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uplo
 
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
+
+    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSION_RECORD_AUDIO = 1;
+    private static final int PERMISSION_LOCATION = 2;
 
     private Button btnRecordNow;
     private TextView tvTitleMessage;
@@ -102,7 +110,14 @@ public class TestRecordFragment extends Fragment {
     }
 
     public void recordNowButtonPressed() {
+        boolean alreadyHavePermission =  requestPermissions(getActivity().getApplicationContext());
 
+        if (alreadyHavePermission){
+            recordNow();
+        }
+    }
+
+    public void recordNow(){
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
@@ -176,5 +191,125 @@ public class TestRecordFragment extends Fragment {
 
         }
     };
+
+    private boolean requestPermissions(Context context){
+        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
+//        https://developer.android.com/training/permissions/requesting.html
+
+        boolean allPermissionsAlreadyGranted = true;
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
+
+            requestPermissions(new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
+
+        }
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            requestPermissions(new String[]{
+                    Manifest.permission.RECORD_AUDIO}, PERMISSION_RECORD_AUDIO);
+
+        }
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
+
+        }
+
+        return allPermissionsAlreadyGranted;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
+            } else {
+                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
+            }
+        }
+
+        if (requestCode == PERMISSION_RECORD_AUDIO) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+                tvMessages.setText("RECORD_AUDIO permission granted");
+            } else {
+                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
+            }
+        }
+
+        // May as well check GPS Location permission again
+
+        if (requestCode == PERMISSION_LOCATION) {
+            // Request for camera permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted. Start recording
+                tvMessages.setText("LOCATION permission granted");
+            } else {
+                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
+            }
+        }
+
+        // To avoid user having to press the 'Record Now' button again, we will check to see if we know have all permissions and if we do, start the recording
+
+        if (haveAllPermissions(getActivity().getApplicationContext())){
+            recordNow();
+        }
+
+        // END_INCLUDE(onRequestPermissionsResult)
+    }
+
+    private boolean haveAllPermissions(Context context){
+        boolean allPermissionsAlreadyGranted = true;
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+        }
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+        }
+
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            allPermissionsAlreadyGranted = false;
+
+        }
+
+        return allPermissionsAlreadyGranted;
+
+    }
 
 }
