@@ -63,6 +63,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 return;
             }
             final String alarmIntentType = bundle.getString("type");
+            final String duration ;
 
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
@@ -73,7 +74,15 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             if (alarmIntentType.equalsIgnoreCase("recordNowButton")){
                 recordButtonWasPressed = true;
+            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton")) {
+                recordButtonWasPressed = true;
+                duration = bundle.getString("duration");
             }
+
+
+
+
+
             if (prefs.getIsDisabled() && !recordButtonWasPressed){ //
                  jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
@@ -135,21 +144,24 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             // need to determine the source of the intent ie Main UI or boot receiver
 
-             if (alarmIntentType.equalsIgnoreCase("recordNowButton")) {
-                try {
-                    // Start recording in new thread.
+             if ((alarmIntentType.equalsIgnoreCase("recordNowButton")) ||(alarmIntentType.equalsIgnoreCase("birdCountButton5"))) {
+                 try {
+                     // Start recording in new thread.
 
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-                            MainThread mainThread = new MainThread(context, alarmIntentType);
-                            mainThread.run();
-                        }
-                    };
-                    thread.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                     Thread thread = new Thread() {
+                         @Override
+                         public void run() {
+                             MainThread mainThread = new MainThread(context, alarmIntentType);
+                             mainThread.run();
+                         }
+                     };
+                     thread.start();
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+
+             }else if (alarmIntentType.equalsIgnoreCase("birdCountButton")){
+
 
 
             } else { // intent came from boot receiver or app (not test record, or walk )
@@ -178,7 +190,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs){
         // The battery level required to continue depends on the type of alarm
 
-        if (alarmType.equalsIgnoreCase("recordNowButton") ){
+        if ((alarmType.equalsIgnoreCase("recordNowButton")) || (alarmType.equalsIgnoreCase("birdCountButton") )){
             // record now button was pressed
             return true;
         }

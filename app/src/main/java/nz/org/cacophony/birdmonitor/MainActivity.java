@@ -217,9 +217,18 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
 
-    public void launchWalkingActivity(@SuppressWarnings("UnusedParameters") View v) {
+//    public void launchWalkingActivity(@SuppressWarnings("UnusedParameters") View v) {
+//        try {
+//            Intent intent = new Intent(this, WalkingActivity.class);
+//            startActivity(intent);
+//        } catch (Exception ex) {
+//            Log.e(TAG, ex.getLocalizedMessage());
+//        }
+//    }
+
+    public void launchBirdCountActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, WalkingActivity.class);
+            Intent intent = new Intent(this, BirdCountActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());

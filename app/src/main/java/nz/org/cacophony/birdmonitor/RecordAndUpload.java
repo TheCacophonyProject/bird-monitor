@@ -41,7 +41,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting{
 static void doRecord(Context context, String typeOfRecording) {
     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
-    Log.d(TAG, "typeOfRecording is " + typeOfRecording);
     String returnValue;
 
     if (typeOfRecording == null) {
@@ -54,6 +53,14 @@ static void doRecord(Context context, String typeOfRecording) {
     Prefs prefs = new Prefs(context);
 
     long   recordTimeSeconds = (long) prefs.getRecordingDuration();
+
+    if (typeOfRecording.equalsIgnoreCase("birdCountButton5")){
+        recordTimeSeconds = 60 * 5;
+    }else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")){
+        recordTimeSeconds = 60 * 10;
+    }else if (typeOfRecording.equalsIgnoreCase("birdCountButton55")){
+        recordTimeSeconds = 60 * 15;
+    }
 
 
 
