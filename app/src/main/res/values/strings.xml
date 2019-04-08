@@ -30,7 +30,7 @@
 
     <string name="activity_or_fragment_title_gps_location">GPS Location</string>
 
-     <string name="help_text_welcome">Thank you for installing the Bird Monitor app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
+    <string name="help_text_welcome">Thank you for installing the Bird Monitor app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
     <string name="help_text_create_account">The Bird Monitor is designed to work with an account on the Cacophony server.  Please fill in the form to create your account, or if you already have an account you can skip this step.</string>
     <string name="help_text_sign_in">Signing in, will enable you to create a group on the server, or select a group that you have previously created.\n\nIf you already know the group that you are going to use with this phone, you can skip this step.</string>
     <string name="help_text_create_or_choose_group">Your phone needs to be registered with a group on the server.  If you signed in on the previous page, you will see a list of groups associated with your account.\n\nYou can either select one of the groups or create a new group.</string>
@@ -187,6 +187,8 @@
     <string name="enter_a_new_group_here">Enter a new Group Here</string>
     <string name="attempting_to_creat">Attempting to create user - please wait</string>
     <string name="Record_with_low_battery_is_ON">Record with low battery is ON</string>
+    <string name="bird_count">Bird Count</string>
+    <string name="bird_count_message">Choose the length of time and then press the Record button</string>
 
 
 </resources>

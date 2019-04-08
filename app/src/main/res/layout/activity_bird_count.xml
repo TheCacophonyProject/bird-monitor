@@ -1,11 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swWalking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nz.org.cacophony.birdmonitor.WelcomeFragment"
-    tools:layout_editor_absoluteY="25dp">
+    tools:context="nz.org.cacophony.birdmonitor.WalkingActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -16,7 +28,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/choose_the_internet_connection_mode"
+        android:text="@string/bird_count_message"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Normal"
+            android:text="5 Minute"
             />
 
         <View
@@ -67,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Online"/>
+            android:text="10 Minute"/>
 
         <View
             android:id="@+id/divider4"
@@ -83,7 +95,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Offline"/>
+            android:text="15 Minute"/>
 
         <View
             android:id="@+id/divider5"
@@ -94,17 +106,37 @@
 
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/tvMessages"
+    <Button
+        android:id="@+id/btnRecordNow"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+
         android:layout_marginRight="8dp"
+        android:text="Record Now"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <Button
+        android:id="@+id/btnFinished"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="finished"
+        android:text="Finished"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>

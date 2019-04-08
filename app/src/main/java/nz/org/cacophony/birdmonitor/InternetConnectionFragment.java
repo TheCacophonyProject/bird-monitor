@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 //import android.widget.RadioButton;
 import android.support.v7.widget.AppCompatRadioButton;
 
-
-import nz.org.cacophony.birdmonitor.R;
-
 public class InternetConnectionFragment extends Fragment {
 
     private static final String TAG = "InternetConnectionFragment";
@@ -30,9 +27,9 @@ public class InternetConnectionFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbNormal);
-        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbOnline);
-        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.rbOffline);
+        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbFiveMinute);
+        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbTenMinute);
+        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.FifteenMinute);
 
         displayOrHideGUIObjects();
 

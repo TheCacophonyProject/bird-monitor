@@ -121,29 +121,29 @@ class GuiControls {
         nowSwipeLeft(); // takes you to Internet Connection
 
         // Check Normal selection
-        onView(withId(R.id.rbNormal)).check(matches(isChecked()));
+        onView(withId(R.id.rbFiveMinute)).check(matches(isChecked()));
         String internetConnectionMode = prefs.getInternetConnectionMode();
         assertEquals("normal", internetConnectionMode);
 
         // Check Online
-        onView(withId(R.id.rbOnline)).perform(click());
-        onView(withId(R.id.rbOnline)).check(matches(isChecked()));
+        onView(withId(R.id.rbTenMinute)).perform(click());
+        onView(withId(R.id.rbTenMinute)).check(matches(isChecked()));
         internetConnectionMode = prefs.getInternetConnectionMode();
         assertEquals("online", internetConnectionMode);
         nowSwipeRight(); // leave page
         nowSwipeLeft();  // return to page
-        onView(withId(R.id.rbOnline)).check(matches(isChecked())); // check Online is still selected
+        onView(withId(R.id.rbTenMinute)).check(matches(isChecked())); // check Online is still selected
         internetConnectionMode = prefs.getInternetConnectionMode(); // and check still correct in preferences
         assertEquals("online", internetConnectionMode);
 
         // Offline
-        onView(withId(R.id.rbOffline)).perform(click());
-        onView(withId(R.id.rbOffline)).check(matches(isChecked()));
+        onView(withId(R.id.FifteenMinute)).perform(click());
+        onView(withId(R.id.FifteenMinute)).check(matches(isChecked()));
         internetConnectionMode = prefs.getInternetConnectionMode();
         assertEquals("offline", internetConnectionMode);
         nowSwipeRight(); // leave page
         nowSwipeLeft();  // return to page
-        onView(withId(R.id.rbOffline)).check(matches(isChecked())); // check Online is still selected
+        onView(withId(R.id.FifteenMinute)).check(matches(isChecked())); // check Online is still selected
         internetConnectionMode = prefs.getInternetConnectionMode(); // and check still correct in preferences
         assertEquals("offline", internetConnectionMode);
 
