@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,7 +27,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import nz.org.cacophony.birdmonitor.R;
+
 
 
 /**
@@ -48,6 +49,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     private static final int PERMISSION_LOCATION = 2;
 
     private TextView tvMessages;
+
+    private PermissionsHelper permissionsHelper;
 
     @Override
     protected void onStart() {
@@ -80,6 +83,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         //https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        checkPermissions();
     }
 
     private void disableFlightMode(){
@@ -117,7 +121,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
             Log.e(TAG, "Error calling super.onResume");
         }
 
-        checkPermissions();
+//        checkPermissions();
+        displayPermissions();
         refreshVitalsDisplayedText();
 
         // Application name text  appNameVersionText
@@ -134,123 +139,115 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         disableFlightMode();
     }
 
-    /**
-     * Checks if the app has the required permissions. Storage, Microphone, Location.
-     */
-    private void checkPermissions() {
-        if (!requestPermissions()) {
-            return;  // will need to press button again.
-        }
-        boolean storagePermission =
-                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        boolean microphonePermission =
-                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        boolean locationPermission =
-                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-        TextView permissionText = findViewById(R.id.appPermissionText);
-        if (storagePermission && microphonePermission && locationPermission) {
-            permissionText.setText(getString(R.string.required_permissions_true));
-
-            return;
-        } else {
-            permissionText.setText(getString(R.string.required_permissions_false));
-        }
-
-        List<String> missingPermissionList = new ArrayList<>();
-        if (!storagePermission) missingPermissionList.add("Write External Storage");
-        if (!microphonePermission) missingPermissionList.add("Recording");
-        if (!locationPermission) missingPermissionList.add("Location");
-
-        String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
-        tvMessages.setText(missingPermissionMessage);
-        Log.w(TAG, missingPermissionMessage);
-    }
-
-    private boolean requestPermissions(){
-        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
-//        https://developer.android.com/training/permissions/requesting.html
-
-        boolean allPermissionsAlreadyGranted = true;
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_WRITE_EXTERNAL_STORAGE);
-
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECORD_AUDIO},
-                    PERMISSION_RECORD_AUDIO);
-
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_LOCATION);
-
-        }
-
-        return allPermissionsAlreadyGranted;
-    }
-
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
-            } else {
-                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
-            }
-        }
-
-        if (requestCode == PERMISSION_RECORD_AUDIO) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("RECORD_AUDIO permission granted");
-            } else {
-                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
-            }
-        }
-
-        if (requestCode == PERMISSION_LOCATION) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("LOCATION permission granted");
-            } else {
-                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
-            }
-        }
-
-        // END_INCLUDE(onRequestPermissionsResult)
-    }
+//    /**
+//     * Checks if the app has the required permissions. Storage, Microphone, Location.
+//     */
+//    private void checkPermissions() {
+////        if (!requestPermissions()) {
+////            return;  // will need to press button again.
+////        }
+//        boolean storagePermission =
+//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+//        boolean recordPermission =
+//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+//        boolean locationPermission =
+//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+//
+//        TextView permissionText = findViewById(R.id.appPermissionText);
+//        if (storagePermission && recordPermission && locationPermission) {
+//            permissionText.setText(getString(R.string.required_permissions_true));
+//
+//            return;
+//        } else {
+//            permissionText.setText(getString(R.string.required_permissions_false));
+//        }
+//
+//        List<String> missingPermissionList = new ArrayList<>();
+//        if (!storagePermission) missingPermissionList.add("Write External Storage");
+//        if (!recordPermission) missingPermissionList.add("Recording");
+//        if (!locationPermission) missingPermissionList.add("Location");
+//
+//        String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
+//        tvMessages.setText(missingPermissionMessage);
+//        Log.w(TAG, missingPermissionMessage);
+//    }
+//
+//    private boolean requestPermissions(){
+//        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
+////        https://developer.android.com/training/permissions/requesting.html
+//
+//        boolean allPermissionsAlreadyGranted = true;
+//
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            allPermissionsAlreadyGranted = false;
+//
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    PERMISSION_WRITE_EXTERNAL_STORAGE);
+//
+//        }
+//
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.RECORD_AUDIO)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            allPermissionsAlreadyGranted = false;
+//
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.RECORD_AUDIO},
+//                    PERMISSION_RECORD_AUDIO);
+//
+//        }
+//
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            allPermissionsAlreadyGranted = false;
+//
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    PERMISSION_LOCATION);
+//
+//        }
+//
+//        return allPermissionsAlreadyGranted;
+//    }
+//
+//
+//
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                           int[] grantResults) {
+//        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+//
+//            if (Util.wasGrantedPermission(grantResults)) {
+//                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
+//            } else {
+//                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
+//            }
+//        }
+//
+//        if (requestCode == PERMISSION_RECORD_AUDIO) {
+//            if (Util.wasGrantedPermission(grantResults)) {
+//                tvMessages.setText("RECORD_AUDIO permission granted");
+//            } else {
+//                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
+//            }
+//        }
+//
+//        if (requestCode == PERMISSION_LOCATION) {
+//            if (Util.wasGrantedPermission(grantResults)) {
+//                tvMessages.setText("LOCATION permission granted");
+//            } else {
+//                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
+//            }
+//        }
+//    }
 
     private void refreshVitalsDisplayedText(){
         Prefs prefs = new Prefs(getApplicationContext());
@@ -384,6 +381,52 @@ try {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    /**
+     * Checks if the app has the required permissions. Storage, Microphone, Location.
+     */
+    private void displayPermissions() {
+//        if (!requestPermissions()) {
+//            return;  // will need to press button again.
+//        }
+        boolean storagePermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean recordPermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        boolean locationPermission =
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        TextView permissionText = findViewById(R.id.appPermissionText);
+        if (storagePermission && recordPermission && locationPermission) {
+            permissionText.setText(getString(R.string.required_permissions_true));
+
+            return;
+        } else {
+            permissionText.setText(getString(R.string.required_permissions_false));
+        }
+
+        List<String> missingPermissionList = new ArrayList<>();
+        if (!storagePermission) missingPermissionList.add("Write External Storage");
+        if (!recordPermission) missingPermissionList.add("Recording");
+        if (!locationPermission) missingPermissionList.add("Location");
+
+        String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
+        tvMessages.setText(missingPermissionMessage);
+        Log.w(TAG, missingPermissionMessage);
     }
 }
 

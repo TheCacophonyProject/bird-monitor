@@ -83,6 +83,8 @@ public class GPSFragment extends Fragment {
             IntentFilter iffRoot = new IntentFilter("ROOT");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNoticeRoot, iffRoot);
 
+            requestPermissions(getActivity().getApplicationContext());
+
             updateGpsDisplay(getActivity().getApplicationContext());
 
 
@@ -295,10 +297,10 @@ public class GPSFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         // According to //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
-        // this will only get called if the containing Activity's (SetuupWizardActivity in this case) method onRequestPermissionsResult calls super.onRequestPermissionsResult
+        // this will only get called if the containing Activity's (SetupWizardActivity in this case) method onRequestPermissionsResult calls super.onRequestPermissionsResult
 
         if (requestCode == PERMISSION_LOCATION) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (Util.wasGrantedPermission(grantResults)) {
                 tvMessages.setText("LOCATION permission granted");
                 updateGPSLocation();
             } else {
