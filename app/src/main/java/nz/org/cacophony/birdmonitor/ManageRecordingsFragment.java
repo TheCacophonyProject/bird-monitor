@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,8 +26,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class ManageRecordingsFragment extends Fragment {
@@ -42,10 +41,12 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
 
+    private PermissionsHelper permissionsHelper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_manage_recordings, container, false);
+        View view = inflater.inflate(R.layout.fragment_manage_recordings, container, false);
 
         IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
@@ -53,7 +54,7 @@ public class ManageRecordingsFragment extends Fragment {
         setUserVisibleHint(false);
         tvMessages = (TextView) view.findViewById(R.id.tvMessagesManageRecordings);
         btnUploadFiles = (Button) view.findViewById(R.id.btnUploadFiles);
-        btnUploadFiles.setOnClickListener(new View.OnClickListener(){
+        btnUploadFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tvMessages.setText("");
@@ -62,7 +63,7 @@ public class ManageRecordingsFragment extends Fragment {
         });
 
         btnDeleteAllRecordings = (Button) view.findViewById(R.id.btnDeleteAllRecordings);
-        btnDeleteAllRecordings.setOnClickListener(new View.OnClickListener(){
+        btnDeleteAllRecordings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tvMessages.setText("");
@@ -70,14 +71,14 @@ public class ManageRecordingsFragment extends Fragment {
             }
         });
 
-         tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
+        tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
         displayOrHideGUIObjects();
 
         return view;
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
     }
@@ -85,37 +86,39 @@ public class ManageRecordingsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+
+        if (getActivity() == null) {
             return;
         }
+        checkPermissions();
         if (visible) {
-            displayOrHideGUIObjects();
 
+            displayOrHideGUIObjects();
         }
     }
 
-    void displayOrHideGUIObjects() {
+   public void displayOrHideGUIObjects() {
         int numberOfRecordings = getNumberOfRecordings();
         tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordings);
 
-        if(numberOfRecordings == 0){
+        if (numberOfRecordings == 0) {
             btnUploadFiles.setEnabled(false);
             btnDeleteAllRecordings.setEnabled(false);
-        }else{
+        } else {
             btnUploadFiles.setEnabled(true);
             btnDeleteAllRecordings.setEnabled(true);
         }
     }
 
-    public void uploadRecordings(){
+    public void uploadRecordings() {
 
-        if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
+        if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
-        if (prefs.getGroupName() == null){
+        if (prefs.getGroupName() == null) {
             tvMessages.setText("You need to register this phone before you can upload");
             return;
         }
@@ -124,11 +127,11 @@ public class ManageRecordingsFragment extends Fragment {
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
 
-        if (getNumberOfRecordings() > 0){ // should be as button should be disabled if no recordings
+        if (getNumberOfRecordings() > 0) { // should be as button should be disabled if no recordings
             tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
-        }else{
+        } else {
             tvMessages.setText("There are no recordings on the phone to upload.");
         }
     }
@@ -138,30 +141,31 @@ public class ManageRecordingsFragment extends Fragment {
 
         boolean alreadyHavePermission =  haveAllPermissions(getActivity().getApplicationContext());
 
-        if (alreadyHavePermission){
+        if (alreadyHavePermission) {
             numberOfRecordings = getNumberOfRecordingsNoPermissionCheck();
-        }else{
-            requestPermissions(getActivity().getApplicationContext());
         }
+//        }else{
+//            requestPermissions(getActivity().getApplicationContext());
+//        }
 
         return numberOfRecordings;
     }
 
-    private int getNumberOfRecordingsNoPermissionCheck(){
+        private int getNumberOfRecordingsNoPermissionCheck(){
 
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
         return recordingFiles.length;
     }
 
-    public void deleteAllRecordingsButton(){
+    public void deleteAllRecordingsButton() {
 
         // are you sure?
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Add the buttons
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-              deleteAllRecordings();
+                deleteAllRecordings();
             }
         });
         builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
@@ -195,7 +199,8 @@ public class ManageRecordingsFragment extends Fragment {
         dialog.show();
 
     }
-    public void deleteAllRecordings(){
+
+    public void deleteAllRecordings() {
 
         Util.deleteAllRecordingsOnPhoneUsingDeleteButton(getActivity().getApplicationContext());
 
@@ -240,49 +245,6 @@ public class ManageRecordingsFragment extends Fragment {
         }
     };
 
-    private boolean requestPermissions(Context context){
-        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
-//        https://developer.android.com/training/permissions/requesting.html
-
-        boolean allPermissionsAlreadyGranted = true;
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
-
-            requestPermissions(new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
-
-        }
-
-        return allPermissionsAlreadyGranted;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
-            } else {
-                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
-            }
-        }
-
-
-        if (haveAllPermissions(getActivity().getApplicationContext())){
-            displayOrHideGUIObjects();
-        }
-
-        // END_INCLUDE(onRequestPermissionsResult)
-    }
 
     private boolean haveAllPermissions(Context context){
         boolean allPermissionsAlreadyGranted = true;
@@ -297,6 +259,17 @@ public class ManageRecordingsFragment extends Fragment {
 
         return allPermissionsAlreadyGranted;
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
+    }
+
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
 }

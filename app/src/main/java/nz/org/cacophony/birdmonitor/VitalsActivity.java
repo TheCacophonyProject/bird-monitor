@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,25 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-
 /**
  * The code to display the Vitals screen that the user can access from the menu, and displays to the
  * user information such as whether the app has registered with the server, the Device ID of the
  * app and the GPS loction.
  */
 @SuppressWarnings("NullableProblems")
-public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
+public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
     // Register with idling counter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
 // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = VitalsActivity.class.getName();
-
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSION_RECORD_AUDIO = 1;
-    private static final int PERMISSION_LOCATION = 2;
 
     private TextView tvMessages;
 
@@ -86,28 +79,25 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         checkPermissions();
     }
 
-    private void disableFlightMode(){
+    private void disableFlightMode() {
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
-            new Thread()
-            {
-                public void run()
-                {
-                    VitalsActivity.this.runOnUiThread(new Runnable()
-                    {
-                        public void run()
-                        {
+            new Thread() {
+                public void run() {
+                    VitalsActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
                             Util.disableFlightMode(getApplicationContext());
                         }
                     });
                 }
             }.start();
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
             tvMessages.setText("Error disabling flight mode");
         }
     }
+
     /**
      * Updated UI.
      */
@@ -115,13 +105,12 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     public void onResume() {
         try {
             super.onResume();
-        }   catch (Exception ex){
+        } catch (Exception ex) {
             // This is very poor, but I have no idea why super.onResume give a null pointer exception
             // Need to spend time on this
             Log.e(TAG, "Error calling super.onResume");
         }
 
-//        checkPermissions();
         displayPermissions();
         refreshVitalsDisplayedText();
 
@@ -139,117 +128,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         disableFlightMode();
     }
 
-//    /**
-//     * Checks if the app has the required permissions. Storage, Microphone, Location.
-//     */
-//    private void checkPermissions() {
-////        if (!requestPermissions()) {
-////            return;  // will need to press button again.
-////        }
-//        boolean storagePermission =
-//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-//        boolean recordPermission =
-//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-//        boolean locationPermission =
-//                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-//
-//        TextView permissionText = findViewById(R.id.appPermissionText);
-//        if (storagePermission && recordPermission && locationPermission) {
-//            permissionText.setText(getString(R.string.required_permissions_true));
-//
-//            return;
-//        } else {
-//            permissionText.setText(getString(R.string.required_permissions_false));
-//        }
-//
-//        List<String> missingPermissionList = new ArrayList<>();
-//        if (!storagePermission) missingPermissionList.add("Write External Storage");
-//        if (!recordPermission) missingPermissionList.add("Recording");
-//        if (!locationPermission) missingPermissionList.add("Location");
-//
-//        String missingPermissionMessage = "App not granted some permissions: " + StringUtils.join(missingPermissionList, ", ");
-//        tvMessages.setText(missingPermissionMessage);
-//        Log.w(TAG, missingPermissionMessage);
-//    }
-//
-//    private boolean requestPermissions(){
-//        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
-////        https://developer.android.com/training/permissions/requesting.html
-//
-//        boolean allPermissionsAlreadyGranted = true;
-//
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            allPermissionsAlreadyGranted = false;
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                    PERMISSION_WRITE_EXTERNAL_STORAGE);
-//
-//        }
-//
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.RECORD_AUDIO)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            allPermissionsAlreadyGranted = false;
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.RECORD_AUDIO},
-//                    PERMISSION_RECORD_AUDIO);
-//
-//        }
-//
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            allPermissionsAlreadyGranted = false;
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSION_LOCATION);
-//
-//        }
-//
-//        return allPermissionsAlreadyGranted;
-//    }
-//
-//
-//
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                                           int[] grantResults) {
-//        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
-//
-//            if (Util.wasGrantedPermission(grantResults)) {
-//                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
-//            } else {
-//                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
-//            }
-//        }
-//
-//        if (requestCode == PERMISSION_RECORD_AUDIO) {
-//            if (Util.wasGrantedPermission(grantResults)) {
-//                tvMessages.setText("RECORD_AUDIO permission granted");
-//            } else {
-//                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
-//            }
-//        }
-//
-//        if (requestCode == PERMISSION_LOCATION) {
-//            if (Util.wasGrantedPermission(grantResults)) {
-//                tvMessages.setText("LOCATION permission granted");
-//            } else {
-//                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
-//            }
-//        }
-//    }
 
-    private void refreshVitalsDisplayedText(){
+    private void refreshVitalsDisplayedText() {
         Prefs prefs = new Prefs(getApplicationContext());
         // Device registered text
         TextView registered = findViewById(R.id.mainRegisteredStatus);
@@ -262,11 +142,11 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Logged In text.
         TextView loggedInText = findViewById(R.id.loggedInText);
 
-// Check the age of the webToken
+        // Check the age of the webToken
         boolean webTokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
 
-        if ( webTokenIsCurrent)
+        if (webTokenIsCurrent)
             loggedInText.setText(getString(R.string.logged_in_to_server_true));
         else
             loggedInText.setText(getString(R.string.logged_in_to_server_false));
@@ -301,9 +181,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Update time of next recording
         TextView tvNextRecording = findViewById(R.id.tvNextRecording);
 
-        if (prefs.getIsDisabled()){
+        if (prefs.getIsDisabled()) {
             tvNextRecording.setText("Next Recording: Disabled - no next recording");
-        }else{
+        } else {
             String nextAlarm = Util.getNextAlarm(getApplicationContext());
             tvNextRecording.setText("Next Recording: " + nextAlarm);
         }
@@ -312,29 +192,27 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         updateGpsDisplay(prefs);
     }
 
-    private void updateGpsDisplay(Prefs prefs){
+    private void updateGpsDisplay(Prefs prefs) {
 
-try {
-    double lat = prefs.getLatitude();
-    double lon = prefs.getLongitude();
+        try {
+            double lat = prefs.getLatitude();
+            double lon = prefs.getLongitude();
 
-    if (lat != 0 && lon != 0) {
-        //http://www.coderzheaven.com/2012/10/14/numberformat-class-android-rounding-number-android-formatting-decimal-values-android/
-        NumberFormat numberFormat  = new DecimalFormat("#.000000");
-        String latStr = numberFormat.format(lat);
-        String lonStr = numberFormat.format(lon);
-        TextView locationStatus = findViewById(R.id.gpsText);
-        String latitude = getString(R.string.latitude);
-        String longitude = getString(R.string.longitude);
-        String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
-        locationStatus.setText(locationStatusToDisplay);
-         }
-}catch (Exception ex){
-    Log.e(TAG, ex.getLocalizedMessage());
-}
+            if (lat != 0 && lon != 0) {
+                //http://www.coderzheaven.com/2012/10/14/numberformat-class-android-rounding-number-android-formatting-decimal-values-android/
+                NumberFormat numberFormat = new DecimalFormat("#.000000");
+                String latStr = numberFormat.format(lat);
+                String lonStr = numberFormat.format(lon);
+                TextView locationStatus = findViewById(R.id.gpsText);
+                String latitude = getString(R.string.latitude);
+                String longitude = getString(R.string.longitude);
+                String locationStatusToDisplay = latitude + ": " + latStr + ", " + longitude + ": " + lonStr;
+                locationStatus.setText(locationStatusToDisplay);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
     }
-
-
 
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -348,7 +226,7 @@ try {
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
                     String messageType = joMessage.getString("messageType");
 
-                     if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
+                    if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         refreshVitalsDisplayedText();
                     }
                 }
@@ -400,9 +278,7 @@ try {
      * Checks if the app has the required permissions. Storage, Microphone, Location.
      */
     private void displayPermissions() {
-//        if (!requestPermissions()) {
-//            return;  // will need to press button again.
-//        }
+
         boolean storagePermission =
                 ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         boolean recordPermission =

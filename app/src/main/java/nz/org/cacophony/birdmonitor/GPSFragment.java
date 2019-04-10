@@ -7,13 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -24,28 +22,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class GPSFragment extends Fragment {
 
     private static final String TAG = "GPSFragment";
 
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSION_RECORD_AUDIO = 1;
-    private static final int PERMISSION_LOCATION = 2;
-
     private TextView tvMessages;
     private TextView tvSearching;
     private TextView latitudeDisplay;
     private TextView longitudeDisplay;
+
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,10 +74,9 @@ public class GPSFragment extends Fragment {
             IntentFilter iffRoot = new IntentFilter("ROOT");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNoticeRoot, iffRoot);
 
-            requestPermissions(getActivity().getApplicationContext());
+            checkPermissions();
 
             updateGpsDisplay(getActivity().getApplicationContext());
-
 
         } else {
 
@@ -96,17 +86,9 @@ public class GPSFragment extends Fragment {
     }
 
     private void updateGPSLocationButtonPressed() {
-      boolean alreadyHavePermission =  requestPermissions(getActivity().getApplicationContext());
-      if (alreadyHavePermission){
-          updateGPSLocation();
-      }
-    }
-
-    private void updateGPSLocation(){
-
         // First check to see if Location service is available
         // https://stackoverflow.com/questions/25175522/how-to-enable-location-access-programmatically-in-android
-        if (!canGetLocation()){
+        if (!canGetLocation()) {
             // Display dialog
             displayMessage();
             return;
@@ -144,7 +126,7 @@ public class GPSFragment extends Fragment {
                         } else {
                             String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                              ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
 
                             tvSearching.setVisibility(View.GONE);
                         }
@@ -221,7 +203,7 @@ public class GPSFragment extends Fragment {
 
         if (lm == null)
 
-            lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+            lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         // exceptions will be thrown if provider is not permitted.
         try {
@@ -230,12 +212,10 @@ public class GPSFragment extends Fragment {
 
         }
 
-
-
         return gps_enabled;
     }
 
-    private void displayMessage(){
+    private void displayMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Add the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -267,51 +247,15 @@ public class GPSFragment extends Fragment {
         dialog.show();
     }
 
-
-    private boolean requestPermissions(Context context){
-        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
-//        https://developer.android.com/training/permissions/requesting.html
-
-        boolean allPermissionsAlreadyGranted = true;
-
-        if (ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-        //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
-
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
-
-        }
-
-        return allPermissionsAlreadyGranted;
-    }
-
-
-
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        // According to //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
-        // this will only get called if the containing Activity's (SetupWizardActivity in this case) method onRequestPermissionsResult calls super.onRequestPermissionsResult
-
-        if (requestCode == PERMISSION_LOCATION) {
-            if (Util.wasGrantedPermission(grantResults)) {
-                tvMessages.setText("LOCATION permission granted");
-                updateGPSLocation();
-            } else {
-                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
-            }
-        }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
     }
 
-
-
-
-
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+    }
 
 }

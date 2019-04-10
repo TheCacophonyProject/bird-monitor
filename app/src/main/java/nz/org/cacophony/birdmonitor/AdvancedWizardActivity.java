@@ -4,12 +4,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import nz.org.cacophony.birdmonitor.R;
 
 public class AdvancedWizardActivity extends AppCompatActivity {
+
+    private static final String TAG = "AdvancedWizardActivity";
 
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
@@ -106,7 +109,16 @@ public class AdvancedWizardActivity extends AppCompatActivity {
                                            int[] grantResults) {
         // https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Need to update the number of recordings displayed in the Managed Recordings Fragment.  Did it hear because for some reason I could not get it to refresh using this method in the ManageRecordingsFragment
+        try {
+            ((ManageRecordingsFragment) mSectionsStatePagerAdapter.getItem(0)).displayOrHideGUIObjects();
+        }catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
     }
+
+
 
 
 

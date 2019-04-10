@@ -17,8 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import org.json.JSONObject;
 
+import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
@@ -52,7 +52,7 @@ public class TestRecordFragment extends Fragment {
             }
         });
 
-        btnRecordNow =  view.findViewById(R.id.btnRecordNow);
+        btnRecordNow = view.findViewById(R.id.btnRecordNow);
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +93,7 @@ public class TestRecordFragment extends Fragment {
         }
     }
 
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
 
         if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
@@ -107,10 +107,10 @@ public class TestRecordFragment extends Fragment {
     }
 
     public void recordNowButtonPressed() {
-            recordNow();
+        recordNow();
     }
 
-    public void recordNow(){
+    public void recordNow() {
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
@@ -185,7 +185,6 @@ public class TestRecordFragment extends Fragment {
 
         }
     };
-
 
 
     @Override

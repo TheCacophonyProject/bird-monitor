@@ -31,6 +31,7 @@ public class PermissionsHelper {
     }
 
     public void onRequestPermissionsResult(Activity activity, int requestCode, String permissions[], int[] grantResults) {
+        Log.d("tim2", "tim2");
         switch (requestCode) {
             case REQUEST_ID_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<>();
@@ -65,8 +66,7 @@ public class PermissionsHelper {
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                         builder.setTitle("Permission required")
-                                .setMessage(message)
-//                                .setPositiveButton(android.R.string.ok, (dialog, id) -> dialog.cancel());
+                                .setMessage(message)//
                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() //https://stackoverflow.com/questions/11585099/alertdialog-show-new-alertdialog-builderthis-is-undefined
                                 {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -74,6 +74,7 @@ public class PermissionsHelper {
                                     }
                                 });
                         AlertDialog alert = builder.create();
+                        alert.getWindow().setBackgroundDrawableResource(android.R.color.white); // https://stackoverflow.com/questions/18346920/change-the-background-color-of-a-pop-up-dialog
                         alert.show();
                     }
                 }
