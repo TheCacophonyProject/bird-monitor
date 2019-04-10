@@ -5,11 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
 import android.text.util.Linkify;
@@ -22,21 +20,18 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
 
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSION_RECORD_AUDIO = 1;
-    private static final int PERMISSION_LOCATION = 2;
-
     private Button btnRecordNow;
     private TextView tvTitleMessage;
     private TextView tvMessages;
+    private TextView tvServerLink;
+
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +41,7 @@ public class TestRecordFragment extends Fragment {
         setUserVisibleHint(false);
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
         tvMessages = view.findViewById(R.id.tvMessages);
+        tvServerLink = view.findViewById(R.id.tvServerLink);
 
         Button btnNext = view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +52,7 @@ public class TestRecordFragment extends Fragment {
             }
         });
 
-        btnRecordNow =  view.findViewById(R.id.btnRecordNow);
+        btnRecordNow = view.findViewById(R.id.btnRecordNow);
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,13 +86,14 @@ public class TestRecordFragment extends Fragment {
         if (visible) {
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+            checkPermissions();
             displayOrHideGUIObjects();
         } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
 
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
 
         if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
@@ -110,14 +107,10 @@ public class TestRecordFragment extends Fragment {
     }
 
     public void recordNowButtonPressed() {
-        boolean alreadyHavePermission =  requestPermissions(getActivity().getApplicationContext());
-
-        if (alreadyHavePermission){
-            recordNow();
-        }
+        recordNow();
     }
 
-    public void recordNow(){
+    public void recordNow() {
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
@@ -176,6 +169,7 @@ public class TestRecordFragment extends Fragment {
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
+                        tvServerLink.setVisibility(View.VISIBLE);
                         tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
@@ -192,124 +186,18 @@ public class TestRecordFragment extends Fragment {
         }
     };
 
-    private boolean requestPermissions(Context context){
-        // If Android OS >= 6 then need to ask user for permission to Write External Storage, Recording, Location
-//        https://developer.android.com/training/permissions/requesting.html
-
-        boolean allPermissionsAlreadyGranted = true;
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            //https://stackoverflow.com/questions/35989288/onrequestpermissionsresult-not-being-called-in-fragment-if-defined-in-both-fragm
-
-            requestPermissions(new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL_STORAGE);
-
-        }
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            requestPermissions(new String[]{
-                    Manifest.permission.RECORD_AUDIO}, PERMISSION_RECORD_AUDIO);
-
-        }
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_LOCATION);
-
-        }
-
-        return allPermissionsAlreadyGranted;
-    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("WRITE_EXTERNAL_STORAGE permission granted");
-            } else {
-                tvMessages.setText("Do not have WRITE_EXTERNAL_STORAGE permission, You can NOT save recordings");
-            }
-        }
-
-        if (requestCode == PERMISSION_RECORD_AUDIO) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("RECORD_AUDIO permission granted");
-            } else {
-                tvMessages.setText("Do not have RECORD_AUDIO permission, You can NOT record");
-            }
-        }
-
-        // May as well check GPS Location permission again
-
-        if (requestCode == PERMISSION_LOCATION) {
-            // Request for camera permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted. Start recording
-                tvMessages.setText("LOCATION permission granted");
-            } else {
-                tvMessages.setText("Do not have LOCATION permission, You can NOT set the GPS position");
-            }
-        }
-
-        // To avoid user having to press the 'Record Now' button again, we will check to see if we know have all permissions and if we do, start the recording
-
-        if (haveAllPermissions(getActivity().getApplicationContext())){
-            recordNow();
-        }
-
-        // END_INCLUDE(onRequestPermissionsResult)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
     }
 
-    private boolean haveAllPermissions(Context context){
-        boolean allPermissionsAlreadyGranted = true;
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-        }
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-        }
-
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            allPermissionsAlreadyGranted = false;
-
-        }
-
-        return allPermissionsAlreadyGranted;
-
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
 }
