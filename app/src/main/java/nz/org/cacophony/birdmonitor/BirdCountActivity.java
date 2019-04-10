@@ -1,14 +1,19 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
@@ -34,12 +39,17 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     private static final int PERMISSION_LOCATION = 2;
 
     private Button btnRecordNow;
+    private Button btnFinished;
     private TextView tvMessages;
     private TextView tvTitle;
 
     private AppCompatRadioButton rbFiveMinute;
     private AppCompatRadioButton rbTenMinute;
     private AppCompatRadioButton rbFifteenMinute;
+
+    private boolean recording = false;
+
+    CountDownTimer countDownTimer = null;
 
     @Override
     protected void onStart() {
@@ -59,6 +69,8 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         setSupportActionBar(myToolbar);
 
         btnRecordNow =  findViewById(R.id.btnRecordNow);
+        btnFinished =  findViewById(R.id.btnFinished);
+
         tvMessages = findViewById(R.id.tvMessages);
         tvTitle = findViewById(R.id.tvTitle);
 
@@ -66,10 +78,19 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         rbTenMinute =  findViewById(R.id.rbTenMinute);
         rbFifteenMinute =  findViewById(R.id.rbFifteenMinute);
 
+
+
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recordNowButtonPressed();
+            }
+        });
+
+        btnFinished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finished();
             }
         });
 
@@ -149,7 +170,10 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         }
     }
 
+
     public void recordNow(){
+
+        int durationInSeconds = 0;
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(this, StartRecordingReceiver.class);
@@ -158,13 +182,33 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
             if (rbFiveMinute.isChecked()){
                 myIntent.putExtra("type", "birdCountButton5");
+                durationInSeconds = 5 * 60 * 1000;
             }else if (rbTenMinute.isChecked()){
                 myIntent.putExtra("type", "birdCountButton10");
+                durationInSeconds = 10 * 60 * 1000;
             }else if (rbFifteenMinute.isChecked()){
                 myIntent.putExtra("type", "birdCountButton15");
+                durationInSeconds = 15 * 60 * 1000;
             }
 
            sendBroadcast(myIntent);
+            recording = true;
+            countDownTimer = new CountDownTimer(durationInSeconds, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    btnRecordNow.setText("seconds remaining: " + millisUntilFinished / 1000);
+                    //here you can have your logic to set text to edittext
+                }
+
+                public void onFinish() {
+                    btnRecordNow.setText("Record Now");
+                    btnFinished.setText("Finished");
+                    recording = false;
+                }
+
+            }.start();
+
+            btnFinished.setText("Cancel Recording");
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
@@ -256,9 +300,60 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         // END_INCLUDE(onRequestPermissionsResult)
     }
 
-    public void finished(@SuppressWarnings("UnusedParameters") View v) {
+//    public void finished(@SuppressWarnings("UnusedParameters") View v) {
+public void finished() {
         try {
-            finish();
+            if (recording){
+                // are you sure?
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // Add the buttons
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // How to cancel a recording?
+                        countDownTimer.cancel(); // this just cancels the timeer
+                        recording = false;
+                        btnRecordNow.setEnabled(true);
+                        btnRecordNow.setVisibility(View.VISIBLE);
+                        btnRecordNow.setText("Record Now");
+                        btnFinished.setText("Finished");
+                        recordIdlingResource.decrement();
+
+                    }
+                });
+                builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        return;
+                    }
+                });
+                builder.setMessage("Are you sure you want to stop recording?")
+                        .setTitle("Stop recording");
+
+                final AlertDialog dialog = builder.create();
+
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+                        btnPositive.setTextSize(24);
+                        int btnPositiveColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
+                        btnPositive.setTextColor(btnPositiveColor);
+
+                        Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+                        btnNegative.setTextSize(24);
+                        int btnNegativeColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
+                        btnNegative.setTextColor(btnNegativeColor);
+
+                        //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+                        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                        textView.setTextSize(22);
+                    }
+                });
+                dialog.show();
+            }else{
+
+                finish();
+            }
+
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
@@ -290,6 +385,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             btnRecordNow.setVisibility(View.GONE);
         } else {
           btnRecordNow.setEnabled(true);
+            btnFinished.setText("Finished");
             tvTitle.setText(getResources().getString(R.string.bird_count_message));
             btnRecordNow.setVisibility(View.VISIBLE);
         }
@@ -337,10 +433,14 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
+                        recording = false;
+                        countDownTimer.cancel();
                         tvTitle.setText(getResources().getString(R.string.bird_count_message));
                         tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
+                        btnRecordNow.setText("Record Now");
+                        btnFinished.setText("Finished");
                         recordIdlingResource.decrement();
                     }
                 }

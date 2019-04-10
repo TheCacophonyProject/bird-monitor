@@ -189,7 +189,7 @@
     <string name="attempting_to_creat">Attempting to create user - please wait</string>
     <string name="Record_with_low_battery_is_ON">Record with low battery is ON</string>
 
-    <string name="bird_count_message">Manually perform a recording now and when it has finished go to the Recordings screen to upload the recording.</string>
+    <string name="bird_count_message">Choose a recording duration and press the record button.</string>
 
 
 </resources>
