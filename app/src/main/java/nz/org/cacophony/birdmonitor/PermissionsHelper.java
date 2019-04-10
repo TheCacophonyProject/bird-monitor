@@ -57,19 +57,25 @@ public class PermissionsHelper {
             }
             message.append("The app cannot function properly without these permissions. Please consider granting these permissions in the phone\'s Settings.");
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage(message)//
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() //https://stackoverflow.com/questions/11585099/alertdialog-show-new-alertdialog-builderthis-is-undefined
-                    {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.getWindow().setBackgroundDrawableResource(android.R.color.white); // https://stackoverflow.com/questions/18346920/change-the-background-color-of-a-pop-up-dialog
+            AlertDialog alert = createMessageDialog(activity, message);
             alert.show();
         }
-
     }
+
+    AlertDialog createMessageDialog(Activity activity, StringBuilder message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(message)//
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() //https://stackoverflow.com/questions/11585099/alertdialog-show-new-alertdialog-builderthis-is-undefined
+                {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.white); // https://stackoverflow.com/questions/18346920/change-the-background-color-of-a-pop-up-dialog
+        return alert;
+    }
+
+
 }
 
