@@ -223,7 +223,9 @@ public class ManageRecordingsFragment extends Fragment {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
                             tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS")) {
+                        } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
                             tvMessages.setText(messageToDisplay);
                             uploadFilesIdlingResource.decrement();
                         }

@@ -34,7 +34,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".BirdCountActivity"></activity>
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -64,8 +63,8 @@
             android:label="@string/activity_or_fragment_title_vitals"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".WalkingActivity"
-            android:label="@string/activity_or_fragment_title_walking"
+            android:name=".BirdCountActivity"
+            android:label="@string/activity_or_fragment_title_bird_count"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DisableActivity"

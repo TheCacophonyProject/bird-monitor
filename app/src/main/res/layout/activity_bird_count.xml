@@ -89,13 +89,13 @@
             android:background="?android:attr/listDivider" />
 
         <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/FifteenMinute"
+            android:id="@+id/rbFifteenMinute"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="15 Minute"/>
+            android:text="15 Minute" />
 
         <View
             android:id="@+id/divider5"
@@ -123,6 +123,21 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <TextView
+        android:id="@+id/tvMessages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gpsText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/message_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRecordNow" />
 
     <Button
         android:id="@+id/btnFinished"

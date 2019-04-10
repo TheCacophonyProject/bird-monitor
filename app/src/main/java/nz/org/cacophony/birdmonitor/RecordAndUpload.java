@@ -58,14 +58,22 @@ static void doRecord(Context context, String typeOfRecording) {
         recordTimeSeconds = 60 * 5;
     }else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")){
         recordTimeSeconds = 60 * 10;
-    }else if (typeOfRecording.equalsIgnoreCase("birdCountButton55")){
+    }else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")){
         recordTimeSeconds = 60 * 15;
     }
 
 
 
-            if (prefs.getUseShortRecordings()) {
+            if (prefs.getUseShortRecordings()) { // for testing
                 recordTimeSeconds = 1;
+
+                if (typeOfRecording.equalsIgnoreCase("birdCountButton5")){
+                    recordTimeSeconds = recordTimeSeconds * 5;
+                }else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")){
+                    recordTimeSeconds = recordTimeSeconds * 10;
+                }else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")){
+                    recordTimeSeconds = recordTimeSeconds * 15;
+                }
             }
 
     if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {

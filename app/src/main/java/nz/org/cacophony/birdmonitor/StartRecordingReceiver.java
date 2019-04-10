@@ -74,9 +74,12 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             if (alarmIntentType.equalsIgnoreCase("recordNowButton")){
                 recordButtonWasPressed = true;
-            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton")) {
+            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton5")) {
                 recordButtonWasPressed = true;
-                duration = bundle.getString("duration");
+            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton10")) {
+                recordButtonWasPressed = true;
+            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
+                recordButtonWasPressed = true;
             }
 
 
@@ -181,7 +184,10 @@ public class StartRecordingReceiver extends BroadcastReceiver{
             Log.e(TAG, ex.getLocalizedMessage());
 
         }finally{
-            wakeLock.release();
+            // https://stackoverflow.com/questions/12140844/java-lang-runtimeexception-wakelock-under-locked-c2dm-lib
+            if (wakeLock.isHeld())
+                wakeLock.release();
+
         }
 
     }

@@ -1150,6 +1150,8 @@ Prefs prefs = new Prefs(context);
             dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source))){
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))){
+            dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
 
         }else {
             dialogMessage = "Still to fix in Util.displayHelp";
