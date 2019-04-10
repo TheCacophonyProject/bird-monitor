@@ -32,10 +32,6 @@ public class ManageRecordingsFragment extends Fragment {
 
     private static final String TAG = "ManageRecordFragment";
 
-    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSION_RECORD_AUDIO = 1;
-    private static final int PERMISSION_LOCATION = 2;
-
     private Button btnUploadFiles;
     private Button btnDeleteAllRecordings;
     TextView tvNumberOfRecordings;
@@ -97,7 +93,7 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
-   public void displayOrHideGUIObjects() {
+    public void displayOrHideGUIObjects() {
         int numberOfRecordings = getNumberOfRecordings();
         tvNumberOfRecordings.setText("Number of recordings on phone: " + numberOfRecordings);
 
@@ -136,22 +132,19 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
-    private int getNumberOfRecordings(){
+    private int getNumberOfRecordings() {
         int numberOfRecordings = -1;
 
-        boolean alreadyHavePermission =  haveAllPermissions(getActivity().getApplicationContext());
+        boolean alreadyHavePermission = haveAllPermissions(getActivity().getApplicationContext());
 
         if (alreadyHavePermission) {
             numberOfRecordings = getNumberOfRecordingsNoPermissionCheck();
         }
-//        }else{
-//            requestPermissions(getActivity().getApplicationContext());
-//        }
 
         return numberOfRecordings;
     }
 
-        private int getNumberOfRecordingsNoPermissionCheck(){
+    private int getNumberOfRecordingsNoPermissionCheck() {
 
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
@@ -246,7 +239,7 @@ public class ManageRecordingsFragment extends Fragment {
     };
 
 
-    private boolean haveAllPermissions(Context context){
+    private boolean haveAllPermissions(Context context) {
         boolean allPermissionsAlreadyGranted = true;
 
         if (ContextCompat.checkSelfPermission(context,
