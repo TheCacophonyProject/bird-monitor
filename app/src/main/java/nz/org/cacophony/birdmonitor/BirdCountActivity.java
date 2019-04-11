@@ -7,16 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,9 +24,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.json.JSONObject;
-
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 
@@ -67,22 +61,21 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        btnRecordNow =  findViewById(R.id.btnRecordNow);
-        btnFinished =  findViewById(R.id.btnFinished);
+        btnRecordNow = findViewById(R.id.btnRecordNow);
+        btnFinished = findViewById(R.id.btnFinished);
 
         tvMessages = findViewById(R.id.tvMessages);
         tvTitle = findViewById(R.id.tvTitle);
 
         rbFiveMinute = findViewById(R.id.rbFiveMinute);
-        rbTenMinute =  findViewById(R.id.rbTenMinute);
-        rbFifteenMinute =  findViewById(R.id.rbFifteenMinute);
-
+        rbTenMinute = findViewById(R.id.rbTenMinute);
+        rbFifteenMinute = findViewById(R.id.rbFifteenMinute);
 
 
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recordNowButtonPressed();
+                recordNow();
             }
         });
 
@@ -93,7 +86,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             }
         });
 
-        rbFiveMinute.setOnClickListener(new View.OnClickListener(){
+        rbFiveMinute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Prefs prefs = new Prefs(getApplicationContext());
@@ -102,7 +95,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         });
 
 
-        rbTenMinute.setOnClickListener(new View.OnClickListener(){
+        rbTenMinute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Prefs prefs = new Prefs(getApplicationContext());
@@ -111,7 +104,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         });
 
 
-        rbFifteenMinute.setOnClickListener(new View.OnClickListener(){
+        rbFifteenMinute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Prefs prefs = new Prefs(getApplicationContext());
@@ -142,7 +135,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
@@ -167,38 +160,35 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         displayOrHideGUIObjects();
     }
 
-    public void recordNowButtonPressed() {
-//        boolean alreadyHavePermission =  requestPermissions();
-//
-//        if (alreadyHavePermission){
-            recordNow();
-//        }
-    }
+        public void recordNow() {
 
 
-    public void recordNow(){
-
-        int durationInSeconds = 0;
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(this, StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
         try {
 
-            if (rbFiveMinute.isChecked()){
+            long durationInSeconds = 0;
+
+            if (rbFiveMinute.isChecked()) {
                 myIntent.putExtra("type", "birdCountButton5");
-                durationInSeconds = 5 * 60 * 1000;
-            }else if (rbTenMinute.isChecked()){
+                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton5");
+            } else if (rbTenMinute.isChecked()) {
                 myIntent.putExtra("type", "birdCountButton10");
-                durationInSeconds = 10 * 60 * 1000;
-            }else if (rbFifteenMinute.isChecked()){
+                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton10");
+            } else if (rbFifteenMinute.isChecked()) {
                 myIntent.putExtra("type", "birdCountButton15");
-                durationInSeconds = 15 * 60 * 1000;
+                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton15");
             }
 
-           sendBroadcast(myIntent);
+            long durationInMilliSeconds = durationInSeconds * 1000;
+
+
+            sendBroadcast(myIntent);
             recording = true;
-            countDownTimer = new CountDownTimer(durationInSeconds, 1000) {
+
+            countDownTimer = new CountDownTimer(durationInMilliSeconds, 1000) {
 
                 public void onTick(long millisUntilFinished) {
                     btnRecordNow.setText("seconds remaining: " + millisUntilFinished / 1000);
@@ -221,11 +211,10 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     }
 
 
-
-//    public void finished(@SuppressWarnings("UnusedParameters") View v) {
-public void finished() {
+    //    public void finished(@SuppressWarnings("UnusedParameters") View v) {
+    public void finished() {
         try {
-            if (recording){
+            if (recording) {
                 // are you sure?
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 // Add the buttons
@@ -240,7 +229,7 @@ public void finished() {
                         btnRecordNow.setVisibility(View.VISIBLE);
                         btnRecordNow.setText("Record Now");
                         btnFinished.setText("Finished");
-                        recordIdlingResource.decrement();
+                        //   recordIdlingResource.decrement();
 
                     }
                 });
@@ -273,7 +262,7 @@ public void finished() {
                     }
                 });
                 dialog.show();
-            }else{
+            } else {
 
                 finish();
             }
@@ -284,8 +273,7 @@ public void finished() {
     }
 
 
-
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
 
         Prefs prefs = new Prefs(getApplicationContext());
         String birdCountDuration = prefs.getBirdCountDuration();
@@ -301,14 +289,14 @@ public void finished() {
             case "fifteenMinute":
                 rbFifteenMinute.setChecked(true);
                 break;
-             }
+        }
 
         if (RecordAndUpload.isRecording) {
             btnRecordNow.setEnabled(false);
             tvTitle.setText("Can not record, as a recording is already in progress");
             btnRecordNow.setVisibility(View.GONE);
         } else {
-          btnRecordNow.setEnabled(true);
+            btnRecordNow.setEnabled(true);
             btnFinished.setText("Finished");
             tvTitle.setText(getResources().getString(R.string.bird_count_message));
             btnRecordNow.setVisibility(View.VISIBLE);
@@ -332,9 +320,6 @@ public void finished() {
 
                     if (messageType.equalsIgnoreCase("RECORDING_DISABLED")) {
                         tvMessages.setText(messageToDisplay);
-//                    } else if (messageType.equalsIgnoreCase("ALREADY_RECORDING")) {
-//                        tvMessages.setText(messageToDisplay);
-//                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("NO_PERMISSION_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {

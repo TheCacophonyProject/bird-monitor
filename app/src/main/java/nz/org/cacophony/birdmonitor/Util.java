@@ -1395,4 +1395,38 @@ Prefs prefs = new Prefs(context);
         }
     }
 
+    public static long getRecordingDuration(Context context, String typeOfRecording){
+        Prefs prefs = new Prefs(context);
+        long recordTimeSeconds = (long) prefs.getRecordingDuration();
+
+        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+            recordTimeSeconds = 60 * 5;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+            recordTimeSeconds = 60 * 10;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+            recordTimeSeconds = 60 * 15;
+        }
+
+
+        if (prefs.getUseShortRecordings()) { // for testing
+            recordTimeSeconds = 1;
+
+            if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+                recordTimeSeconds = recordTimeSeconds * 5;
+            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+                recordTimeSeconds = recordTimeSeconds * 10;
+            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+                recordTimeSeconds = recordTimeSeconds * 15;
+            }
+        }
+
+        if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
+            recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
+            Log.d(TAG, "typeOfRecording is dawn or dusk");
+        } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
+            recordTimeSeconds += 1; // help to recognise recordNowButton recordings
+        }
+        return recordTimeSeconds;
+    }
+
 }
