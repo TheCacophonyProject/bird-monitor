@@ -77,6 +77,8 @@ class Prefs {
     private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
 
     private static final String HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
+    private static final String CANCEL_RECORDING_ACCESS_KEY = "CANCEL_RECORDING_ACCESS";
+
     private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
     private static final String USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
 
@@ -667,5 +669,13 @@ class Prefs {
 
     void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
         setString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY, lastDeviceNameUsedForTesting);
+    }
+
+    boolean getCancelRecording() {
+        return getBoolean(CANCEL_RECORDING_ACCESS_KEY);
+    }
+
+    void setCancelRecording(boolean cancelRecording) {
+        setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
     }
 }

@@ -147,7 +147,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             // need to determine the source of the intent ie Main UI or boot receiver
 
-             if ((alarmIntentType.equalsIgnoreCase("recordNowButton")) ||(alarmIntentType.equalsIgnoreCase("birdCountButton5"))) {
+             if (alarmIntentType.equalsIgnoreCase("recordNowButton") || alarmIntentType.equalsIgnoreCase("birdCountButton5") || alarmIntentType.equalsIgnoreCase("birdCountButton10") || alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
                  try {
                      // Start recording in new thread.
 
@@ -163,11 +163,8 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                      e.printStackTrace();
                  }
 
-             }else if (alarmIntentType.equalsIgnoreCase("birdCountButton")){
 
-
-
-            } else { // intent came from boot receiver or app (not test record, or walk )
+            } else { // intent came from boot receiver or app (not test record, or bird count )
 
                 Intent mainServiceIntent = new Intent(context, MainService.class);
                 try {
