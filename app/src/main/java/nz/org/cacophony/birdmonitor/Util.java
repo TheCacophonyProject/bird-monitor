@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -1366,4 +1367,30 @@ Prefs prefs = new Prefs(context);
         String deviceNameFromPrefs = prefs.getDeviceName();
         return groupNameFromPrefs != null && deviceNameFromPrefs != null;
     }
+
+    public static boolean haveAllPermissions(Context context, String permissions[]) {
+
+        //String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION};
+
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context,
+                    permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                return false;
+
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean wasGrantedPermission(int[] grantResults){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
@@ -25,17 +27,16 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import nz.org.cacophony.birdmonitor.R;
-
 public class GPSFragment extends Fragment {
 
     private static final String TAG = "GPSFragment";
-
 
     private TextView tvMessages;
     private TextView tvSearching;
     private TextView latitudeDisplay;
     private TextView longitudeDisplay;
+
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class GPSFragment extends Fragment {
             IntentFilter iffRoot = new IntentFilter("ROOT");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNoticeRoot, iffRoot);
 
+            checkPermissions();
+
             updateGpsDisplay(getActivity().getApplicationContext());
 
         } else {
@@ -83,10 +86,9 @@ public class GPSFragment extends Fragment {
     }
 
     private void updateGPSLocationButtonPressed() {
-
         // First check to see if Location service is available
         // https://stackoverflow.com/questions/25175522/how-to-enable-location-access-programmatically-in-android
-        if (!canGetLocation()){
+        if (!canGetLocation()) {
             // Display dialog
             displayMessage();
             return;
@@ -124,7 +126,7 @@ public class GPSFragment extends Fragment {
                         } else {
                             String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                              ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
 
                             tvSearching.setVisibility(View.GONE);
                         }
@@ -201,7 +203,7 @@ public class GPSFragment extends Fragment {
 
         if (lm == null)
 
-            lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+            lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         // exceptions will be thrown if provider is not permitted.
         try {
@@ -210,12 +212,10 @@ public class GPSFragment extends Fragment {
 
         }
 
-
-
         return gps_enabled;
     }
 
-    private void displayMessage(){
+    private void displayMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Add the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -245,6 +245,17 @@ public class GPSFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
+    }
+
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
 }

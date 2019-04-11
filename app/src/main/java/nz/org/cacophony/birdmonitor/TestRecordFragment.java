@@ -1,10 +1,12 @@
 package nz.org.cacophony.birdmonitor;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
@@ -18,8 +20,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
@@ -29,6 +29,9 @@ public class TestRecordFragment extends Fragment {
     private Button btnRecordNow;
     private TextView tvTitleMessage;
     private TextView tvMessages;
+    private TextView tvServerLink;
+
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class TestRecordFragment extends Fragment {
         setUserVisibleHint(false);
         tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
         tvMessages = view.findViewById(R.id.tvMessages);
+        tvServerLink = view.findViewById(R.id.tvServerLink);
 
         Button btnNext = view.findViewById(R.id.btnFinished);
         btnNext.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +52,7 @@ public class TestRecordFragment extends Fragment {
             }
         });
 
-        btnRecordNow =  view.findViewById(R.id.btnRecordNow);
+        btnRecordNow = view.findViewById(R.id.btnRecordNow);
         btnRecordNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,13 +86,14 @@ public class TestRecordFragment extends Fragment {
         if (visible) {
             IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+            checkPermissions();
             displayOrHideGUIObjects();
         } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
 
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
 
         if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
@@ -102,7 +107,10 @@ public class TestRecordFragment extends Fragment {
     }
 
     public void recordNowButtonPressed() {
+        recordNow();
+    }
 
+    public void recordNow() {
         btnRecordNow.setEnabled(false);
 
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
@@ -161,6 +169,7 @@ public class TestRecordFragment extends Fragment {
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
+                        tvServerLink.setVisibility(View.VISIBLE);
                         tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
@@ -176,5 +185,19 @@ public class TestRecordFragment extends Fragment {
 
         }
     };
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
+    }
+
+    private void checkPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+    }
 
 }
