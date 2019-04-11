@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +36,9 @@ public class PermissionsHelper {
         for (int i = 0; i < grantResults.length; i++) {
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                 String deniedPermission = permissions[i];
-                try {
-                    // Each permission seems to start with 'android.permission.' so have removed these parts to make message nicer
-                    String[] parts = deniedPermission.split("\\.");
-                    deniedPermission = parts[parts.length - 1];
-                } catch (Exception ex) {
-                    Log.e(TAG, ex.getLocalizedMessage());
-                }
+                // Each permission seems to start with 'android.permission.' so have removed these parts to make message nicer
+                String[] parts = deniedPermission.split("\\.");
+                deniedPermission = parts[parts.length - 1];
                 deniedPermissions.add(deniedPermission);
             }
         }
@@ -62,7 +57,7 @@ public class PermissionsHelper {
         }
     }
 
-    AlertDialog createMessageDialog(Activity activity, StringBuilder message){
+    AlertDialog createMessageDialog(Activity activity, StringBuilder message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message)//
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() //https://stackoverflow.com/questions/11585099/alertdialog-show-new-alertdialog-builderthis-is-undefined
