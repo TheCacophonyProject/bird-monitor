@@ -188,6 +188,21 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             sendBroadcast(myIntent);
             recording = true;
 
+            // A CountDownTimer is used for display purpose only - the actual duration of the
+            // recording is controlled by Thread in RecordAndUpload (I couldn't see an easy
+            // way of communicating between the two places.
+            // However, if the user has selected to play a warning sound before the recording
+            // starts, RecordAndUpload sleeps for 2 seconds before the recording starts and the
+            // CountDownTimer is not in sync.            //
+            // Putting a sleep on the GUI is not recommended/didn't work so I just added the 2
+            // seconds to the CountDownTimerer :-)
+
+
+            Prefs prefs = new Prefs(getApplicationContext());
+            if (prefs.getPlayWarningSound()){
+                durationInMilliSeconds += 2000;
+            }
+
             countDownTimer = new CountDownTimer(durationInMilliSeconds, 1000) {
 
                 public void onTick(long millisUntilFinished) {

@@ -1395,6 +1395,17 @@ Prefs prefs = new Prefs(context);
         }
     }
 
+    public static boolean isBirdCountRecording(String typeOfRecording){
+        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+            return true;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+            return true;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+            return true;
+        }
+        return false;
+    }
+
     public static long getRecordingDuration(Context context, String typeOfRecording){
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();

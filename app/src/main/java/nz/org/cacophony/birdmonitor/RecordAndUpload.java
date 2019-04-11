@@ -68,7 +68,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             return;
         } else {
 
-            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
+            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
 
             returnValue = "recorded successfully";
         }
@@ -121,7 +121,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
     }
 
-    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps) {
+    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
         recordIdlingResource.increment();
         isRecording = true;
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -278,25 +278,42 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 return;
             }
 
+            // The duration of the recording is controlled by sleeping this thread.
 
-            // Sleep for duration of recording.
+            // With the addition of the Bird Count feature, the ability to cancel the recording was
+            // added.  It was looking too difficult to communicate with this thread from the GUI
+            // so This was done, by continually checking if a flag in prefs had be raised.
+
+            // Just in case this checking affects the actual time of a recording, I only used this
+            // checking for the Bird Count recordings.
+
+            if (Util.isBirdCountRecording(typeOfRecording)) {
             // Sleep for duration of recording modified to check if that no request to stop has be given (say from Bird Count)
-            try {
-                long remainingRecordingTime = recordTimeSeconds * 1000;
-                while (remainingRecordingTime > 0 && !prefs.getCancelRecording()) {
-                    Thread.sleep(1000);
-                    remainingRecordingTime -= 1000;
+                try {
+                    long remainingRecordingTime = recordTimeSeconds * 1000;
+                    while (remainingRecordingTime > 0 && !prefs.getCancelRecording()) {
+                        Thread.sleep(1000);
+                        remainingRecordingTime -= 1000;
+                    }
+
+                    prefs.setCancelRecording(false);
+
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Failed sleeping in recording thread.");
+                    return;
                 }
+            } else {
+                // Sleep for duration of recording.
+                try {
 
-                prefs.setCancelRecording(false);
+                    Thread.sleep(recordTimeSeconds * 1000);
 
-
-                // Thread.sleep(recordTimeSeconds * 1000);
-
-            } catch (InterruptedException e) {
-                Log.e(TAG, "Failed sleeping in recording thread.");
-                return;
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Failed sleeping in recording thread.");
+                    return;
+                }
             }
+
 
             // Stop recording.
             mRecorder.stop();

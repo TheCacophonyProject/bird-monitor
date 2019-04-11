@@ -18,13 +18,13 @@ import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
  * This class receives the intents that indicate that a recording is required to be made.  Before a
  * recording is initiated a number of 'house keeping' tasks/checks are made including creating the
  * next alarms and checking the phone has enough power to proceed.
- *
+ * <p>
  * Depending on how a recording request is made (ie from Android alarm or the 'Record Now' button)
  * either a service or thread is used to proceed to making the actual recording - this was imposed
  * by the Android OS.
  */
 
-public class StartRecordingReceiver extends BroadcastReceiver{
+public class StartRecordingReceiver extends BroadcastReceiver {
 
     private static final String TAG = StartRecordingReceiver.class.getName();
 
@@ -35,14 +35,14 @@ public class StartRecordingReceiver extends BroadcastReceiver{
         Prefs prefs = new Prefs(context);
 
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-        if (powerManager == null){
+        if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");
             return;
         }
-
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "Cacophonometer:StartRecordingReceiverWakelockTag");
-        wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        PowerManager.WakeLock wakeLock = null;
+//        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+//                "Cacophonometer:StartRecordingReceiverWakelockTag");
+//        wakeLock.acquire(10*60*1000L /*10 minutes*/);
         try {
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
@@ -58,36 +58,47 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
-            if (bundle == null){
+            if (bundle == null) {
                 Log.e(TAG, "bundle is null");
                 return;
             }
             final String alarmIntentType = bundle.getString("type");
-            final String duration ;
+            final String duration;
 
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 return;
             }
 
+            // A wake lock stops the Android OS trying to save power by stopping a process.
+            // A 10 minute wait lock has been working well, but with the addition of the
+            // Bird Count feature with a 10 and 15 minute duration, I've increased the duration of
+            // the wake locks.
+            //
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "Cacophonometer:StartRecordingReceiverWakelockTag");
+
+            long wakeLockDuration = 10 * 60 * 1000L; /*10 minutes*/
+
             boolean recordButtonWasPressed = false;
 
-            if (alarmIntentType.equalsIgnoreCase("recordNowButton")){
+            if (alarmIntentType.equalsIgnoreCase("recordNowButton")) {
                 recordButtonWasPressed = true;
-            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton5")) {
+            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton5")) {
                 recordButtonWasPressed = true;
-            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton10")) {
+            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton10")) {
                 recordButtonWasPressed = true;
-            }else if (alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
+                wakeLockDuration = 12 * 60 * 1000L; // 10 minutes for recording plus margin of error/uploading
+            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
                 recordButtonWasPressed = true;
+                wakeLockDuration = 17 * 60 * 1000L; // 15 minutes for recording plus margin of error/uploading
             }
 
+            wakeLock.acquire(wakeLockDuration);
 
 
-
-
-            if (prefs.getIsDisabled() && !recordButtonWasPressed){ //
-                 jsonObjectMessageToBroadcast = new JSONObject();
+            if (prefs.getIsDisabled() && !recordButtonWasPressed) { //
+                jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
                 Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
@@ -99,7 +110,7 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
                 // Need to enable record button
 
-                 jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
@@ -139,29 +150,29 @@ public class StartRecordingReceiver extends BroadcastReceiver{
 
 
             if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-                if (prefs.getIsDisableDawnDuskRecordings()){
+                if (prefs.getIsDisableDawnDuskRecordings()) {
                     return; // exit onReceive method
                 }
 
-                    }
+            }
 
             // need to determine the source of the intent ie Main UI or boot receiver
 
-             if (alarmIntentType.equalsIgnoreCase("recordNowButton") || alarmIntentType.equalsIgnoreCase("birdCountButton5") || alarmIntentType.equalsIgnoreCase("birdCountButton10") || alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
-                 try {
-                     // Start recording in new thread.
+            if (alarmIntentType.equalsIgnoreCase("recordNowButton") || alarmIntentType.equalsIgnoreCase("birdCountButton5") || alarmIntentType.equalsIgnoreCase("birdCountButton10") || alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
+                try {
+                    // Start recording in new thread.
 
-                     Thread thread = new Thread() {
-                         @Override
-                         public void run() {
-                             MainThread mainThread = new MainThread(context, alarmIntentType);
-                             mainThread.run();
-                         }
-                     };
-                     thread.start();
-                 } catch (Exception e) {
-                     e.printStackTrace();
-                 }
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            MainThread mainThread = new MainThread(context, alarmIntentType);
+                            mainThread.run();
+                        }
+                    };
+                    thread.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
             } else { // intent came from boot receiver or app (not test record, or bird count )
@@ -177,35 +188,36 @@ public class StartRecordingReceiver extends BroadcastReceiver{
                 context.startService(mainServiceIntent);
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
 
-        }finally{
+        } finally {
             // https://stackoverflow.com/questions/12140844/java-lang-runtimeexception-wakelock-under-locked-c2dm-lib
-            if (wakeLock.isHeld())
-                wakeLock.release();
-
+            if (wakeLock != null) {
+                if (wakeLock.isHeld())
+                    wakeLock.release();
+            }
         }
 
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs){
+    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
         // The battery level required to continue depends on the type of alarm
 
-        if ((alarmType.equalsIgnoreCase("recordNowButton")) || (alarmType.equalsIgnoreCase("birdCountButton") )){
+        if ((alarmType.equalsIgnoreCase("recordNowButton")) || (alarmType.equalsIgnoreCase("birdCountButton"))) {
             // record now button was pressed
             return true;
         }
 
-        if (prefs.getIgnoreLowBattery()){
+        if (prefs.getIgnoreLowBattery()) {
             return true;
         }
 
-        if (alarmType.equalsIgnoreCase("repeating")){
+        if (alarmType.equalsIgnoreCase("repeating")) {
 
             return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
-        }else { // must be a dawn or dusk alarm
+        } else { // must be a dawn or dusk alarm
 
             return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
         }
