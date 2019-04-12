@@ -42,12 +42,9 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
     static void doRecord(Context context, String typeOfRecording) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
-        String returnValue;
 
         if (typeOfRecording == null) {
             Log.e(TAG, "typeOfRecording is null");
-
-            returnValue = "error";
             return;
         }
 
@@ -67,16 +64,13 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             return;
         } else {
-
             makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
-
-            returnValue = "recorded successfully";
         }
 
 
 // Checked that it has a webToken before trying to upload
         if (prefs.getToken() == null) {
-            returnValue = "not logged in";
+
             jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
@@ -101,7 +95,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     if (uploadedFilesSuccessfully) {
                         prefs.setDateTimeLastUpload(now);
                     } else {
-                        returnValue = "recorded BUT did not upload";
+
                         Log.e(TAG, "Files failed to upload");
                         jsonObjectMessageToBroadcast = new JSONObject();
                         try {
@@ -115,10 +109,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
                 }
             }
-
         }
-
-
     }
 
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
@@ -165,7 +156,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             } else {
                 fileName += " apModeOff";
             }
-
 
             String batteryStatus = Util.getBatteryStatus(context);
             fileName += " " + batteryStatus;
@@ -288,7 +278,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             // checking for the Bird Count recordings.
 
             if (Util.isBirdCountRecording(typeOfRecording)) {
-            // Sleep for duration of recording modified to check if that no request to stop has be given (say from Bird Count)
+                // Sleep for duration of recording modified to check if that no request to stop has be given (say from Bird Count)
                 try {
                     long remainingRecordingTime = recordTimeSeconds * 1000;
                     while (remainingRecordingTime > 0 && !prefs.getCancelRecording()) {
@@ -302,18 +292,15 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     Log.e(TAG, "Failed sleeping in recording thread.");
                     return;
                 }
-            } else {
+            } else { // Is a non Bird Count recording
                 // Sleep for duration of recording.
                 try {
-
                     Thread.sleep(recordTimeSeconds * 1000);
-
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Failed sleeping in recording thread.");
                     return;
                 }
             }
-
 
             // Stop recording.
             mRecorder.stop();
@@ -321,7 +308,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
             mRecorder.reset();
             mRecorder.release();
-
 
             if (playWarningBeeps) {
                 ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
@@ -389,7 +375,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 // check to see if webToken needs updating
                 boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
-
                 if ((prefs.getToken() == null) || !tokenIsCurrent) {
 
                     if (!Server.login(context)) {
@@ -398,7 +383,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     }
                 }
 
-
                 for (File aFile : recordingFiles) {
 
                     if (sendFile(context, aFile)) {
@@ -406,11 +390,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         boolean fileSuccessfullyDeleted = false;
                         try {
                             fileSuccessfullyDeleted = aFile.delete();
-
                         } catch (Exception ex) {
-
                             Log.e(TAG, ex.getLocalizedMessage());
-
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
@@ -464,7 +445,6 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             if (aFile.delete()) {
                 return false;
             }
-
         }
 
         String year = fileNameParts[0];

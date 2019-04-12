@@ -34,7 +34,6 @@ android {
         debug {
             applicationIdSuffix '.dev'
             debuggable true
-
         }
 
     }

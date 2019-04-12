@@ -36,7 +36,6 @@ public class ManageRecordingsFragment extends Fragment {
     private Button btnDeleteAllRecordings;
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
-
     private PermissionsHelper permissionsHelper;
 
     @Override
