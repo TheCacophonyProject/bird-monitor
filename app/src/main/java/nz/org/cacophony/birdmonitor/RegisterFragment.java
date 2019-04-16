@@ -23,8 +23,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
 
 public class RegisterFragment extends Fragment {
@@ -375,7 +373,7 @@ public class RegisterFragment extends Fragment {
         Thread registerThread = new Thread() {
             @Override
             public void run() {
-                Server.register(group, deviceName, context);
+                Server.registerDevice(group, deviceName, context);
             }
         };
         registerThread.start();
