@@ -46,43 +46,13 @@ public class GroupsFragment extends Fragment {
         lvGroups =  view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                try {
-                    // this line adds the data of your EditText and puts in your array
-                    String newGroup = etNewGroupInput.getText().toString();
-
-                    // Check a group was entered
-                    if (newGroup == null){
-                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name.");
-                        return;
-                    }
-                    // Check group name is at least 4 characters long
-                    if (newGroup.length() < 4){
-                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name of at least 4 characters.");
-                        return;
-                    }
-
-                    // Check if this group already exists
-
-                        if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Sorry, can NOT add that group as it already exists.");
-                        return;
-                    }
-                    ((SetupWizardActivity) getActivity()).setGroup(newGroup);
-                    tvMessages.setText("Adding group to server");
-                    Util.addGroupToServer(getActivity(), newGroup);
-                    adapter.add(newGroup);
-                    ((EditText) view.findViewById(R.id.etNewGroupInput)).setText("");
-
-
-                } catch (Exception ex) {
-                    Log.e(TAG, ex.getLocalizedMessage());
-                }
+            public void onClick(final View view) {
+                addGroup();
             }
         });
 
@@ -100,6 +70,39 @@ public class GroupsFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void addGroup() {
+        try {
+            // this line adds the data of your EditText and puts in your array
+            final String newGroup = etNewGroupInput.getText().toString();
+
+            // Check group name is at least 4 characters long
+            if (newGroup.length() < 4){
+                ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name of at least 4 characters.");
+                return;
+            }
+
+            // Check if this group already exists
+
+            if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
+                ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Sorry, can NOT add that group as it already exists.");
+                return;
+            }
+            ((SetupWizardActivity) getActivity()).setGroup(newGroup);
+            tvMessages.setText("Adding group to server");
+            Util.addGroupToServer(getActivity(), newGroup, new Runnable() {
+                @Override
+                public void run() {
+                    // Only add the group to the UI on success
+                    adapter.add(newGroup);
+                    etNewGroupInput.setText("");
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
     }
 
     @Override

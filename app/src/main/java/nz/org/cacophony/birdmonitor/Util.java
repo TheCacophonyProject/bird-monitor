@@ -61,7 +61,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-import nz.org.cacophony.birdmonitor.R;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -1313,12 +1312,15 @@ Prefs prefs = new Prefs(context);
         thread.start();
     }
 
-    static void addGroupToServer(final Context context, final String groupName){
+    static void addGroupToServer(final Context context, final String groupName, final Runnable onSuccess){
         Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
-                   Server.addGroupToServer(context, groupName);
+                    if (Server.addGroupToServer(context, groupName)) {
+                        onSuccess.run();
+                    }
+
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getLocalizedMessage());
