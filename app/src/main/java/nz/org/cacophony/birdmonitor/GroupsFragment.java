@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
+import java.util.Comparator;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
@@ -48,6 +48,7 @@ public class GroupsFragment extends Fragment {
 
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
+        sortGroups();
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,18 @@ public class GroupsFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void sortGroups() {
+        adapter.setNotifyOnChange(false);
+        adapter.sort(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        adapter.setNotifyOnChange(true);
+        adapter.notifyDataSetChanged();
     }
 
     private void addGroup() {
@@ -96,6 +109,7 @@ public class GroupsFragment extends Fragment {
                 public void run() {
                     // Only add the group to the UI on success
                     adapter.add(newGroup);
+                    sortGroups();
                     etNewGroupInput.setText("");
                 }
             });
