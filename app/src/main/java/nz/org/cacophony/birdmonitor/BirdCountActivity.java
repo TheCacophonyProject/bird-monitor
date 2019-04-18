@@ -160,7 +160,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         displayOrHideGUIObjects();
     }
 
-        public void recordNow() {
+    public void recordNow() {
 
 
         btnRecordNow.setEnabled(false);
@@ -199,7 +199,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
 
             Prefs prefs = new Prefs(getApplicationContext());
-            if (prefs.getPlayWarningSound()){
+            if (prefs.getPlayWarningSound()) {
                 durationInMilliSeconds += 2000;
             }
 

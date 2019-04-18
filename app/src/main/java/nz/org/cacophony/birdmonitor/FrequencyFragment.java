@@ -18,7 +18,6 @@ public class FrequencyFragment extends Fragment {
 
     private Switch swRecordMoreOften;
     private Switch swUseFrequentUploads;
-    private Switch swPeriodicallyUpdateGPS;
     private TextView tvMessages;
 
     @Override
@@ -31,7 +30,6 @@ public class FrequencyFragment extends Fragment {
         tvMessages = (TextView) view.findViewById(R.id.tvMessages);
         swRecordMoreOften = (Switch) view.findViewById(R.id.swRecordMoreOften);
         swUseFrequentUploads = (Switch) view.findViewById(R.id.swUseFrequentUploads);
-        swPeriodicallyUpdateGPS = (Switch) view.findViewById(R.id.swPeriodicallyUpdateGPS);
 
         displayOrHideGUIObjects();
 
@@ -48,15 +46,6 @@ public class FrequencyFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Util.setUseFrequentUploads(getActivity().getApplicationContext(), swUseFrequentUploads.isChecked());
-                displayOrHideGUIObjects();
-            }
-        });
-
-
-        swPeriodicallyUpdateGPS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Util.setPeriodicallyUpdateGPS(getActivity().getApplicationContext(), swPeriodicallyUpdateGPS.isChecked());
                 displayOrHideGUIObjects();
             }
         });
@@ -95,13 +84,6 @@ public class FrequencyFragment extends Fragment {
             swUseFrequentUploads.setText("Upload after every recording is OFF");
         }
 
-
-       swPeriodicallyUpdateGPS.setChecked(prefs.getPeriodicallyUpdateGPS());
-        if (prefs.getPeriodicallyUpdateGPS()){
-            swPeriodicallyUpdateGPS.setText("Periodically update GPS is ON");
-        }else{
-            swPeriodicallyUpdateGPS.setText("Periodically update GPS is OFF");
-        }
     }
 
 }

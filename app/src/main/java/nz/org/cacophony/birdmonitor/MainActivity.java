@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createTheNextSingleStandardAlarm(getApplicationContext());
         DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
         Util.createCreateAlarms(getApplicationContext());
-        Util.setUpLocationUpdateAlarm(getApplicationContext());
 
 
 // Open the Setup wizard if the app does not yet have device name

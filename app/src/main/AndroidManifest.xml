@@ -41,10 +41,6 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".StartRecordingReceiver" />
-        <receiver
-            android:name=".LocationReceiver"
-            android:enabled="true"
-            android:exported="false" />
 
         <service android:name=".MainService" />
 

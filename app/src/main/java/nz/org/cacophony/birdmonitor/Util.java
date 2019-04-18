@@ -865,57 +865,6 @@ Prefs prefs = new Prefs(context);
         setTheNextSingleStandardAlarmUsingDelay(context, delay);
     }
 
-    public static void setUpLocationUpdateAlarm(Context context){
-    Prefs prefs = new Prefs(context);
-        if (prefs.getPeriodicallyUpdateGPS()){
-                    createLocationUpdateAlarm(context);
-                }else{
-                    deleteLocationUpdateAlarm(context);
-                }
-    }
-
-    public static void createLocationUpdateAlarm(Context context){
-
-        // When in walking mode, also set up alarm for periodically updating location
-        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
-
-        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
-
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null){
-            Log.e(TAG, "alarmManager is null");
-            return;
-        }
-
-        Prefs prefs = new Prefs(context);
-        long timeBetweenVeryFrequentRecordingsSeconds = (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
-
-        long delayBetweenLocationUpdates = 1000 * timeBetweenVeryFrequentRecordingsSeconds;
-        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-        long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-            // https://developer.android.com/reference/android/app/AlarmManager.html
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
-            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }
-    }
-
-    private static void deleteLocationUpdateAlarm(Context context){
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null){
-            Log.e(TAG, "alarmManager is null");
-            return;
-        }
-        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
-        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
-
-        alarmManager.cancel(pendingLocationUpdateIntent);
-    }
-
     public static void updateGPSLocation(Context context){
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null){
@@ -1037,33 +986,6 @@ Prefs prefs = new Prefs(context);
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
         createTheNextSingleStandardAlarm(context);
-    }
-
-    static void setPeriodicallyUpdateGPS(Context context, boolean periodicallyUpdateGPS){
-        Prefs prefs = new Prefs(context);
-        prefs.setPeriodicallyUpdateGPS(periodicallyUpdateGPS);
-        createLocationUpdateAlarm(context);
-    }
-
-    static void setWalkingMode(Context context, boolean walkingMode){
-        Prefs prefs = new Prefs(context);
-        if (walkingMode){
-            prefs.setInternetConnectionMode("offline");
-            prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
-        }else{
-            prefs.setInternetConnectionMode("normal");
-            prefs.setIsDisabled(!walkingMode); // I thought it best to disable recording when user exits walking mode, but don't enable just because they turn on walking mode
-        }
-
-        prefs.setUseFrequentRecordings(walkingMode);
-        prefs.setIgnoreLowBattery(walkingMode);
-        prefs.setPlayWarningSound(walkingMode);
-        prefs.setPeriodicallyUpdateGPS(walkingMode);
-        prefs.setIsDisableDawnDuskRecordings(walkingMode);
-
-        // need to reset alarms as their frequency may have changed.
-        Util.createTheNextSingleStandardAlarm(context);
-        Util.setUpLocationUpdateAlarm(context);
     }
 
     static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings){

@@ -44,14 +44,13 @@
             android:background="?android:attr/listDivider" />
 
         <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/rbFiveMinute"
+            android:id="@+id/rbNormal"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Normal"
-            />
+            android:text="Normal" />
 
         <View
             android:id="@+id/divider9"
@@ -61,13 +60,13 @@
             android:background="?android:attr/listDivider" />
 
         <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/rbTenMinute"
+            android:id="@+id/rbOnline"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Online"/>
+            android:text="Online" />
 
         <View
             android:id="@+id/divider4"
@@ -77,13 +76,13 @@
             android:background="?android:attr/listDivider" />
 
         <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/FifteenMinute"
+            android:id="@+id/rbOffline"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="Offline"/>
+            android:text="Offline" />
 
         <View
             android:id="@+id/divider5"

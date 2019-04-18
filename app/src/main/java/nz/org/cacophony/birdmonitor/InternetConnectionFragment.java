@@ -27,9 +27,9 @@ public class InternetConnectionFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbFiveMinute);
-        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbTenMinute);
-        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.FifteenMinute);
+        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbNormal);
+        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbOnline);
+        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.rbOffline);
 
         displayOrHideGUIObjects();
 
