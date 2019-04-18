@@ -41,7 +41,7 @@ public class SetupWizardActivity extends AppCompatActivity {
         setupViewPager(mViewPager);
 
         final Prefs prefs = new Prefs(this.getApplicationContext());
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
         }
     }
@@ -69,34 +69,34 @@ public class SetupWizardActivity extends AppCompatActivity {
         }
     }
 
-    public void nextPageView(){
+    public void nextPageView() {
         int currentItem = mViewPager.getCurrentItem();
 
 
         currentItem++;
-        if (currentItem < mViewPager.getAdapter().getCount()){
+        if (currentItem < mViewPager.getAdapter().getCount()) {
             mViewPager.setCurrentItem(currentItem);
             // Set the toolbar title
 
-        }else{
+        } else {
             finish();
         }
     }
 
-    public void setNumberOfPagesForNotSigned(){
-            mSectionsStatePagerAdapter.setNumberOfPages(3);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
+    public void setNumberOfPagesForNotSigned() {
+        mSectionsStatePagerAdapter.setNumberOfPages(3);
+        mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
-    public void setNumberOfPagesForSignedInNotRegistered(){
+    public void setNumberOfPagesForSignedInNotRegistered() {
         mSectionsStatePagerAdapter.setNumberOfPages(5);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
-    public void setNumberOfPagesForRegisterd(){
-            mSectionsStatePagerAdapter.setNumberOfPages(7);
-            mSectionsStatePagerAdapter.notifyDataSetChanged();
-     }
+    public void setNumberOfPagesForRegisterd() {
+        mSectionsStatePagerAdapter.setNumberOfPages(7);
+        mSectionsStatePagerAdapter.notifyDataSetChanged();
+    }
 
     private void setupViewPager(ViewPager viewPager) {
 
@@ -129,8 +129,8 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
     public String getGroup() {
-        if (group != null){
-            if (group.equals("")){
+        if (group != null) {
+            if (group.equals("")) {
                 group = null;
             }
         }
@@ -138,18 +138,19 @@ public class SetupWizardActivity extends AppCompatActivity {
     }
 
     public void setGroup(String group) {
-        if (group != null){
-            if (group.equals("")){
+        if (group != null) {
+            if (group.equals("")) {
                 group = null;
             }
         }
         this.group = group;
     }
 
-    public void displayOKDialogMessage(String title, String messageToDisplay){
+    public void displayOKDialogMessage(String title, String messageToDisplay) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
-        builder.setPositiveButton("OK", (dialog, id) -> {});
+        builder.setPositiveButton("OK", (dialog, id) -> {
+        });
 
         builder.setMessage(messageToDisplay)
                 .setTitle(title);
@@ -158,10 +159,10 @@ public class SetupWizardActivity extends AppCompatActivity {
 
         dialog.setOnShowListener(dialogInterface -> {
 
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
 
             //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
             TextView textView = dialog.findViewById(android.R.id.message);

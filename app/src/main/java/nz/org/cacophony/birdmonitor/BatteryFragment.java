@@ -17,7 +17,7 @@ public class BatteryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_battery, container, false);
+        View view = inflater.inflate(R.layout.fragment_battery, container, false);
 
         setUserVisibleHint(false);
 
@@ -37,7 +37,7 @@ public class BatteryFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -48,9 +48,9 @@ public class BatteryFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swIgnoreLowBattery.setChecked(prefs.getIgnoreLowBattery());
-        if (prefs.getIgnoreLowBattery()){
+        if (prefs.getIgnoreLowBattery()) {
             swIgnoreLowBattery.setText("Record with low battery is ON");
-        }else{
+        } else {
             swIgnoreLowBattery.setText("Record with low battery is OFF");
         }
     }

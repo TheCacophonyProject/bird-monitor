@@ -19,7 +19,7 @@ public class SoundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_sound, container, false);
+        View view = inflater.inflate(R.layout.fragment_sound, container, false);
 
         setUserVisibleHint(false);
         tvMessages = view.findViewById(R.id.tvMessages);
@@ -39,7 +39,7 @@ public class SoundFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -50,9 +50,9 @@ public class SoundFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swPlayWarningSound.setChecked(prefs.getPlayWarningSound());
-        if (prefs.getPlayWarningSound()){
+        if (prefs.getPlayWarningSound()) {
             swPlayWarningSound.setText("Warning sound is ON");
-        }else{
+        } else {
             swPlayWarningSound.setText("Warning sound is OFF");
         }
     }

@@ -20,7 +20,7 @@ public class FrequencyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_frequency, container, false);
+        View view = inflater.inflate(R.layout.fragment_frequency, container, false);
 
         setUserVisibleHint(false);
 
@@ -47,7 +47,7 @@ public class FrequencyFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -59,19 +59,18 @@ public class FrequencyFragment extends Fragment {
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
         swRecordMoreOften.setChecked(prefs.getUseFrequentRecordings());
-        if (prefs.getUseFrequentRecordings()){
+        if (prefs.getUseFrequentRecordings()) {
             swRecordMoreOften.setText("Record more often is ON");
-        }else{
+        } else {
             swRecordMoreOften.setText("Record more often is OFF");
         }
 
 
-
         swUseFrequentUploads.setChecked(prefs.getUseFrequentUploads());
 
-        if (prefs.getUseFrequentUploads()){
+        if (prefs.getUseFrequentUploads()) {
             swUseFrequentUploads.setText("Upload after every recording is ON");
-        }else{
+        } else {
             swUseFrequentUploads.setText("Upload after every recording is OFF");
         }
 

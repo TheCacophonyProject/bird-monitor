@@ -95,7 +95,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             wakeLock.acquire(wakeLockDuration);
 
 
-            if (prefs.getIsDisabled() && !recordButtonWasPressed) { //
+            if (prefs.getIsDisabled() && !recordButtonWasPressed) {
                 jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
@@ -191,9 +191,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
         } finally {
             // https://stackoverflow.com/questions/12140844/java-lang-runtimeexception-wakelock-under-locked-c2dm-lib
-            if (wakeLock != null) {
-                if (wakeLock.isHeld())
-                    wakeLock.release();
+            if (wakeLock != null && wakeLock.isHeld()) {
+                wakeLock.release();
             }
         }
 

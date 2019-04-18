@@ -29,7 +29,7 @@ public class DisableActivity extends AppCompatActivity {
         switchDisable = findViewById(R.id.swDisable);
 
         switchDisable.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(!buttonView.isShown()){
+            if (!buttonView.isShown()) {
                 return;
             }
             prefs.setIsDisabled(!isChecked);
@@ -38,6 +38,7 @@ public class DisableActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_help, menu);
@@ -51,24 +52,20 @@ public class DisableActivity extends AppCompatActivity {
         displayOrHideGUIObjects();
 
 
-
-
-
     }
 
-    void displayOrHideGUIObjects(){
+    void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getApplicationContext());
         boolean isDisabled = prefs.getIsDisabled();
 
         switchDisable.setChecked(!isDisabled);
 
-        if (isDisabled){
+        if (isDisabled) {
             switchDisable.setText("Recording is OFF");
-        }else{
+        } else {
             switchDisable.setText("Recording is ON");
         }
     }
-
 
 
     public void finished(@SuppressWarnings("UnusedParameters") View v) {

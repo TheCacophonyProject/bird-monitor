@@ -11,13 +11,13 @@ import java.util.ArrayList;
  */
 public class ExecuteAsRootBaseTim extends ExecuteAsRootBase {
     private final ArrayList<String> commands = new ArrayList<>();
+
     @Override
     protected ArrayList<String> getCommandsToExecute() {
-
         return commands;
     }
 
-    void addCommand(String command){
+    void addCommand(String command) {
         commands.add(command);
     }
 }

@@ -7,9 +7,9 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -30,17 +30,17 @@ class SignInUser {
         tearDownForSignInUser(mActivityTestRule);
     }
 
-    private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForSignInUser(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         Context targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setUserSignedIn(false);
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
 
             onView(withId(R.id.btnSetup)).perform(click());
@@ -58,7 +58,7 @@ class SignInUser {
     }
 
 
-    private static void signIn(){
+    private static void signIn() {
 
         HelperCode.signInUserTimhot();
 
@@ -69,7 +69,7 @@ class SignInUser {
 
     }
 
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
 
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
 

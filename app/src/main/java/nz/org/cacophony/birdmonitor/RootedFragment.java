@@ -21,7 +21,7 @@ public class RootedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_rooted, container, false);
+        View view = inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
         tvMessages = view.findViewById(R.id.tvMessages);
@@ -30,7 +30,7 @@ public class RootedFragment extends Fragment {
 
         displayOrHideGUIObjects();
 
-            btnFinished.setOnClickListener(v -> ((AdvancedWizardActivity)getActivity()).nextPageView());
+        btnFinished.setOnClickListener(v -> ((AdvancedWizardActivity) getActivity()).nextPageView());
 
         swRooted.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Prefs prefs = new Prefs(getActivity());
@@ -44,7 +44,7 @@ public class RootedFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -56,15 +56,15 @@ public class RootedFragment extends Fragment {
         Prefs prefs = new Prefs(getActivity());
         swRooted.setChecked(prefs.getHasRootAccess());
 
-        if (prefs.getHasRootAccess()){
+        if (prefs.getHasRootAccess()) {
             swRooted.setText("YES");
-        }else{
+        } else {
             swRooted.setText("NO");
         }
 
-        if (prefs.getSettingsForTestServerEnabled()){
+        if (prefs.getSettingsForTestServerEnabled()) {
             btnFinished.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             btnFinished.setVisibility(View.VISIBLE);
         }
     }

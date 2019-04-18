@@ -16,20 +16,17 @@ import java.util.ArrayList;
  * The app is designed to run on rooted phones so that it can toggle airplane/flight mode on and off
  * (to save power).  To be able to do this it needs to be able to run root commands - this class
  * can be used to determine if root commands can run and also to run them.
- *
+ * <p>
  * The class was copied from http://muzikant-android.blogspot.com/2011/02/how-to-get-root-access-and-execute.html
  * and extended by ExecuteAsRootBase to allow specific command e.g. enable flight mode to run.
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-abstract class ExecuteAsRootBase
-{
-    public static boolean canRunRootCommands()
-    {
+abstract class ExecuteAsRootBase {
+    public static boolean canRunRootCommands() {
         boolean returnValue = false;
         Process suProcess;
 
-        try
-        {
+        try {
             suProcess = Runtime.getRuntime().exec("su");
 
             DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
@@ -38,42 +35,33 @@ abstract class ExecuteAsRootBase
             BufferedReader osRes = new BufferedReader(new InputStreamReader(suProcess.getInputStream()));
 
             //noinspection ConstantConditions
-            if (null != osRes)
-            {
+            if (null != osRes) {
                 // Getting the id of the current user to check if this is root
                 os.writeBytes("id\n");
                 os.flush();
 
                 String currUid = osRes.readLine();
                 @SuppressWarnings("UnusedAssignment") boolean exitSu = false;
-                if (null == currUid)
-                {
+                if (null == currUid) {
                     returnValue = false;
                     exitSu = false;
                     Log.d("ROOT", "Can't get root access or denied by user");
-                }
-                else if (currUid.contains("uid=0"))
-                {
+                } else if (currUid.contains("uid=0")) {
                     returnValue = true;
                     exitSu = true;
                     Log.d("ROOT", "Root access granted");
-                }
-                else
-                {
+                } else {
                     returnValue = false;
                     exitSu = true;
                     Log.d("ROOT", "Root access rejected: " + currUid);
                 }
 
-                if (exitSu)
-                {
+                if (exitSu) {
                     os.writeBytes("exit\n");
                     os.flush();
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // Can't get root !
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
@@ -84,22 +72,18 @@ abstract class ExecuteAsRootBase
         return returnValue;
     }
 
-    public final boolean execute(Context context)
-    {
+    public final boolean execute(Context context) {
         boolean returnValue = false;
 
-        try
-        {
+        try {
             ArrayList<String> commands = getCommandsToExecute();
-            if (null != commands && commands.size() > 0)
-            {
+            if (null != commands && commands.size() > 0) {
                 Process suProcess = Runtime.getRuntime().exec("su");
 
                 DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
 
                 // Execute commands that require root access
-                for (String currCommand : commands)
-                {
+                for (String currCommand : commands) {
                     os.writeBytes(currCommand + "\n");
                     os.flush();
                 }
@@ -107,23 +91,17 @@ abstract class ExecuteAsRootBase
                 os.writeBytes("exit\n");
                 os.flush();
 
-                try
-                {
+                try {
                     int suProcessRetval = suProcess.waitFor();
                     //noinspection RedundantIfStatement
-                    if (255 != suProcessRetval)
-                    {
+                    if (255 != suProcessRetval) {
                         // Root access granted
                         returnValue = true;
-                    }
-                    else
-                    {
+                    } else {
                         // Root access denied
                         returnValue = false;
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Log.e("ROOT", "Error executing root action", ex);
                     String messageToDisplay = "";
                     JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -132,9 +110,7 @@ abstract class ExecuteAsRootBase
                     Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
                 }
             }
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Log.w("ROOT", "Can't get root access", ex);
 
             String messageToDisplay = "";
@@ -146,9 +122,7 @@ abstract class ExecuteAsRootBase
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-        }
-        catch (SecurityException ex)
-        {
+        } catch (SecurityException ex) {
             Log.w("ROOT", "Can't get root access", ex);
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -159,9 +133,7 @@ abstract class ExecuteAsRootBase
                 e.printStackTrace();
             }
             Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Log.w("ROOT", "Error executing internal operation", ex);
             String messageToDisplay = "";
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -176,5 +148,6 @@ abstract class ExecuteAsRootBase
 
         return returnValue;
     }
+
     protected abstract ArrayList<String> getCommandsToExecute();
 }

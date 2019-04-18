@@ -1,4 +1,3 @@
-
 package nz.org.cacophony.birdmonitor;
 
 

@@ -22,15 +22,15 @@ public class AudioSourceSettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_audio_source_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_audio_source_settings, container, false);
 
         setUserVisibleHint(false);
         rbCAMCORDER = view.findViewById(R.id.rbCAMCORDER);
-        rbDEFAULT =  view.findViewById(R.id.rbDEFAULT);
-        rbMIC =  view.findViewById(R.id.rbMIC);
-        rbUNPROCESSED =  view.findViewById(R.id.rbUNPROCESSED);
-        rbVOICE_COMMUNICATION =  view.findViewById(R.id.rbVOICE_COMMUNICATION);
-        rbVOICE_RECOGNITION =  view.findViewById(R.id.rbVOICE_RECOGNITION);
+        rbDEFAULT = view.findViewById(R.id.rbDEFAULT);
+        rbMIC = view.findViewById(R.id.rbMIC);
+        rbUNPROCESSED = view.findViewById(R.id.rbUNPROCESSED);
+        rbVOICE_COMMUNICATION = view.findViewById(R.id.rbVOICE_COMMUNICATION);
+        rbVOICE_RECOGNITION = view.findViewById(R.id.rbVOICE_RECOGNITION);
 
         displayOrHideGUIObjects();
 
@@ -73,7 +73,7 @@ public class AudioSourceSettingsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {

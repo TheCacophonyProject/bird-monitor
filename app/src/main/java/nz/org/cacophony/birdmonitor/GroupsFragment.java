@@ -34,12 +34,12 @@ public class GroupsFragment extends Fragment {
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_groups, container, false);
+        View view = inflater.inflate(R.layout.fragment_groups, container, false);
         setUserVisibleHint(false);
 
-        etNewGroupInput =  view.findViewById(R.id.etNewGroupInput);
-        btnCreateGroup =  view.findViewById(R.id.btnCreateGroup);
-        lvGroups =  view.findViewById(R.id.lvGroups);
+        etNewGroupInput = view.findViewById(R.id.etNewGroupInput);
+        btnCreateGroup = view.findViewById(R.id.btnCreateGroup);
+        lvGroups = view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
 
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
@@ -70,14 +70,13 @@ public class GroupsFragment extends Fragment {
             final String newGroup = etNewGroupInput.getText().toString();
 
             // Check group name is at least 4 characters long
-            if (newGroup.length() < 4){
+            if (newGroup.length() < 4) {
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name of at least 4 characters.");
                 return;
             }
 
             // Check if this group already exists
-
-            if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
+            if (Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)) {
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Sorry, can NOT add that group as it already exists.");
                 return;
             }
@@ -100,7 +99,7 @@ public class GroupsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -112,11 +111,10 @@ public class GroupsFragment extends Fragment {
             IntentFilter iff = new IntentFilter("SERVER_GROUPS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
-        }else{
+        } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
-
 
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -124,7 +122,7 @@ public class GroupsFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-           
+
             try {
 
                 if (getView() == null) {
@@ -155,25 +153,25 @@ public class GroupsFragment extends Fragment {
 
                         getGroupsIdlingResource.decrement();
 
-                    } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
+                    } else if (messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
                         getGroupsIdlingResource.decrement();
-                    }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
+                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
-                      adapter.clear();
+                        adapter.clear();
                         //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
                         getGroupsIdlingResource.decrement();
 
-                    }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                    } else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         getGroupsIdlingResource.decrement();
-                }
+                    }
 
                 }
 
@@ -183,9 +181,9 @@ public class GroupsFragment extends Fragment {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
                 try {
                     getGroupsIdlingResource.decrement();
-                }catch (Exception e){
-                        Log.e(TAG, e.getLocalizedMessage(), e);
-                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.getLocalizedMessage(), e);
+                }
             }
         }
     };

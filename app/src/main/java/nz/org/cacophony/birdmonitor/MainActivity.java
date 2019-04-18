@@ -17,10 +17,10 @@ import android.view.View;
 import android.widget.Button;
 
 
-public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
+public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
     // Register with idling counter
-   // https://developer.android.com/training/testing/espresso/idling-resource.html
-   // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
+    // https://developer.android.com/training/testing/espresso/idling-resource.html
+    // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setSettingsForTestServerEnabled(false);
 
-           prefs.setIsFirstTimeFalse();
+            prefs.setIsFirstTimeFalse();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
 
-        if (prefs.getSettingsForTestServerEnabled()){
+        if (prefs.getSettingsForTestServerEnabled()) {
             advancedButton.setText("Very Advanced");
         }
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     break;
             }
 
-        return true;
+            return true;
         });
 
         // Now create the alarms that will cause the recordings to happen
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
 // Open the Setup wizard if the app does not yet have device name
-       if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
@@ -148,11 +148,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Prefs prefs = new Prefs(this.getApplicationContext());
 
 
-        if (prefs.getIsDisabled()){
-            ((Button)findViewById(R.id.btnDisable)).setText("Enable Recording");
+        if (prefs.getIsDisabled()) {
+            ((Button) findViewById(R.id.btnDisable)).setText("Enable Recording");
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
-        }else{
-            ((Button)findViewById(R.id.btnDisable)).setText("Disable Recording");
+        } else {
+            ((Button) findViewById(R.id.btnDisable)).setText("Disable Recording");
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
         // listens for events broadcast from ?
@@ -161,8 +161,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
     }
-
-
 
 
     @SuppressWarnings("EmptyMethod")
@@ -207,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     }
 
 
-
 //    public void launchWalkingActivity(@SuppressWarnings("UnusedParameters") View v) {
 //        try {
 //            Intent intent = new Intent(this, WalkingActivity.class);
@@ -234,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
-
 
 
     public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {

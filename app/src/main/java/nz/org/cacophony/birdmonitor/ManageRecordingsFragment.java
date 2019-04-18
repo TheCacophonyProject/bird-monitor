@@ -146,12 +146,12 @@ public class ManageRecordingsFragment extends Fragment {
     public void deleteAllRecordingsButton() {
 
         // are you sure?
-        final AlertDialog dialog =  new AlertDialog.Builder(getActivity())
-            .setPositiveButton("Yes", (di, id) -> deleteAllRecordings())
-            .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
-            .setMessage("Are you sure you want to delete all the recordings on this phone?")
-            .setTitle("Delete ALL Recordings")
-            .create();
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Yes", (di, id) -> deleteAllRecordings())
+                .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
+                .setMessage("Are you sure you want to delete all the recordings on this phone?")
+                .setTitle("Delete ALL Recordings")
+                .create();
 
         dialog.setOnShowListener(dialogInterface -> {
             Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);

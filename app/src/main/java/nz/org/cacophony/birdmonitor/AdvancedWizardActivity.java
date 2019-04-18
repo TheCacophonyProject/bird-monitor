@@ -53,31 +53,30 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         }
     }
 
-    public void nextPageView(){
+    public void nextPageView() {
         int currentItem = mViewPager.getCurrentItem();
         currentItem++;
-        if (currentItem < mViewPager.getAdapter().getCount()){
+        if (currentItem < mViewPager.getAdapter().getCount()) {
             mViewPager.setCurrentItem(currentItem);
 
 
-        }else{
+        } else {
             finish();
         }
     }
 
-    private void setNumberOfPagesForAdvanced(){
+    private void setNumberOfPagesForAdvanced() {
         mSectionsStatePagerAdapter.setNumberOfPages(6);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
 
-
-    private void setNumberOfPagesForVeryAdvanced(){
+    private void setNumberOfPagesForVeryAdvanced() {
         mSectionsStatePagerAdapter.setNumberOfPages(8);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
-    private void setupViewPager(ViewPager viewPager){
+    private void setupViewPager(ViewPager viewPager) {
 
         mSectionsStatePagerAdapter.addFragment(new ManageRecordingsFragment(), getResources().getString(R.string.activity_or_fragment_title_manage_recordings));
         mSectionsStatePagerAdapter.addFragment(new InternetConnectionFragment(), getResources().getString(R.string.activity_or_fragment_title_internet_connection));
@@ -87,14 +86,14 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new RootedFragment(), getResources().getString(R.string.activity_or_fragment_title_rooted));
 
         // And for Very Advanced
-        mSectionsStatePagerAdapter.addFragment(new AudioSourceSettingsFragment(),  getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source));
-        mSectionsStatePagerAdapter.addFragment(new TestingFragment(),  getResources().getString(R.string.activity_or_fragment_title_settings_for_testing));
+        mSectionsStatePagerAdapter.addFragment(new AudioSourceSettingsFragment(), getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source));
+        mSectionsStatePagerAdapter.addFragment(new TestingFragment(), getResources().getString(R.string.activity_or_fragment_title_settings_for_testing));
 
 
         Prefs prefs = new Prefs(this);
-        if (prefs.getSettingsForTestServerEnabled()){
+        if (prefs.getSettingsForTestServerEnabled()) {
             setNumberOfPagesForVeryAdvanced();
-        }else{
+        } else {
             setNumberOfPagesForAdvanced();
         }
 
@@ -111,13 +110,10 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         // Need to update the number of recordings displayed in the Managed Recordings Fragment.  Did it hear because for some reason I could not get it to refresh using this method in the ManageRecordingsFragment
         try {
             ((ManageRecordingsFragment) mSectionsStatePagerAdapter.getItem(0)).displayOrHideGUIObjects();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
-
-
-
 
 
 }

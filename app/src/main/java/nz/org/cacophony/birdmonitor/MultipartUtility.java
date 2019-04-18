@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
  * POST requests to a web server.
- * @author www.codejava.net
  *
+ * @author www.codejava.net
  */
 @SuppressWarnings({"JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
 class MultipartUtility {
@@ -53,7 +53,8 @@ class MultipartUtility {
 
     /**
      * Adds a form field to the request
-     * @param name field name
+     *
+     * @param name  field name
      * @param value field value
      */
     public void addFormField(String name, String value) {
@@ -69,7 +70,8 @@ class MultipartUtility {
 
     /**
      * Adds a upload file section to the request
-     * @param fieldName name attribute in <input type="file" name="..." />
+     *
+     * @param fieldName  name attribute in <input type="file" name="..." />
      * @param uploadFile a File to be uploaded
      * @throws IOException
      */
@@ -104,7 +106,8 @@ class MultipartUtility {
 
     /**
      * Adds a header field to the request.
-     * @param name - name of the header field
+     *
+     * @param name  - name of the header field
      * @param value - value of the header field
      */
     @SuppressWarnings("unused")
@@ -115,6 +118,7 @@ class MultipartUtility {
 
     /**
      * Completes the request and receives response from the server.
+     *
      * @return a list of Strings as response in case the server returned
      * status OK, otherwise an exception is thrown.
      * @throws IOException

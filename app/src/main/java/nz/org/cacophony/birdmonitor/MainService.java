@@ -16,8 +16,7 @@ public class MainService extends IntentService {
     private static final String TAG = MainService.class.getName();
 
 
-
-    public MainService(){
+    public MainService() {
         super("MainService");
     }
 
@@ -25,34 +24,34 @@ public class MainService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        if (powerManager == null){
+        if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");
             return;
         }
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "Cacophonometer:MainServiceWakelockTag");
-        wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
 
-      try {
+        try {
 
-          Bundle bundle = intent != null ? intent.getExtras() : null;
-          if (bundle != null){
-              String alarmIntentType = bundle.getString("type");
-              if (alarmIntentType == null){
-                  alarmIntentType = "unknown";
-                  Log.w(TAG, "alarmIntentType = unknown");
-              }
-              RecordAndUpload.doRecord(getApplicationContext(),alarmIntentType);
-          }else{
-              Log.e(TAG, "MainService error");
-          }
+            Bundle bundle = intent != null ? intent.getExtras() : null;
+            if (bundle != null) {
+                String alarmIntentType = bundle.getString("type");
+                if (alarmIntentType == null) {
+                    alarmIntentType = "unknown";
+                    Log.w(TAG, "alarmIntentType = unknown");
+                }
+                RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType);
+            } else {
+                Log.e(TAG, "MainService error");
+            }
 
-      }catch (Exception ex){
+        } catch (Exception ex) {
 
-          Log.e(TAG,ex.getLocalizedMessage() );
-      }finally {
-          Util.enableFlightMode(getApplicationContext());
-          wakeLock.release();
-      }
+            Log.e(TAG, ex.getLocalizedMessage());
+        } finally {
+            Util.enableFlightMode(getApplicationContext());
+            wakeLock.release();
+        }
     }
 }

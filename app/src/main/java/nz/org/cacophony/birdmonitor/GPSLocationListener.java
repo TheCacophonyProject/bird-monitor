@@ -28,32 +28,31 @@ class GPSLocationListener implements LocationListener {
     }
 
 
-
     public void onLocationChanged(Location location) {
 
-       try {
-           Log.d(TAG, "onLocationChanged 1");
+        try {
+            Log.d(TAG, "onLocationChanged 1");
 
-           double lat = location.getLatitude();
-           lat = Math.round(lat*1000000.0)/1000000.0;
-           double lon = location.getLongitude();
-           lon = Math.round(lon*1000000.0)/1000000.0;
+            double lat = location.getLatitude();
+            lat = Math.round(lat * 1000000.0) / 1000000.0;
+            double lon = location.getLongitude();
+            lon = Math.round(lon * 1000000.0) / 1000000.0;
 
-           Prefs prefs = new Prefs(context);
-           prefs.setLatitude(lat);
-           prefs.setLongitude(lon);
+            Prefs prefs = new Prefs(context);
+            prefs.setLatitude(lat);
+            prefs.setLongitude(lon);
 
-           JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-           try {
-               jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_SUCCESS");
-           } catch (JSONException e) {
-               e.printStackTrace();
-           }
-           Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_SUCCESS");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
 
-       }catch (Exception ex){
-           Log.e(TAG, ex.getLocalizedMessage(), ex);
-       }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
 
     }
 
