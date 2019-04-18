@@ -107,7 +107,7 @@ class DeleteRecordings {
         HelperCode.dismissDialogWithYes();
 
         int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
-        assertTrue(numberOfRecordingsAfterDelete == 0);
+        assertEquals(0, numberOfRecordingsAfterDelete);
 
         onView(withId(R.id.tvMessagesManageRecordings)).check(matches(withText("All recordings on the phone have been deleted.")));
     }

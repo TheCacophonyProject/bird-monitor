@@ -2,10 +2,10 @@ package nz.org.cacophony.birdmonitor;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-//import android.widget.RadioButton;
 import android.support.v7.widget.AppCompatRadioButton;
 
 public class InternetConnectionFragment extends Fragment {
@@ -27,36 +27,27 @@ public class InternetConnectionFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        rbNormal = (AppCompatRadioButton) view.findViewById(R.id.rbNormal);
-        rbOnline = (AppCompatRadioButton) view.findViewById(R.id.rbOnline);
-        rbOffline = (AppCompatRadioButton) view.findViewById(R.id.rbOffline);
+        rbNormal = view.findViewById(R.id.rbNormal);
+        rbOnline = view.findViewById(R.id.rbOnline);
+        rbOffline = view.findViewById(R.id.rbOffline);
 
         displayOrHideGUIObjects();
 
-        rbNormal.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setInternetConnectionMode("normal");
-            }
+        rbNormal.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setInternetConnectionMode("normal");
         });
 
 
-        rbOnline.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setInternetConnectionMode("online");
-            }
+        rbOnline.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setInternetConnectionMode("online");
         });
 
 
-        rbOffline.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setInternetConnectionMode("offline");
-            }
+        rbOffline.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setInternetConnectionMode("offline");
         });
 
 

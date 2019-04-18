@@ -6,10 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class TestingFragment extends Fragment {
 
@@ -30,58 +27,43 @@ public class TestingFragment extends Fragment {
 
 
         displayOrHideGUIObjects();
-        btnFinished.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
+        btnFinished.setOnClickListener(v -> ((AdvancedWizardActivity)getActivity()).nextPageView());
 
-                ((AdvancedWizardActivity)getActivity()).nextPageView();
+
+        swUseTestServer.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
+            if (!buttonView.isShown()){
+                return;
             }
-        });
 
+            Util.setUseTestServer(getActivity().getApplicationContext(), isChecked);
 
-        swUseTestServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // https://stackoverflow.com/questions/17372750/android-setoncheckedchangelistener-calls-again-when-old-view-comes-back
-                if (!buttonView.isShown()){
-                    return;
-                }
-
-                Util.setUseTestServer(getActivity().getApplicationContext(), isChecked);
-
-                if (!isChecked){
-                    Prefs prefs = new Prefs(getActivity().getApplicationContext());
-                    prefs.setUseShortRecordings(false);
-                    prefs.setUseVeryFrequentRecordings(false);
-                }
-                displayOrHideGUIObjects();
-
-            }
-        });
-
-
-        swUseVeryFrequentRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!buttonView.isShown()){
-                    return;
-                }
-                Util.setUseVeryFrequentRecordings(getActivity().getApplicationContext(), isChecked);
-                displayOrHideGUIObjects();
-            }
-        });
-
-
-        swShortRecordings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!buttonView.isShown()){
-                    return;
-                }
+            if (!isChecked){
                 Prefs prefs = new Prefs(getActivity().getApplicationContext());
-                prefs.setUseShortRecordings(isChecked);
-                displayOrHideGUIObjects();
+                prefs.setUseShortRecordings(false);
+                prefs.setUseVeryFrequentRecordings(false);
             }
+            displayOrHideGUIObjects();
+
+        });
+
+
+        swUseVeryFrequentRecordings.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(!buttonView.isShown()){
+                return;
+            }
+            Util.setUseVeryFrequentRecordings(getActivity().getApplicationContext(), isChecked);
+            displayOrHideGUIObjects();
+        });
+
+
+        swShortRecordings.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(!buttonView.isShown()){
+                return;
+            }
+            Prefs prefs = new Prefs(getActivity().getApplicationContext());
+            prefs.setUseShortRecordings(isChecked);
+            displayOrHideGUIObjects();
         });
 
         return view;

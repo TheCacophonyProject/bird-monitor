@@ -19,8 +19,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
 
 public class CreateAccountFragment extends Fragment {
@@ -65,12 +63,7 @@ public class CreateAccountFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createUserButtonPressed();
-            }
-        });
+        btnSignUp.setOnClickListener(v -> createUserButtonPressed());
 
         return view;
     }
@@ -182,24 +175,14 @@ public class CreateAccountFragment extends Fragment {
             return ;
         }
 
-        Thread signUpThread = new Thread() {
-            @Override
-            public void run() {
-
-                Server.signUp(username, emailAddress, password, context);
-            }
-        };
-        signUpThread.start();
-
+        new Thread(() -> Server.signUp(username, emailAddress, password, context)).start();
     }
 
     private void disableFlightMode(){
         try {
             Util.disableFlightMode(getActivity().getApplicationContext());
-
-
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
+        } catch (Exception ex){
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
         }
     }
@@ -259,7 +242,7 @@ public class CreateAccountFragment extends Fragment {
 
             } catch (Exception ex) {
 
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
 
                 tilUsername.setVisibility(View.VISIBLE);
                 tilEmail.setVisibility(View.VISIBLE);

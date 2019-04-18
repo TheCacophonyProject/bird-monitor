@@ -1,7 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.annotation.SuppressLint;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-
-import nz.org.cacophony.birdmonitor.R;
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting{
@@ -92,11 +89,8 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             advancedButton.setText("Very Advanced");
         }
 
-        advancedButton.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
+        advancedButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     advancedButtonDownTime = System.currentTimeMillis();
                     break;
@@ -105,12 +99,12 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     advancedButtonUpTime = System.currentTimeMillis();
                     long timeBetweenDownAndUp = advancedButtonUpTime - advancedButtonDownTime;
 
-                    if (timeBetweenDownAndUp > 5000){
-                        if (prefs.getSettingsForTestServerEnabled()){
+                    if (timeBetweenDownAndUp > 5000) {
+                        if (prefs.getSettingsForTestServerEnabled()) {
                             advancedButton.setText("Advanced");
                             prefs.setSettingsForTestServerEnabled(false);
 
-                        }else{
+                        } else {
                             advancedButton.setText("Very Advanced");
                             prefs.setSettingsForTestServerEnabled(true);
 
@@ -119,15 +113,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                         // Add or Remove Settings for Test Server fragment
 
 
-                    }else{
+                    } else {
                         startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
                     break;
             }
 
         return true;
-        }
-
         });
 
         // Now create the alarms that will cause the recordings to happen
@@ -210,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         try {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -230,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Intent intent = new Intent(this, BirdCountActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -239,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Intent intent = new Intent(this, VitalsActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -250,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             Intent intent = new Intent(this, DisableActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -268,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
             } catch (Exception ex) {
 
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
     };

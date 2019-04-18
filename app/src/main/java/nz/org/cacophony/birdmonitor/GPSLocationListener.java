@@ -52,7 +52,7 @@ class GPSLocationListener implements LocationListener {
            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
 
        }catch (Exception ex){
-           Log.e(TAG, ex.getLocalizedMessage());
+           Log.e(TAG, ex.getLocalizedMessage(), ex);
        }
 
     }

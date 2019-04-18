@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -47,23 +46,17 @@ public class ManageRecordingsFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessagesManageRecordings);
-        btnUploadFiles = (Button) view.findViewById(R.id.btnUploadFiles);
-        btnUploadFiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvMessages.setText("");
-                uploadRecordings();
-            }
+        tvMessages = view.findViewById(R.id.tvMessagesManageRecordings);
+        btnUploadFiles = view.findViewById(R.id.btnUploadFiles);
+        btnUploadFiles.setOnClickListener(v -> {
+            tvMessages.setText("");
+            uploadRecordings();
         });
 
-        btnDeleteAllRecordings = (Button) view.findViewById(R.id.btnDeleteAllRecordings);
-        btnDeleteAllRecordings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tvMessages.setText("");
-                deleteAllRecordingsButton();
-            }
+        btnDeleteAllRecordings = view.findViewById(R.id.btnDeleteAllRecordings);
+        btnDeleteAllRecordings.setOnClickListener(v -> {
+            tvMessages.setText("");
+            deleteAllRecordingsButton();
         });
 
         tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
@@ -153,49 +146,34 @@ public class ManageRecordingsFragment extends Fragment {
     public void deleteAllRecordingsButton() {
 
         // are you sure?
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deleteAllRecordings();
-            }
-        });
-        builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                return;
-            }
-        });
-        builder.setMessage("Are you sure you want to delete all the recordings on this phone?")
-                .setTitle("Delete ALL Recordings");
+        final AlertDialog dialog =  new AlertDialog.Builder(getActivity())
+            .setPositiveButton("Yes", (di, id) -> deleteAllRecordings())
+            .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
+            .setMessage("Are you sure you want to delete all the recordings on this phone?")
+            .setTitle("Delete ALL Recordings")
+            .create();
 
-        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
+            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            btnNegative.setTextSize(24);
+            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnNegative.setTextColor(btnNegativeColor);
 
-                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-                btnNegative.setTextSize(24);
-                int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnNegative.setTextColor(btnNegativeColor);
-
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
         });
         dialog.show();
 
     }
 
     public void deleteAllRecordings() {
-
         Util.deleteAllRecordingsOnPhoneUsingDeleteButton(getActivity().getApplicationContext());
-
     }
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -234,7 +212,7 @@ public class ManageRecordingsFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
     };

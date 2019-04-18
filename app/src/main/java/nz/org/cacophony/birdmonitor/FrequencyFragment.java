@@ -5,11 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class FrequencyFragment extends Fragment {
 
@@ -27,27 +24,21 @@ public class FrequencyFragment extends Fragment {
 
         setUserVisibleHint(false);
 
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        swRecordMoreOften = (Switch) view.findViewById(R.id.swRecordMoreOften);
-        swUseFrequentUploads = (Switch) view.findViewById(R.id.swUseFrequentUploads);
+        tvMessages = view.findViewById(R.id.tvMessages);
+        swRecordMoreOften = view.findViewById(R.id.swRecordMoreOften);
+        swUseFrequentUploads = view.findViewById(R.id.swUseFrequentUploads);
 
         displayOrHideGUIObjects();
 
-        swRecordMoreOften.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Util.setUseFrequentRecordings(getActivity().getApplicationContext(), swRecordMoreOften.isChecked());
-                displayOrHideGUIObjects();
-            }
+        swRecordMoreOften.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Util.setUseFrequentRecordings(getActivity().getApplicationContext(), swRecordMoreOften.isChecked());
+            displayOrHideGUIObjects();
         });
 
 
-        swUseFrequentUploads.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Util.setUseFrequentUploads(getActivity().getApplicationContext(), swUseFrequentUploads.isChecked());
-                displayOrHideGUIObjects();
-            }
+        swUseFrequentUploads.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Util.setUseFrequentUploads(getActivity().getApplicationContext(), swUseFrequentUploads.isChecked());
+            displayOrHideGUIObjects();
         });
 
         return view;

@@ -5,11 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class BatteryFragment extends Fragment {
 
@@ -17,7 +13,6 @@ public class BatteryFragment extends Fragment {
 
 
     private Switch swIgnoreLowBattery;
-    private TextView tvMessages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,19 +20,15 @@ public class BatteryFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_battery, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
 
-        swIgnoreLowBattery = (Switch) view.findViewById(R.id.swIgnoreLowBattery);
+        swIgnoreLowBattery = view.findViewById(R.id.swIgnoreLowBattery);
 
         displayOrHideGUIObjects();
 
-        swIgnoreLowBattery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setIgnoreLowBattery(swIgnoreLowBattery.isChecked());
-                displayOrHideGUIObjects();
-            }
+        swIgnoreLowBattery.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setIgnoreLowBattery(swIgnoreLowBattery.isChecked());
+            displayOrHideGUIObjects();
         });
 
         return view;

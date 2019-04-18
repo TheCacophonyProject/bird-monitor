@@ -44,21 +44,10 @@ public class TestRecordFragment extends Fragment {
         tvServerLink = view.findViewById(R.id.tvServerLink);
 
         Button btnNext = view.findViewById(R.id.btnFinished);
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ((SetupWizardActivity) getActivity()).nextPageView();
-            }
-        });
+        btnNext.setOnClickListener(v -> ((SetupWizardActivity) getActivity()).nextPageView());
 
         btnRecordNow = view.findViewById(R.id.btnRecordNow);
-        btnRecordNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recordNowButtonPressed();
-            }
-        });
+        btnRecordNow.setOnClickListener(v -> recordNowButtonPressed());
 
         // Turn the words 'Cacophony Server' in the text view into a link
         // https://stackoverflow.com/questions/2734270/how-do-i-make-links-in-a-textview-clickable
@@ -120,7 +109,7 @@ public class TestRecordFragment extends Fragment {
             getActivity().sendBroadcast(myIntent);
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -178,7 +167,7 @@ public class TestRecordFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
                 tvMessages.setText("Could not record");
 
             }

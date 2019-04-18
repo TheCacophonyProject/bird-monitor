@@ -110,7 +110,7 @@ class UploadRecordings {
 
 
         int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
-        assertTrue(numberOfRecordingsAfterDelete == 0);
+        assertEquals(0, numberOfRecordingsAfterDelete);
 
         long lastRecordIdReturnedFromServer = prefs.getLastRecordIdReturnedFromServer();
 

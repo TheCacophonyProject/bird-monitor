@@ -235,19 +235,18 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             } catch (Exception ex) {
 
                 Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
 
                 return;
             }
 
             if (playWarningBeeps) {
-
                 ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
                 toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
-                    Log.e(TAG, ex.getLocalizedMessage());
+                    Log.e(TAG, ex.getLocalizedMessage(), ex);
                 }
             }
 
@@ -323,7 +322,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             isRecording = false;
             jsonObjectMessageToBroadcast = new JSONObject();
@@ -331,7 +330,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
             Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
         }
@@ -391,7 +390,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         try {
                             fileSuccessfullyDeleted = aFile.delete();
                         } catch (Exception ex) {
-                            Log.e(TAG, ex.getLocalizedMessage());
+                            Log.e(TAG, ex.getLocalizedMessage(), ex);
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
@@ -422,7 +421,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             }
             return returnValue;
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             return false;
         }
     }
@@ -535,7 +534,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     simImei = mTelephonyManager.getDeviceId();
                 }
             } catch (SecurityException ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
             additionalMetadata.put("SIM IMEI", simImei);
 

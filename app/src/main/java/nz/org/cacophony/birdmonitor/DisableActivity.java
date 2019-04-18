@@ -1,16 +1,13 @@
 package nz.org.cacophony.birdmonitor;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Switch;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class DisableActivity extends AppCompatActivity {
     private static final String TAG = DisableActivity.class.getName();
@@ -24,23 +21,20 @@ public class DisableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_disable);
 
         //https://developer.android.com/training/appbar/setting-up#java
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         final Prefs prefs = new Prefs(getApplicationContext());
 
         switchDisable = findViewById(R.id.swDisable);
 
-        switchDisable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!buttonView.isShown()){
-                    return;
-                }
-                prefs.setIsDisabled(!isChecked);
-                displayOrHideGUIObjects();
-
+        switchDisable.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(!buttonView.isShown()){
+                return;
             }
+            prefs.setIsDisabled(!isChecked);
+            displayOrHideGUIObjects();
+
         });
 
     }
@@ -82,7 +76,7 @@ public class DisableActivity extends AppCompatActivity {
         try {
             finish();
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 

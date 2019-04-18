@@ -13,7 +13,6 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +34,7 @@ class RegisterPhone {
         tearDownForRegisterPhone(mActivityTestRule);
     }
 
-    public static void unRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    public static void unRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) throws InterruptedException {
         setUpForUnRegisterPhone(mActivityTestRule);
         unRegisterPhone();
         tearDownForUnRegisterPhone(mActivityTestRule);
@@ -73,7 +72,7 @@ class RegisterPhone {
 
     }
 
-    private static void setUpForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    private static void setUpForUnRegisterPhone(ActivityTestRule<MainActivity> mActivityTestRule) throws InterruptedException {
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
@@ -95,11 +94,7 @@ class RegisterPhone {
 
         // Need to sign in
         HelperCode.signInUserTimhot();
-        try {
-            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        } catch (Exception ex) {
-
-        }
+        Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
         nowSwipeLeft(); // takes you to Groups screen
 
         registerPhone();

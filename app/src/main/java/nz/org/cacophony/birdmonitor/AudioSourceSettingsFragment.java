@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nz.org.cacophony.birdmonitor.R;
-
 public class AudioSourceSettingsFragment extends Fragment {
 
     private static final String TAG = "AudioSourceSettingsFragment";
@@ -36,54 +34,36 @@ public class AudioSourceSettingsFragment extends Fragment {
 
         displayOrHideGUIObjects();
 
-        rbCAMCORDER.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("CAMCORDER");
-            }
+        rbCAMCORDER.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("CAMCORDER");
         });
 
 
-        rbDEFAULT.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("DEFAULT");
-            }
+        rbDEFAULT.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("DEFAULT");
         });
 
 
-        rbMIC.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("MIC");
-            }
+        rbMIC.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("MIC");
         });
 
-        rbUNPROCESSED.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("UNPROCESSED");
-            }
+        rbUNPROCESSED.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("UNPROCESSED");
         });
 
-        rbVOICE_COMMUNICATION.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("VOICE_COMMUNICATION");
-            }
+        rbVOICE_COMMUNICATION.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("VOICE_COMMUNICATION");
         });
 
-        rbVOICE_RECOGNITION.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setAudioSource("VOICE_RECOGNITION");
-            }
+        rbVOICE_RECOGNITION.setOnClickListener(v -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setAudioSource("VOICE_RECOGNITION");
         });
 
 

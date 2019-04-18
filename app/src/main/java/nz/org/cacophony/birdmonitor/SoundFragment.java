@@ -5,11 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class SoundFragment extends Fragment {
 
@@ -25,18 +22,15 @@ public class SoundFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_sound, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        swPlayWarningSound = (Switch) view.findViewById(R.id.swPlayWarningSound);
+        tvMessages = view.findViewById(R.id.tvMessages);
+        swPlayWarningSound = view.findViewById(R.id.swPlayWarningSound);
 
         displayOrHideGUIObjects();
 
-        swPlayWarningSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setPlayWarningSound(swPlayWarningSound.isChecked());
-                displayOrHideGUIObjects();
-            }
+        swPlayWarningSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setPlayWarningSound(swPlayWarningSound.isChecked());
+            displayOrHideGUIObjects();
         });
 
         return view;

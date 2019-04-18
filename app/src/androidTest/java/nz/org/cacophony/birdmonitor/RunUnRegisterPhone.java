@@ -40,7 +40,7 @@ public class RunUnRegisterPhone {
 
 
     @Test
-    public void unRegisterPhone() {
+    public void unRegisterPhone() throws InterruptedException {
         RegisterPhone.unRegisterPhone(mActivityTestRule);
     }
 

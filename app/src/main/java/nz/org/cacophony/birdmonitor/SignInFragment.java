@@ -20,8 +20,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.signInIdlingResource;
 
@@ -53,28 +51,22 @@ public class SignInFragment extends Fragment {
         btnSignOutUser =  view.findViewById(R.id.btnSignOutUser);
         tvMessages =  view.findViewById(R.id.tvMessages);
 
-        btnSignIn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                }
-                signinButtonPressed();
+        btnSignIn.setOnClickListener(v -> {
+            // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            if (imm != null){
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }
+            signinButtonPressed();
         });
 
-        btnSignOutUser.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                }
-                signOutUserButtonPressed();
+        btnSignOutUser.setOnClickListener(v -> {
+            // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            if (imm != null){
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }
+            signOutUserButtonPressed();
         });
 
         displayOrHideGUIObjects();
@@ -97,7 +89,7 @@ public class SignInFragment extends Fragment {
         Thread loginThread = new Thread() {
             @Override
             public void run() {
-                Server.loginUser(getActivity().getApplicationContext());;
+                Server.loginUser(getActivity().getApplicationContext());
             }
         };
         loginThread.start();
@@ -107,7 +99,7 @@ public class SignInFragment extends Fragment {
         try {
             Util.disableFlightMode(getActivity().getApplicationContext());
         }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
         }
     }
@@ -234,7 +226,7 @@ public class SignInFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
                 signInIdlingResource.decrement();
             }
@@ -306,7 +298,7 @@ public class SignInFragment extends Fragment {
 
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
         tvMessages.setText("Attempting to sign into the server - please wait");

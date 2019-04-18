@@ -11,16 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
-import java.util.Comparator;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
@@ -33,10 +31,8 @@ public class GroupsFragment extends Fragment {
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
 
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_groups, container, false);
         setUserVisibleHint(false);
@@ -50,37 +46,20 @@ public class GroupsFragment extends Fragment {
         lvGroups.setAdapter(adapter);
         sortGroups();
 
-        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                addGroup();
-            }
+        btnCreateGroup.setOnClickListener(v -> addGroup());
+
+        lvGroups.setOnItemClickListener((a, v, index, l) -> {
+            String group = lvGroups.getItemAtPosition(index).toString();
+            ((SetupWizardActivity) getActivity()).setGroup(group);
+            ((SetupWizardActivity) getActivity()).nextPageView();
         });
-
-        lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String group = lvGroups.getItemAtPosition(i).toString();
-                ((SetupWizardActivity) getActivity()).setGroup(group);
-                ((SetupWizardActivity) getActivity()).nextPageView();
-
-
-            }
-        });
-
 
         return view;
     }
 
     private void sortGroups() {
         adapter.setNotifyOnChange(false);
-        adapter.sort(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        adapter.sort(String::compareTo);
         adapter.setNotifyOnChange(true);
         adapter.notifyDataSetChanged();
     }
@@ -104,14 +83,11 @@ public class GroupsFragment extends Fragment {
             }
             ((SetupWizardActivity) getActivity()).setGroup(newGroup);
             tvMessages.setText("Adding group to server");
-            Util.addGroupToServer(getActivity(), newGroup, new Runnable() {
-                @Override
-                public void run() {
-                    // Only add the group to the UI on success
-                    adapter.add(newGroup);
-                    sortGroups();
-                    etNewGroupInput.setText("");
-                }
+            Util.addGroupToServer(getActivity(), newGroup, () -> {
+                // Only add the group to the UI on success
+                adapter.add(newGroup);
+                sortGroups();
+                etNewGroupInput.setText("");
             });
 
         } catch (Exception ex) {
@@ -202,11 +178,11 @@ public class GroupsFragment extends Fragment {
 
             } catch (Exception ex) {
 
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
                 try {
                     getGroupsIdlingResource.decrement();
                 }catch (Exception e){
-                        Log.e(TAG, e.getLocalizedMessage());
+                        Log.e(TAG, e.getLocalizedMessage(), e);
                     }
             }
         }

@@ -64,7 +64,7 @@ class Server {
 
             login(context);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
 
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -76,7 +76,7 @@ class Server {
                 Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
     }
@@ -530,7 +530,7 @@ class Server {
             }
 
         } catch (IOException ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
         }
@@ -607,7 +607,7 @@ class Server {
             Util.broadcastAMessage(context, SERVER_GROUPS_ACTION, jsonObjectMessageToBroadcast);
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
         return groups;
@@ -649,7 +649,7 @@ class Server {
                 return false;
             }
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             return false;
         }
     }

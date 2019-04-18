@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**

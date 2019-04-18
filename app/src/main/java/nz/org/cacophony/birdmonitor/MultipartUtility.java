@@ -21,7 +21,7 @@ import java.util.List;
  * @author www.codejava.net
  *
  */
-@SuppressWarnings({"Convert2Diamond", "JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
+@SuppressWarnings({"JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
 class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
@@ -48,8 +48,7 @@ class MultipartUtility {
         this.charset = charset;
 
         outputStream = conn.getOutputStream();
-        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
-                true);
+        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
     }
 
     /**
@@ -121,7 +120,7 @@ class MultipartUtility {
      * @throws IOException
      */
     public List<String> finish() throws IOException {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         writer.append(LINE_FEED).flush();
         writer.append("--" + boundary + "--").append(LINE_FEED);

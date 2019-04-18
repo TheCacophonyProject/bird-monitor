@@ -1,14 +1,12 @@
 package nz.org.cacophony.birdmonitor;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class AdvancedWizardActivity extends AppCompatActivity {
 
@@ -114,7 +112,7 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         try {
             ((ManageRecordingsFragment) mSectionsStatePagerAdapter.getItem(0)).displayOrHideGUIObjects();
         }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 

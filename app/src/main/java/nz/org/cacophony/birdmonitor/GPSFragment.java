@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
@@ -50,12 +49,7 @@ public class GPSFragment extends Fragment {
         longitudeDisplay = view.findViewById(R.id.tvLongitude);
 
         Button btnGetGPSLocation = view.findViewById(R.id.btnGetGPSLocation);
-        btnGetGPSLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateGPSLocationButtonPressed();
-            }
-        });
+        btnGetGPSLocation.setOnClickListener(v -> updateGPSLocationButtonPressed());
 
         return view;
     }
@@ -134,7 +128,7 @@ public class GPSFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
     };
@@ -161,7 +155,7 @@ public class GPSFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
 
@@ -192,7 +186,7 @@ public class GPSFragment extends Fragment {
 
             }
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -218,11 +212,9 @@ public class GPSFragment extends Fragment {
     private void displayMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Add the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Intent intent2 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent2);
-            }
+        builder.setPositiveButton("OK", (dialog, id) -> {
+            Intent intent2 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent2);
         });
 
         builder.setMessage("Your phone\'s Location service is Off.  Press OK, to be taken to settings, and turn Location ON.  Then press your phone\'s back button to return here and press the UPDATE GPS LOCATION again.")
@@ -230,18 +222,15 @@ public class GPSFragment extends Fragment {
 
         final AlertDialog dialog = builder.create();
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
 
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
         });
 
         dialog.show();

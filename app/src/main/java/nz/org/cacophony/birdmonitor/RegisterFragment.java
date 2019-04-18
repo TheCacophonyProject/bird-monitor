@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -48,20 +47,10 @@ public class RegisterFragment extends Fragment {
         etDeviceNameInput =  view.findViewById(R.id.etDeviceNameInput);
 
         btnRegister = view.findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                registerButtonPressed();
-            }
-        });
+        btnRegister.setOnClickListener(v -> registerButtonPressed());
 
         btnUnRegister = view.findViewById(R.id.btnUnRegister);
-        btnUnRegister.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                unregisterButtonPressed();
-            }
-        });
+        btnUnRegister.setOnClickListener(v -> unregisterButtonPressed());
 
         tvTitleMessage =  view.findViewById(R.id.tvTitleMessage);
 
@@ -143,7 +132,7 @@ public class RegisterFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
 
                 tvMessages.setText("Oops, your phone did not register - not sure why");
                 displayOrHideGUIObjects(true);
@@ -370,13 +359,7 @@ public class RegisterFragment extends Fragment {
             return;
         }
         registerPhoneIdlingResource.increment();
-        Thread registerThread = new Thread() {
-            @Override
-            public void run() {
-                Server.registerDevice(group, deviceName, context);
-            }
-        };
-        registerThread.start();
+        new Thread(() -> Server.registerDevice(group, deviceName, context)).start();
     }
 
 
@@ -386,45 +369,30 @@ public class RegisterFragment extends Fragment {
             tvMessages.setText("Not currently registered - so can not unregister :-(");
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                unregister();
-            }
-        });
-        builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                return;
-            }
-        });
-        builder.setMessage("Are you sure?")
-                .setTitle("Un-register this phone");
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+            .setPositiveButton("Yes", (di, id) -> unregister())
+            .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
+            .setMessage("Are you sure?")
+            .setTitle("Un-register this phone")
+            .create();
 
-        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
+            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            btnNegative.setTextSize(24);
+            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnNegative.setTextColor(btnNegativeColor);
 
-                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-                btnNegative.setTextSize(24);
-                int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnNegative.setTextColor(btnNegativeColor);
-
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
         });
 
         dialog.show();
-
-
     }
 
     private void unregister() {
@@ -449,7 +417,7 @@ public class RegisterFragment extends Fragment {
             Util.disableFlightMode(getActivity().getApplicationContext());
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             tvMessages.setText("Error disabling flight mode");
         }
     }

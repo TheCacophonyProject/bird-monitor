@@ -187,7 +187,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
 
         } finally {
             // https://stackoverflow.com/questions/12140844/java-lang-runtimeexception-wakelock-under-locked-c2dm-lib

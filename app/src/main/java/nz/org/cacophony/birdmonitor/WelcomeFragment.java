@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nz.org.cacophony.birdmonitor.R;
-
 
 public class WelcomeFragment extends Fragment {
 
