@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 //import android.widget.RadioButton;
 import android.support.v7.widget.AppCompatRadioButton;
 
-
-import nz.org.cacophony.birdmonitor.R;
-
 public class InternetConnectionFragment extends Fragment {
 
     private static final String TAG = "InternetConnectionFragment";

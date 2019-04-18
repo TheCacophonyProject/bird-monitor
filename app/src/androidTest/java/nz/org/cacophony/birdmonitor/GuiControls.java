@@ -62,7 +62,6 @@ class GuiControls {
 
     private static void guiControls(){
 
-        walking();
         enableOrDisableRecording();
         internetConnection();
         warningSound();
@@ -71,27 +70,6 @@ class GuiControls {
         frequencyUpload();
         frequenyGPS();
         rooted();
-    }
-
-    private static void walking(){
-        Util.setWalkingMode(targetContext, false);
-        onView(withId(R.id.btnWalking)).perform(click());
-        onView(withId(R.id.swWalking2)).perform(click());
-        onView(withId(R.id.btnFinished)).perform(click());
-
-        boolean allPrefsForWalkingSet = areAllPrefsForWalkingSet();
-
-        assertTrue(allPrefsForWalkingSet);
-
-       // Now turn walking off
-        onView(withId(R.id.btnWalking)).perform(click());
-        onView(withId(R.id.swWalking2)).perform(click());
-        onView(withId(R.id.btnFinished)).perform(click());
-
-        allPrefsForWalkingSet = areAllPrefsForWalkingSet();
-
-        assertTrue(!allPrefsForWalkingSet);
-
     }
 
     private static void enableOrDisableRecording(){
@@ -207,13 +185,11 @@ class GuiControls {
     private static void frequencyRecord(){
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
-        Util.setPeriodicallyUpdateGPS(targetContext, false);
 
         nowSwipeLeft();  // to get to Frequency screen
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked())); // Record more often should be off
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked())); // Upload after every recording should be off
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isNotChecked())); // Periodically update GPS often should be off
 
         // Now turn record more often on
         onView(withId(R.id.swRecordMoreOften)).perform(click());
@@ -235,7 +211,6 @@ class GuiControls {
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isNotChecked()));
 
         // and check prefs are still correct
          recordMoreOften = prefs.getUseFrequentRecordings();
@@ -256,14 +231,11 @@ class GuiControls {
 
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
-        Util.setPeriodicallyUpdateGPS(targetContext, false);
 
         nowSwipeLeft();  // to get to Frequency screen
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isNotChecked()));
-
 
         onView(withId(R.id.swUseFrequentUploads)).perform(click());
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isChecked())); // confirm it is checked
@@ -284,7 +256,6 @@ class GuiControls {
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isChecked()));
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isNotChecked()));
 
         // and check prefs are still correct
         recordMoreOften = prefs.getUseFrequentRecordings();
@@ -305,17 +276,12 @@ class GuiControls {
 
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
-        Util.setPeriodicallyUpdateGPS(targetContext, false);
 
         nowSwipeLeft();  // to get to Frequency screen
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isNotChecked()));
 
-
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).perform(click());
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isChecked())); // confirm it is checked
         // Check correct prefs variable was set and others were not set
         boolean recordMoreOften = prefs.getUseFrequentRecordings();
         assertFalse(recordMoreOften);
@@ -333,7 +299,6 @@ class GuiControls {
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).check(matches(isChecked()));
 
         // and check prefs are still correct
         recordMoreOften = prefs.getUseFrequentRecordings();
@@ -345,8 +310,6 @@ class GuiControls {
         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         assertTrue(periodicallyUpdateGPS);
 
-        // Finished so leave all off
-        onView(withId(R.id.swPeriodicallyUpdateGPS)).perform(click());
     }
 
     private static void rooted(){

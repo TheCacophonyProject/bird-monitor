@@ -6,6 +6,7 @@
     <string name="app_icon_name">Bird Monitor</string>
 
     <string name="activity_or_fragment_title_welcome">Welcome</string>
+    <string name="activity_or_fragment_title_vitals">App Vitals</string>
     <string name="activity_or_fragment_title_setup">Setup</string>
     <string name="activity_or_fragment_title_advanced_setup">Advanced Setup</string>
     <string name="activity_or_fragment_title_main">Bird Monitor</string>
@@ -23,14 +24,14 @@
     <string name="activity_or_fragment_title_settings_for_audio_source">Audio Source</string>
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
 
-    <string name="activity_or_fragment_title_vitals">App Vitals</string>
+    <string name="activity_or_fragment_title_bird_count">Bird Count</string>
     <string name="activity_or_fragment_title_create_account">Create Account</string>
     <string name="activity_or_fragment_title_sign_in">Sign In</string>
     <string name="activity_or_fragment_title_create_or_choose_group">Create/Choose Group</string>
 
     <string name="activity_or_fragment_title_gps_location">GPS Location</string>
 
-     <string name="help_text_welcome">Thank you for installing the Bird Monitor app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
+    <string name="help_text_welcome">Thank you for installing the Bird Monitor app.  The app will automatically make audio recordings every hour (and additional recordings around dawn and dusk) and upload them to the Cacophony Project data server.  This will allow monitoring of birdsong near your phone.  To use this app, first complete the setup steps (swipe to move through the screens in turn).\n\nThank you again for supporting The Cacophony Project https://cacophony.org.nz/ </string>
     <string name="help_text_create_account">The Bird Monitor is designed to work with an account on the Cacophony server.  Please fill in the form to create your account, or if you already have an account you can skip this step.</string>
     <string name="help_text_sign_in">Signing in, will enable you to create a group on the server, or select a group that you have previously created.\n\nIf you already know the group that you are going to use with this phone, you can skip this step.</string>
     <string name="help_text_create_or_choose_group">Your phone needs to be registered with a group on the server.  If you signed in on the previous page, you will see a list of groups associated with your account.\n\nYou can either select one of the groups or create a new group.</string>
@@ -46,8 +47,8 @@
     <string name="help_text_settings_for_testing">App Testers: Use the test server which will allow you to increase the recording frequency and use short recordings. Note: Data and recordings on the server are likely to be wiped at some point.</string>
     <string name="help_text_manage_recordings">Normally you will not need to \’Manage Recordings\’ as the app will automatically upload your recordings to the server.\n\nHowever, if you have been using the phone without an internet connection (perhaps you have been for a walk or have just re-established an internet connection after leaving your phone to make recordings in a location without out internet access) you can now use this screen to upload all the recordings on the phone.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed and should change to zero if all the recordings are successfully uploaded.\n\nIf you prefer, you can delete all the recordings on the phone – perhaps you didn’t realize you had been making recordings! Careful with this option – you can’t get them back.</string>
     <string name="help_text_settings_for_audio_source">Take a look at: https://developer.android.com/reference/android/media/MediaRecorder.AudioSource</string>
+    <string name="help_text_settings_for_bird_count">The Bird Count feature aims to replicate the typical senario of sitting at a location and manually counting birds.  Choose the most appropriate duration and press the Record button.  \n\nNote: Once recording has finished, the app will attempt to upload the recordings - If you do not want this behaviour enable Offline mode in the app (See the Internet Connection screen under Advanced).</string>
 
-    help_text_settings_for_audio_source
 
     <string name="help_text_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it says Disabled. \n\nMessages displays any extra information.</string>
 
@@ -187,6 +188,8 @@
     <string name="enter_a_new_group_here">Enter a new Group Here</string>
     <string name="attempting_to_creat">Attempting to create user - please wait</string>
     <string name="Record_with_low_battery_is_ON">Record with low battery is ON</string>
+
+    <string name="bird_count_message">Choose a recording duration and press the record button.</string>
 
 
 </resources>

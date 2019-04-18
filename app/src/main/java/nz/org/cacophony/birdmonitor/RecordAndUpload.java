@@ -31,114 +31,91 @@ import java.util.TimeZone;
  * sends recording to server.
  */
 
-class RecordAndUpload implements IdlingResourceForEspressoTesting{
+class RecordAndUpload implements IdlingResourceForEspressoTesting {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
-    private RecordAndUpload(){
+
+    private RecordAndUpload() {
 
     }
 
-static void doRecord(Context context, String typeOfRecording) {
-    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-
-    Log.d(TAG, "typeOfRecording is " + typeOfRecording);
-    String returnValue;
-
-    if (typeOfRecording == null) {
-        Log.e(TAG, "typeOfRecording is null");
-
-        returnValue = "error";
-        return;
-    }
-
-    Prefs prefs = new Prefs(context);
-
-    long   recordTimeSeconds = (long) prefs.getRecordingDuration();
+    static void doRecord(Context context, String typeOfRecording) {
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
 
+        if (typeOfRecording == null) {
+            Log.e(TAG, "typeOfRecording is null");
+            return;
+        }
 
-            if (prefs.getUseShortRecordings()) {
-                recordTimeSeconds = 1;
+        Prefs prefs = new Prefs(context);
+
+        long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording);
+
+
+        if (isRecording) {
+            jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress.");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-    if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
-        recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
-        Log.d(TAG, "typeOfRecording is dawn or dusk");
-    } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
-        recordTimeSeconds += 1; // help to recognise recordNowButton recordings
-        prefs.setDateTimeLastRepeatingAlarmFiredToZero(); // Helped when testing, but probably don't need when app is running normally
-    }
-
-if (isRecording){
-     jsonObjectMessageToBroadcast = new JSONObject();
-    try {
-        jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
-        jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress.");
-    } catch (JSONException e) {
-        e.printStackTrace();
-    }
-    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-   return;
-}else{
-
-    makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound());
-
-    returnValue = "recorded successfully";
-}
-
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            return;
+        } else {
+            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
+        }
 
 
 // Checked that it has a webToken before trying to upload
-    if (prefs.getToken() == null) {
-        returnValue =  "not logged in";
-        jsonObjectMessageToBroadcast = new JSONObject();
-        try {
-            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "The Phone is NOT registered - could not upload the files.");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-    }else {
-        // only upload recordings if sufficient time has passed since last upload
-        long dateTimeLastUpload = prefs.getDateTimeLastUpload();
-        long now = new Date().getTime();
-        long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
-        //noinspection UnusedAssignment
-        boolean uploadedFilesSuccessfully = false;
+        if (prefs.getToken() == null) {
+
+            jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "The Phone is NOT registered - could not upload the files.");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        } else {
+            // only upload recordings if sufficient time has passed since last upload
+            long dateTimeLastUpload = prefs.getDateTimeLastUpload();
+            long now = new Date().getTime();
+            long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
+            //noinspection UnusedAssignment
+            boolean uploadedFilesSuccessfully = false;
 
 
- if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
+            if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
-         if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
-                uploadedFilesSuccessfully = uploadFiles(context);
-             if (uploadedFilesSuccessfully) {
-                 prefs.setDateTimeLastUpload(now);
-             }else{
-                 returnValue = "recorded BUT did not upload";
-                 Log.e(TAG, "Files failed to upload");
-                 jsonObjectMessageToBroadcast = new JSONObject();
-                 try {
-                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
-                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server.");
-                 } catch (JSONException e) {
-                     e.printStackTrace();
-                 }
-                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-             }
+                if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
+                    uploadedFilesSuccessfully = uploadFiles(context);
+                    if (uploadedFilesSuccessfully) {
+                        prefs.setDateTimeLastUpload(now);
+                    } else {
 
+                        Log.e(TAG, "Files failed to upload");
+                        jsonObjectMessageToBroadcast = new JSONObject();
+                        try {
+                            jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
+                            jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server.");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                    }
+
+                }
             }
         }
-
     }
 
-
-}
-
-    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps){
+    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
         recordIdlingResource.increment();
-       isRecording = true;
-             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+        isRecording = true;
+        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "GETTING_READY_TO_RECORD");
             jsonObjectMessageToBroadcast.put("messageToDisplay", "Getting ready to record.");
@@ -146,202 +123,222 @@ if (isRecording){
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-try {
-
-
-    Prefs prefs = new Prefs(context);
-    // Get recording file.
-    Date date = new Date(System.currentTimeMillis());
-    // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
-    Calendar nowToday = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
-
-    Calendar dawn = Util.getDawn(context, nowToday);
-
-    long relativeToDawn = nowToday.getTimeInMillis() - dawn.getTimeInMillis();
-    relativeToDawn = relativeToDawn / 1000; // now in seconds
-
-    Calendar dusk = Util.getDusk(context, nowToday);
-
-    long relativeToDusk = nowToday.getTimeInMillis() - dusk.getTimeInMillis();
-    relativeToDusk = relativeToDusk / 1000; // now in seconds
-
-    DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
-    String fileName = fileFormat.format(date);
-
-    if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
-        fileName += " rToDawn " + relativeToDawn;
-    } else {
-        fileName += " rToDusk " + relativeToDusk;
-    }
-
-    if (Util.isAirplaneModeOn(context)) {
-        fileName += " apModeOn";
-    } else {
-        fileName += " apModeOff";
-    }
-
-
-    String batteryStatus = Util.getBatteryStatus(context);
-    fileName += " " + batteryStatus;
-    double batteryLevel = Util.getBatteryLevel(context);
-    fileName += " " + batteryLevel;
-    fileName += " " + recordTimeSeconds;
-
-    NumberFormat numberFormat  = new DecimalFormat("#.000000");
-    double lat = prefs.getLatitude();
-    double lon = prefs.getLongitude();
-    String latStr = numberFormat.format(lat);
-    String lonStr = numberFormat.format(lon);
-    fileName += " " + latStr;
-    fileName += " " + lonStr;
-
-
-    fileName += ".m4a";
-
-    File file = new File(Util.getRecordingsFolder(context), fileName);
-    String filePath = file.getAbsolutePath();
-
-    // Setup audio recording settings.
-    MediaRecorder mRecorder = new MediaRecorder();
-
-    // Try to prepare recording.
-    try {
-
-        // Automatic gain control setting
-        String audioSource = prefs.getAudioSource();
-
-        switch (audioSource)
-        {
-            case "CAMCORDER":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-            break;
-
-            case "DEFAULT":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-                break;
-
-            case "MIC":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                break;
-
-            case "UNPROCESSED":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
-                }else{
-                    mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-                }
-                break;
-
-            case "VOICE_COMMUNICATION":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
-                break;
-
-            case "VOICE_RECOGNITION":
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
-                break;
-            default:
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        }
-
-
-        mRecorder.setOutputFile(filePath);
-
-            // Sampling configuration
-            mRecorder.setAudioChannels(1);
-            mRecorder.setAudioSamplingRate(16000);
-
-            // Encoding configuration
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
-            mRecorder.setAudioEncodingBitRate(256000);
-
-        mRecorder.prepare();
-
-    } catch (Exception ex) {
-
-        Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
-        Log.e(TAG, ex.getLocalizedMessage());
-
-        return;
-    }
-
-       if (playWarningBeeps) {
-
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
         try {
-            Thread.sleep(2000);
+
+
+            Prefs prefs = new Prefs(context);
+            // Get recording file.
+            Date date = new Date(System.currentTimeMillis());
+            // Calculate dawn and dusk offset in seconds will be sent to server to allow queries on this data
+            Calendar nowToday = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+
+            Calendar dawn = Util.getDawn(context, nowToday);
+
+            long relativeToDawn = nowToday.getTimeInMillis() - dawn.getTimeInMillis();
+            relativeToDawn = relativeToDawn / 1000; // now in seconds
+
+            Calendar dusk = Util.getDusk(context, nowToday);
+
+            long relativeToDusk = nowToday.getTimeInMillis() - dusk.getTimeInMillis();
+            relativeToDusk = relativeToDusk / 1000; // now in seconds
+
+            DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
+            String fileName = fileFormat.format(date);
+
+            if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
+                fileName += " rToDawn " + relativeToDawn;
+            } else {
+                fileName += " rToDusk " + relativeToDusk;
+            }
+
+            if (Util.isAirplaneModeOn(context)) {
+                fileName += " apModeOn";
+            } else {
+                fileName += " apModeOff";
+            }
+
+            String batteryStatus = Util.getBatteryStatus(context);
+            fileName += " " + batteryStatus;
+            double batteryLevel = Util.getBatteryLevel(context);
+            fileName += " " + batteryLevel;
+            fileName += " " + recordTimeSeconds;
+
+            NumberFormat numberFormat = new DecimalFormat("#.000000");
+            double lat = prefs.getLatitude();
+            double lon = prefs.getLongitude();
+            String latStr = numberFormat.format(lat);
+            String lonStr = numberFormat.format(lon);
+            fileName += " " + latStr;
+            fileName += " " + lonStr;
+
+
+            fileName += ".m4a";
+
+            File file = new File(Util.getRecordingsFolder(context), fileName);
+            String filePath = file.getAbsolutePath();
+
+            // Setup audio recording settings.
+            MediaRecorder mRecorder = new MediaRecorder();
+
+            // Try to prepare recording.
+            try {
+
+                // Automatic gain control setting
+                String audioSource = prefs.getAudioSource();
+
+                switch (audioSource) {
+                    case "CAMCORDER":
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                        break;
+
+                    case "DEFAULT":
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                        break;
+
+                    case "MIC":
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        break;
+
+                    case "UNPROCESSED":
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+                        } else {
+                            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                        }
+                        break;
+
+                    case "VOICE_COMMUNICATION":
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+                        break;
+
+                    case "VOICE_RECOGNITION":
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+                        break;
+                    default:
+                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                }
+
+
+                mRecorder.setOutputFile(filePath);
+
+                // Sampling configuration
+                mRecorder.setAudioChannels(1);
+                mRecorder.setAudioSamplingRate(16000);
+
+                // Encoding configuration
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+                mRecorder.setAudioEncodingBitRate(256000);
+
+                mRecorder.prepare();
+
+            } catch (Exception ex) {
+
+                Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
+                Log.e(TAG, ex.getLocalizedMessage());
+
+                return;
+            }
+
+            if (playWarningBeeps) {
+
+                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
+                try {
+                    Thread.sleep(2000);
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getLocalizedMessage());
+                }
+            }
+
+            // Start recording.
+            try {
+                mRecorder.start();
+                jsonObjectMessageToBroadcast = new JSONObject();
+                try {
+                    jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has started");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            } catch (Exception e) {
+
+                Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
+                return;
+            }
+
+            // The duration of the recording is controlled by sleeping this thread.
+
+            // With the addition of the Bird Count feature, the ability to cancel the recording was
+            // added.  It was looking too difficult to communicate with this thread from the GUI
+            // so This was done, by continually checking if a flag in prefs had be raised.
+
+            // Just in case this checking affects the actual time of a recording, I only used this
+            // checking for the Bird Count recordings.
+
+            if (Util.isBirdCountRecording(typeOfRecording)) {
+                // Sleep for duration of recording modified to check if that no request to stop has be given (say from Bird Count)
+                try {
+                    long remainingRecordingTime = recordTimeSeconds * 1000;
+                    while (remainingRecordingTime > 0 && !prefs.getCancelRecording()) {
+                        Thread.sleep(1000);
+                        remainingRecordingTime -= 1000;
+                    }
+
+                    prefs.setCancelRecording(false);
+
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Failed sleeping in recording thread.");
+                    return;
+                }
+            } else { // Is a non Bird Count recording
+                // Sleep for duration of recording.
+                try {
+                    Thread.sleep(recordTimeSeconds * 1000);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Failed sleeping in recording thread.");
+                    return;
+                }
+            }
+
+            // Stop recording.
+            mRecorder.stop();
+
+            //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+            mRecorder.reset();
+            mRecorder.release();
+
+            if (playWarningBeeps) {
+                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
+            }
+
+            // Give time for file to be saved. (and play beeps)
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
+            }
+
+            Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
+        } finally {
+            isRecording = false;
+            jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
         }
-    }
-
-    // Start recording.
-    try {
-        mRecorder.start();
-         jsonObjectMessageToBroadcast = new JSONObject();
-        try {
-            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has started");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-    } catch (Exception e) {
-
-        Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
-        return;
-    }
-
-
-    // Sleep for duration of recording.
-    try {
-
-        Thread.sleep(recordTimeSeconds * 1000);
-
-    } catch (InterruptedException e) {
-        Log.e(TAG, "Failed sleeping in recording thread.");
-        return;
-    }
-
-    // Stop recording.
-    mRecorder.stop();
-
-    //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
-    mRecorder.reset();
-    mRecorder.release();
-
-
-    if (playWarningBeeps) {
-        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
-        toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
-    }
-
-    // Give time for file to be saved. (and play beeps)
-    try {
-        Thread.sleep(1000);
-    } catch (InterruptedException ex) {
-        Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
-    }
-
-    Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
-}catch (Exception ex){
-    Log.e(TAG, ex.getLocalizedMessage());
-}finally {
-    isRecording = false;
-     jsonObjectMessageToBroadcast = new JSONObject();
-    try {
-        jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
-    } catch (JSONException e) {
-        e.printStackTrace();
-    }
-    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-}
 
     }
 
-    public static boolean uploadFiles(Context context){
+    public static boolean uploadFiles(Context context) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
             jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
@@ -353,9 +350,9 @@ try {
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
-            if (recordingsFolder == null){
+            if (recordingsFolder == null) {
 
-                Log.e(TAG,"Error getting recordings folder." );
+                Log.e(TAG, "Error getting recordings folder.");
                 return false;
             }
             File recordingFiles[] = recordingsFolder.listFiles();
@@ -363,7 +360,7 @@ try {
                 Util.disableFlightMode(context);
 
                 // Now wait for network connection as setFlightMode takes a while
-                if (!Util.waitForNetworkConnection(context, true)){
+                if (!Util.waitForNetworkConnection(context, true)) {
 
                     Log.e(TAG, "Failed to disable airplane mode");
                     return false;
@@ -378,7 +375,6 @@ try {
                 // check to see if webToken needs updating
                 boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
-
                 if ((prefs.getToken() == null) || !tokenIsCurrent) {
 
                     if (!Server.login(context)) {
@@ -387,7 +383,6 @@ try {
                     }
                 }
 
-
                 for (File aFile : recordingFiles) {
 
                     if (sendFile(context, aFile)) {
@@ -395,11 +390,8 @@ try {
                         boolean fileSuccessfullyDeleted = false;
                         try {
                             fileSuccessfullyDeleted = aFile.delete();
-
-                        }catch (Exception ex){
-
+                        } catch (Exception ex) {
                             Log.e(TAG, ex.getLocalizedMessage());
-
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
@@ -416,9 +408,9 @@ try {
 
                 }
             }
-            if (returnValue){
+            if (returnValue) {
 
-                 jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
@@ -429,7 +421,7 @@ try {
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             }
             return returnValue;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
             return false;
         }
@@ -450,10 +442,9 @@ try {
         // this code breaks if old files exist, so delete them and move on
 
         if (fileNameParts.length != 18) {
-          if (aFile.delete()){
-              return false;
-          }
-
+            if (aFile.delete()) {
+                return false;
+            }
         }
 
         String year = fileNameParts[0];
@@ -479,19 +470,19 @@ try {
         }
 
         String localFilePath = Util.getRecordingsFolder(context) + "/" + fileName;
-        if (! new File(localFilePath).exists()){
+        if (!new File(localFilePath).exists()) {
 
-            Log.e(TAG,localFilePath + " does not exist" );
+            Log.e(TAG, localFilePath + " does not exist");
             return false;
         }
         //https://stackoverflow.com/questions/11399491/java-timezone-offset
         TimeZone tz = TimeZone.getDefault();
         Calendar cal = GregorianCalendar.getInstance(tz);
         int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-        String offset = String.format(Locale.ENGLISH,"%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60)); // added in Locale.ENGLISH to stop Lint warning
+        String offset = String.format(Locale.ENGLISH, "%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60)); // added in Locale.ENGLISH to stop Lint warning
         offset = (offsetInMillis >= 0 ? "+" : "-") + offset;
 
-        String recordingDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second+offset;
+        String recordingDateTime = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second + offset;
 
         try {
 
@@ -526,12 +517,12 @@ try {
 
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
-            if (mTelephonyManager == null){
+            if (mTelephonyManager == null) {
                 Log.e(TAG, "mTelephonyManager is null");
                 return false;
             }
 
-            additionalMetadata.put("SIM state",Util.getSimStateAsString( mTelephonyManager.getSimState()));
+            additionalMetadata.put("SIM state", Util.getSimStateAsString(mTelephonyManager.getSimState()));
             if (mTelephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY) {
                 additionalMetadata.put("SimOperatorName", mTelephonyManager.getSimOperatorName());
             }
@@ -539,13 +530,11 @@ try {
             String simImei = "Unknown";
             try {
                 if (android.os.Build.VERSION.SDK_INT >= 26) {
-                    simImei=mTelephonyManager.getImei();
+                    simImei = mTelephonyManager.getImei();
+                } else {
+                    simImei = mTelephonyManager.getDeviceId();
                 }
-                else
-                {
-                    simImei=mTelephonyManager.getDeviceId();
-                }
-            }catch (SecurityException ex){
+            } catch (SecurityException ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
             }
             additionalMetadata.put("SIM IMEI", simImei);
@@ -553,7 +542,7 @@ try {
             audioRecording.put("additionalMetadata", additionalMetadata);
 
         } catch (JSONException ex) {
-            Log.e(TAG,ex.getLocalizedMessage() );
+            Log.e(TAG, ex.getLocalizedMessage());
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);
     }

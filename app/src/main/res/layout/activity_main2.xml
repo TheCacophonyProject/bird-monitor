@@ -38,13 +38,13 @@
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
     <Button
-        android:id="@+id/btnWalking"
+        android:id="@+id/btnBirdCount"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:onClick="launchWalkingActivity"
-        android:text="Walking Setup"
+        android:onClick="launchBirdCountActivity"
+        android:text="Bird Count"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="@+id/btnStatistics"
         app:layout_constraintStart_toStartOf="@+id/btnStatistics"
@@ -72,9 +72,9 @@
 
         android:text="Advanced"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnWalking"
-        app:layout_constraintStart_toStartOf="@+id/btnWalking"
-        app:layout_constraintTop_toBottomOf="@+id/btnWalking" />
+        app:layout_constraintEnd_toEndOf="@+id/btnBirdCount"
+        app:layout_constraintStart_toStartOf="@+id/btnBirdCount"
+        app:layout_constraintTop_toBottomOf="@+id/btnBirdCount" />
 
     <Button
         android:id="@+id/btnDisable"

@@ -65,8 +65,6 @@ public class BootReceiver extends BroadcastReceiver {
 
                         Util.createCreateAlarms(context);
 
-                        Util.setUpLocationUpdateAlarm(context);
-
                         Util.enableFlightMode(context);
 
                     } catch (Exception e) {

@@ -864,57 +864,6 @@ Prefs prefs = new Prefs(context);
         setTheNextSingleStandardAlarmUsingDelay(context, delay);
     }
 
-    public static void setUpLocationUpdateAlarm(Context context){
-    Prefs prefs = new Prefs(context);
-        if (prefs.getPeriodicallyUpdateGPS()){
-                    createLocationUpdateAlarm(context);
-                }else{
-                    deleteLocationUpdateAlarm(context);
-                }
-    }
-
-    public static void createLocationUpdateAlarm(Context context){
-
-        // When in walking mode, also set up alarm for periodically updating location
-        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
-
-        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
-
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null){
-            Log.e(TAG, "alarmManager is null");
-            return;
-        }
-
-        Prefs prefs = new Prefs(context);
-        long timeBetweenVeryFrequentRecordingsSeconds = (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
-
-        long delayBetweenLocationUpdates = 1000 * timeBetweenVeryFrequentRecordingsSeconds;
-        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-        long startWindowTimeForLocationUpdate = currentElapsedRealTime + delayBetweenLocationUpdates;
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-            // https://developer.android.com/reference/android/app/AlarmManager.html
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){ //m is Marshmallow 23
-            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTimeForLocationUpdate, pendingLocationUpdateIntent);
-        }
-    }
-
-    private static void deleteLocationUpdateAlarm(Context context){
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null){
-            Log.e(TAG, "alarmManager is null");
-            return;
-        }
-        Intent locationUpdateIntent = new Intent(context, LocationReceiver.class);
-        PendingIntent pendingLocationUpdateIntent = PendingIntent.getBroadcast(context, 0, locationUpdateIntent,0);
-
-        alarmManager.cancel(pendingLocationUpdateIntent);
-    }
-
     public static void updateGPSLocation(Context context){
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null){
@@ -1038,33 +987,6 @@ Prefs prefs = new Prefs(context);
         createTheNextSingleStandardAlarm(context);
     }
 
-    static void setPeriodicallyUpdateGPS(Context context, boolean periodicallyUpdateGPS){
-        Prefs prefs = new Prefs(context);
-        prefs.setPeriodicallyUpdateGPS(periodicallyUpdateGPS);
-        createLocationUpdateAlarm(context);
-    }
-
-    static void setWalkingMode(Context context, boolean walkingMode){
-        Prefs prefs = new Prefs(context);
-        if (walkingMode){
-            prefs.setInternetConnectionMode("offline");
-            prefs.setUseFrequentUploads(!walkingMode); // don't upload as it will be in airplane mode
-        }else{
-            prefs.setInternetConnectionMode("normal");
-            prefs.setIsDisabled(!walkingMode); // I thought it best to disable recording when user exits walking mode, but don't enable just because they turn on walking mode
-        }
-
-        prefs.setUseFrequentRecordings(walkingMode);
-        prefs.setIgnoreLowBattery(walkingMode);
-        prefs.setPlayWarningSound(walkingMode);
-        prefs.setPeriodicallyUpdateGPS(walkingMode);
-        prefs.setIsDisableDawnDuskRecordings(walkingMode);
-
-        // need to reset alarms as their frequency may have changed.
-        Util.createTheNextSingleStandardAlarm(context);
-        Util.setUpLocationUpdateAlarm(context);
-    }
-
     static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings){
         Prefs prefs = new Prefs(context);
         prefs.setUseFrequentRecordings(useFrequentRecordings);
@@ -1149,6 +1071,8 @@ Prefs prefs = new Prefs(context);
             dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
         }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source))){
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
+        }else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))){
+            dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
 
         }else {
             dialogMessage = "Still to fix in Util.displayHelp";
@@ -1393,6 +1317,51 @@ Prefs prefs = new Prefs(context);
         }else {
             return false;
         }
+    }
+
+    public static boolean isBirdCountRecording(String typeOfRecording){
+        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+            return true;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+            return true;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static long getRecordingDuration(Context context, String typeOfRecording){
+        Prefs prefs = new Prefs(context);
+        long recordTimeSeconds = (long) prefs.getRecordingDuration();
+
+        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+            recordTimeSeconds = 60 * 5;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+            recordTimeSeconds = 60 * 10;
+        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+            recordTimeSeconds = 60 * 15;
+        }
+
+
+        if (prefs.getUseShortRecordings()) { // for testing
+            recordTimeSeconds = 1;
+
+            if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+                recordTimeSeconds = recordTimeSeconds * 5;
+            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+                recordTimeSeconds = recordTimeSeconds * 10;
+            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+                recordTimeSeconds = recordTimeSeconds * 15;
+            }
+        }
+
+        if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
+            recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
+            Log.d(TAG, "typeOfRecording is dawn or dusk");
+        } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
+            recordTimeSeconds += 1; // help to recognise recordNowButton recordings
+        }
+        return recordTimeSeconds;
     }
 
 }
