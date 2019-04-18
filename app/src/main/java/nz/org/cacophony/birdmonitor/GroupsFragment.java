@@ -85,9 +85,11 @@ public class GroupsFragment extends Fragment {
             tvMessages.setText("Adding group to server");
             Util.addGroupToServer(getActivity(), newGroup, () -> {
                 // Only add the group to the UI on success
-                adapter.add(newGroup);
-                sortGroups();
-                etNewGroupInput.setText("");
+                getActivity().runOnUiThread(() -> {
+                    adapter.add(newGroup);
+                    sortGroups();
+                    etNewGroupInput.setText("");
+                });
             });
 
         } catch (Exception ex) {
