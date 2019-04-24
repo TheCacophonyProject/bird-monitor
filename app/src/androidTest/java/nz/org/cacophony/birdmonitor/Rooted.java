@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,21 +26,19 @@ class Rooted {
     }
 
 
-
-    private static void setUpForRooted(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRooted(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setIsDisabled(true); // stops recording upsetting test
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
         }
 
     }
-
 
 
     private static void tearDownForRooted(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -51,7 +48,7 @@ class Rooted {
         Util.disableFlightMode(targetContext);
 
         // Now check we have a network connection again
-       boolean hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
+        boolean hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
         assertTrue(hasNetworkConnection);
 
         // To prevent other tests failing due to phone going into airplane mode, change hasRoot to no
@@ -62,7 +59,7 @@ class Rooted {
     }
 
 
-    private static void rooted(){
+    private static void rooted() {
         // idlingresource is not a suitable way of waiting for network connection in these tests,
         // because the test doesn't actually interact with the GUI which is what idlingresource is
         // supposed to be used with.
@@ -76,7 +73,7 @@ class Rooted {
 
         // order of tests depends on whether there is a network connection when test starts
 
-        if (hasNetworkConnection){
+        if (hasNetworkConnection) {
 
             // Turn on airplane mode
             Util.enableFlightMode(targetContext);
@@ -92,7 +89,7 @@ class Rooted {
             hasNetworkConnection = Util.waitForNetworkConnection(targetContext, true);
             assertTrue(hasNetworkConnection);
 
-        }else{ // did not have a network connection, so airplane mode is probably on
+        } else { // did not have a network connection, so airplane mode is probably on
 
             // Turn off airplane mode
             Util.disableFlightMode(targetContext);

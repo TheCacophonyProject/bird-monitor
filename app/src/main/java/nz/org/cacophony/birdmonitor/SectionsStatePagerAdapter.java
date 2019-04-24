@@ -14,25 +14,25 @@ class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
 
     private int numberOfPages = 1;
 
-private final List<Fragment> mfragmentList = new ArrayList<>();
+    private final List<Fragment> mfragmentList = new ArrayList<>();
     private final List<String> mfragmentTitleList = new ArrayList<>();
 
     public SectionsStatePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void addFragment(Fragment fragment, String title){
+    public void addFragment(Fragment fragment, String title) {
         mfragmentList.add(fragment);
         mfragmentTitleList.add(title);
     }
 
-    public void setNumberOfPages(int numberOfPages){
+    public void setNumberOfPages(int numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
 
     @Override
     public Fragment getItem(int position) {
-       return mfragmentList.get(position);
+        return mfragmentList.get(position);
     }
 
     @Override

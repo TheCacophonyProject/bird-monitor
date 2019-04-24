@@ -219,13 +219,13 @@ class Prefs {
         }
     }
 
-    String getServerScheme(){
+    String getServerScheme() {
         return SCHEME;
     }
 
-    String getServerHost(){
+    String getServerHost() {
         if (getBoolean(USE_TEST_SERVER_KEY)) {
-           return TEST_SERVER_HOST;
+            return TEST_SERVER_HOST;
         } else {
             return PRODUCTION_SERVER_HOST;
         }
@@ -272,9 +272,11 @@ class Prefs {
     String getUserNameOrEmailAddress() {
         return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
     }
+
     void setEmailAddress(String emailAddress) {
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
+
     void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
@@ -290,7 +292,6 @@ class Prefs {
     String getUserToken() {
         return getString(USER_TOKEN_KEY);
     }
-
 
 
     void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
@@ -583,52 +584,52 @@ class Prefs {
         return getBooleanDefaultTrue();
     }
 
-        void setIsFirstTimeFalse() {
+    void setIsFirstTimeFalse() {
         setBoolean(FIRST_TIME_KEY, false);
     }
 
-    long getTimeThatLastRecordingHappened(){
+    long getTimeThatLastRecordingHappened() {
         return getLong(LAST_RECORDING_TIME_KEY);
-        }
+    }
 
-    void setTimeThatLastRecordingHappened(long lastRecordingTime){
+    void setTimeThatLastRecordingHappened(long lastRecordingTime) {
         setLong(LAST_RECORDING_TIME_KEY, lastRecordingTime);
     }
 
-    String getInternetConnectionMode(){
+    String getInternetConnectionMode() {
         return getString(INTERNET_CONNECTION_MODE_KEY);
     }
 
-    void setInternetConnectionMode(String internetConnectionMode){
+    void setInternetConnectionMode(String internetConnectionMode) {
         setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
     }
 
-    String getAudioSource(){
+    String getAudioSource() {
         String audioSource = getString(AUDIO_SOURCE_KEY);
-                if (audioSource == null){
-                    audioSource = "MIC";
-                }
+        if (audioSource == null) {
+            audioSource = "MIC";
+        }
         return audioSource;
     }
 
-    void setAudioSource(String audioSource){
+    void setAudioSource(String audioSource) {
         setString(AUDIO_SOURCE_KEY, audioSource);
     }
 
-    String getBirdCountDuration(){
+    String getBirdCountDuration() {
         String birdCountDuration = getString(BIRD_COUNT_DURATION_KEY);
-        if (birdCountDuration == null){
+        if (birdCountDuration == null) {
             birdCountDuration = "fiveMinute";
         }
         return birdCountDuration;
     }
 
-    void setBirdCountDuration(String birdCountDuration){
+    void setBirdCountDuration(String birdCountDuration) {
         setString(BIRD_COUNT_DURATION_KEY, birdCountDuration);
     }
 
     void setIsDisabled(boolean isDisabled) {
-       setBoolean(DISABLED_KEY, isDisabled);
+        setBoolean(DISABLED_KEY, isDisabled);
     }
 
     boolean getIsDisabled() {
@@ -643,19 +644,19 @@ class Prefs {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
     }
 
-    void setSettingsForTestServerEnabled(boolean isEnabled){
+    void setSettingsForTestServerEnabled(boolean isEnabled) {
         setBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY, isEnabled);
     }
 
-    boolean getSettingsForTestServerEnabled(){
+    boolean getSettingsForTestServerEnabled() {
         return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
     }
 
-    void setGroups(String groups){
+    void setGroups(String groups) {
         setString(GROUPS_KEY, groups);
     }
 
-      String getGroups(){
+    String getGroups() {
         return getString(GROUPS_KEY);
     }
 
@@ -664,7 +665,7 @@ class Prefs {
     }
 
     boolean getUserSignedIn() {
-       return getBoolean(USER_SIGNED_IN_KEY);
+        return getBoolean(USER_SIGNED_IN_KEY);
     }
 
     void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {

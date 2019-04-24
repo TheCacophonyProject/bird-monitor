@@ -10,10 +10,10 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -39,14 +39,13 @@ class GuiControls {
     }
 
 
-
-    private static void setUpForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
         prefs.setIsDisabled(false);
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
         }
@@ -60,7 +59,7 @@ class GuiControls {
     }
 
 
-    private static void guiControls(){
+    private static void guiControls() {
 
         enableOrDisableRecording();
         internetConnection();
@@ -72,7 +71,7 @@ class GuiControls {
         rooted();
     }
 
-    private static void enableOrDisableRecording(){
+    private static void enableOrDisableRecording() {
         prefs.setIsDisabled(false);
         onView(withId(R.id.btnDisable)).perform(click());
         onView(withId(R.id.swDisable)).perform(click());
@@ -93,7 +92,7 @@ class GuiControls {
 
     }
 
-    private static void internetConnection(){
+    private static void internetConnection() {
         prefs.setInternetConnectionMode("normal");
         onView(withId(R.id.btnAdvanced)).perform(click());
         nowSwipeLeft(); // takes you to Internet Connection
@@ -128,7 +127,7 @@ class GuiControls {
         prefs.setInternetConnectionMode("normal"); // finished testing interconnection mode so return to normal
     }
 
-    private static void warningSound(){
+    private static void warningSound() {
         prefs.setPlayWarningSound(false);
         nowSwipeLeft();  // to get to Warning sound page
         onView(withId(R.id.swPlayWarningSound)).check(matches(isNotChecked())); // warning sound should be off
@@ -155,7 +154,7 @@ class GuiControls {
         // Finished so leave warning sound off
     }
 
-    private static void ignoreLowBattery(){
+    private static void ignoreLowBattery() {
         prefs.setIgnoreLowBattery(false);
         nowSwipeLeft();  // to get to Ignore Low Battery screen
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isNotChecked())); // Ignore Low Battery should be off
@@ -182,7 +181,7 @@ class GuiControls {
         // Finished so leave Ignore Low Battery off
     }
 
-    private static void frequencyRecord(){
+    private static void frequencyRecord() {
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
@@ -213,20 +212,20 @@ class GuiControls {
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
 
         // and check prefs are still correct
-         recordMoreOften = prefs.getUseFrequentRecordings();
+        recordMoreOften = prefs.getUseFrequentRecordings();
         assertTrue(recordMoreOften);
 
-         useFrequentUploads = prefs.getUseFrequentUploads();
+        useFrequentUploads = prefs.getUseFrequentUploads();
         assertFalse(useFrequentUploads);
 
-         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
+        periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         assertFalse(periodicallyUpdateGPS);
 
         // Finished so leave all off
         onView(withId(R.id.swRecordMoreOften)).perform(click());
     }
 
-    private static void frequencyUpload(){
+    private static void frequencyUpload() {
         nowSwipeRight(); // to go to screen before frequency
 
         Util.setUseFrequentRecordings(targetContext, false);
@@ -271,7 +270,7 @@ class GuiControls {
         onView(withId(R.id.swUseFrequentUploads)).perform(click());
     }
 
-    private static void frequenyGPS(){
+    private static void frequenyGPS() {
         nowSwipeRight(); // to go to screen before frequency
 
         Util.setUseFrequentRecordings(targetContext, false);
@@ -312,7 +311,7 @@ class GuiControls {
 
     }
 
-    private static void rooted(){
+    private static void rooted() {
         prefs.setHasRootAccess(false);
         nowSwipeLeft();  // to get to Rooted sound page
         onView(withId(R.id.swRooted)).check(matches(isNotChecked())); // warning sound should be off
@@ -340,33 +339,33 @@ class GuiControls {
 
     }
 
-    private static boolean areAllPrefsForWalkingSet(){
+    private static boolean areAllPrefsForWalkingSet() {
         boolean walkingMode = true; // if any of the following are false, then change walking mode to false
 
         if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
             walkingMode = false;
-        }else if(!prefs.getUseFrequentRecordings()){
+        } else if (!prefs.getUseFrequentRecordings()) {
             walkingMode = false;
-        }else if (!prefs.getIgnoreLowBattery()){
+        } else if (!prefs.getIgnoreLowBattery()) {
             walkingMode = false;
-        }else if (!prefs.getPlayWarningSound()){
+        } else if (!prefs.getPlayWarningSound()) {
             walkingMode = false;
-        }else if (!prefs.getPeriodicallyUpdateGPS()){
+        } else if (!prefs.getPeriodicallyUpdateGPS()) {
             walkingMode = false;
-        }else if (!prefs.getIsDisableDawnDuskRecordings()){
+        } else if (!prefs.getIsDisableDawnDuskRecordings()) {
             walkingMode = false;
-        }else if (prefs.getUseFrequentUploads()){
+        } else if (prefs.getUseFrequentUploads()) {
             walkingMode = false;
         }
 
         return walkingMode;
     }
 
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
-    private static void nowSwipeRight(){
+    private static void nowSwipeRight() {
         onView(withId(R.id.SetUpWizard)).perform(swipeRight());
     }
 

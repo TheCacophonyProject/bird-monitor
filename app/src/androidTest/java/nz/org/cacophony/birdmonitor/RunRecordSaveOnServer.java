@@ -1,11 +1,8 @@
 package nz.org.cacophony.birdmonitor;
 
 
-
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
-
-
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -46,8 +43,6 @@ public class RunRecordSaveOnServer {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
     }
-
-
 
 
     @Test

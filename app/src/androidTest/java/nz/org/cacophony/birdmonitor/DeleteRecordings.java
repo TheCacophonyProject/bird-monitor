@@ -2,6 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
+
 import java.io.File;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -33,7 +34,7 @@ class DeleteRecordings {
         tearDownForDeleteAllRecordings(mActivityTestRule);
     }
 
-    private static void setUpForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
 
 
         targetContext = getInstrumentation().getTargetContext();
@@ -44,10 +45,10 @@ class DeleteRecordings {
         prefs.setIsDisabled(true);
 
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
             onView(withId(R.id.btnSetup)).perform(click());
         }
@@ -62,7 +63,7 @@ class DeleteRecordings {
         HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -90,7 +91,6 @@ class DeleteRecordings {
     }
 
 
-
     private static void tearDownForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
         prefs.setInternetConnectionMode("normal");
         Util.signOutUser(targetContext);
@@ -98,7 +98,7 @@ class DeleteRecordings {
     }
 
 
-    private static void deleteAllRecordings(){
+    private static void deleteAllRecordings() {
 
         int numberOfRecordingsBeforeDelete = Util.getNumberOfRecordings(targetContext);
         assertTrue(numberOfRecordingsBeforeDelete > 0);
@@ -107,14 +107,13 @@ class DeleteRecordings {
         HelperCode.dismissDialogWithYes();
 
         int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
-        assertTrue(numberOfRecordingsAfterDelete == 0);
+        assertEquals(0, numberOfRecordingsAfterDelete);
 
         onView(withId(R.id.tvMessagesManageRecordings)).check(matches(withText("All recordings on the phone have been deleted.")));
     }
 
 
-
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 

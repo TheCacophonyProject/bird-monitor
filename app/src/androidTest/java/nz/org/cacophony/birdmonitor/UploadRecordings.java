@@ -35,16 +35,16 @@ class UploadRecordings {
     }
 
 
-    private static void setUpForUploadAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForUploadAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
 
             onView(withId(R.id.btnSetup)).perform(click());
@@ -60,7 +60,7 @@ class UploadRecordings {
         HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -91,7 +91,6 @@ class UploadRecordings {
     }
 
 
-
     private static void tearDownForDeleteAllRecordings(ActivityTestRule<MainActivity> mActivityTestRule) {
         prefs.setInternetConnectionMode("normal");
         prefs.setIsDisabled(false);
@@ -99,8 +98,7 @@ class UploadRecordings {
     }
 
 
-
-    private static void uploadAllRecordings(){
+    private static void uploadAllRecordings() {
 
         int numberOfRecordingsBeforeUpload = Util.getNumberOfRecordings(targetContext);
         assertTrue(numberOfRecordingsBeforeUpload > 0);
@@ -110,7 +108,7 @@ class UploadRecordings {
 
 
         int numberOfRecordingsAfterDelete = Util.getNumberOfRecordings(targetContext);
-        assertTrue(numberOfRecordingsAfterDelete == 0);
+        assertEquals(0, numberOfRecordingsAfterDelete);
 
         long lastRecordIdReturnedFromServer = prefs.getLastRecordIdReturnedFromServer();
 
@@ -119,7 +117,7 @@ class UploadRecordings {
         onView(withId(R.id.tvMessagesManageRecordings)).check(matches(withText("Recordings have been uploaded to the server.")));
     }
 
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 

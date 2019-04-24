@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
  * POST requests to a web server.
- * @author www.codejava.net
  *
+ * @author www.codejava.net
  */
-@SuppressWarnings({"Convert2Diamond", "JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
+@SuppressWarnings({"JavaDoc", "StringConcatenationInsideStringBufferAppend", "UnusedAssignment"})
 class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
@@ -48,13 +48,13 @@ class MultipartUtility {
         this.charset = charset;
 
         outputStream = conn.getOutputStream();
-        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
-                true);
+        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
     }
 
     /**
      * Adds a form field to the request
-     * @param name field name
+     *
+     * @param name  field name
      * @param value field value
      */
     public void addFormField(String name, String value) {
@@ -70,7 +70,8 @@ class MultipartUtility {
 
     /**
      * Adds a upload file section to the request
-     * @param fieldName name attribute in <input type="file" name="..." />
+     *
+     * @param fieldName  name attribute in <input type="file" name="..." />
      * @param uploadFile a File to be uploaded
      * @throws IOException
      */
@@ -105,7 +106,8 @@ class MultipartUtility {
 
     /**
      * Adds a header field to the request.
-     * @param name - name of the header field
+     *
+     * @param name  - name of the header field
      * @param value - value of the header field
      */
     @SuppressWarnings("unused")
@@ -116,12 +118,13 @@ class MultipartUtility {
 
     /**
      * Completes the request and receives response from the server.
+     *
      * @return a list of Strings as response in case the server returned
      * status OK, otherwise an exception is thrown.
      * @throws IOException
      */
     public List<String> finish() throws IOException {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         writer.append(LINE_FEED).flush();
         writer.append("--" + boundary + "--").append(LINE_FEED);

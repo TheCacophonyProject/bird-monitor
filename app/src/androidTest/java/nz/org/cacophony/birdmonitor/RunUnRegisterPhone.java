@@ -2,7 +2,6 @@ package nz.org.cacophony.birdmonitor;
 
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
-
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -40,7 +39,7 @@ public class RunUnRegisterPhone {
 
 
     @Test
-    public void unRegisterPhone() {
+    public void unRegisterPhone() throws InterruptedException {
         RegisterPhone.unRegisterPhone(mActivityTestRule);
     }
 

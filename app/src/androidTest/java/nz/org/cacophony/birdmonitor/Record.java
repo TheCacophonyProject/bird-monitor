@@ -45,7 +45,7 @@ class Record {
         tearDownForRecord(mActivityTestRule);
     }
 
-    private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         // Seems sometimes particualar idling resources are not idle e.g. [RECORD]
 
@@ -54,10 +54,10 @@ class Record {
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
             onView(withId(R.id.btnSetup)).perform(click());
         }
@@ -74,7 +74,7 @@ class Record {
         HelperCode.signInUserTimhot();
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
         nowSwipeLeft(); // takes you to Groups screen
@@ -86,7 +86,6 @@ class Record {
         nowSwipeLeft(); // takes you to Test RecordAndSaveOnPhone
 
 
-
     }
 
     private static void tearDownForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
@@ -95,7 +94,7 @@ class Record {
         Util.signOutUser(targetContext);
 
         File recordingsFolder = Util.getRecordingsFolder(targetContext);
-        for (File file : recordingsFolder.listFiles()){
+        for (File file : recordingsFolder.listFiles()) {
             file.delete();
         }
 
@@ -104,7 +103,7 @@ class Record {
     }
 
 
-    private static void recordAndSaveOnPhone(){
+    private static void recordAndSaveOnPhone() {
         // Need to put phone into offline mode so it doesn't try to upload the recording
         prefs.setInternetConnectionMode("offline");
 
@@ -119,12 +118,12 @@ class Record {
         assertEquals(numberOfRecordingsBeforeTestRecord + 1, numberOfRecordingsAfterTestRecord);
     }
 
-    private static void recordAndSaveOnServer(){
+    private static void recordAndSaveOnServer() {
         // Need to put phone into normal mode so it uploads the recording
         prefs.setInternetConnectionMode("normal");
 
         File recordingsFolder = Util.getRecordingsFolder(targetContext);
-        for (File file : recordingsFolder.listFiles()){
+        for (File file : recordingsFolder.listFiles()) {
             file.delete();
         }
 
@@ -134,18 +133,17 @@ class Record {
         prefs.setIsDisabled(true);
         try {
             Thread.sleep(10000); // Espresso says shouldn't do this, but I needed a way to wait for file to be uploaded.  Espresso only waits for counting resource to be idle IF/FOR simulated user interaction.
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("Record", ex.getLocalizedMessage());
         }
 
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
-        assertTrue(lastRecordingIdFromServer >-1); // Don't know what the recording ID will be, so just check it exists
+        assertTrue(lastRecordingIdFromServer > -1); // Don't know what the recording ID will be, so just check it exists
     }
 
 
-
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
-    }
+}

@@ -19,8 +19,6 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import nz.org.cacophony.birdmonitor.R;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
 
 public class CreateAccountFragment extends Fragment {
@@ -58,19 +56,14 @@ public class CreateAccountFragment extends Fragment {
         tilPassword1 = view.findViewById(R.id.tilPassword1);
         etPassword1 = view.findViewById(R.id.etPassword1);
         tilPassword2 = view.findViewById(R.id.tilPassword2);
-         etPassword2 = view.findViewById(R.id.etPassword2);
+        etPassword2 = view.findViewById(R.id.etPassword2);
         btnSignUp = view.findViewById(R.id.btnSignUp);
       //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
         tvMessages = view.findViewById(R.id.tvMessagesCreateAccount);
 
         setUserVisibleHint(false);
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createUserButtonPressed();
-            }
-        });
+        btnSignUp.setOnClickListener(v -> createUserButtonPressed());
 
         return view;
     }
@@ -86,7 +79,7 @@ public class CreateAccountFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -94,47 +87,46 @@ public class CreateAccountFragment extends Fragment {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
             displayOrHideGUIObjects();
 
-        }else{
+        } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
 
 
-    private void displayOrHideGUIObjects(){
+    private void displayOrHideGUIObjects() {
 
         tvTitle.setVisibility(View.VISIBLE);
         tilUsername.setVisibility(View.VISIBLE);
-            tilEmail.setVisibility(View.VISIBLE);
-            tilPassword1.setVisibility(View.VISIBLE);
-            tilPassword2.setVisibility(View.VISIBLE);
+        tilEmail.setVisibility(View.VISIBLE);
+        tilPassword1.setVisibility(View.VISIBLE);
+        tilPassword2.setVisibility(View.VISIBLE);
 
         btnSignUp.setVisibility(View.VISIBLE);
         tvMessages.setText("");
     }
 
 
-
-    private void createUserButtonPressed(){
+    private void createUserButtonPressed() {
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
-         if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")){
-            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered") ;
+        if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The internet connection (in Advanced) has been set 'offline' - so this device can not be registered");
             return;
         }
 
-        if (!Util.isNetworkConnected(getActivity().getApplicationContext())){
-           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The phone is not currently connected to the internet - please fix and try again\"") ;
+        if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "The phone is not currently connected to the internet - please fix and try again\"");
             return;
         }
 
         // Check that the username is valid, at least 5 characters.
         String username = etUsername.getText().toString();
-        if (username.length() < 1){
+        if (username.length() < 1) {
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a Username of at least 5 characters (no spaces)");
             return;
-        }else if (username.length() < 5) {
-           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", username + " is not a valid username. Please use at least 5 characters (no spaces)");
+        } else if (username.length() < 5) {
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", username + " is not a valid username. Please use at least 5 characters (no spaces)");
             return;
         }
 
@@ -142,21 +134,21 @@ public class CreateAccountFragment extends Fragment {
         String emailAddress = etEmail.getText().toString();
 
         if (emailAddress.length() < 1) {
-           ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter an email address");
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter an email address");
             return;
-        } else if (!Util.isValidEmail(emailAddress)){
+        } else if (!Util.isValidEmail(emailAddress)) {
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", emailAddress + " is not a valid email address.");
             return;
         }
 
         //Check password is valid
         String etPassword1 = ((EditText) getView().findViewById(R.id.etPassword1)).getText().toString();
-        if (etPassword1.length() < 8){
+        if (etPassword1.length() < 8) {
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Minimum password length is 8 characters.");
             return;
         }
         String etPassword2 = ((EditText) getView().findViewById(R.id.etPassword2)).getText().toString();
-        if (!etPassword1.equals(etPassword2)){
+        if (!etPassword1.equals(etPassword2)) {
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Passwords must match.");
             return;
         }
@@ -177,29 +169,19 @@ public class CreateAccountFragment extends Fragment {
         disableFlightMode();
 
         // Now wait for network connection as disableFlightMode takes a while
-        if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)){
+        if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)) {
             Log.e(TAG, "Failed to disable airplane mode");
-            return ;
+            return;
         }
 
-        Thread signUpThread = new Thread() {
-            @Override
-            public void run() {
-
-                Server.signUp(username, emailAddress, password, context);
-            }
-        };
-        signUpThread.start();
-
+        new Thread(() -> Server.signUp(username, emailAddress, password, context)).start();
     }
 
-    private void disableFlightMode(){
+    private void disableFlightMode() {
         try {
             Util.disableFlightMode(getActivity().getApplicationContext());
-
-
-        }catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Error disabling flight mode.");
         }
     }
@@ -239,7 +221,7 @@ public class CreateAccountFragment extends Fragment {
                         etPassword1.setText("");
                         etPassword2.setText("");
 
-                      // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
+                        // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
                         tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
                         createAccountIdlingResource.decrement();
 
@@ -249,17 +231,16 @@ public class CreateAccountFragment extends Fragment {
                         tilPassword1.setVisibility(View.VISIBLE);
                         tilPassword2.setVisibility(View.VISIBLE);
                         tvMessages.setText("");
-                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay) ;
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         createAccountIdlingResource.decrement();
-                        }
-
                     }
 
+                }
 
 
             } catch (Exception ex) {
 
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
 
                 tilUsername.setVisibility(View.VISIBLE);
                 tilEmail.setVisibility(View.VISIBLE);

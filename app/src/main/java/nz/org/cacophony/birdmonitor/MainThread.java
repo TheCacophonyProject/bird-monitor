@@ -28,12 +28,13 @@ class MainThread implements Runnable {
         this.alarmIntentType = alarmIntentType;
 
     }
+
     @Override
     public void run() {
 
         Looper.prepare();
         //        if (context == null || handler == null) {
-        if (context == null ) {
+        if (context == null) {
             Log.w(TAG, "Context or Handler were null.");
 
 
@@ -55,12 +56,11 @@ class MainThread implements Runnable {
         }
 
 
-
         try {
 
-            RecordAndUpload.doRecord(context, alarmIntentType );
+            RecordAndUpload.doRecord(context, alarmIntentType);
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -39,31 +38,21 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_register, container, false);
+        View view = inflater.inflate(R.layout.fragment_register, container, false);
 
         setUserVisibleHint(false);
 
-        tvMessages =  view.findViewById(R.id.tvMessagesRegister);
-        etGroupNameInput =  view.findViewById(R.id.etGroupNameInput);
-        etDeviceNameInput =  view.findViewById(R.id.etDeviceNameInput);
+        tvMessages = view.findViewById(R.id.tvMessagesRegister);
+        etGroupNameInput = view.findViewById(R.id.etGroupNameInput);
+        etDeviceNameInput = view.findViewById(R.id.etDeviceNameInput);
 
         btnRegister = view.findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                registerButtonPressed();
-            }
-        });
+        btnRegister.setOnClickListener(v -> registerButtonPressed());
 
         btnUnRegister = view.findViewById(R.id.btnUnRegister);
-        btnUnRegister.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                unregisterButtonPressed();
-            }
-        });
+        btnUnRegister.setOnClickListener(v -> unregisterButtonPressed());
 
-        tvTitleMessage =  view.findViewById(R.id.tvTitleMessage);
+        tvTitleMessage = view.findViewById(R.id.tvTitleMessage);
 
         return view;
     }
@@ -72,7 +61,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -81,7 +70,7 @@ public class RegisterFragment extends Fragment {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
 
-        // Set next pages
+            // Set next pages
 
 //            Prefs prefs = new Prefs(getActivity());
 //            String groupNameFromPrefs = prefs.getGroupName();
@@ -90,14 +79,14 @@ public class RegisterFragment extends Fragment {
 //                ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
 //            }
 
-            if (Util.isPhoneRegistered(getActivity())){
+            if (Util.isPhoneRegistered(getActivity())) {
                 ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
             }
 
             displayOrHideGUIObjects();
 
 
-        }else{
+        } else {
 
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
@@ -124,14 +113,14 @@ public class RegisterFragment extends Fragment {
 
                     if (messageType != null) {
 
-                        if (messageType.equalsIgnoreCase("REGISTER_SUCCESS") ) {
+                        if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
                             tvMessages.setText(messageToDisplay + " Swipe to next screen.");
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
                             etGroupNameInput.setEnabled(false);
                             etDeviceNameInput.setEnabled(false);
                             registerPhoneIdlingResource.decrement();
 
-                        }else if (messageType.equalsIgnoreCase("REGISTER_FAIL")){
+                        } else if (messageType.equalsIgnoreCase("REGISTER_FAIL")) {
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
                             etGroupNameInput.setEnabled(true);
@@ -143,7 +132,7 @@ public class RegisterFragment extends Fragment {
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
 
                 tvMessages.setText("Oops, your phone did not register - not sure why");
                 displayOrHideGUIObjects(true);
@@ -151,10 +140,12 @@ public class RegisterFragment extends Fragment {
             }
         }
     };
+
     void displayOrHideGUIObjects() {
 
         displayOrHideGUIObjects(false);
     }
+
     void displayOrHideGUIObjects(boolean callSetNumberOfPages) {
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
@@ -164,51 +155,51 @@ public class RegisterFragment extends Fragment {
 
         tvTitleMessage.setText(getString(R.string.register_title_unregistered));
 
-        if (groupNameFromPrefs == null){
+        if (groupNameFromPrefs == null) {
             // First time user has used this app
             // Phone is not registerd
             btnRegister.setVisibility(View.VISIBLE);
             btnUnRegister.setVisibility(View.INVISIBLE);
-            if (callSetNumberOfPages){
+            if (callSetNumberOfPages) {
                 ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
             }
 
-            if (groupNameFromGroupsActivity == null){
+            if (groupNameFromGroupsActivity == null) {
                 // User did not enter a group on Groups screen
                 // Display default register screen
                 etGroupNameInput.setEnabled(true);
                 etDeviceNameInput.setEnabled(true);
 
                 etGroupNameInput.setText("");
-                if (deviceNameFromPrefs != null){
+                if (deviceNameFromPrefs != null) {
                     etDeviceNameInput.setText(deviceNameFromPrefs);
-                }else {
+                } else {
                     etDeviceNameInput.setText("");
                 }
 
-            }else{
+            } else {
                 // User DID enter a group on Groups screen
                 // Display that group
                 etGroupNameInput.setEnabled(true);
                 etDeviceNameInput.setEnabled(true);
 
                 etGroupNameInput.setText(groupNameFromGroupsActivity);
-                if (deviceNameFromPrefs != null){
+                if (deviceNameFromPrefs != null) {
                     etDeviceNameInput.setText(deviceNameFromPrefs);
-                }else {
+                } else {
                     etDeviceNameInput.setText("");
                 }
             }
         } else {
             // User has used this phone before and a group has been saved
-            if (groupNameFromGroupsActivity == null){
+            if (groupNameFromGroupsActivity == null) {
                 // User did not enter a new group so display the group that they used last time
                 etGroupNameInput.setEnabled(true);
                 etDeviceNameInput.setEnabled(true);
 
                 etGroupNameInput.setText(groupNameFromPrefs);
 
-                if (deviceNameFromPrefs != null){
+                if (deviceNameFromPrefs != null) {
                     // This means that the phone has already been registered so disable the input fields, hide the register button and display the unregister button.
                     if (callSetNumberOfPages) {
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
@@ -222,7 +213,7 @@ public class RegisterFragment extends Fragment {
                     btnRegister.setVisibility(View.INVISIBLE);
                     btnUnRegister.setVisibility(View.VISIBLE);
 
-                }else {
+                } else {
                     // This means that the phone is not registered so make sure input fields are enabled and only register button is displayed
                     if (callSetNumberOfPages) {
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
@@ -235,14 +226,14 @@ public class RegisterFragment extends Fragment {
                     etDeviceNameInput.setText("");
                 }
 
-            }else { // groupNameFromPrefs and groupNameFromGroupsActivity are not null
+            } else { // groupNameFromPrefs and groupNameFromGroupsActivity are not null
 
 
-                if (groupNameFromPrefs.equals(groupNameFromGroupsActivity)){
+                if (groupNameFromPrefs.equals(groupNameFromGroupsActivity)) {
                     // Phone is still registered and the user isn't trying to change groups
                     tvTitleMessage.setText(getString(R.string.register_title_registered)); // Might not need this, but being safe
 
-                }else{
+                } else {
                     // User has entered a new group in the previous group screen
                     // Need to tell the user that they need to first unregister if they want to change groups
                     tvTitleMessage.setText("The phone is currently registered to group " + groupNameFromPrefs + ". You need to un-register before changing groups.");
@@ -255,20 +246,20 @@ public class RegisterFragment extends Fragment {
                 etDeviceNameInput.setEnabled(true);
                 //etGroupNameInput.setText(groupNameFromPrefs);
                 etGroupNameInput.setText(groupNameFromGroupsActivity);
-                if (deviceNameFromPrefs != null){
+                if (deviceNameFromPrefs != null) {
                     // May as well display device name that was used with the last group
                     etDeviceNameInput.setText(deviceNameFromPrefs);
-                }else {
+                } else {
                     etDeviceNameInput.setText("");
                 }
 
                 // Which button to display depends on if it is currently registered
                 // As it has got here we already know it has a group in preferences
-                if (deviceNameFromPrefs != null){
+                if (deviceNameFromPrefs != null) {
                     // Phone is registered so display unregisterd
                     btnRegister.setVisibility(View.INVISIBLE);
                     btnUnRegister.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     // Phone is NOT registered so display register
                     btnRegister.setVisibility(View.VISIBLE);
                     btnUnRegister.setVisibility(View.INVISIBLE);
@@ -307,7 +298,7 @@ public class RegisterFragment extends Fragment {
         }
 
         // Check that the device name is valid, at least 4 characters.
-        String deviceName = ((EditText)  getView().findViewById(R.id.etDeviceNameInput)).getText().toString();
+        String deviceName = ((EditText) getView().findViewById(R.id.etDeviceNameInput)).getText().toString();
         if (deviceName.length() < 1) {
             tvMessages.setText("Please enter a device name of at least 4 characters (no spaces)");
             return;
@@ -317,21 +308,18 @@ public class RegisterFragment extends Fragment {
         }
 
         // Don't allow . (dots) in the device name
-        if (deviceName.contains(".")){
+        if (deviceName.contains(".")) {
             tvMessages.setText(deviceName + " is not a valid device name. Full stops . are not allowed.");
             return;
         }
-
-
-
 
 
         String groupNameFromPrefs = prefs.getGroupName();
         String deviceNameFromPrefs = prefs.getDeviceName();
 
         // Check to see if the user has actually changed anything from last time it was registerd
-        if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
-            if (groupNameFromPrefs.equals(group) && deviceNameFromPrefs.equals(deviceName)){
+        if (groupNameFromPrefs != null && deviceNameFromPrefs != null) {
+            if (groupNameFromPrefs.equals(group) && deviceNameFromPrefs.equals(deviceName)) {
                 tvMessages.setText("Already registered with those group and device names.");
                 return;
             }
@@ -343,7 +331,7 @@ public class RegisterFragment extends Fragment {
 
         // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (imm != null){
+        if (imm != null) {
             imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
         }
 
@@ -370,13 +358,7 @@ public class RegisterFragment extends Fragment {
             return;
         }
         registerPhoneIdlingResource.increment();
-        Thread registerThread = new Thread() {
-            @Override
-            public void run() {
-                Server.registerDevice(group, deviceName, context);
-            }
-        };
-        registerThread.start();
+        new Thread(() -> Server.registerDevice(group, deviceName, context)).start();
     }
 
 
@@ -386,45 +368,30 @@ public class RegisterFragment extends Fragment {
             tvMessages.setText("Not currently registered - so can not unregister :-(");
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                unregister();
-            }
-        });
-        builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                return;
-            }
-        });
-        builder.setMessage("Are you sure?")
-                .setTitle("Un-register this phone");
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Yes", (di, id) -> unregister())
+                .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
+                .setMessage("Are you sure?")
+                .setTitle("Un-register this phone")
+                .create();
 
-        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
+            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            btnNegative.setTextSize(24);
+            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnNegative.setTextColor(btnNegativeColor);
 
-                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-                btnNegative.setTextSize(24);
-                int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-                btnNegative.setTextColor(btnNegativeColor);
-
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
         });
 
         dialog.show();
-
-
     }
 
     private void unregister() {
@@ -449,11 +416,10 @@ public class RegisterFragment extends Fragment {
             Util.disableFlightMode(getActivity().getApplicationContext());
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             tvMessages.setText("Error disabling flight mode");
         }
     }
-
 
 
 }

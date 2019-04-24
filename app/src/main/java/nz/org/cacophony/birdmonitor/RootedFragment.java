@@ -6,11 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import nz.org.cacophony.birdmonitor.R;
 
 public class RootedFragment extends Fragment {
 
@@ -24,29 +21,21 @@ public class RootedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_rooted, container, false);
+        View view = inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = (TextView) view.findViewById(R.id.tvMessages);
-        swRooted = (Switch) view.findViewById(R.id.swRooted);
-        btnFinished = (Button) view.findViewById(R.id.btnFinished);
+        tvMessages = view.findViewById(R.id.tvMessages);
+        swRooted = view.findViewById(R.id.swRooted);
+        btnFinished = view.findViewById(R.id.btnFinished);
 
         displayOrHideGUIObjects();
 
-            btnFinished.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    ((AdvancedWizardActivity)getActivity()).nextPageView();
-                }
-            });
+        btnFinished.setOnClickListener(v -> ((AdvancedWizardActivity) getActivity()).nextPageView());
 
-        swRooted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Prefs prefs = new Prefs(getActivity());
-                prefs.setHasRootAccess(swRooted.isChecked());
-                displayOrHideGUIObjects();
-            }
+        swRooted.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setHasRootAccess(swRooted.isChecked());
+            displayOrHideGUIObjects();
         });
 
         return view;
@@ -55,7 +44,7 @@ public class RootedFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -67,15 +56,15 @@ public class RootedFragment extends Fragment {
         Prefs prefs = new Prefs(getActivity());
         swRooted.setChecked(prefs.getHasRootAccess());
 
-        if (prefs.getHasRootAccess()){
+        if (prefs.getHasRootAccess()) {
             swRooted.setText("YES");
-        }else{
+        } else {
             swRooted.setText("NO");
         }
 
-        if (prefs.getSettingsForTestServerEnabled()){
+        if (prefs.getSettingsForTestServerEnabled()) {
             btnFinished.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             btnFinished.setVisibility(View.VISIBLE);
         }
     }

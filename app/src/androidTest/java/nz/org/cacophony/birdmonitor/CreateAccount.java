@@ -3,6 +3,7 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
+
 import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -11,9 +12,9 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 
 /**
  * Created by Tim Hunt on 16-Mar-18.
@@ -30,17 +31,17 @@ class CreateAccount {
 
     }
 
-    private static void setUpForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule){
+    private static void setUpForCreateAccount(ActivityTestRule<MainActivity> mActivityTestRule) {
 
         Context targetContext = getInstrumentation().getTargetContext();
         Prefs prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
 
 
-        if (prefs.getDeviceName() == null){
+        if (prefs.getDeviceName() == null) {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
-        }else{
+        } else {
             // Main menu will be showing
             onView(withId(R.id.btnSetup)).perform(click());
         }
@@ -51,12 +52,12 @@ class CreateAccount {
     }
 
 
-    private static void create(){
+    private static void create() {
 
         try {
             // Create a uniqueish username
             Date now = new Date();
-            String deviceName = Long.toString(now.getTime()/1000);
+            String deviceName = Long.toString(now.getTime() / 1000);
             deviceName.substring(deviceName.length() - 8);
             onView(withId(R.id.etUsername)).perform(replaceText(deviceName), closeSoftKeyboard());
             onView(withId(R.id.etEmail)).perform(replaceText(deviceName + "@gmail.com"), closeSoftKeyboard());
@@ -65,7 +66,7 @@ class CreateAccount {
 
             onView(withId(R.id.btnSignUp)).perform(click());
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("CreateAccount", ex.getLocalizedMessage());
         }
 
@@ -75,7 +76,7 @@ class CreateAccount {
         onView(withId(R.id.tvMessagesCreateAccount)).check(matches(withText(successMessage)));
     }
 
-    private static void nowSwipeLeft(){
+    private static void nowSwipeLeft() {
         onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 }

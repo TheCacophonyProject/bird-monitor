@@ -2,6 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.util.Log;
+
 import java.util.Date;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -20,49 +21,49 @@ import static org.hamcrest.Matchers.is;
 
 class HelperCode {
 
-   public static void useTestServerAndShortRecordings(){
+    public static void useTestServerAndShortRecordings() {
 
-       Context targetContext = getInstrumentation().getTargetContext();
-       Prefs prefs = new Prefs(targetContext);
+        Context targetContext = getInstrumentation().getTargetContext();
+        Prefs prefs = new Prefs(targetContext);
 
-        if (!prefs.getUseTestServer()){
+        if (!prefs.getUseTestServer()) {
             Util.setUseTestServer(targetContext, true);
             prefs.setUseShortRecordings(true);
         }
     }
 
-    public static void signOutUser(Prefs prefs){
+    public static void signOutUser(Prefs prefs) {
 
         prefs.setUsername(null);
         prefs.setUsernamePassword(null);
         prefs.setUserSignedIn(false);
     }
 
-    public static void dismissWelcomeDialog(){
-        try{
+    public static void dismissWelcomeDialog() {
+        try {
 
             try {
                 while (!recordIdlingResource.isIdleNow()) {
                     recordIdlingResource.decrement();
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 Log.e("Record", ex.getLocalizedMessage());
             }
-            onView(allOf(withId(android.R.id.button1), withText("OK"))).perform(scrollTo(),click());
-        }catch (Exception ex){
+            onView(allOf(withId(android.R.id.button1), withText("OK"))).perform(scrollTo(), click());
+        } catch (Exception ex) {
             Log.e("HelperCode", ex.getLocalizedMessage());
         }
     }
 
-    public static void dismissDialogWithYes(){
-        try{
-            onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(),click());
-        }catch (Exception ex){
+    public static void dismissDialogWithYes() {
+        try {
+            onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(), click());
+        } catch (Exception ex) {
             Log.e("HelperCode", ex.getLocalizedMessage());
         }
     }
 
-    public static void signInUserTimhot(){
+    public static void signInUserTimhot() {
 
         try {
 
@@ -73,13 +74,13 @@ class HelperCode {
             onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
             onView(withId(R.id.btnSignIn)).perform(click());
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("SignInUser", ex.getLocalizedMessage());
         }
     }
 
 
-    public static void registerPhone(Prefs prefs){
+    public static void registerPhone(Prefs prefs) {
 
         try {
             Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
@@ -92,25 +93,25 @@ class HelperCode {
             // Create a unique device name
             Date now = new Date();
 
-            String deviceName = Long.toString(now.getTime()/1000);
+            String deviceName = Long.toString(now.getTime() / 1000);
             prefs.setLastDeviceNameUsedForTesting(deviceName); // save the device name so can find recordings for it later
 
             onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());
             onView(withId(R.id.btnRegister)).perform(click());
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("RegisterPhone", ex.getLocalizedMessage());
         }
     }
 
-    public static void unRegisterPhone(){
+    public static void unRegisterPhone() {
 
         try {
             Thread.sleep(1000);
             onView(withId(R.id.btnUnRegister)).perform(click());
             Thread.sleep(1000);
             dismissDialogWithYes();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("RegisterPhone", ex.getLocalizedMessage());
         }
     }

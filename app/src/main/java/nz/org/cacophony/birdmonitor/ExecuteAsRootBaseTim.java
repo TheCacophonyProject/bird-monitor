@@ -9,16 +9,15 @@ import java.util.ArrayList;
  * It may have been possible to modify ExecuteAsRootBase, but extended it interfered with that
  * code less which I hoped would reduce the chance of breaking it :-)
  */
-@SuppressWarnings("Convert2Diamond")
 public class ExecuteAsRootBaseTim extends ExecuteAsRootBase {
-    private final ArrayList<String> commands = new ArrayList<String>();
+    private final ArrayList<String> commands = new ArrayList<>();
+
     @Override
     protected ArrayList<String> getCommandsToExecute() {
-
         return commands;
     }
 
-    void addCommand(String command){
+    void addCommand(String command) {
         commands.add(command);
     }
 }

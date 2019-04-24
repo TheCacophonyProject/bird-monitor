@@ -11,16 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
-import java.util.Comparator;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
@@ -33,54 +31,35 @@ public class GroupsFragment extends Fragment {
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
 
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_groups, container, false);
+        View view = inflater.inflate(R.layout.fragment_groups, container, false);
         setUserVisibleHint(false);
 
-        etNewGroupInput =  view.findViewById(R.id.etNewGroupInput);
-        btnCreateGroup =  view.findViewById(R.id.btnCreateGroup);
-        lvGroups =  view.findViewById(R.id.lvGroups);
+        etNewGroupInput = view.findViewById(R.id.etNewGroupInput);
+        btnCreateGroup = view.findViewById(R.id.btnCreateGroup);
+        lvGroups = view.findViewById(R.id.lvGroups);
         tvMessages = view.findViewById(R.id.tvMessages);
 
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
         sortGroups();
 
-        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                addGroup();
-            }
+        btnCreateGroup.setOnClickListener(v -> addGroup());
+
+        lvGroups.setOnItemClickListener((a, v, index, l) -> {
+            String group = lvGroups.getItemAtPosition(index).toString();
+            ((SetupWizardActivity) getActivity()).setGroup(group);
+            ((SetupWizardActivity) getActivity()).nextPageView();
         });
-
-        lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String group = lvGroups.getItemAtPosition(i).toString();
-                ((SetupWizardActivity) getActivity()).setGroup(group);
-                ((SetupWizardActivity) getActivity()).nextPageView();
-
-
-            }
-        });
-
 
         return view;
     }
 
     private void sortGroups() {
         adapter.setNotifyOnChange(false);
-        adapter.sort(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        adapter.sort(String::compareTo);
         adapter.setNotifyOnChange(true);
         adapter.notifyDataSetChanged();
     }
@@ -91,27 +70,25 @@ public class GroupsFragment extends Fragment {
             final String newGroup = etNewGroupInput.getText().toString();
 
             // Check group name is at least 4 characters long
-            if (newGroup.length() < 4){
+            if (newGroup.length() < 4) {
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Please enter a group name of at least 4 characters.");
                 return;
             }
 
             // Check if this group already exists
-
-            if(Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)){
+            if (Util.getGroupsStoredOnPhone(getActivity()).contains(newGroup)) {
                 ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "Sorry, can NOT add that group as it already exists.");
                 return;
             }
             ((SetupWizardActivity) getActivity()).setGroup(newGroup);
             tvMessages.setText("Adding group to server");
-            Util.addGroupToServer(getActivity(), newGroup, new Runnable() {
-                @Override
-                public void run() {
-                    // Only add the group to the UI on success
+            Util.addGroupToServer(getActivity(), newGroup, () -> {
+                // Only add the group to the UI on success
+                getActivity().runOnUiThread(() -> {
                     adapter.add(newGroup);
                     sortGroups();
                     etNewGroupInput.setText("");
-                }
+                });
             });
 
         } catch (Exception ex) {
@@ -122,7 +99,7 @@ public class GroupsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
-        if (getActivity() == null){
+        if (getActivity() == null) {
             return;
         }
         if (visible) {
@@ -134,11 +111,10 @@ public class GroupsFragment extends Fragment {
             IntentFilter iff = new IntentFilter("SERVER_GROUPS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
-        }else{
+        } else {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
         }
     }
-
 
 
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
@@ -146,7 +122,7 @@ public class GroupsFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-           
+
             try {
 
                 if (getView() == null) {
@@ -177,37 +153,37 @@ public class GroupsFragment extends Fragment {
 
                         getGroupsIdlingResource.decrement();
 
-                    } else if(messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
+                    } else if (messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
                         getGroupsIdlingResource.decrement();
-                    }else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
+                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
-                      adapter.clear();
+                        adapter.clear();
                         //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
                         adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
                         adapter.notifyDataSetChanged();
                         getGroupsIdlingResource.decrement();
 
-                    }else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                    } else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         getGroupsIdlingResource.decrement();
-                }
+                    }
 
                 }
 
 
             } catch (Exception ex) {
 
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
                 try {
                     getGroupsIdlingResource.decrement();
-                }catch (Exception e){
-                        Log.e(TAG, e.getLocalizedMessage());
-                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.getLocalizedMessage(), e);
+                }
             }
         }
     };

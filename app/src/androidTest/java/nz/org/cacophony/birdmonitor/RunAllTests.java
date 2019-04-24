@@ -12,7 +12,6 @@ package nz.org.cacophony.birdmonitor;
  */
 
 
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

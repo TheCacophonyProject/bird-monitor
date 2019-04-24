@@ -64,19 +64,19 @@ class Server {
 
             login(context);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
 
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "refresh_vitals_displayed_text");
-                Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
 
                 jsonObjectMessageToBroadcast.put("messageType", "enable_vitals_button");
-                Util.broadcastAMessage(context,  "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
     }
@@ -323,7 +323,6 @@ class Server {
      * @param group   Name of group to register under.
      * @param context App context.
      */
-    @SuppressWarnings("RedundantStringConstructorCall")
     static void registerDevice(final String group, final String deviceName, final Context context) {
         final Prefs prefs = new Prefs(context);
 
@@ -530,7 +529,7 @@ class Server {
             }
 
         } catch (IOException ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
         }
@@ -607,7 +606,7 @@ class Server {
             Util.broadcastAMessage(context, SERVER_GROUPS_ACTION, jsonObjectMessageToBroadcast);
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
         return groups;
@@ -649,7 +648,7 @@ class Server {
                 return false;
             }
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             return false;
         }
     }

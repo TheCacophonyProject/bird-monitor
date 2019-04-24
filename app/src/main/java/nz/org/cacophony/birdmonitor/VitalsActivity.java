@@ -82,18 +82,9 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     private void disableFlightMode() {
         try {
             //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
-            new Thread() {
-                public void run() {
-                    VitalsActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Util.disableFlightMode(getApplicationContext());
-                        }
-                    });
-                }
-            }.start();
-
+            new Thread(() -> runOnUiThread(() -> Util.disableFlightMode(getApplicationContext()))).start();
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
             tvMessages.setText("Error disabling flight mode");
         }
     }
@@ -210,7 +201,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 locationStatus.setText(locationStatusToDisplay);
             }
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -232,7 +223,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 }
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
                 tvMessages.setText("Could not record");
             }
 
@@ -243,7 +234,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         try {
             finish();
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 

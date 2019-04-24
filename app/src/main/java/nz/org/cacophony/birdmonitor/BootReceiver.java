@@ -1,4 +1,3 @@
-
 package nz.org.cacophony.birdmonitor;
 
 
@@ -82,7 +81,7 @@ public class BootReceiver extends BroadcastReceiver {
             try {
                 Thread.sleep(3000);
             } catch (Exception e) {
-                Log.e(TAG, ex.getLocalizedMessage());
+                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
         }
 
