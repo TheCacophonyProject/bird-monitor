@@ -2,7 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.util.Log;
-
+import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,17 +13,6 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
-
-import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
@@ -45,7 +34,7 @@ class Server {
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
     private static final String SIGNUP_URL = "/api/v1/users";
-    private static final String GROUPS_URL = "api/v1/groups"; // deliberately don't have leading / https://square.github.io/okhttp/3.x/okhttp/ says not to have it
+    private static final String GROUPS_URL = "/api/v1/groups";
     private static final OkHttpClient client = new OkHttpClient();
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -591,29 +580,21 @@ class Server {
 
     static boolean addGroupToServer(Context context, String groupName) {
         final Prefs prefs = new Prefs(context);
-        try {
-            HttpUrl url = new HttpUrl.Builder()
-                    .scheme(prefs.getServerScheme())
-                    .host(prefs.getServerHost())
-                    .addPathSegments(GROUPS_URL)
-                    .build();
 
-            RequestBody formBody = new FormBody.Builder()
+        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+
+        try {
+            RequestBody requestBody = new FormBody.Builder()
                     .add("groupname", groupName)
                     .build();
 
-            String authorization = prefs.getUserToken();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("Authorization", authorization)
-                    .post(formBody)
-                    .build();
+            PostResponse postResponse = makePost(groupsUrl, requestBody, prefs.getUserToken());
+            Response response = postResponse.response;
 
-            Response response = client.newCall(request).execute();
             Log.i("MSG", response.message());
             JSONObject jsonObjectMessageToBroadcast = new JSONObject().put("responseCode", response.code());
 
-            if (response.code() == 200) {
+            if (response.isSuccessful()) {
                 String messageToDisplay = "Success, the group " + groupName + " has been added to the server";
                 // Now add it to local storage
                 Util.addGroup(context, groupName);
