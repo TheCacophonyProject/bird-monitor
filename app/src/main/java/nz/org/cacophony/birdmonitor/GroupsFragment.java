@@ -16,6 +16,7 @@ import android.widget.*;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
+import static nz.org.cacophony.birdmonitor.Server.SERVER_GROUPS_ACTION;
 
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
@@ -101,7 +102,7 @@ public class GroupsFragment extends Fragment {
             tvMessages.setText("");
             resetGroups();
 
-            IntentFilter iff = new IntentFilter("SERVER_GROUPS");
+            IntentFilter iff = new IntentFilter(SERVER_GROUPS_ACTION);
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         } else {

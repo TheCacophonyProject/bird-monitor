@@ -47,6 +47,9 @@ import java.util.*;
 
 import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
 
 
 /**
@@ -1000,7 +1003,7 @@ class Util {
                     }
 
                 }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
@@ -1103,7 +1106,7 @@ class Util {
 
                 JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                 if (getNumberOfRecordings(context) == 0) {
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
+                    jsonObjectMessageToBroadcast.put("messageType", SUCCESSFULLY_DELETED_RECORDINGS);
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
 
                     // Delete any recording notes files
@@ -1117,10 +1120,10 @@ class Util {
                     prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
 
                 } else {
-                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
+                    jsonObjectMessageToBroadcast.put("messageType", FAILED_RECORDINGS_NOT_DELETED);
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
                 }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }

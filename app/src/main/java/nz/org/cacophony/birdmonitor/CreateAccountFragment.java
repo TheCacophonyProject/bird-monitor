@@ -16,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
 
 public class CreateAccountFragment extends Fragment {
+
+    public static final String SERVER_SIGNUP_ACTION = "SERVER_SIGNUP";
+
     private static final String TAG = "CreateAccountFragment";
 
     private TextView tvTitle;
@@ -83,7 +85,7 @@ public class CreateAccountFragment extends Fragment {
             return;
         }
         if (visible) {
-            IntentFilter iff = new IntentFilter("SERVER_SIGNUP");
+            IntentFilter iff = new IntentFilter(SERVER_SIGNUP_ACTION);
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
             displayOrHideGUIObjects();
 

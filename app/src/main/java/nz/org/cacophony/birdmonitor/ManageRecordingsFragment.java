@@ -26,6 +26,31 @@ import java.io.File;
 
 public class ManageRecordingsFragment extends Fragment {
 
+    public enum MessageType {
+        RECORDING_DISABLED,
+        NO_PERMISSION_TO_RECORD,
+        UPLOADING_FAILED,
+        UPLOADING_FINISHED,
+        GETTING_READY_TO_RECORD,
+        FAILED_RECORDINGS_NOT_UPLOADED,
+        RECORD_AND_UPLOAD_FAILED,
+        UPLOADING_FAILED_NOT_REGISTERED,
+        RECORDING_STARTED,
+        RECORDING_FINISHED,
+        ALREADY_RECORDING,
+        SUCCESSFULLY_DELETED_RECORDINGS,
+        FAILED_RECORDINGS_NOT_DELETED,
+        UPLOADING_RECORDINGS,
+        SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON,
+        FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON,
+        PREPARING_TO_UPLOAD,
+        CONNECTED_TO_SERVER,
+        UPLOADING_STOPPED,
+        RECORDING_DELETED
+    }
+
+    public static final String MANAGE_RECORDINGS_ACTION = "MANAGE_RECORDINGS";
+
     private static final String TAG = "ManageRecordFragment";
 
     private Button btnUploadFiles;
@@ -40,7 +65,7 @@ public class ManageRecordingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage_recordings, container, false);
 
-        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+        IntentFilter iff = new IntentFilter(MANAGE_RECORDINGS_ACTION);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
         setUserVisibleHint(false);
@@ -200,33 +225,34 @@ public class ManageRecordingsFragment extends Fragment {
                 if (jsonStringMessage != null) {
 
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
+                    String messageTypeStr = joMessage.optString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
                     // Need to handle broadcasts
 
-                    if (messageType != null) {
-                        if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("RECORDING_DELETED")) {
-                            displayOrHideGUIObjects();
-                        } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
-                            btnCancel.setEnabled(true);
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("UPLOADING_STOPPED")) {
-                            btnCancel.setEnabled(false);
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("PREPARING_TO_UPLOAD")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("CONNECTED_TO_SERVER")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
-                            btnCancel.setEnabled(false);
-                            tvMessages.setText(messageToDisplay);
+                    if (!messageTypeStr.isEmpty()) {
+                        MessageType messageType = MessageType.valueOf(messageTypeStr);
+                        switch (messageType) {
+                            case FAILED_RECORDINGS_NOT_DELETED:
+                            case SUCCESSFULLY_DELETED_RECORDINGS:
+                            case FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON:
+                            case PREPARING_TO_UPLOAD:
+                            case CONNECTED_TO_SERVER:
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case UPLOADING_RECORDINGS:
+                                btnCancel.setEnabled(true);
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case UPLOADING_STOPPED:
+                            case SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON:
+                                btnCancel.setEnabled(false);
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case RECORDING_DELETED:
+                                displayOrHideGUIObjects();
+                                break;
                         }
-
                         displayOrHideGUIObjects();
                     }
                 }

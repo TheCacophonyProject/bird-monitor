@@ -20,6 +20,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.PREPARING_TO_UPLOAD;
+
 
 /**
  * This is where the action is - however the code starts, it gets here to do a recording and then
@@ -57,7 +60,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             return;
         } else {
             makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
@@ -74,7 +77,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
         } else {
             // only upload recordings if sufficient time has passed since last upload
             long dateTimeLastUpload = prefs.getDateTimeLastUpload();
@@ -100,7 +103,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                        Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
                     }
 
                 }
@@ -118,7 +121,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
         String timeOfRecordingForBirdCountMessage = "";
         String locationForBirdCountMessage = "";
         try {
@@ -270,7 +273,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             } catch (Exception e) {
 
                 Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
@@ -332,7 +335,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     } else {
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
                     }
-                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                    Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
                 } catch (JSONException e) {
                     Log.e(TAG, e.getLocalizedMessage(), e);
                 }
@@ -354,7 +357,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
             jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
             jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has been cancelled.");
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
         } catch (JSONException e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
         }
@@ -381,12 +384,12 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
     public static boolean uploadFiles(Context context) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "PREPARING_TO_UPLOAD");
+            jsonObjectMessageToBroadcast.put("messageType", PREPARING_TO_UPLOAD);
             jsonObjectMessageToBroadcast.put("messageToDisplay", "Preparing to upload.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
@@ -502,7 +505,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             }
             return returnValue;
         } catch (Exception ex) {

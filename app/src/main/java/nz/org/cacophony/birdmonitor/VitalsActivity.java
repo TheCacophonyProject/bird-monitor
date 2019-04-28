@@ -25,6 +25,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+
 
 /**
  * The code to display the Vitals screen that the user can access from the menu, and displays to the
@@ -47,7 +49,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
+        IntentFilter iff = new IntentFilter(MANAGE_RECORDINGS_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
     }
 

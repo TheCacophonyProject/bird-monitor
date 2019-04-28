@@ -7,11 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.content.Context.POWER_SERVICE;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.RECORDING_DISABLED;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
 
 /**
@@ -95,7 +96,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
             if (prefs.getIsDisabled() && !recordButtonWasPressed) {
                 jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
+                jsonObjectMessageToBroadcast.put("messageType", RECORDING_DISABLED);
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
                 Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
@@ -113,7 +114,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
                 return;
             }
 

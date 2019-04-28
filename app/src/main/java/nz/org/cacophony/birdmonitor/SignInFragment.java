@@ -17,13 +17,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.signInIdlingResource;
 
 public class SignInFragment extends Fragment {
+
+    public static final String SERVER_USER_LOGIN_ACTION = "SERVER_USER_LOGIN";
+
     private static final String TAG = "SignInFragment";
 
     private Button btnSignIn;
@@ -112,7 +114,7 @@ public class SignInFragment extends Fragment {
         }
         if (visible) {
             //  signInGUIIdlingResource.increment();
-            IntentFilter iff = new IntentFilter("SERVER_USER_LOGIN");
+            IntentFilter iff = new IntentFilter(SERVER_USER_LOGIN_ACTION);
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
             displayOrHideGUIObjects();
         } else {

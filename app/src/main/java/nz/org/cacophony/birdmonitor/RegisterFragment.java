@@ -19,12 +19,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
 
 public class RegisterFragment extends Fragment {
+
+    public static final String SERVER_REGISTER_ACTION = "SERVER_REGISTER";
+
     private static final String TAG = "RegisterFragment";
 
 
@@ -66,7 +68,7 @@ public class RegisterFragment extends Fragment {
         }
         if (visible) {
 
-            IntentFilter iff = new IntentFilter("SERVER_REGISTER");
+            IntentFilter iff = new IntentFilter(SERVER_REGISTER_ACTION);
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
 
 
