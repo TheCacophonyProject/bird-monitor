@@ -9,7 +9,7 @@ import android.support.test.espresso.idling.CountingIdlingResource;
  * and decremented when it finishes.  An Espresso test will not progress is the counter is non zero.
  */
 
-interface IdlingResourceForEspressoTesting {
+public interface IdlingResourceForEspressoTesting {
 
     CountingIdlingResource signInIdlingResource = new CountingIdlingResource("SIGNIN");
     CountingIdlingResource getGroupsIdlingResource = new CountingIdlingResource("GET_GROUPS");

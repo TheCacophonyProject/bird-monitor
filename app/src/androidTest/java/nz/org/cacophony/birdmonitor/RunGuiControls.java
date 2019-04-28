@@ -3,7 +3,7 @@ package nz.org.cacophony.birdmonitor;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

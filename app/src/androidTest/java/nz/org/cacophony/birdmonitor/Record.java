@@ -3,6 +3,7 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 import java.io.File;
 

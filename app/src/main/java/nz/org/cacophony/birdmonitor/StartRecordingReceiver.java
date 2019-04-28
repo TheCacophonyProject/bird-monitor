@@ -11,9 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.content.Context.POWER_SERVICE;
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.RECORDING_DISABLED;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_DISABLED;
 
 /**
  * This class receives the intents that indicate that a recording is required to be made.  Before a

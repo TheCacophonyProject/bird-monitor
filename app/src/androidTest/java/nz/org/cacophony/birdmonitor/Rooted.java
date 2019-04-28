@@ -2,6 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertTrue;

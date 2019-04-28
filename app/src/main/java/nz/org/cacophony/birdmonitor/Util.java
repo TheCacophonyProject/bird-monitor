@@ -47,9 +47,9 @@ import java.util.*;
 
 import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
 
 
 /**
@@ -57,7 +57,7 @@ import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MessageType.
  *
  * @author Tim Hunt
  */
-class Util {
+public class Util {
     private static final String TAG = Util.class.getName();
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
@@ -76,7 +76,7 @@ class Util {
      * Make sure user has given permission to record.
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    static boolean checkPermissionsForRecording(Context context) {
+    public static boolean checkPermissionsForRecording(Context context) {
         if (context == null) {
             Log.e(TAG, "Context was null when checking permissions");
             return false;
@@ -232,7 +232,7 @@ class Util {
      * @return
      * @throws Exception
      */
-    static String getDeviceID(String webToken) throws Exception {
+    public static String getDeviceID(String webToken) throws Exception {
         if (webToken == null) {
             return "";
         }
@@ -267,7 +267,7 @@ class Util {
         return new String(decodedBytes, "UTF8");
     }
 
-    static double getBatteryLevel(Context context) {
+    public static double getBatteryLevel(Context context) {
         double batteryLevel;
         batteryLevel = getBatteryLevelUsingSystemFile();
         if (batteryLevel == -1) {
@@ -277,7 +277,7 @@ class Util {
         return batteryLevel;
     }
 
-    static double getBatteryLevelUsingSystemFile() {
+    public static double getBatteryLevelUsingSystemFile() {
 
         // https://longtrieuquang.wordpress.com/2013/04/08/android-battery-information-from-file-system/
         // found the file volt that stores battery voltage
@@ -305,7 +305,7 @@ class Util {
         return batteryLevel;
     }
 
-    static double getBatteryLevelByIntent(Context context) {
+    public static double getBatteryLevelByIntent(Context context) {
 
         //Will use the method of checking battery level that may only give an update if phone charging status changes
         // this will return a percentage
@@ -339,7 +339,7 @@ class Util {
         return line;
     }
 
-    static String getBatteryStatus(Context context) {
+    public static String getBatteryStatus(Context context) {
         // https://developer.android.com/training/monitoring-device-state/battery-monitoring.html
         // http://stackoverflow.com/questions/24934260/intentreceiver-components-are-not-allowed-to-register-to-receive-intents-when
 
@@ -385,7 +385,7 @@ class Util {
      */
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    static boolean isAirplaneModeOn(Context context) {
+    public static boolean isAirplaneModeOn(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return Settings.System.getInt(context.getContentResolver(),
                     Settings.System.AIRPLANE_MODE_ON, 0) != 0;
@@ -409,7 +409,7 @@ class Util {
         return calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
     }
 
-    static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
+    public static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
         Prefs prefs = new Prefs(context);
         Calendar sunRise = getSunrise(context, todayOrTomorrow);
         Calendar dawn = (Calendar) sunRise.clone();
@@ -438,7 +438,7 @@ class Util {
      * @param todayOrTomorrow Calendar that represents either today or tomorrow
      * @return
      */
-    static Calendar getDusk(Context context, Calendar todayOrTomorrow) {
+    public static Calendar getDusk(Context context, Calendar todayOrTomorrow) {
         Prefs prefs = new Prefs(context);
         Calendar sunSet = getSunset(context, todayOrTomorrow);
         Calendar dusk = (Calendar) sunSet.clone();
@@ -467,7 +467,7 @@ class Util {
 
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired) {
+    public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired) {
         int numberOfLoops = 0;
 
         while (isNetworkConnected(context) != networkConnectionRequired) {
@@ -492,7 +492,7 @@ class Util {
     }
 
 
-    static boolean isNetworkConnected(Context context) {
+    public static boolean isNetworkConnected(Context context) {
 
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -510,7 +510,7 @@ class Util {
         return isConnected;
     }
 
-    static void disableFlightMode(final Context context) {
+    public static void disableFlightMode(final Context context) {
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -550,7 +550,7 @@ class Util {
     }
 
 
-    static void enableFlightMode(final Context context) {
+    public static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
 
         boolean onlineMode = prefs.getOnLineMode();
@@ -619,7 +619,7 @@ class Util {
     }
 
 
-    static String getSimStateAsString(int simState) {
+    public static String getSimStateAsString(int simState) {
         String simStateStr;
         switch (simState) {
             case 0:
@@ -669,13 +669,13 @@ class Util {
     }
 
 
-    static Toast getToast(Context context) {
+    public static Toast getToast(Context context) {
         @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, "There is a problem writing to the memory - please fix", Toast.LENGTH_LONG);
         toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         return toast;
     }
 
-    static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage) {
+    public static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage) {
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
 
         Intent intent = new Intent(action);
@@ -750,7 +750,7 @@ class Util {
         return directory;
     }
 
-    static boolean isWebTokenCurrent(Prefs prefs) {
+    public static boolean isWebTokenCurrent(Prefs prefs) {
         if (prefs.getToken() == null) {
             return false;
         }
@@ -872,7 +872,7 @@ class Util {
         }
     }
 
-    static long[] getDawnDuskAlarmList(Context context) {
+    public static long[] getDawnDuskAlarmList(Context context) {
         Prefs prefs = new Prefs(context);
         String alarmsString = prefs.getAlarmString();
         if (alarmsString == null) {
@@ -893,7 +893,7 @@ class Util {
         return alarmTimes;
     }
 
-    static String getNextAlarm(Context context) {
+    public static String getNextAlarm(Context context) {
         Prefs prefs = new Prefs(context);
         long nextAlarm = prefs.getNextSingleStandardAlarm();
         long[] dawnDuskAlarms = getDawnDuskAlarmList(context);
@@ -908,7 +908,7 @@ class Util {
         return convertUnixTimeToString(nextAlarm);
     }
 
-    static void addDawnDuskAlarm(Context context, long alarmInUnixTime) {
+    public static void addDawnDuskAlarm(Context context, long alarmInUnixTime) {
         Prefs prefs = new Prefs(context);
         // First Ignore it if this time has already passed
         Date now = new Date();
@@ -926,7 +926,7 @@ class Util {
         prefs.saveDawnDuskAlarms(currentAlarms);
     }
 
-    static void setTheNextSingleStandardAlarmUsingDelay(Context context, long delayInMillisecs) {
+    public static void setTheNextSingleStandardAlarmUsingDelay(Context context, long delayInMillisecs) {
         Prefs prefs = new Prefs(context);
         // need to covert this delay into unix time
         Date date = new Date();
@@ -935,19 +935,19 @@ class Util {
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
     }
 
-    static String getTimeThatLastRecordingHappened(Context context) {
+    public static String getTimeThatLastRecordingHappened(Context context) {
         Prefs prefs = new Prefs(context);
         long lastRecordingTime = prefs.getTimeThatLastRecordingHappened();
         return convertUnixTimeToString(lastRecordingTime);
     }
 
-    static void setTimeThatLastRecordingHappened(Context context, long timeLastRecordingHappened) {
+    public static void setTimeThatLastRecordingHappened(Context context, long timeLastRecordingHappened) {
         Prefs prefs = new Prefs(context);
         prefs.setTimeThatLastRecordingHappened(timeLastRecordingHappened);
 
     }
 
-    static String convertUnixTimeToString(long unixTimeToConvert) {
+    public static String convertUnixTimeToString(long unixTimeToConvert) {
         if (unixTimeToConvert < 1) {
             return "";
         }
@@ -957,25 +957,25 @@ class Util {
         return fileFormat.format(date);
     }
 
-    static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
+    public static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
         createTheNextSingleStandardAlarm(context);
     }
 
-    static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings) {
+    public static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseFrequentRecordings(useFrequentRecordings);
         createTheNextSingleStandardAlarm(context);
     }
 
-    static void setUseFrequentUploads(Context context, boolean useFrequentUploads) {
+    public static void setUseFrequentUploads(Context context, boolean useFrequentUploads) {
         Prefs prefs = new Prefs(context);
         prefs.setUseFrequentUploads(useFrequentUploads);
 
     }
 
-    static void uploadFilesUsingUploadButton(final Context context) {
+    public static void uploadFilesUsingUploadButton(final Context context) {
         new Thread(() -> {
             try {
 //              testUploadRecordingsIdlingResource.increment();
@@ -1095,7 +1095,7 @@ class Util {
         ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context) {
+    public static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context) {
         new Thread(() -> {
             try {
                 File recordingsFolder = Util.getRecordingsFolder(context);
@@ -1130,7 +1130,7 @@ class Util {
         }).start();
     }
 
-    static int getNumberOfRecordings(Context context) {
+    public static int getNumberOfRecordings(Context context) {
         File recordingsFolder = Util.getRecordingsFolder(context);
         File recordingFiles[] = recordingsFolder.listFiles();
         return recordingFiles.length;
@@ -1190,7 +1190,7 @@ class Util {
         return groups;
     }
 
-    static void getGroupsFromServer(final Context context) {
+    public static void getGroupsFromServer(final Context context) {
         new Thread(() -> {
             try {
                 ArrayList<String> groupsFromServer = Server.getGroups(context);
@@ -1201,7 +1201,7 @@ class Util {
         }).start();
     }
 
-    static void addGroupToServer(final Context context, final String groupName, final Runnable onSuccess) {
+    public static void addGroupToServer(final Context context, final String groupName, final Runnable onSuccess) {
         new Thread(() -> {
             try {
                 if (Server.addGroupToServer(context, groupName)) {
@@ -1213,7 +1213,7 @@ class Util {
         }).start();
     }
 
-    static void setUseTestServer(final Context context, boolean useTestServer) {
+    public static void setUseTestServer(final Context context, boolean useTestServer) {
         Prefs prefs = new Prefs(context);
         prefs.setUseTestServer(useTestServer);
         // Need to un register phone and remove groups, account
@@ -1222,7 +1222,7 @@ class Util {
         prefs.setGroups(null);
     }
 
-    static void unregisterPhone(final Context context) {
+    public static void unregisterPhone(final Context context) {
         try {
             Prefs prefs = new Prefs(context);
 
@@ -1237,7 +1237,7 @@ class Util {
 
     }
 
-    static void signOutUser(final Context context) {
+    public static void signOutUser(final Context context) {
         try {
             Prefs prefs = new Prefs(context);
             prefs.setUserSignedIn(false);
@@ -1246,7 +1246,7 @@ class Util {
         }
     }
 
-    static boolean isPhoneRegistered(final Context context) {
+    public static boolean isPhoneRegistered(final Context context) {
         Prefs prefs = new Prefs(context);
         String groupNameFromPrefs = prefs.getGroupName();
         String deviceNameFromPrefs = prefs.getDeviceName();

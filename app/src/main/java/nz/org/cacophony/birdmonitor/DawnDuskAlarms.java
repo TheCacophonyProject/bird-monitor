@@ -26,12 +26,12 @@ import static android.content.Context.ALARM_SERVICE;
  * vary between 26 and 29 minutes before/after sunrise/sunset, so will add/subtract 27 minutes.
  */
 
-class DawnDuskAlarms {
+public class DawnDuskAlarms {
 
 
     private static final String TAG = DawnDuskAlarms.class.getName();
 
-    static void configureDawnAndDuskAlarms(Context context, boolean ignoreTimeConstraints) {
+    public static void configureDawnAndDuskAlarms(Context context, boolean ignoreTimeConstraints) {
         Prefs prefs = new Prefs(context);
         long dateTimeLastCalculatedDawnDusk = prefs.getDateTimeLastCalculatedDawnDusk();
         long timeIntervalBetweenDawnDuskTimeCalculation = 1000 * 60 * 60 * 12; // 12 hours - seemed like a good period to wait. Must happen within 24 hours (and shift in sun) since they were last set

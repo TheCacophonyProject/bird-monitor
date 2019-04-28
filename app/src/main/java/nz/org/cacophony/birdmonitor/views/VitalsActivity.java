@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.*;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
 
 /**

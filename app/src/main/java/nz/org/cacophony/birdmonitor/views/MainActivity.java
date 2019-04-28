@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import nz.org.cacophony.birdmonitor.*;
 
 
 public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {

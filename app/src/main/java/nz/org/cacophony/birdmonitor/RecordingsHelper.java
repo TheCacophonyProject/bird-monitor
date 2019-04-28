@@ -3,6 +3,7 @@ package nz.org.cacophony.birdmonitor;
 import android.content.BroadcastReceiver;
 import android.support.v4.util.Consumer;
 import android.util.Log;
+import nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;

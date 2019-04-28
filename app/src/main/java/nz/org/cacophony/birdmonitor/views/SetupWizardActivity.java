@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.SectionsStatePagerAdapter;
+import nz.org.cacophony.birdmonitor.Util;
 
 public class SetupWizardActivity extends AppCompatActivity {
     // https://www.youtube.com/watch?v=UqtsyhASW74

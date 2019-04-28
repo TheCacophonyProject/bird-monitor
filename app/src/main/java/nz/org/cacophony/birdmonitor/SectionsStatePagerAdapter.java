@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Tim Hunt on 28-Nov-18.
  */
-class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
+public class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
 
     private int numberOfPages = 1;
 

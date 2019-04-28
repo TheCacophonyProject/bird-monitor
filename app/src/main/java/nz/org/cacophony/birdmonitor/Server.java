@@ -14,17 +14,17 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static nz.org.cacophony.birdmonitor.CreateAccountFragment.SERVER_SIGNUP_ACTION;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
-import static nz.org.cacophony.birdmonitor.RegisterFragment.SERVER_REGISTER_ACTION;
-import static nz.org.cacophony.birdmonitor.SignInFragment.SERVER_USER_LOGIN_ACTION;
+import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.SERVER_SIGNUP_ACTION;
+import static nz.org.cacophony.birdmonitor.views.RegisterFragment.SERVER_REGISTER_ACTION;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.SERVER_USER_LOGIN_ACTION;
 
 
 /**
  * This class deals with connecting to the server (test connection, Login, Register, upload recording).
  */
 
-class Server {
+public class Server {
 
     private static final String TAG = Server.class.getName();
 
@@ -74,7 +74,7 @@ class Server {
     }
 
 
-    static boolean login(Context context) {
+    public static boolean login(Context context) {
         final Prefs prefs = new Prefs(context);
         try {
             Util.disableFlightMode(context);
@@ -127,7 +127,7 @@ class Server {
         return prefs.getToken() != null;
     }
 
-    static void loginUser(Context context) {
+    public static void loginUser(Context context) {
 
         final Prefs prefs = new Prefs(context);
 
@@ -248,7 +248,7 @@ class Server {
      * @param group   Name of group to register under.
      * @param context App context.
      */
-    static void registerDevice(final String group, final String deviceName, final Context context) {
+    public static void registerDevice(final String group, final String deviceName, final Context context) {
         final Prefs prefs = new Prefs(context);
 
         // Check that the group name is valid, at least 4 characters.
@@ -339,7 +339,7 @@ class Server {
         return new WebResponse(response);
     }
 
-    static void signUp(final String username, final String emailAddress, final String password, final Context context) {
+    public static void signUp(final String username, final String emailAddress, final String password, final Context context) {
         final Prefs prefs = new Prefs(context);
 
         String signupUrl = prefs.getServerUrl() + SIGNUP_URL;
@@ -428,7 +428,7 @@ class Server {
                 ).build();
     }
 
-    static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
+    public static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
@@ -476,7 +476,7 @@ class Server {
         return uploadSuccess;
     }
 
-    static ArrayList<String> getGroups(Context context) {
+    public static ArrayList<String> getGroups(Context context) {
         final Prefs prefs = new Prefs(context);
 
         ArrayList<String> groups = new ArrayList<>();
@@ -529,7 +529,7 @@ class Server {
         return groups;
     }
 
-    static boolean addGroupToServer(Context context, String groupName) {
+    public static boolean addGroupToServer(Context context, String groupName) {
         final Prefs prefs = new Prefs(context);
 
         String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
@@ -561,8 +561,6 @@ class Server {
             return false;
         }
     }
-
-
 
     static class WebResponse {
         final Response response;

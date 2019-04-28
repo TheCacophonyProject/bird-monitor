@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -21,12 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 
-import static nz.org.cacophony.birdmonitor.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
 public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 

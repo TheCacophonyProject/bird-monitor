@@ -2,14 +2,13 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.support.test.rule.ActivityTestRule;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 import java.io.File;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
