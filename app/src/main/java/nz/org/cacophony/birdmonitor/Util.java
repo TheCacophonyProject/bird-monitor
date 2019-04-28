@@ -1,7 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -61,6 +60,7 @@ import java.util.Map;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 
+import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
 
 
@@ -87,27 +87,26 @@ class Util {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean checkPermissionsForRecording(Context context) {
-        boolean permissionForRecording = false;
-        try {
-            if (context == null) {
-                Log.e(TAG, "Context was null when checking permissions");
-
-            } else {
-                boolean storagePermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-
-                boolean microphonePermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-                boolean locationPermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                permissionForRecording = (storagePermission && microphonePermission && locationPermission);
-            }
-
-        } catch (Exception ex) {
-            Log.e(TAG, "Error with checkPermissionsForRecording");
+        if (context == null) {
+            Log.e(TAG, "Context was null when checking permissions");
+            return false;
         }
-        return permissionForRecording;
+        boolean canWriteExternalStorage = checkHasPermission(context, WRITE_EXTERNAL_STORAGE);
+        boolean canRecordAudio = checkHasPermission(context, RECORD_AUDIO);
+        boolean canAccessFineLocation = checkHasPermission(context, ACCESS_FINE_LOCATION);
+        boolean canReadPhoneState = checkHasPermission(context, READ_PHONE_STATE);
+        if (canWriteExternalStorage && canRecordAudio && canAccessFineLocation && canReadPhoneState) {
+            return true;
+        } else {
+            Log.w(TAG, String.format("Missing permission for recording." +
+                        "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
+                    canWriteExternalStorage, canRecordAudio, canAccessFineLocation, canReadPhoneState));
+            return false;
+        }
+    }
 
+    private static boolean checkHasPermission(Context context, String permission) {
+        return ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**

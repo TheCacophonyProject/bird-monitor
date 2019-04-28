@@ -25,6 +25,9 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 
     private static final String TAG = BirdCountActivity.class.getName();
@@ -226,7 +229,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     }
 
 
-    //    public void finished(@SuppressWarnings("UnusedParameters") View v) {
     public void finished() {
         try {
             if (recording) {
@@ -318,13 +320,20 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         }
     }
 
+    private boolean equalsAnyIgnoreCase(String input, List<String> toCheck) {
+        for (String check : toCheck) {
+            if (input.equalsIgnoreCase(check)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private final BroadcastReceiver onNotice = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             try {
-
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
                 if (jsonStringMessage != null) {
@@ -333,34 +342,26 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                     String messageType = joMessage.getString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    if (messageType.equalsIgnoreCase("RECORDING_DISABLED")) {
+                    List<String> tvMessageTypes = Arrays.asList(
+                            "RECORDING_DISABLED", "NO_PERMISSION_TO_RECORD", "UPLOADING_RECORDINGS",
+                            "UPLOADING_FAILED", "UPLOADING_FINISHED", "GETTING_READY_TO_RECORD",
+                            "FAILED_RECORDINGS_NOT_UPLOADED", "RECORD_AND_UPLOAD_FAILED",
+                            "UPLOADING_FAILED_NOT_REGISTERED", "RECORDING_STARTED", "RECORDING_FINISHED"
+                    );
+
+                    if (equalsAnyIgnoreCase(messageType,
+                            tvMessageTypes)) {
                         tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("NO_PERMISSION_TO_RECORD")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED")) {
-                        tvMessages.setText(messageToDisplay);
+                    }
+
+                    if (equalsAnyIgnoreCase(messageType, Arrays.asList("UPLOADING_FAILED", "UPLOADING_FINISHED"))) {
                         uploadFilesIdlingResource.decrement();
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FINISHED")) {
-                        tvMessages.setText(messageToDisplay);
-                        uploadFilesIdlingResource.decrement();
-                    } else if (messageType.equalsIgnoreCase("GETTING_READY_TO_RECORD")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_UPLOADED")) {
-                        tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORD_AND_UPLOAD_FAILED")) {
-                        tvMessages.setText(messageToDisplay);
                         recordIdlingResource.decrement();
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED_NOT_REGISTERED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
-                        tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         recording = false;
                         countDownTimer.cancel();
                         tvTitle.setText(getResources().getString(R.string.bird_count_message));
-                        tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
                         btnRecordNow.setText("Record Now");
@@ -388,6 +389,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         permissionsHelper.checkAndRequestPermissions(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE);
     }
 }
