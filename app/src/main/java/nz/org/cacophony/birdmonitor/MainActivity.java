@@ -214,6 +214,15 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         }
     }
 
+    public void launchGPSActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, GPSActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
+    }
+
     public void launchVitalsActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
             Intent intent = new Intent(this, VitalsActivity.class);

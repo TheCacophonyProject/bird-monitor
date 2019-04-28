@@ -51,6 +51,19 @@
         app:layout_constraintTop_toBottomOf="@+id/btnStatistics" />
 
     <Button
+        android:id="@+id/btnGPSLocation"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:onClick="launchGPSActivity"
+        android:text="@string/gps_location"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toEndOf="@+id/btnBirdCount"
+        app:layout_constraintStart_toStartOf="@+id/btnBirdCount"
+        app:layout_constraintTop_toBottomOf="@+id/btnBirdCount" />
+
+    <Button
         android:id="@+id/btnStatistics"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
@@ -72,9 +85,9 @@
 
         android:text="@string/advanced"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnBirdCount"
-        app:layout_constraintStart_toStartOf="@+id/btnBirdCount"
-        app:layout_constraintTop_toBottomOf="@+id/btnBirdCount" />
+        app:layout_constraintEnd_toEndOf="@+id/btnGPSLocation"
+        app:layout_constraintStart_toStartOf="@+id/btnGPSLocation"
+        app:layout_constraintTop_toBottomOf="@+id/btnGPSLocation" />
 
     <Button
         android:id="@+id/btnDisable"

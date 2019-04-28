@@ -193,6 +193,7 @@
     <string name="basic_setup">Basic Setup</string>
     <string name="vitals">Vitals</string>
     <string name="five_minute_bird_count">5 min Bird Count</string>
+    <string name="gps_location">GPS Location</string>
     <string name="advanced">Advanced</string>
     <string name="disable_recording">Disable Recording</string>
     <string name="enable_recording">Enable Recording</string>
