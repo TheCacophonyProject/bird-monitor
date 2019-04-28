@@ -1,7 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -11,15 +10,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import info.guardianproject.netcipher.NetCipher;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -279,44 +278,6 @@ class Server {
         }
     }
 
-
-    private static HttpURLConnection openURL(String serverUrl) {
-        HttpURLConnection conn = null;
-        try {
-            URL url = new URL(serverUrl);
-            switch (url.getProtocol()) {
-                case "http":
-                    conn = (HttpURLConnection) url.openConnection();
-                    break;
-                case "https":
-                    conn = openHttpsURL(url);
-                    break;
-                default:
-                    throw new IllegalArgumentException("unsupported protocol");
-            }
-
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getLocalizedMessage(), e);
-        }
-
-        return conn;
-    }
-
-    private static HttpURLConnection openHttpsURL(URL url) throws IOException {
-        // Create connection
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
-            return NetCipher.getHttpsURLConnection(url);
-        }
-        return (HttpURLConnection) url.openConnection();
-    }
-
     /**
      * Does a synchronous http request to register the device. Can't be run on main/UI thread.
      *
@@ -391,11 +352,24 @@ class Server {
         }
     }
 
+    private static PostResponse makePost(String url, RequestBody requestBody, String authToken) throws IOException, JSONException {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", authToken)
+                .post(requestBody)
+                .build();
+        return submitPost(request);
+    }
+
     private static PostResponse makePost(String url, RequestBody requestBody) throws IOException, JSONException {
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
+        return submitPost(request);
+    }
+
+    private static PostResponse submitPost(Request request) throws IOException, JSONException {
         Response response = client.newCall(request).execute();
         Log.i("MSG", response.message());
         return new PostResponse(response);
@@ -428,20 +402,18 @@ class Server {
             }
 
             if (response.isSuccessful() && responseJson.getBoolean("success")) {
-                if (responseJson.getBoolean("success")) {
-                    prefs.setUserToken(responseJson.getString("token"));
-                    prefs.setUserTokenLastRefreshed(new Date().getTime());
-                    prefs.setUsername(username);
-                    prefs.setUsernamePassword(password);
-                    prefs.setEmailAddress(emailAddress);
+                prefs.setUserToken(responseJson.getString("token"));
+                prefs.setUserTokenLastRefreshed(new Date().getTime());
+                prefs.setUsername(username);
+                prefs.setUsernamePassword(password);
+                prefs.setEmailAddress(emailAddress);
 
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
-                    String messageToDisplay = "Success, you have successfully created a new user account";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
-                    return;
-                }
+                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
+                String messageToDisplay = "Success, you have successfully created a new user account";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context, "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
+                return;
             }
 
             //Unexpected response code from server
@@ -473,6 +445,25 @@ class Server {
         }
     }
 
+    private static RequestBody createAudioPostBody(File audioFile, JSONObject data) {
+        String fileName = audioFile.getName();
+        String mediaType = URLConnection.guessContentTypeFromName(fileName);
+
+        return new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addPart(
+                        Headers.of(
+                                "Content-Disposition", "form-data; name=\"data\""
+                        ),
+                        RequestBody.create(MediaType.parse("Content-Type: text/plain; charset=UTF-8"), data.toString()))
+                .addPart(
+                        Headers.of(
+                                "Content-Disposition", "form-data; name=\"file\"; filename=\"" + fileName + "\"",
+                                "Content-Transfer-Encoding", "binary"),
+                        RequestBody.create(MediaType.parse(mediaType), audioFile)
+                ).build();
+    }
+
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         uploadFilesIdlingResource.increment();
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
@@ -491,44 +482,30 @@ class Server {
         }
         uploading = true;
 
-        String charset = "UTF-8";
-
         Prefs prefs = new Prefs(context);
         String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
-            HttpURLConnection conn = openURL(uploadUrl);
+            RequestBody requestBody = createAudioPostBody(audioFile, data);
 
-            MultipartUtility multipart = new MultipartUtility(conn, charset, prefs.getToken());
-
-            multipart.addFormField("data", data.toString());
-            multipart.addFilePart("file", audioFile);
-
-            List<String> responseString = multipart.finish();
+            PostResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
+            Response response = postResponse.response;
+            JSONObject responseJson = postResponse.responseJson;
 
             Log.i(TAG, "SERVER REPLIED:");
-            try {
-                uploadSuccess = false;
-                for (String line : responseString) {
-                    JSONObject joRes = new JSONObject(line);
-                    long recordingId = joRes.getLong("recordingId");
+            uploadSuccess = false;
+            long recordingId = responseJson.getLong("recordingId");
 
-                    prefs.setLastRecordIdReturnedFromServer(recordingId);
-                    long check = prefs.getLastRecordIdReturnedFromServer();
-                    if (recordingId != check) {
-                        Log.e(TAG, "Error with recording id");
-                    }
-
-                    if (joRes.getBoolean("success")) {
-                        uploadSuccess = true;
-                        break;
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            prefs.setLastRecordIdReturnedFromServer(recordingId);
+            long check = prefs.getLastRecordIdReturnedFromServer();
+            if (recordingId != check) {
+                Log.e(TAG, "Error with recording id");
             }
 
-        } catch (IOException ex) {
+            if (response.isSuccessful()) {
+                uploadSuccess = true;
+            }
+
+        } catch (IOException | JSONException ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
