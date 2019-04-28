@@ -123,6 +123,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        String timeOfRecordingForBirdCountMessage = "";
+        String locationForBirdCountMessage = "";
         try {
 
 
@@ -143,7 +145,11 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             relativeToDusk = relativeToDusk / 1000; // now in seconds
 
             DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
+
             String fileName = fileFormat.format(date);
+
+            DateFormat timeOnlyFormat = new SimpleDateFormat("hh:mm a", Locale.UK);
+            timeOfRecordingForBirdCountMessage = timeOnlyFormat.format(date);
 
             if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
                 fileName += " rToDawn " + relativeToDawn;
@@ -170,6 +176,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             String lonStr = numberFormat.format(lon);
             fileName += " " + latStr;
             fileName += " " + lonStr;
+
+            locationForBirdCountMessage = latStr + " " + lonStr;
 
 
             fileName += ".m4a";
@@ -328,7 +336,13 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             jsonObjectMessageToBroadcast = new JSONObject();
             try {
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+
+                if (Util.isBirdCountRecording(typeOfRecording)) {
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
+                }else {
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+                }
+
             } catch (JSONException e) {
                 Log.e(TAG, e.getLocalizedMessage(), e);
             }
