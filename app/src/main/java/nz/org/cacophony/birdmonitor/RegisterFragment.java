@@ -126,6 +126,8 @@ public class RegisterFragment extends Fragment {
                             etGroupNameInput.setEnabled(true);
                             etDeviceNameInput.setEnabled(true);
                             registerPhoneIdlingResource.decrement();
+                        } else {
+                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         }
 
                     }
