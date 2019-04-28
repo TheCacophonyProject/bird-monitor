@@ -12,12 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
@@ -44,7 +39,7 @@ public class GroupsFragment extends Fragment {
 
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, Util.getGroupsStoredOnPhone(getActivity()));
         lvGroups.setAdapter(adapter);
-        sortGroups();
+        resetGroups();
 
         btnCreateGroup.setOnClickListener(v -> addGroup());
 
@@ -57,10 +52,11 @@ public class GroupsFragment extends Fragment {
         return view;
     }
 
-    private void sortGroups() {
-        adapter.setNotifyOnChange(false);
+    private void resetGroups() {
+        //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
+        adapter.clear();
+        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
         adapter.sort(String::compareTo);
-        adapter.setNotifyOnChange(true);
         adapter.notifyDataSetChanged();
     }
 
@@ -85,8 +81,7 @@ public class GroupsFragment extends Fragment {
             Util.addGroupToServer(getActivity(), newGroup, () -> {
                 // Only add the group to the UI on success
                 getActivity().runOnUiThread(() -> {
-                    adapter.add(newGroup);
-                    sortGroups();
+                    resetGroups();
                     etNewGroupInput.setText("");
                 });
             });
@@ -104,9 +99,7 @@ public class GroupsFragment extends Fragment {
         }
         if (visible) {
             tvMessages.setText("");
-            adapter.clear();
-            adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
-            adapter.notifyDataSetChanged();
+            resetGroups();
 
             IntentFilter iff = new IntentFilter("SERVER_GROUPS");
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
@@ -147,9 +140,7 @@ public class GroupsFragment extends Fragment {
                         // Refresh groups list (added as automated testing sometimes tried to get group before they were showing
 
                         tvMessages.setText("");
-                        adapter.clear();
-                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
-                        adapter.notifyDataSetChanged();
+                        resetGroups();
 
                         getGroupsIdlingResource.decrement();
 
@@ -157,15 +148,11 @@ public class GroupsFragment extends Fragment {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
-                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
-                        adapter.notifyDataSetChanged();
+                        resetGroups();
                         getGroupsIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
-                        adapter.clear();
-                        //https://stackoverflow.com/questions/14503006/android-listview-not-refreshing-after-notifydatasetchanged
-                        adapter.addAll(Util.getGroupsStoredOnPhone(getActivity()));
-                        adapter.notifyDataSetChanged();
+                        resetGroups();
                         getGroupsIdlingResource.decrement();
 
                     } else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
