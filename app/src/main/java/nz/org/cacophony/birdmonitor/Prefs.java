@@ -110,6 +110,7 @@ class Prefs {
     private static final String GROUPS_KEY = "GROUPS";
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
+    private static final String LATEST_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
     public Prefs(Context context) {
         this.context = context;
@@ -678,5 +679,13 @@ class Prefs {
 
     void setCancelRecording(boolean cancelRecording) {
         setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
+    }
+
+    void setLatestRecordingFileName(String latestRecordingFileName){
+        setString(LATEST_RECORDING_FILE_NAME_KEY, latestRecordingFileName);
+    }
+
+    String getLatestRecordingFileName(){
+        return getString(LATEST_RECORDING_FILE_NAME_KEY);
     }
 }

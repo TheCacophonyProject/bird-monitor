@@ -17,10 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -31,6 +33,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
     private Button btnRecordNow;
     private Button btnFinished;
+    private Button btnAddNotes;
     private TextView tvMessages;
     private TextView tvTitle;
 
@@ -41,6 +44,8 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     private PermissionsHelper permissionsHelper;
 
     private boolean recording = false;
+
+    private EditText result;
 
     CountDownTimer countDownTimer = null;
 
@@ -63,6 +68,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
         btnRecordNow = findViewById(R.id.btnRecordNow);
         btnFinished = findViewById(R.id.btnFinished);
+        btnAddNotes = findViewById(R.id.btnAddNotes);
 
         tvMessages = findViewById(R.id.tvMessages);
         tvTitle = findViewById(R.id.tvTitle);
@@ -83,6 +89,13 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             @Override
             public void onClick(View v) {
                 finished();
+            }
+        });
+
+        btnAddNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNotes();
             }
         });
 
@@ -389,5 +402,53 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+
+    private void addNotes(){
+        Context context = getApplicationContext();
+        Prefs prefs = new Prefs(context);
+        String latestRecordingFileName = prefs.getLatestRecordingFileName();
+
+
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.prompts, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.editTextDialogUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                // edit text
+                                result.setText(userInput.getText());
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+
+
     }
 }

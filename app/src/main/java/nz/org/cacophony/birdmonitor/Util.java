@@ -73,6 +73,7 @@ class Util {
     private static final String TAG = Util.class.getName();
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
+    private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -182,8 +183,21 @@ class Util {
      * @param context
      * @return File object representing recordings folder.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File getRecordingsFolder(Context context) {
+        return getRecordingsOrNotesFolder(context, Util.DEFAULT_RECORDINGS_FOLDER);
+    }
+
+    /**
+     * Returns the folder for storing recording notes on the phone.
+     *
+     * @param context
+     * @return File object representing recording notes folder.
+     */
+    public static File getRecordingNotesFolder(Context context) {
+        return getRecordingsOrNotesFolder(context, Util.DEFAULT_RECORDING_NOTES_FOLDER);
+    }
+
+    public static File getRecordingsOrNotesFolder(Context context, String recordingsOrNotes) {
 
         File localFolderFile;
         try {
@@ -193,7 +207,9 @@ class Util {
                 return null;
             }
 
-            localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
+          //  localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
+
+            localFolderFile = new File(appDataFolder, recordingsOrNotes);
 
             if (!localFolderFile.exists()) {
                 localFolderFile.mkdirs();

@@ -179,11 +179,17 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             locationForBirdCountMessage = latStr + " " + lonStr;
 
+            // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
+            prefs.setLatestRecordingFileName(fileName + ".json");
 
             fileName += ".m4a";
 
             File file = new File(Util.getRecordingsFolder(context), fileName);
             String filePath = file.getAbsolutePath();
+
+            // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
+
+            prefs.setLatestRecordingFileName(fileName);
 
             // Setup audio recording settings.
             MediaRecorder mRecorder = new MediaRecorder();
