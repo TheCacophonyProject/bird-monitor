@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".GPSActivity"></activity>
+
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -62,6 +62,10 @@
         <activity
             android:name=".BirdCountActivity"
             android:label="@string/activity_or_fragment_title_bird_count"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".GPSActivity"
+            android:label="@string/activity_or_fragment_title_gps_location"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DisableActivity"

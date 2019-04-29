@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -59,15 +60,20 @@ public class GPSActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        IntentFilter iff = new IntentFilter("GPS");
-//        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
-//
-//        IntentFilter iffRoot = new IntentFilter("ROOT");
-//        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeRoot, iffRoot);
-//
-//        checkPermissions();
-//
-//        updateGpsDisplay(getApplicationContext());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_help:
+                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_gps_location));
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -290,5 +296,13 @@ public class GPSActivity extends AppCompatActivity {
         }
 
     };
+
+    public void finished(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            finish();
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
+    }
 
 }
