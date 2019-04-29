@@ -199,7 +199,9 @@
     <string name="disable_recording">Disable Recording</string>
     <string name="enable_recording">Enable Recording</string>
     <string name="very_advanced">Very Advanced</string>
-    Update GPS Location
+
+    <string name="bird_count_notes_message">Use this screen to add your own notes about the current recording in progress, or if recording has finished, about the previous recording (as long as it hasn\'t yet been uploaded).</string>
+
 
 
 </resources>
