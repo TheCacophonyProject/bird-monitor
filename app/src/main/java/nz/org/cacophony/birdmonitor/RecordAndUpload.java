@@ -14,10 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -184,7 +181,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             if (Util.isBirdCountRecording(typeOfRecording)) {
                 // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
-                prefs.setLatestBirdCountRecordingFileName(fileName + ".json");
+                prefs.setLatestBirdCountRecordingFileNameNoExtension(fileName);
             }
 
 
@@ -429,9 +426,9 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                                     notesFile.delete();
 
                                     // If this file was the latest bird count file, then need to set the latest bird count file to null
-                                    String fileNameOfLatestBirdCountFile = prefs.getLatestRecordingFileName();
+                                    String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
                                     if (notesFileName.equals(fileNameOfLatestBirdCountFile)){
-                                        prefs.setLatestBirdCountRecordingFileName(null);
+                                        prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
                                     }
                                 }
                             }
@@ -573,23 +570,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             if (notesFile.exists()) {
 
-
-                StringBuilder jsonText = new StringBuilder();
-
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(notesFile));
-                    String line;
-
-                    while ((line = br.readLine()) != null) {
-                        jsonText.append(line);
-                        jsonText.append('\n');
-                    }
-                    br.close();
-                } catch (IOException e) {
-                    //You'll need to add proper error handling here
-                }
-
-                JSONObject jsonNotes = new JSONObject(jsonText.toString());
+                JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFile);
                 String weatherNote = jsonNotes.getString("weatherNote");
                 String countedByNote = jsonNotes.getString("countedByNote");
                 String otherNote = jsonNotes.getString("otherNote");

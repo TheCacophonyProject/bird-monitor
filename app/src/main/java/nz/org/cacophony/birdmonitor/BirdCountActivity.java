@@ -25,7 +25,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
 
@@ -411,14 +414,16 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
     private void addNotes(){
         Prefs prefs = new Prefs(this);
 
-        String latestRecordingFileName = prefs.getLatestRecordingFileName();
+        String latestRecordingFileName = prefs.getLatestBirdCountRecordingFileNameNoExtension();
 
         if (latestRecordingFileName == null){
+            displayNoRecordingAlertDialog();
             return;
         }
 
         AlertDialog alertDialog = createNotesDialog(this, latestRecordingFileName);
         alertDialog.show();
+
     }
 
     private AlertDialog createNotesDialog(Context context, String latestRecordingFileName){
@@ -428,11 +433,29 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         View birdCountNotesDialogView = inflater.inflate(R.layout.dialog_bird_count_notes, null);
         alertDialogBuilder.setView(birdCountNotesDialogView);
 
-        alertDialogBuilder.setView(birdCountNotesDialogView);
-
         final TextInputEditText etWeather = birdCountNotesDialogView.findViewById(R.id.etWeather);
         final TextInputEditText etCountedBy = birdCountNotesDialogView.findViewById(R.id.etCountedBy);
         final TextInputEditText etOther = birdCountNotesDialogView.findViewById(R.id.etOther);
+
+        final Button btnOK = birdCountNotesDialogView.findViewById(R.id.btnOK);
+
+
+        // Pre fill fields with last notes for this recording if they exist
+
+        File notesFileNameForLastestRecording = Util.getNotesFileForLatestRecording(context);
+        if (notesFileNameForLastestRecording != null) {
+            if (notesFileNameForLastestRecording.exists()) {
+                JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFileNameForLastestRecording);
+                try {
+                    etWeather.setText(jsonNotes.getString("weatherNote"));
+                    etCountedBy.setText(jsonNotes.getString("countedByNote"));
+                    etOther.setText(jsonNotes.getString("otherNote"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // set dialog message
         alertDialogBuilder
@@ -447,7 +470,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                                 countedByNote = etCountedBy.getText().toString();
                                 otherNote = etOther.getText().toString();
                                 Util.saveRecordingNote(context, latestRecordingFileName, weatherNote, countedByNote, otherNote);
-                                Log.e("adf", weatherNote);
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -457,8 +479,39 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                             }
                         });
 
-//        // create alert dialog
-//        AlertDialog alertDialog = alertDialogBuilder.create();
-        return alertDialogBuilder.create();
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        btnOK.setOnClickListener(v -> {
+
+            weatherNote = etWeather.getText().toString();
+            countedByNote = etCountedBy.getText().toString();
+            otherNote = etOther.getText().toString();
+            Util.saveRecordingNote(context, latestRecordingFileName, weatherNote, countedByNote, otherNote);
+            alertDialog.dismiss();
+        });
+        return alertDialog;
     }
+
+    void displayNoRecordingAlertDialog(){
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setPositiveButton("OK",null)
+                .setMessage("Sorry - There is no recording for you to attach notes to.")
+                .setTitle("No Recording")
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(this.getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
+
+
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
+        });
+        dialog.show();
+    }
+
+
 }

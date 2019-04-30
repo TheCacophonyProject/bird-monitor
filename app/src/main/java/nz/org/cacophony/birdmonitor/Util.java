@@ -47,6 +47,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1123,7 +1124,7 @@ class Util {
                     }
 
                    Prefs prefs = new Prefs(context);
-                    prefs.setLatestBirdCountRecordingFileName(null);
+                    prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
 
                 } else {
                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
@@ -1327,7 +1328,7 @@ class Util {
 
     public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
        // Prefs prefs = new Prefs(context);
-        File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName);
+        File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
         //String filePath = file.getAbsolutePath();
 
         JSONObject recordingNotes = new JSONObject();
@@ -1345,12 +1346,45 @@ class Util {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-
-
     }
 
 
     public static String getRecordingFileExtension() {
         return RECORDING_FILE_EXTENSION;
+    }
+
+    public static File getNotesFileForLatestRecording(Context context){
+        Prefs prefs = new Prefs(context);
+        String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
+        if (latestRecordingFileNameWithOutExtension == null){
+            return null;
+        }else{
+            String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension + ".json";
+            return new File(notesFilePathName);
+        }
+    }
+
+    public static JSONObject getNotesFromNoteFile(File notesFile){
+        if (!notesFile.exists()){
+            return null;
+        }
+        StringBuilder jsonText = new StringBuilder();
+        JSONObject jsonNotes = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(notesFile));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                jsonText.append(line);
+                jsonText.append('\n');
+            }
+            br.close();
+
+             jsonNotes = new JSONObject(jsonText.toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+     return jsonNotes;
     }
 }
