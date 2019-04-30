@@ -438,10 +438,10 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         final TextInputEditText etOther = birdCountNotesDialogView.findViewById(R.id.etOther);
 
         final Button btnOK = birdCountNotesDialogView.findViewById(R.id.btnOK);
+        final Button btnCancel = birdCountNotesDialogView.findViewById(R.id.btnCancel);
 
 
         // Pre fill fields with last notes for this recording if they exist
-
         File notesFileNameForLastestRecording = Util.getNotesFileForLatestRecording(context);
         if (notesFileNameForLastestRecording != null) {
             if (notesFileNameForLastestRecording.exists()) {
@@ -457,37 +457,22 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             }
         }
 
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                // get user input and set it to result
-                                // edit text
-
-                                weatherNote = etWeather.getText().toString();
-                                countedByNote = etCountedBy.getText().toString();
-                                otherNote = etOther.getText().toString();
-                                Util.saveRecordingNote(context, latestRecordingFileName, weatherNote, countedByNote, otherNote);
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
+        alertDialogBuilder.setCancelable(false);
 
         AlertDialog alertDialog = alertDialogBuilder.create();
-        btnOK.setOnClickListener(v -> {
 
+        btnOK.setOnClickListener(v -> {
             weatherNote = etWeather.getText().toString();
             countedByNote = etCountedBy.getText().toString();
             otherNote = etOther.getText().toString();
             Util.saveRecordingNote(context, latestRecordingFileName, weatherNote, countedByNote, otherNote);
             alertDialog.dismiss();
         });
+
+        btnCancel.setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
+
         return alertDialog;
     }
 
