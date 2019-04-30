@@ -101,7 +101,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             @Override
             public void onClick(View v) {
                addNotes();
-               // showDialog3();
             }
         });
 
@@ -134,9 +133,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         checkPermissions();
 
         Prefs prefs = new Prefs(getApplicationContext());
-
         prefs.setCancelRecording(false);
-
     }
 
     @Override
@@ -226,7 +223,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
                 public void onTick(long millisUntilFinished) {
                     btnRecordNow.setText("seconds remaining: " + millisUntilFinished / 1000);
-                    //here you can have your logic to set text to edittext
                 }
 
                 public void onFinish() {
@@ -244,8 +240,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         }
     }
 
-
-    //    public void finished(@SuppressWarnings("UnusedParameters") View v) {
     public void finished() {
         try {
             if (recording) {
@@ -264,7 +258,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                         btnRecordNow.setText("Record Now");
                         btnFinished.setText("Finished");
                         //   recordIdlingResource.decrement();
-
                     }
                 });
                 builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
@@ -297,7 +290,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                 });
                 dialog.show();
             } else {
-
                 finish();
             }
 
@@ -305,7 +297,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             Log.e(TAG, ex.getLocalizedMessage());
         }
     }
-
 
     void displayOrHideGUIObjects() {
 
@@ -343,9 +334,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         public void onReceive(Context context, Intent intent) {
 
             try {
-
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-
                 if (jsonStringMessage != null) {
 
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
@@ -391,9 +380,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage());
                 tvMessages.setText("Could not record");
-
             }
-
         }
     };
 
@@ -450,7 +437,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                     etWeather.setText(jsonNotes.getString("weatherNote"));
                     etCountedBy.setText(jsonNotes.getString("countedByNote"));
                     etOther.setText(jsonNotes.getString("otherNote"));
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
