@@ -43,12 +43,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,6 +77,7 @@ class Util {
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
+    private static final String RECORDING_FILE_EXTENSION = ".m4a";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -1110,6 +1114,17 @@ class Util {
                 if (getNumberOfRecordings(context) == 0) {
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
+
+                    // Delete any recording notes files
+                    File recordingNotesFolder = Util.getRecordingNotesFolder(context);
+
+                    for (File file : recordingNotesFolder.listFiles()) {
+                        file.delete();
+                    }
+
+                   Prefs prefs = new Prefs(context);
+                    prefs.setLatestBirdCountRecordingFileName(null);
+
                 } else {
                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
@@ -1310,4 +1325,32 @@ class Util {
         return recordTimeSeconds;
     }
 
+    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
+       // Prefs prefs = new Prefs(context);
+        File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName);
+        //String filePath = file.getAbsolutePath();
+
+        JSONObject recordingNotes = new JSONObject();
+        try{
+        recordingNotes.put("weatherNote", weatherNote);
+            recordingNotes.put("countedByNote", countedByNote);
+            recordingNotes.put("otherNote", otherNote);
+
+            Writer output = null;
+            output = new BufferedWriter(new FileWriter(file));
+            output.write(recordingNotes.toString());
+            output.close();
+
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+
+
+    }
+
+
+    public static String getRecordingFileExtension() {
+        return RECORDING_FILE_EXTENSION;
+    }
 }

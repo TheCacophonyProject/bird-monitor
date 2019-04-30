@@ -10,7 +10,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
 
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="334dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -45,7 +45,53 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/rect_text_edit"
-            android:hint="Enter username"
+            android:hint="Enter a description of the weather"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilCountedBy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilWeather">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etCountedBy"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Enter your name"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilOther"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilCountedBy">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etOther"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rect_text_edit"
+            android:hint="Enter any other information"
             android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>

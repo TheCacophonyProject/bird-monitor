@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -46,7 +45,9 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
     private boolean recording = false;
 
-    private String  weather;
+    private String weatherNote;
+    private String countedByNote;
+    private String otherNote;
 
     CountDownTimer countDownTimer = null;
 
@@ -408,9 +409,19 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
 
     private void addNotes(){
-        Context context = getApplicationContext();
-        Prefs prefs = new Prefs(context);
+        Prefs prefs = new Prefs(this);
+
         String latestRecordingFileName = prefs.getLatestRecordingFileName();
+
+        if (latestRecordingFileName == null){
+            return;
+        }
+
+        AlertDialog alertDialog = createNotesDialog(this, latestRecordingFileName);
+        alertDialog.show();
+    }
+
+    private AlertDialog createNotesDialog(Context context, String latestRecordingFileName){
 
         AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -420,6 +431,8 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         alertDialogBuilder.setView(birdCountNotesDialogView);
 
         final TextInputEditText etWeather = birdCountNotesDialogView.findViewById(R.id.etWeather);
+        final TextInputEditText etCountedBy = birdCountNotesDialogView.findViewById(R.id.etCountedBy);
+        final TextInputEditText etOther = birdCountNotesDialogView.findViewById(R.id.etOther);
 
         // set dialog message
         alertDialogBuilder
@@ -430,8 +443,11 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                                 // get user input and set it to result
                                 // edit text
 
-                                weather = etWeather.getText().toString();
-                                Log.e("adf", weather);
+                                weatherNote = etWeather.getText().toString();
+                                countedByNote = etCountedBy.getText().toString();
+                                otherNote = etOther.getText().toString();
+                                Util.saveRecordingNote(context, latestRecordingFileName, weatherNote, countedByNote, otherNote);
+                                Log.e("adf", weatherNote);
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -441,67 +457,8 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                             }
                         });
 
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-
-
-
-    }
-
-    void showDialog3(){
-        final EditText taskEditText = new EditText(this);
-        final EditText taskEditText2 = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // How to cancel a recording?
-                Prefs prefs = new Prefs(getApplicationContext());
-                prefs.setCancelRecording(true);
-                countDownTimer.cancel(); // this just cancels the timeer
-                recording = false;
-                btnRecordNow.setEnabled(true);
-                btnRecordNow.setVisibility(View.VISIBLE);
-                btnRecordNow.setText("Record Now");
-                btnFinished.setText("Finished");
-                //   recordIdlingResource.decrement();
-
-            }
-        });
-        builder.setNegativeButton("No/Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                return;
-            }
-        });
-        builder.setMessage("Are you sure you want to stop recording?")
-                .setTitle("Stop recording");
-
-        builder.setView(taskEditText);
-        builder.setView(taskEditText2);
-
-        final AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-                btnPositive.setTextSize(24);
-                int btnPositiveColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
-                btnPositive.setTextColor(btnPositiveColor);
-
-                Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-                btnNegative.setTextSize(24);
-                int btnNegativeColor = ResourcesCompat.getColor(getResources(), R.color.dialogButtonText, null);
-                btnNegative.setTextColor(btnNegativeColor);
-
-                //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-                TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-                textView.setTextSize(22);
-            }
-        });
-        dialog.show();
+//        // create alert dialog
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+        return alertDialogBuilder.create();
     }
 }

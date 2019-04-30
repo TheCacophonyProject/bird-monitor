@@ -14,7 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -179,17 +182,17 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             locationForBirdCountMessage = latStr + " " + lonStr;
 
-            // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
-            prefs.setLatestRecordingFileName(fileName + ".json");
+            if (Util.isBirdCountRecording(typeOfRecording)) {
+                // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
+                prefs.setLatestBirdCountRecordingFileName(fileName + ".json");
+            }
 
-            fileName += ".m4a";
+
+            fileName += Util.getRecordingFileExtension();
 
             File file = new File(Util.getRecordingsFolder(context), fileName);
             String filePath = file.getAbsolutePath();
 
-            // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
-
-            prefs.setLatestRecordingFileName(fileName);
 
             // Setup audio recording settings.
             MediaRecorder mRecorder = new MediaRecorder();
@@ -345,7 +348,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
                 if (Util.isBirdCountRecording(typeOfRecording)) {
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
-                }else {
+                } else {
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
                 }
 
@@ -408,7 +411,32 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
                         boolean fileSuccessfullyDeleted = false;
                         try {
+
+                            String recordingFileNameWithOutPath = aFile.getName();
+
                             fileSuccessfullyDeleted = aFile.delete();
+
+                            if (fileSuccessfullyDeleted) {
+                                // Delete the recording notes file if it exists.
+                                String recordingFileExtension = Util.getRecordingFileExtension();
+                                String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
+                                String notesFileName = recordingFileNameWithOutPathOrExtension + ".json";
+                                String notesFilePathName = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
+
+                                File notesFile = new File(notesFilePathName);
+
+                                if (notesFile.exists()) {
+                                    notesFile.delete();
+
+                                    // If this file was the latest bird count file, then need to set the latest bird count file to null
+                                    String fileNameOfLatestBirdCountFile = prefs.getLatestRecordingFileName();
+                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)){
+                                        prefs.setLatestBirdCountRecordingFileName(null);
+                                    }
+                                }
+                            }
+
+
                         } catch (Exception ex) {
                             Log.e(TAG, ex.getLocalizedMessage(), ex);
                         }
@@ -454,6 +482,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
         JSONObject audioRecording = new JSONObject();
 
         String fileName = aFile.getName();
+
 
         // http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
@@ -533,6 +562,43 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             additionalMetadata.put("App has root access", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
+
+            // Add the recording notes if they exist.
+            String recordingFileExtension = Util.getRecordingFileExtension();
+            String recordingFileWithOutExtension = fileName.split(recordingFileExtension)[0];
+            String notesFileName = recordingFileWithOutExtension + ".json";
+            String notesFilePath = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
+
+            File notesFile = new File(notesFilePath);
+
+            if (notesFile.exists()) {
+
+
+                StringBuilder jsonText = new StringBuilder();
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(notesFile));
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+                        jsonText.append(line);
+                        jsonText.append('\n');
+                    }
+                    br.close();
+                } catch (IOException e) {
+                    //You'll need to add proper error handling here
+                }
+
+                JSONObject jsonNotes = new JSONObject(jsonText.toString());
+                String weatherNote = jsonNotes.getString("weatherNote");
+                String countedByNote = jsonNotes.getString("countedByNote");
+                String otherNote = jsonNotes.getString("otherNote");
+
+                additionalMetadata.put("Weather", weatherNote);
+                additionalMetadata.put("Counted By", countedByNote);
+                additionalMetadata.put("Other Notes", otherNote);
+            }
+
 
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);

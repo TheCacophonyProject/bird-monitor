@@ -197,6 +197,7 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
+                            
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
                             tvMessages.setText(messageToDisplay);
