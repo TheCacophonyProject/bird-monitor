@@ -103,26 +103,18 @@ class Server {
             JSONObject responseJson = postResponse.responseJson;
 
 
-            if (response.code() == 200) {
-
-                if (responseJson.getBoolean("success")) {
-
-                    Log.i(TAG, "Successful login.");
-                    prefs.setDeviceToken(responseJson.getString("token"));
-                    Log.d(TAG, "Web token has been refreshed");
-                    prefs.setTokenLastRefreshed(new Date().getTime());
-
-                } else { // not success
-                    prefs.setDeviceToken(null);
-
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
-                    Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
-                }
+            if (response.isSuccessful()) {
+                Log.i(TAG, "Successful login.");
+                prefs.setDeviceToken(responseJson.getString("token"));
+                Log.d(TAG, "Web token has been refreshed");
+                prefs.setTokenLastRefreshed(new Date().getTime());
 
             } else { // STATUS not OK
                 Log.e(TAG, "Invalid devicename or password for login.");
                 prefs.setDeviceToken(null);
+                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
+                Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
             }
 
         } catch (Exception e) {
@@ -198,33 +190,23 @@ class Server {
             JSONObject responseJson = postResponse.responseJson;
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
-            if (response.code() == 200) {
-                //  Here you read any answer from server.
+            if (response.isSuccessful()) {
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
 
-                if (responseJson.getBoolean("success")) {
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
+                String userToken = responseJson.getString("token");
+                prefs.setUserToken(userToken);
+                prefs.setTokenLastRefreshed(new Date().getTime());
+                prefs.setUserSignedIn(true);
 
-                    String userToken = responseJson.getString("token");
-                    prefs.setUserToken(userToken);
-                    prefs.setTokenLastRefreshed(new Date().getTime());
-                    prefs.setUserSignedIn(true);
+                boolean isItSignedIn = prefs.getUserSignedIn();
+                Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
-                    boolean isItSignedIn = prefs.getUserSignedIn();
-                    Log.e(TAG, "isItSignedIn" + isItSignedIn);
-
-                    String messageToDisplay = "You have successfully signed in as ";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-
-                } else { // not success
-                    prefs.setUserToken(null);
-                    jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                    String messageToDisplay = "Error, unable to sign in.";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-                }
+                String messageToDisplay = "You have successfully signed in as ";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
             } else if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
+                prefs.setUserToken(null);
                 String message = "Sorry could not sign in.";
                 try {
                     String errorType = responseJson.getString("errorType");
@@ -246,8 +228,9 @@ class Server {
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
             } else {
+                prefs.setUserToken(null);
                 JSONArray messages = responseJson.getJSONArray("messages");
-                String firstMessage = (String) messages.get(0);
+                String firstMessage = messages.optString(0, "Error, unable to sign in.");
                 jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
@@ -307,7 +290,7 @@ class Server {
                 return;
             }
 
-            if (response.isSuccessful() && responseJson.getBoolean("success")) {
+            if (response.isSuccessful()) {
 
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
@@ -390,7 +373,7 @@ class Server {
                 return;
             }
 
-            if (response.isSuccessful() && responseJson.getBoolean("success")) {
+            if (response.isSuccessful()) {
                 prefs.setUserToken(responseJson.getString("token"));
                 prefs.setUserTokenLastRefreshed(new Date().getTime());
                 prefs.setUsername(username);
@@ -546,23 +529,17 @@ class Server {
 
                 // Get groups from responseBody
                 JSONObject joRes = new JSONObject(responseBody);
-
-                if (joRes.getBoolean("success")) {
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
-                    JSONArray groupsJSONArray = joRes.getJSONArray("groups");
-                    if (groupsJSONArray != null) {
-                        for (int i = 0; i < groupsJSONArray.length(); i++) {
-                            JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
-                            String groupName = groupJSONObject.getString("groupname");
-                            groups.add(groupName);
-                        }
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
+                JSONArray groupsJSONArray = joRes.getJSONArray("groups");
+                if (groupsJSONArray != null) {
+                    for (int i = 0; i < groupsJSONArray.length(); i++) {
+                        JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
+                        String groupName = groupJSONObject.getString("groupname");
+                        groups.add(groupName);
                     }
-
-                    messageToDisplay = "Success, groups have been updated from server";
-                } else {
-                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_RETRIEVE_GROUPS");
-                    messageToDisplay = "Error, unable to get groups from server";
                 }
+
+                messageToDisplay = "Success, groups have been updated from server";
 
             } else { // not success
                 messageToDisplay = "Error, unable to get groups from server";
