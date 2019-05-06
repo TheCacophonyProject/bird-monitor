@@ -409,6 +409,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                     }
 
                     if (sendFile(context, aFile)) {
+
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
                         boolean fileSuccessfullyDeleted = false;
                         try {
@@ -418,6 +419,18 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                             fileSuccessfullyDeleted = aFile.delete();
 
                             if (fileSuccessfullyDeleted) {
+                                // Send a broadcast to inform GUI that the number of files on phone has changed
+                                JSONObject jsonObjectMessageToBroadcast2 = new JSONObject();
+                                try {
+                                    jsonObjectMessageToBroadcast2.put("messageType", "RECORDING_DELETED");
+                                    jsonObjectMessageToBroadcast2.put("messageToDisplay", "RECORDING_DELETED"); // not used, but stops error when broadcast read
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast2);
+
+
+
                                 // Delete the recording notes file if it exists.
                                 String recordingFileExtension = Util.getRecordingFileExtension();
                                 String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
