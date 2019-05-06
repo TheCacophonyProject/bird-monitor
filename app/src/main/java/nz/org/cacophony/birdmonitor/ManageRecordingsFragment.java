@@ -218,6 +218,13 @@ public class ManageRecordingsFragment extends Fragment {
                         } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
                             btnCancel.setEnabled(true);
                             tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("UPLOADING_STOPPED")) {
+                            btnCancel.setEnabled(false);
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("PREPARING_TO_UPLOAD")) {
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("CONNECTED_TO_SERVER")) {
+                            tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
                             btnCancel.setEnabled(false);
                             tvMessages.setText(messageToDisplay);
@@ -262,36 +269,9 @@ public class ManageRecordingsFragment extends Fragment {
     }
 
     public void cancelButtonPressed() {
-
-        // are you sure?
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setPositiveButton("Yes", (di, id) -> stopUploadingRecordings())
-                .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
-                .setMessage("Are you sure you want to stop uploading the recordings?")
-                .setTitle("Cancel Upload")
-                .create();
-
-        dialog.setOnShowListener(dialogInterface -> {
-            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-            btnPositive.setTextSize(24);
-            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-            btnPositive.setTextColor(btnPositiveColor);
-
-            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-            btnNegative.setTextSize(24);
-            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
-            btnNegative.setTextColor(btnNegativeColor);
-
-            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-            TextView textView = dialog.findViewById(android.R.id.message);
-            textView.setTextSize(22);
-        });
-        dialog.show();
-
-    }
-
-    private void stopUploadingRecordings(){
         RecordAndUpload.setCancelUploadingRecordings(true);
+        btnCancel.setEnabled(false);
+        tvMessages.setText("Stopping the uploading of Recordings.");
     }
 
 }

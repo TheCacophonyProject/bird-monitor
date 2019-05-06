@@ -361,8 +361,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
     public static boolean uploadFiles(Context context) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading recordings");
+            jsonObjectMessageToBroadcast.put("messageType", "PREPARING_TO_UPLOAD");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Preparing to upload.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -462,8 +462,11 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                             break;
                         }
                     } else {
+                        // Did not upload, but reason may have been that the user pressed cancel
+                        if (!isCancelUploadingRecordings()){
+                            Log.e(TAG, "Failed to upload file to server");
+                        }
 
-                        Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
 

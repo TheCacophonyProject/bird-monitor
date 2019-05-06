@@ -479,15 +479,6 @@ class Server {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
-
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, can not record as a recording is already in progress");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             return false;
         }
         uploading = true;
@@ -499,7 +490,25 @@ class Server {
         try {
             HttpURLConnection conn = openURL(uploadUrl);
 
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            try {
+                jsonObjectMessageToBroadcast.put("messageType", "CONNECTED_TO_SERVER");
+                jsonObjectMessageToBroadcast.put("messageToDisplay", "Connected to Server");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+
             MultipartUtility multipart = new MultipartUtility(conn, charset, prefs.getToken());
+
+            // Previous line can take a number of seconds to complete, so after here seems a good place to check to see if the user has pressed the cancel upload button
+            if (RecordAndUpload.isCancelUploadingRecordings()){
+                Log.w(TAG, "User cancelled uplaoding of recordings.");
+               return false;
+            }
+
+
+
 
             multipart.addFormField("data", data.toString());
             multipart.addFilePart("file", audioFile);

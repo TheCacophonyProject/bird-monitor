@@ -1003,16 +1003,24 @@ class Util {
                 JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                 if (uploadedSuccessfully) {
 
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
                     if (RecordAndUpload.isCancelUploadingRecordings()){
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
                     }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
                         jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
                     }
 
                 } else {
-                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
+
+                    if (RecordAndUpload.isCancelUploadingRecordings()){
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
+                    }
+
                 }
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
