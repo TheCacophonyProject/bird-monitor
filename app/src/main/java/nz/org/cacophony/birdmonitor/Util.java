@@ -1333,9 +1333,9 @@ class Util {
 
         JSONObject recordingNotes = new JSONObject();
         try{
-        recordingNotes.put("weatherNote", weatherNote);
-            recordingNotes.put("countedByNote", countedByNote);
-            recordingNotes.put("otherNote", otherNote);
+        recordingNotes.put("Weather", weatherNote);
+            recordingNotes.put("Counted By", countedByNote);
+            recordingNotes.put("Other", otherNote);
 
             Writer output = null;
             output = new BufferedWriter(new FileWriter(file));

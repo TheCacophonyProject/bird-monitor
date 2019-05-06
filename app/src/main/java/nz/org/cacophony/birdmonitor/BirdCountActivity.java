@@ -434,9 +434,9 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
             if (notesFileNameForLastestRecording.exists()) {
                 JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFileNameForLastestRecording);
                 try {
-                    etWeather.setText(jsonNotes.getString("weatherNote"));
-                    etCountedBy.setText(jsonNotes.getString("countedByNote"));
-                    etOther.setText(jsonNotes.getString("otherNote"));
+                    etWeather.setText(jsonNotes.getString("Weather"));
+                    etCountedBy.setText(jsonNotes.getString("Counted By"));
+                    etOther.setText(jsonNotes.getString("Other"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

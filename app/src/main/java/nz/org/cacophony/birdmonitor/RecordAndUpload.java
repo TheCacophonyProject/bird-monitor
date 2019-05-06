@@ -569,15 +569,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             File notesFile = new File(notesFilePath);
 
             if (notesFile.exists()) {
-
                 JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFile);
-                String weatherNote = jsonNotes.getString("weatherNote");
-                String countedByNote = jsonNotes.getString("countedByNote");
-                String otherNote = jsonNotes.getString("otherNote");
-
-                additionalMetadata.put("Weather", weatherNote);
-                additionalMetadata.put("Counted By", countedByNote);
-                additionalMetadata.put("Other Notes", otherNote);
+                additionalMetadata.put("user-entered", jsonNotes.toString());
             }
 
 
