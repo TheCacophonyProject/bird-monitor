@@ -51,6 +51,7 @@ class Server {
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
 
+
     static void updateServerConnectionStatus(Context context) {
 
         try {
@@ -652,6 +653,8 @@ class Server {
             return false;
         }
     }
+
+
 
     static class PostResponse {
         final Response response;

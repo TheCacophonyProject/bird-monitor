@@ -34,6 +34,7 @@ import java.util.TimeZone;
 class RecordAndUpload implements IdlingResourceForEspressoTesting {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
+    private static boolean cancelUploadingRecordings = false;
 
     private RecordAndUpload() {
 
@@ -403,6 +404,9 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 }
 
                 for (File aFile : recordingFiles) {
+                    if (isCancelUploadingRecordings()){
+                       break;
+                    }
 
                     if (sendFile(context, aFile)) {
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
@@ -427,7 +431,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
                                     // If this file was the latest bird count file, then need to set the latest bird count file to null
                                     String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
-                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)){
+                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)) {
                                         prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
                                     }
                                 }
@@ -457,7 +461,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been successfully uploaded to the server.");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -604,5 +608,13 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);
+    }
+
+    public static boolean isCancelUploadingRecordings() {
+        return cancelUploadingRecordings;
+    }
+
+    public static void setCancelUploadingRecordings(boolean cancelUploadingRecordings2) {
+        cancelUploadingRecordings = cancelUploadingRecordings2;
     }
 }

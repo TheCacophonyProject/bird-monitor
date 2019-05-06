@@ -1004,7 +1004,11 @@ class Util {
                 if (uploadedSuccessfully) {
 
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
+                    if (RecordAndUpload.isCancelUploadingRecordings()){
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
+                    }
 
                 } else {
                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");

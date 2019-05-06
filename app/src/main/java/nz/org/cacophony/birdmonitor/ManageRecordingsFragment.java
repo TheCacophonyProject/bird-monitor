@@ -36,6 +36,7 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
     private PermissionsHelper permissionsHelper;
+    private Button btnCancel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,8 +60,15 @@ public class ManageRecordingsFragment extends Fragment {
             deleteAllRecordingsButton();
         });
 
+        btnCancel = view.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> {
+            cancelButtonPressed();
+        });
+
         tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
         displayOrHideGUIObjects();
+
+        btnCancel.setEnabled(false);
 
         return view;
     }
@@ -100,6 +108,7 @@ public class ManageRecordingsFragment extends Fragment {
 
     public void uploadRecordings() {
 
+
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
@@ -111,6 +120,8 @@ public class ManageRecordingsFragment extends Fragment {
             return;
         }
 
+
+
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
@@ -118,6 +129,8 @@ public class ManageRecordingsFragment extends Fragment {
         if (getNumberOfRecordings() > 0) { // should be as button should be disabled if no recordings
             tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
+            btnCancel.setEnabled(true);
+            RecordAndUpload.setCancelUploadingRecordings(false);
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
         } else {
             tvMessages.setText("There are no recordings on the phone to upload.");
@@ -197,13 +210,14 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
+                            btnCancel.setEnabled(true);
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
+                            btnCancel.setEnabled(false);
                             tvMessages.setText(messageToDisplay);
                             uploadFilesIdlingResource.decrement();
                         }
@@ -243,6 +257,39 @@ public class ManageRecordingsFragment extends Fragment {
         permissionsHelper = new PermissionsHelper();
         permissionsHelper.checkAndRequestPermissions(getActivity(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    public void cancelButtonPressed() {
+
+        // are you sure?
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Yes", (di, id) -> stopUploadingRecordings())
+                .setNegativeButton("No/Cancel", (di, id) -> { /*Exit the dialog*/ })
+                .setMessage("Are you sure you want to stop uploading the recordings?")
+                .setTitle("Cancel Upload")
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
+
+            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            btnNegative.setTextSize(24);
+            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnNegative.setTextColor(btnNegativeColor);
+
+            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
+        });
+        dialog.show();
+
+    }
+
+    private void stopUploadingRecordings(){
+        RecordAndUpload.setCancelUploadingRecordings(true);
     }
 
 }
