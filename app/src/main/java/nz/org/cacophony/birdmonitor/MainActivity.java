@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         final Button advancedButton = findViewById(R.id.btnAdvanced);
 
         if (prefs.getSettingsForTestServerEnabled()) {
-            advancedButton.setText("Very Advanced");
+            advancedButton.setText(getResources().getString(R.string.very_advanced));
         }
 
         advancedButton.setOnTouchListener((v, event) -> {
@@ -101,11 +101,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
                     if (timeBetweenDownAndUp > 5000) {
                         if (prefs.getSettingsForTestServerEnabled()) {
-                            advancedButton.setText("Advanced");
+                            advancedButton.setText(getResources().getString(R.string.advanced));
                             prefs.setSettingsForTestServerEnabled(false);
 
                         } else {
-                            advancedButton.setText("Very Advanced");
+                            advancedButton.setText(getResources().getString(R.string.very_advanced));
                             prefs.setSettingsForTestServerEnabled(true);
 
                         }
@@ -149,10 +149,10 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
 
         if (prefs.getIsDisabled()) {
-            ((Button) findViewById(R.id.btnDisable)).setText("Enable Recording");
+            ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.enable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         } else {
-            ((Button) findViewById(R.id.btnDisable)).setText("Disable Recording");
+            ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.disable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
         // listens for events broadcast from ?
@@ -205,18 +205,18 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
     }
 
 
-//    public void launchWalkingActivity(@SuppressWarnings("UnusedParameters") View v) {
-//        try {
-//            Intent intent = new Intent(this, WalkingActivity.class);
-//            startActivity(intent);
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getLocalizedMessage());
-//        }
-//    }
-
     public void launchBirdCountActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
             Intent intent = new Intent(this, BirdCountActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    public void launchGPSActivity(@SuppressWarnings("UnusedParameters") View v) {
+        try {
+            Intent intent = new Intent(this, GPSActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);

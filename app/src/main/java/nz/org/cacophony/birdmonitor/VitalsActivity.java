@@ -73,7 +73,6 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
 
         tvMessages = findViewById(R.id.tvMessages);
 
-        //https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         checkPermissions();

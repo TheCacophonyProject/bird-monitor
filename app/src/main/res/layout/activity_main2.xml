@@ -30,7 +30,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:onClick="launchSetupActivity"
-        android:text="Basic Setup"
+        android:text="@string/basic_setup"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -44,11 +44,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:onClick="launchBirdCountActivity"
-        android:text="Bird Count"
+        android:text="@string/five_minute_bird_count"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="@+id/btnStatistics"
         app:layout_constraintStart_toStartOf="@+id/btnStatistics"
         app:layout_constraintTop_toBottomOf="@+id/btnStatistics" />
+
+    <Button
+        android:id="@+id/btnGPSLocation"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:onClick="launchGPSActivity"
+        android:text="@string/gps_location"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toEndOf="@+id/btnBirdCount"
+        app:layout_constraintStart_toStartOf="@+id/btnBirdCount"
+        app:layout_constraintTop_toBottomOf="@+id/btnBirdCount" />
 
     <Button
         android:id="@+id/btnStatistics"
@@ -57,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:onClick="launchVitalsActivity"
-        android:text="Vitals"
+        android:text="@string/vitals"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="@+id/btnSetup"
         app:layout_constraintStart_toStartOf="@+id/btnSetup"
@@ -70,11 +83,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
 
-        android:text="Advanced"
+        android:text="@string/advanced"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="@+id/btnBirdCount"
-        app:layout_constraintStart_toStartOf="@+id/btnBirdCount"
-        app:layout_constraintTop_toBottomOf="@+id/btnBirdCount" />
+        app:layout_constraintEnd_toEndOf="@+id/btnGPSLocation"
+        app:layout_constraintStart_toStartOf="@+id/btnGPSLocation"
+        app:layout_constraintTop_toBottomOf="@+id/btnGPSLocation" />
 
     <Button
         android:id="@+id/btnDisable"
@@ -87,7 +100,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:onClick="launchDisableActivity"
-        android:text="Turn Off Recording"
+        android:text="@string/disable_recording"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
