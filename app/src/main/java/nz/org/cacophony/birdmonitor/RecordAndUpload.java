@@ -590,9 +590,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             if (notesFile.exists()) {
                 JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFile);
-                additionalMetadata.put("user-entered", jsonNotes.toString());
+                additionalMetadata.put("user-entered", jsonNotes);
             }
-
 
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
