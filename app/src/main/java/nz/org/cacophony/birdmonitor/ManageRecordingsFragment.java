@@ -33,6 +33,7 @@ public class ManageRecordingsFragment extends Fragment {
     TextView tvNumberOfRecordings;
     private TextView tvMessages;
     private PermissionsHelper permissionsHelper;
+    private Button btnCancel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +57,15 @@ public class ManageRecordingsFragment extends Fragment {
             deleteAllRecordingsButton();
         });
 
+        btnCancel = view.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> {
+            cancelButtonPressed();
+        });
+
         tvNumberOfRecordings = view.findViewById(R.id.tvNumberOfRecordings);
         displayOrHideGUIObjects();
+
+        btnCancel.setEnabled(false);
 
         return view;
     }
@@ -97,6 +105,7 @@ public class ManageRecordingsFragment extends Fragment {
 
     public void uploadRecordings() {
 
+
         if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
@@ -108,6 +117,8 @@ public class ManageRecordingsFragment extends Fragment {
             return;
         }
 
+
+
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
@@ -115,6 +126,8 @@ public class ManageRecordingsFragment extends Fragment {
         if (getNumberOfRecordings() > 0) { // should be as button should be disabled if no recordings
             tvMessages.setText("About to upload " + numberOfFilesToUpload + " recordings.");
             getView().findViewById(R.id.btnUploadFiles).setEnabled(false);
+            btnCancel.setEnabled(true);
+            RecordAndUpload.setCancelUploadingRecordings(false);
             Util.uploadFilesUsingUploadButton(getActivity().getApplicationContext());
         } else {
             tvMessages.setText("There are no recordings on the phone to upload.");
@@ -194,13 +207,23 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-
                             tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("RECORDING_DELETED")) {
+                            displayOrHideGUIObjects();
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
+                            btnCancel.setEnabled(true);
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("UPLOADING_STOPPED")) {
+                            btnCancel.setEnabled(false);
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("PREPARING_TO_UPLOAD")) {
+                            tvMessages.setText(messageToDisplay);
+                        } else if (messageType.equalsIgnoreCase("CONNECTED_TO_SERVER")) {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
+                            btnCancel.setEnabled(false);
                             tvMessages.setText(messageToDisplay);
                         }
 
@@ -239,6 +262,12 @@ public class ManageRecordingsFragment extends Fragment {
         permissionsHelper = new PermissionsHelper();
         permissionsHelper.checkAndRequestPermissions(getActivity(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    public void cancelButtonPressed() {
+        RecordAndUpload.setCancelUploadingRecordings(true);
+        btnCancel.setEnabled(false);
+        tvMessages.setText("Stopping the uploading of Recordings.");
     }
 
 }

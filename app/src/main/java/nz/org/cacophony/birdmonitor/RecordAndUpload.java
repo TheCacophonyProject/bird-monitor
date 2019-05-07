@@ -29,6 +29,7 @@ import java.util.*;
 class RecordAndUpload implements IdlingResourceForEspressoTesting {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
+    private static boolean cancelUploadingRecordings = false;
 
     private RecordAndUpload() {
 
@@ -380,8 +381,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
     public static boolean uploadFiles(Context context) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading recordings");
+            jsonObjectMessageToBroadcast.put("messageType", "PREPARING_TO_UPLOAD");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Preparing to upload.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -423,8 +424,12 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 }
 
                 for (File aFile : recordingFiles) {
+                    if (isCancelUploadingRecordings()){
+                       break;
+                    }
 
                     if (sendFile(context, aFile)) {
+
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
                         boolean fileSuccessfullyDeleted = false;
                         try {
@@ -434,6 +439,18 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                             fileSuccessfullyDeleted = aFile.delete();
 
                             if (fileSuccessfullyDeleted) {
+                                // Send a broadcast to inform GUI that the number of files on phone has changed
+                                JSONObject jsonObjectMessageToBroadcast2 = new JSONObject();
+                                try {
+                                    jsonObjectMessageToBroadcast2.put("messageType", "RECORDING_DELETED");
+                                    jsonObjectMessageToBroadcast2.put("messageToDisplay", "RECORDING_DELETED"); // not used, but stops error when broadcast read
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast2);
+
+
+
                                 // Delete the recording notes file if it exists.
                                 String recordingFileExtension = Util.getRecordingFileExtension();
                                 String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
@@ -447,7 +464,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
                                     // If this file was the latest bird count file, then need to set the latest bird count file to null
                                     String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
-                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)){
+                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)) {
                                         prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
                                     }
                                 }
@@ -465,8 +482,11 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                             break;
                         }
                     } else {
+                        // Did not upload, but reason may have been that the user pressed cancel
+                        if (!isCancelUploadingRecordings()){
+                            Log.e(TAG, "Failed to upload file to server");
+                        }
 
-                        Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
 
@@ -477,7 +497,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been successfully uploaded to the server.");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -623,5 +643,13 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);
+    }
+
+    public static boolean isCancelUploadingRecordings() {
+        return cancelUploadingRecordings;
+    }
+
+    public static void setCancelUploadingRecordings(boolean cancelUploadingRecordings2) {
+        cancelUploadingRecordings = cancelUploadingRecordings2;
     }
 }
