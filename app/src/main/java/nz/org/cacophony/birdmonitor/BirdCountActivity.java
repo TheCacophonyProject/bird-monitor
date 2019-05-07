@@ -26,9 +26,6 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.List;
-
 import java.io.File;
 
 public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
@@ -217,7 +214,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         }
     }
 
-
     public void finished() {
         try {
             if (recording) {
@@ -336,6 +332,7 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
                             countDownTimer.cancel();
                         }
                         tvTitle.setText(getResources().getString(R.string.bird_count_message));
+                        tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
                         btnRecordNow.setText("Record Now");
