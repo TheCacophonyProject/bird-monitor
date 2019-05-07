@@ -20,12 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 import java.io.File;
-
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class ManageRecordingsFragment extends Fragment {
 
@@ -197,6 +194,7 @@ public class ManageRecordingsFragment extends Fragment {
 
                     if (messageType != null) {
                         if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
+
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
                             tvMessages.setText(messageToDisplay);
@@ -204,7 +202,6 @@ public class ManageRecordingsFragment extends Fragment {
                             tvMessages.setText(messageToDisplay);
                         } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
                             tvMessages.setText(messageToDisplay);
-                            uploadFilesIdlingResource.decrement();
                         }
 
                         displayOrHideGUIObjects();

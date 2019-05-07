@@ -48,7 +48,7 @@ public class MainService extends IntentService {
 
         } catch (Exception ex) {
 
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             Util.enableFlightMode(getApplicationContext());
             wakeLock.release();
