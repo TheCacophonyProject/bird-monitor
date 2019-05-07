@@ -1,8 +1,8 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
+import okhttp3.*;
 import info.guardianproject.netcipher.NetCipher;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -12,10 +12,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+
 import java.util.List;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
@@ -38,7 +38,7 @@ class Server {
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
     private static final String SIGNUP_URL = "/api/v1/users";
-    private static final String GROUPS_URL = "api/v1/groups"; // deliberately don't have leading / https://square.github.io/okhttp/3.x/okhttp/ says not to have it
+    private static final String GROUPS_URL = "/api/v1/groups";
     private static final OkHttpClient client = new OkHttpClient();
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
@@ -108,26 +108,18 @@ class Server {
             JSONObject responseJson = postResponse.responseJson;
 
 
-            if (response.code() == 200) {
-
-                if (responseJson.getBoolean("success")) {
-
-                    Log.i(TAG, "Successful login.");
-                    prefs.setDeviceToken(responseJson.getString("token"));
-                    Log.d(TAG, "Web token has been refreshed");
-                    prefs.setTokenLastRefreshed(new Date().getTime());
-
-                } else { // not success
-                    prefs.setDeviceToken(null);
-
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
-                    Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
-                }
+            if (response.isSuccessful()) {
+                Log.i(TAG, "Successful login.");
+                prefs.setDeviceToken(responseJson.getString("token"));
+                Log.d(TAG, "Web token has been refreshed");
+                prefs.setTokenLastRefreshed(new Date().getTime());
 
             } else { // STATUS not OK
                 Log.e(TAG, "Invalid devicename or password for login.");
                 prefs.setDeviceToken(null);
+                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
+                Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
             }
 
         } catch (Exception e) {
@@ -203,33 +195,23 @@ class Server {
             JSONObject responseJson = postResponse.responseJson;
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
-            if (response.code() == 200) {
-                //  Here you read any answer from server.
+            if (response.isSuccessful()) {
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
 
-                if (responseJson.getBoolean("success")) {
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
+                String userToken = responseJson.getString("token");
+                prefs.setUserToken(userToken);
+                prefs.setTokenLastRefreshed(new Date().getTime());
+                prefs.setUserSignedIn(true);
 
-                    String userToken = responseJson.getString("token");
-                    prefs.setUserToken(userToken);
-                    prefs.setTokenLastRefreshed(new Date().getTime());
-                    prefs.setUserSignedIn(true);
+                boolean isItSignedIn = prefs.getUserSignedIn();
+                Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
-                    boolean isItSignedIn = prefs.getUserSignedIn();
-                    Log.e(TAG, "isItSignedIn" + isItSignedIn);
-
-                    String messageToDisplay = "You have successfully signed in as ";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-
-                } else { // not success
-                    prefs.setUserToken(null);
-                    jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                    String messageToDisplay = "Error, unable to sign in.";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
-                }
+                String messageToDisplay = "You have successfully signed in as ";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
             } else if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
+                prefs.setUserToken(null);
                 String message = "Sorry could not sign in.";
                 try {
                     String errorType = responseJson.getString("errorType");
@@ -251,8 +233,9 @@ class Server {
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
 
             } else {
+                prefs.setUserToken(null);
                 JSONArray messages = responseJson.getJSONArray("messages");
-                String firstMessage = (String) messages.get(0);
+                String firstMessage = messages.optString(0, "Error, unable to sign in.");
                 jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
                 Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
@@ -270,44 +253,6 @@ class Server {
                 Log.e(TAG, e2.getLocalizedMessage(), e2);
             }
         }
-    }
-
-
-    private static HttpURLConnection openURL(String serverUrl) {
-        HttpURLConnection conn = null;
-        try {
-            URL url = new URL(serverUrl);
-            switch (url.getProtocol()) {
-                case "http":
-                    conn = (HttpURLConnection) url.openConnection();
-                    break;
-                case "https":
-                    conn = openHttpsURL(url);
-                    break;
-                default:
-                    throw new IllegalArgumentException("unsupported protocol");
-            }
-
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getLocalizedMessage(), e);
-        }
-
-        return conn;
-    }
-
-    private static HttpURLConnection openHttpsURL(URL url) throws IOException {
-        // Create connection
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            //https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
-            return NetCipher.getHttpsURLConnection(url);
-        }
-        return (HttpURLConnection) url.openConnection();
     }
 
     /**
@@ -350,7 +295,7 @@ class Server {
                 return;
             }
 
-            if (response.isSuccessful() && responseJson.getBoolean("success")) {
+            if (response.isSuccessful()) {
 
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
@@ -384,11 +329,24 @@ class Server {
         }
     }
 
+    private static PostResponse makePost(String url, RequestBody requestBody, String authToken) throws IOException, JSONException {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", authToken)
+                .post(requestBody)
+                .build();
+        return submitPost(request);
+    }
+
     private static PostResponse makePost(String url, RequestBody requestBody) throws IOException, JSONException {
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
+        return submitPost(request);
+    }
+
+    private static PostResponse submitPost(Request request) throws IOException, JSONException {
         Response response = client.newCall(request).execute();
         Log.i("MSG", response.message());
         return new PostResponse(response);
@@ -420,21 +378,19 @@ class Server {
                 return;
             }
 
-            if (response.isSuccessful() && responseJson.getBoolean("success")) {
-                if (responseJson.getBoolean("success")) {
-                    prefs.setUserToken(responseJson.getString("token"));
-                    prefs.setUserTokenLastRefreshed(new Date().getTime());
-                    prefs.setUsername(username);
-                    prefs.setUsernamePassword(password);
-                    prefs.setEmailAddress(emailAddress);
+            if (response.isSuccessful()) {
+                prefs.setUserToken(responseJson.getString("token"));
+                prefs.setUserTokenLastRefreshed(new Date().getTime());
+                prefs.setUsername(username);
+                prefs.setUsernamePassword(password);
+                prefs.setEmailAddress(emailAddress);
 
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
-                    String messageToDisplay = "Success, you have successfully created a new user account";
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                    Util.broadcastAMessage(context, "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
-                    return;
-                }
+                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
+                String messageToDisplay = "Success, you have successfully created a new user account";
+                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
+                Util.broadcastAMessage(context, "SERVER_SIGNUP", jsonObjectMessageToBroadcast);
+                return;
             }
 
             //Unexpected response code from server
@@ -466,6 +422,25 @@ class Server {
         }
     }
 
+    private static RequestBody createAudioPostBody(File audioFile, JSONObject data) {
+        String fileName = audioFile.getName();
+        String mediaType = URLConnection.guessContentTypeFromName(fileName);
+
+        return new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addPart(
+                        Headers.of(
+                                "Content-Disposition", "form-data; name=\"data\""
+                        ),
+                        RequestBody.create(MediaType.parse("Content-Type: text/plain; charset=UTF-8"), data.toString()))
+                .addPart(
+                        Headers.of(
+                                "Content-Disposition", "form-data; name=\"file\"; filename=\"" + fileName + "\"",
+                                "Content-Transfer-Encoding", "binary"),
+                        RequestBody.create(MediaType.parse(mediaType), audioFile)
+                ).build();
+    }
+
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
@@ -475,62 +450,36 @@ class Server {
         uploading = true;
         uploadFilesIdlingResource.increment();
 
-        String charset = "UTF-8";
-
         Prefs prefs = new Prefs(context);
         String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
-            HttpURLConnection conn = openURL(uploadUrl);
+            RequestBody requestBody = createAudioPostBody(audioFile, data);
 
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "CONNECTED_TO_SERVER");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Connected to Server");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-
-            MultipartUtility multipart = new MultipartUtility(conn, charset, prefs.getToken());
-
-            // Previous line can take a number of seconds to complete, so after here seems a good place to check to see if the user has pressed the cancel upload button
             if (RecordAndUpload.isCancelUploadingRecordings()){
-                Log.w(TAG, "User cancelled uplaoding of recordings.");
-               return false;
+                Log.w(TAG, "User cancelled uploading of recordings.");
+                return false;
             }
 
+            PostResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
+            Response response = postResponse.response;
+            JSONObject responseJson = postResponse.responseJson;
 
-
-
-            multipart.addFormField("data", data.toString());
-            multipart.addFilePart("file", audioFile);
-
-            List<String> responseString = multipart.finish();
-
+            broadcastGenericError(context, "Connected to Server", "CONNECTED_TO_SERVER", "MANAGE_RECORDINGS");
             Log.i(TAG, "SERVER REPLIED:");
-            try {
-                uploadSuccess = false;
-                for (String line : responseString) {
-                    JSONObject joRes = new JSONObject(line);
-                    long recordingId = joRes.getLong("recordingId");
+            uploadSuccess = false;
+            long recordingId = responseJson.getLong("recordingId");
 
-                    prefs.setLastRecordIdReturnedFromServer(recordingId);
-                    long check = prefs.getLastRecordIdReturnedFromServer();
-                    if (recordingId != check) {
-                        Log.e(TAG, "Error with recording id");
-                    }
-
-                    if (joRes.getBoolean("success")) {
-                        uploadSuccess = true;
-                        break;
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            prefs.setLastRecordIdReturnedFromServer(recordingId);
+            long check = prefs.getLastRecordIdReturnedFromServer();
+            if (recordingId != check) {
+                Log.e(TAG, "Error with recording id");
             }
 
-        } catch (IOException ex) {
+            if (response.isSuccessful()) {
+                uploadSuccess = true;
+            }
+
+        } catch (IOException | JSONException ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
@@ -583,23 +532,17 @@ class Server {
 
                 // Get groups from responseBody
                 JSONObject joRes = new JSONObject(responseBody);
-
-                if (joRes.getBoolean("success")) {
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
-                    JSONArray groupsJSONArray = joRes.getJSONArray("groups");
-                    if (groupsJSONArray != null) {
-                        for (int i = 0; i < groupsJSONArray.length(); i++) {
-                            JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
-                            String groupName = groupJSONObject.getString("groupname");
-                            groups.add(groupName);
-                        }
+                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
+                JSONArray groupsJSONArray = joRes.getJSONArray("groups");
+                if (groupsJSONArray != null) {
+                    for (int i = 0; i < groupsJSONArray.length(); i++) {
+                        JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
+                        String groupName = groupJSONObject.getString("groupname");
+                        groups.add(groupName);
                     }
-
-                    messageToDisplay = "Success, groups have been updated from server";
-                } else {
-                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_RETRIEVE_GROUPS");
-                    messageToDisplay = "Error, unable to get groups from server";
                 }
+
+                messageToDisplay = "Success, groups have been updated from server";
 
             } else { // not success
                 messageToDisplay = "Error, unable to get groups from server";
@@ -617,29 +560,21 @@ class Server {
 
     static boolean addGroupToServer(Context context, String groupName) {
         final Prefs prefs = new Prefs(context);
-        try {
-            HttpUrl url = new HttpUrl.Builder()
-                    .scheme(prefs.getServerScheme())
-                    .host(prefs.getServerHost())
-                    .addPathSegments(GROUPS_URL)
-                    .build();
 
-            RequestBody formBody = new FormBody.Builder()
+        String groupsUrl = prefs.getServerUrl() + GROUPS_URL;
+
+        try {
+            RequestBody requestBody = new FormBody.Builder()
                     .add("groupname", groupName)
                     .build();
 
-            String authorization = prefs.getUserToken();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("Authorization", authorization)
-                    .post(formBody)
-                    .build();
+            PostResponse postResponse = makePost(groupsUrl, requestBody, prefs.getUserToken());
+            Response response = postResponse.response;
 
-            Response response = client.newCall(request).execute();
             Log.i("MSG", response.message());
             JSONObject jsonObjectMessageToBroadcast = new JSONObject().put("responseCode", response.code());
 
-            if (response.code() == 200) {
+            if (response.isSuccessful()) {
                 String messageToDisplay = "Success, the group " + groupName + " has been added to the server";
                 // Now add it to local storage
                 Util.addGroup(context, groupName);

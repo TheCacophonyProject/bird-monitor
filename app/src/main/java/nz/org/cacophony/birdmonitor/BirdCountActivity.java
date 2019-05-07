@@ -298,7 +298,6 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             try {
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {
@@ -358,7 +357,8 @@ public class BirdCountActivity extends AppCompatActivity implements IdlingResour
         permissionsHelper.checkAndRequestPermissions(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE);
     }
 
 

@@ -28,8 +28,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
     private static final String TAG = StartRecordingReceiver.class.getName();
 
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
