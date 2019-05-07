@@ -1,7 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -34,37 +33,19 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-
+import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
 
 
@@ -93,27 +74,26 @@ class Util {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean checkPermissionsForRecording(Context context) {
-        boolean permissionForRecording = false;
-        try {
-            if (context == null) {
-                Log.e(TAG, "Context was null when checking permissions");
-
-            } else {
-                boolean storagePermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-
-                boolean microphonePermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-                boolean locationPermission =
-                        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                permissionForRecording = (storagePermission && microphonePermission && locationPermission);
-            }
-
-        } catch (Exception ex) {
-            Log.e(TAG, "Error with checkPermissionsForRecording");
+        if (context == null) {
+            Log.e(TAG, "Context was null when checking permissions");
+            return false;
         }
-        return permissionForRecording;
+        boolean canWriteExternalStorage = checkHasPermission(context, WRITE_EXTERNAL_STORAGE);
+        boolean canRecordAudio = checkHasPermission(context, RECORD_AUDIO);
+        boolean canAccessFineLocation = checkHasPermission(context, ACCESS_FINE_LOCATION);
+        boolean canReadPhoneState = checkHasPermission(context, READ_PHONE_STATE);
+        if (canWriteExternalStorage && canRecordAudio && canAccessFineLocation && canReadPhoneState) {
+            return true;
+        } else {
+            Log.w(TAG, String.format("Missing permission for recording." +
+                        "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
+                    canWriteExternalStorage, canRecordAudio, canAccessFineLocation, canReadPhoneState));
+            return false;
+        }
+    }
 
+    private static boolean checkHasPermission(Context context, String permission) {
+        return ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -211,8 +191,6 @@ class Util {
 
                 return null;
             }
-
-          //  localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
 
             localFolderFile = new File(appDataFolder, recordingsOrNotes);
 
@@ -1339,24 +1317,20 @@ class Util {
     }
 
     public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
-       // Prefs prefs = new Prefs(context);
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
-        //String filePath = file.getAbsolutePath();
 
         JSONObject recordingNotes = new JSONObject();
-        try{
+        try {
         recordingNotes.put("Weather", weatherNote);
             recordingNotes.put("Counted By", countedByNote);
             recordingNotes.put("Other", otherNote);
 
-            Writer output = null;
-            output = new BufferedWriter(new FileWriter(file));
+            Writer output = new BufferedWriter(new FileWriter(file));
             output.write(recordingNotes.toString());
             output.close();
 
-
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, "exception", ex);
         }
     }
 
@@ -1368,16 +1342,16 @@ class Util {
     public static File getNotesFileForLatestRecording(Context context){
         Prefs prefs = new Prefs(context);
         String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
-        if (latestRecordingFileNameWithOutExtension == null){
+        if (latestRecordingFileNameWithOutExtension == null) {
             return null;
-        }else{
+        } else {
             String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension + ".json";
             return new File(notesFilePathName);
         }
     }
 
     public static JSONObject getNotesFromNoteFile(File notesFile){
-        if (!notesFile.exists()){
+        if (!notesFile.exists()) {
             return null;
         }
         StringBuilder jsonText = new StringBuilder();

@@ -17,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
@@ -214,7 +213,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
                 String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
                 if (jsonStringMessage != null) {
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
+                    String messageType = joMessage.optString("messageType");
 
                     if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
                         refreshVitalsDisplayedText();
@@ -261,7 +260,8 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         permissionsHelper.checkAndRequestPermissions(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE);
     }
 
     /**
