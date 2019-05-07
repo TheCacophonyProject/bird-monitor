@@ -9,7 +9,6 @@ import android.media.ToneGenerator;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,11 +18,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
@@ -299,8 +294,10 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         Thread.sleep(1000);
                         remainingRecordingTime -= 1000;
                     }
-
-                    prefs.setCancelRecording(false);
+                    if (prefs.getCancelRecording()) {
+                        cancelRecording(mRecorder, context, file, prefs);
+                        return;
+                    }
 
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Failed sleeping in recording thread.");
@@ -316,46 +313,69 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 }
             }
 
-            // Stop recording.
-            mRecorder.stop();
-
-            //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
-            mRecorder.reset();
-            mRecorder.release();
-
             if (playWarningBeeps) {
                 ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
                 toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
             }
 
-            // Give time for file to be saved. (and play beeps)
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
-            }
+            endRecording(mRecorder, context);
 
-            Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
-            isRecording = false;
-            jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-
-                if (Util.isBirdCountRecording(typeOfRecording)) {
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
-                } else {
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+            if (isRecording) {
+                try {
+                    jsonObjectMessageToBroadcast = new JSONObject();
+                    jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+                    if (Util.isBirdCountRecording(typeOfRecording)) {
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
+                    } else {
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+                    }
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getLocalizedMessage(), e);
                 }
-
-            } catch (JSONException e) {
-                Log.e(TAG, e.getLocalizedMessage(), e);
             }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            recordIdlingResource.decrement();
+            isRecording = false;
         }
 
+    }
+
+    private static void cancelRecording(MediaRecorder mRecorder, Context context, File file, Prefs prefs) {
+        isRecording = false;
+        prefs.setCancelRecording(false);
+        endRecording(mRecorder, context);
+        if (!file.delete()) {
+            Log.w(TAG, "Failed to delete cancelled recording: " + file.getAbsolutePath());
+        }
+        try {
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has been cancelled.");
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getLocalizedMessage(), e);
+        }
+    }
+
+    private static void endRecording(MediaRecorder mRecorder, Context context) {
+        // Stop recording.
+        mRecorder.stop();
+
+        //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+        mRecorder.reset();
+        mRecorder.release();
+
+        // Give time for file to be saved. (and play beeps)
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Log.e(TAG, "Failed sleeping in recording thread.", ex);
+        }
+
+        Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
     }
 
     public static boolean uploadFiles(Context context) {
@@ -590,9 +610,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
 
             if (notesFile.exists()) {
                 JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFile);
-                additionalMetadata.put("user-entered", jsonNotes.toString());
+                additionalMetadata.put("user-entered", jsonNotes);
             }
-
 
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
