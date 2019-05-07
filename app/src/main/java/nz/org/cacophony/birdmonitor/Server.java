@@ -3,6 +3,8 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.util.Log;
 import okhttp3.*;
+import info.guardianproject.netcipher.NetCipher;
+import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +15,8 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+
+import java.util.List;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
@@ -38,6 +42,7 @@ class Server {
     private static final OkHttpClient client = new OkHttpClient();
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
+
 
     static void updateServerConnectionStatus(Context context) {
 
@@ -437,32 +442,29 @@ class Server {
     }
 
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-        uploadFilesIdlingResource.increment();
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
-
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, can not record as a recording is already in progress");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             return false;
         }
         uploading = true;
+        uploadFilesIdlingResource.increment();
 
         Prefs prefs = new Prefs(context);
         String uploadUrl = prefs.getServerUrl() + UPLOAD_AUDIO_API_URL;
         try {
             RequestBody requestBody = createAudioPostBody(audioFile, data);
 
+            if (RecordAndUpload.isCancelUploadingRecordings()){
+                Log.w(TAG, "User cancelled uploading of recordings.");
+                return false;
+            }
+
             PostResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
+            broadcastGenericError(context, "Connected to Server", "CONNECTED_TO_SERVER", "MANAGE_RECORDINGS");
             Log.i(TAG, "SERVER REPLIED:");
             uploadSuccess = false;
             long recordingId = responseJson.getLong("recordingId");
@@ -481,6 +483,7 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
+            uploadFilesIdlingResource.decrement();
         }
 
         return uploadSuccess;
@@ -587,6 +590,8 @@ class Server {
             return false;
         }
     }
+
+
 
     static class PostResponse {
         final Response response;

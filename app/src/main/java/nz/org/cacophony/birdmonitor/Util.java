@@ -33,32 +33,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import java.util.*;
 
 import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
@@ -73,6 +58,8 @@ class Util {
     private static final String TAG = Util.class.getName();
 
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
+    private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
+    private static final String RECORDING_FILE_EXTENSION = ".m4a";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
@@ -181,8 +168,21 @@ class Util {
      * @param context
      * @return File object representing recordings folder.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File getRecordingsFolder(Context context) {
+        return getRecordingsOrNotesFolder(context, Util.DEFAULT_RECORDINGS_FOLDER);
+    }
+
+    /**
+     * Returns the folder for storing recording notes on the phone.
+     *
+     * @param context
+     * @return File object representing recording notes folder.
+     */
+    public static File getRecordingNotesFolder(Context context) {
+        return getRecordingsOrNotesFolder(context, Util.DEFAULT_RECORDING_NOTES_FOLDER);
+    }
+
+    public static File getRecordingsOrNotesFolder(Context context, String recordingsOrNotes) {
 
         File localFolderFile;
         try {
@@ -192,7 +192,7 @@ class Util {
                 return null;
             }
 
-            localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
+            localFolderFile = new File(appDataFolder, recordingsOrNotes);
 
             if (!localFolderFile.exists()) {
                 localFolderFile.mkdirs();
@@ -981,12 +981,24 @@ class Util {
                 JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                 if (uploadedSuccessfully) {
 
-                    jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
+                    if (RecordAndUpload.isCancelUploadingRecordings()){
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
+                    }
 
                 } else {
-                    jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
+
+                    if (RecordAndUpload.isCancelUploadingRecordings()){
+                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
+                    }else{
+                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
+                    }
+
                 }
                 Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
@@ -1093,6 +1105,17 @@ class Util {
                 if (getNumberOfRecordings(context) == 0) {
                     jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_DELETED_RECORDINGS");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
+
+                    // Delete any recording notes files
+                    File recordingNotesFolder = Util.getRecordingNotesFolder(context);
+
+                    for (File file : recordingNotesFolder.listFiles()) {
+                        file.delete();
+                    }
+
+                   Prefs prefs = new Prefs(context);
+                    prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
+
                 } else {
                     jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_DELETED");
                     jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
@@ -1293,4 +1316,61 @@ class Util {
         return recordTimeSeconds;
     }
 
+    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
+        File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
+
+        JSONObject recordingNotes = new JSONObject();
+        try {
+        recordingNotes.put("Weather", weatherNote);
+            recordingNotes.put("Counted By", countedByNote);
+            recordingNotes.put("Other", otherNote);
+
+            Writer output = new BufferedWriter(new FileWriter(file));
+            output.write(recordingNotes.toString());
+            output.close();
+
+        } catch (Exception ex) {
+            Log.e(TAG, "exception", ex);
+        }
+    }
+
+
+    public static String getRecordingFileExtension() {
+        return RECORDING_FILE_EXTENSION;
+    }
+
+    public static File getNotesFileForLatestRecording(Context context){
+        Prefs prefs = new Prefs(context);
+        String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
+        if (latestRecordingFileNameWithOutExtension == null) {
+            return null;
+        } else {
+            String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension + ".json";
+            return new File(notesFilePathName);
+        }
+    }
+
+    public static JSONObject getNotesFromNoteFile(File notesFile){
+        if (!notesFile.exists()) {
+            return null;
+        }
+        StringBuilder jsonText = new StringBuilder();
+        JSONObject jsonNotes = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(notesFile));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                jsonText.append(line);
+                jsonText.append('\n');
+            }
+            br.close();
+
+             jsonNotes = new JSONObject(jsonText.toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+        }
+     return jsonNotes;
+    }
 }

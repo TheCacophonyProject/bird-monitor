@@ -9,7 +9,6 @@ import android.media.ToneGenerator;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,11 +18,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
@@ -34,6 +29,7 @@ import java.util.TimeZone;
 class RecordAndUpload implements IdlingResourceForEspressoTesting {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
+    private static boolean cancelUploadingRecordings = false;
 
     private RecordAndUpload() {
 
@@ -123,6 +119,8 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             e.printStackTrace();
         }
         Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        String timeOfRecordingForBirdCountMessage = "";
+        String locationForBirdCountMessage = "";
         try {
 
 
@@ -143,7 +141,11 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             relativeToDusk = relativeToDusk / 1000; // now in seconds
 
             DateFormat fileFormat = new SimpleDateFormat("yyyy MM dd HH mm ss", Locale.UK);
+
             String fileName = fileFormat.format(date);
+
+            DateFormat timeOnlyFormat = new SimpleDateFormat("hh:mm a", Locale.UK);
+            timeOfRecordingForBirdCountMessage = timeOnlyFormat.format(date);
 
             if (Math.abs(relativeToDawn) < Math.abs(relativeToDusk)) {
                 fileName += " rToDawn " + relativeToDawn;
@@ -171,11 +173,19 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             fileName += " " + latStr;
             fileName += " " + lonStr;
 
+            locationForBirdCountMessage = latStr + " " + lonStr;
 
-            fileName += ".m4a";
+            if (Util.isBirdCountRecording(typeOfRecording)) {
+                // Save this filename in Prefs so that User can add notes - which will be stored in a file with the same name but .json extension
+                prefs.setLatestBirdCountRecordingFileNameNoExtension(fileName);
+            }
+
+
+            fileName += Util.getRecordingFileExtension();
 
             File file = new File(Util.getRecordingsFolder(context), fileName);
             String filePath = file.getAbsolutePath();
+
 
             // Setup audio recording settings.
             MediaRecorder mRecorder = new MediaRecorder();
@@ -284,8 +294,10 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                         Thread.sleep(1000);
                         remainingRecordingTime -= 1000;
                     }
-
-                    prefs.setCancelRecording(false);
+                    if (prefs.getCancelRecording()) {
+                        cancelRecording(mRecorder, context, file, prefs);
+                        return;
+                    }
 
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Failed sleeping in recording thread.");
@@ -301,47 +313,76 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 }
             }
 
-            // Stop recording.
-            mRecorder.stop();
-
-            //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
-            mRecorder.reset();
-            mRecorder.release();
-
             if (playWarningBeeps) {
                 ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
                 toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 1000);
             }
 
-            // Give time for file to be saved. (and play beeps)
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Log.e(TAG, "Failed sleeping in recording thread." + ex.getLocalizedMessage());
-            }
+            endRecording(mRecorder, context);
 
-            Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
-            isRecording = false;
-            jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
-            } catch (JSONException e) {
-                Log.e(TAG, e.getLocalizedMessage(), e);
+            if (isRecording) {
+                try {
+                    jsonObjectMessageToBroadcast = new JSONObject();
+                    jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+                    if (Util.isBirdCountRecording(typeOfRecording)) {
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
+                    } else {
+                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
+                    }
+                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getLocalizedMessage(), e);
+                }
             }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            recordIdlingResource.decrement();
+            isRecording = false;
         }
 
+    }
+
+    private static void cancelRecording(MediaRecorder mRecorder, Context context, File file, Prefs prefs) {
+        isRecording = false;
+        prefs.setCancelRecording(false);
+        endRecording(mRecorder, context);
+        if (!file.delete()) {
+            Log.w(TAG, "Failed to delete cancelled recording: " + file.getAbsolutePath());
+        }
+        try {
+            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
+            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has been cancelled.");
+            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getLocalizedMessage(), e);
+        }
+    }
+
+    private static void endRecording(MediaRecorder mRecorder, Context context) {
+        // Stop recording.
+        mRecorder.stop();
+
+        //https://stackoverflow.com/questions/9609479/android-mediaplayer-went-away-with-unhandled-events
+        mRecorder.reset();
+        mRecorder.release();
+
+        // Give time for file to be saved. (and play beeps)
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Log.e(TAG, "Failed sleeping in recording thread.", ex);
+        }
+
+        Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
     }
 
     public static boolean uploadFiles(Context context) {
         JSONObject jsonObjectMessageToBroadcast = new JSONObject();
         try {
-            jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_RECORDINGS");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading recordings");
+            jsonObjectMessageToBroadcast.put("messageType", "PREPARING_TO_UPLOAD");
+            jsonObjectMessageToBroadcast.put("messageToDisplay", "Preparing to upload.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -383,12 +424,53 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 }
 
                 for (File aFile : recordingFiles) {
+                    if (isCancelUploadingRecordings()){
+                       break;
+                    }
 
                     if (sendFile(context, aFile)) {
+
                         // deleting files can cause app to crash when phone connected to pc, so put in try catch
                         boolean fileSuccessfullyDeleted = false;
                         try {
+
+                            String recordingFileNameWithOutPath = aFile.getName();
+
                             fileSuccessfullyDeleted = aFile.delete();
+
+                            if (fileSuccessfullyDeleted) {
+                                // Send a broadcast to inform GUI that the number of files on phone has changed
+                                JSONObject jsonObjectMessageToBroadcast2 = new JSONObject();
+                                try {
+                                    jsonObjectMessageToBroadcast2.put("messageType", "RECORDING_DELETED");
+                                    jsonObjectMessageToBroadcast2.put("messageToDisplay", "RECORDING_DELETED"); // not used, but stops error when broadcast read
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast2);
+
+
+
+                                // Delete the recording notes file if it exists.
+                                String recordingFileExtension = Util.getRecordingFileExtension();
+                                String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
+                                String notesFileName = recordingFileNameWithOutPathOrExtension + ".json";
+                                String notesFilePathName = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
+
+                                File notesFile = new File(notesFilePathName);
+
+                                if (notesFile.exists()) {
+                                    notesFile.delete();
+
+                                    // If this file was the latest bird count file, then need to set the latest bird count file to null
+                                    String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
+                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)) {
+                                        prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
+                                    }
+                                }
+                            }
+
+
                         } catch (Exception ex) {
                             Log.e(TAG, ex.getLocalizedMessage(), ex);
                         }
@@ -400,8 +482,11 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                             break;
                         }
                     } else {
+                        // Did not upload, but reason may have been that the user pressed cancel
+                        if (!isCancelUploadingRecordings()){
+                            Log.e(TAG, "Failed to upload file to server");
+                        }
 
-                        Log.e(TAG, "Failed to upload file to server");
                         return false;
                     }
 
@@ -412,7 +497,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
                 jsonObjectMessageToBroadcast = new JSONObject();
                 try {
                     jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Files have been successfully uploaded to the server.");
+                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been successfully uploaded to the server.");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -434,6 +519,7 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
         JSONObject audioRecording = new JSONObject();
 
         String fileName = aFile.getName();
+
 
         // http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         //http://stackoverflow.com/questions/3387622/split-string-on-dot-as-delimiter
@@ -514,6 +600,19 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
 
+            // Add the recording notes if they exist.
+            String recordingFileExtension = Util.getRecordingFileExtension();
+            String recordingFileWithOutExtension = fileName.split(recordingFileExtension)[0];
+            String notesFileName = recordingFileWithOutExtension + ".json";
+            String notesFilePath = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
+
+            File notesFile = new File(notesFilePath);
+
+            if (notesFile.exists()) {
+                JSONObject jsonNotes = Util.getNotesFromNoteFile(notesFile);
+                additionalMetadata.put("user-entered", jsonNotes);
+            }
+
             TelephonyManager mTelephonyManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
             if (mTelephonyManager == null) {
@@ -544,5 +643,13 @@ class RecordAndUpload implements IdlingResourceForEspressoTesting {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return Server.uploadAudioRecording(aFile, audioRecording, context);
+    }
+
+    public static boolean isCancelUploadingRecordings() {
+        return cancelUploadingRecordings;
+    }
+
+    public static void setCancelUploadingRecordings(boolean cancelUploadingRecordings2) {
+        cancelUploadingRecordings = cancelUploadingRecordings2;
     }
 }

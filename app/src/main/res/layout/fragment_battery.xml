@@ -21,8 +21,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
-         tools:ignore="UnknownIdInLayout" />
+         app:layout_constraintTop_toTopOf="parent" />
+
 
 
     <Switch

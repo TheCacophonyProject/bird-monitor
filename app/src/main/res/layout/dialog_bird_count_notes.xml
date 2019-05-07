@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="nz.org.cacophony.birdmonitor.CreateAccountFragment"
-    tools:layout_editor_absoluteY="25dp">
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/birdCountNotes"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
 
 
     <TextView
@@ -16,17 +17,18 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true"
-        android:text="@string/fragment_create_account_intro_text"
+        android:text="@string/bird_count_notes_message"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
+
+
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilUsername"
+        android:id="@+id/tilWeather"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -39,18 +41,17 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/etUsername"
+            android:id="@+id/etWeather"
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/rect_text_edit"
-            android:hint="Enter username"
+            android:hint="Enter a description of the weather"
             android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>
 
-
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilEmail"
+        android:id="@+id/tilCountedBy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -60,23 +61,20 @@
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilUsername">
+        app:layout_constraintTop_toBottomOf="@+id/tilWeather">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/etEmail"
+            android:id="@+id/etCountedBy"
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/rect_text_edit"
-            android:hint="Enter email address"
-            android:inputType="textEmailAddress"
+            android:hint="Enter your name"
             android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>
 
-
-
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilPassword1"
+        android:id="@+id/tilOther"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -86,79 +84,43 @@
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilEmail"
-        app:passwordToggleEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/tilCountedBy">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/etPassword1"
+            android:id="@+id/etOther"
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/rect_text_edit"
-            android:hint="Enter password"
-
-            android:inputType="textPassword"
-            android:singleLine="true" />
-
-    </android.support.design.widget.TextInputLayout>
-
-
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilPassword2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilPassword1"
-        app:passwordToggleEnabled="true">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/etPassword2"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:background="@drawable/rect_text_edit"
-            android:hint="Confirm password"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword"
+            android:hint="Enter any other information"
             android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/btnSignUp"
+        android:id="@+id/btnOK"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-
-        android:text="Create Account"
+        android:text="OK"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilPassword2" />
+        app:layout_constraintTop_toBottomOf="@+id/tilOther" />
 
-    <TextView
-        android:id="@+id/tvMessagesCreateAccount"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignUp" />
+        android:text="Cancel"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toStartOf="@+id/btnOK"
+        app:layout_constraintTop_toBottomOf="@+id/tilOther" />
 
 
 </android.support.constraint.ConstraintLayout>

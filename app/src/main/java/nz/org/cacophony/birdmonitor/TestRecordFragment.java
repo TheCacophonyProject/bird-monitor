@@ -17,11 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import org.json.JSONObject;
-
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 public class TestRecordFragment extends Fragment {
     private static final String TAG = "TestRecordFragment";
@@ -128,31 +124,27 @@ public class TestRecordFragment extends Fragment {
                 if (jsonStringMessage != null) {
 
                     JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
+                    String messageType = joMessage.optString("messageType");
                     String messageToDisplay = joMessage.getString("messageToDisplay");
 
                     if (messageType.equalsIgnoreCase("RECORDING_DISABLED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("ALREADY_RECORDING")) {
                         tvMessages.setText(messageToDisplay);
-                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("NO_PERMISSION_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED")) {
                         tvMessages.setText(messageToDisplay);
-                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FINISHED")) {
                         tvMessages.setText(messageToDisplay);
-                        uploadFilesIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("GETTING_READY_TO_RECORD")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_UPLOADED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORD_AND_UPLOAD_FAILED")) {
                         tvMessages.setText(messageToDisplay);
-                        recordIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED_NOT_REGISTERED")) {
                         tvMessages.setText(messageToDisplay);
                     } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
@@ -162,7 +154,6 @@ public class TestRecordFragment extends Fragment {
                         tvMessages.setText(messageToDisplay);
                         btnRecordNow.setEnabled(true);
                         btnRecordNow.setVisibility(View.VISIBLE);
-                        recordIdlingResource.decrement();
                     }
                 }
 

@@ -6,8 +6,6 @@ repositories {
 }
 
 
-
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -20,7 +18,7 @@ android {
         targetSdkVersion 28
         // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
         versionCode 3
-        versionName "1.4.0"
+        versionName "1.4.1"
         archivesBaseName = "Bird Monitor-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
