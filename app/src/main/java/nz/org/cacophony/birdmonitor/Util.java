@@ -34,36 +34,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import java.util.*;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -211,8 +192,6 @@ class Util {
 
                 return null;
             }
-
-          //  localFolderFile = new File(appDataFolder, Util.DEFAULT_RECORDINGS_FOLDER);
 
             localFolderFile = new File(appDataFolder, recordingsOrNotes);
 
@@ -1327,24 +1306,20 @@ class Util {
     }
 
     public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
-       // Prefs prefs = new Prefs(context);
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
-        //String filePath = file.getAbsolutePath();
 
         JSONObject recordingNotes = new JSONObject();
-        try{
+        try {
         recordingNotes.put("Weather", weatherNote);
             recordingNotes.put("Counted By", countedByNote);
             recordingNotes.put("Other", otherNote);
 
-            Writer output = null;
-            output = new BufferedWriter(new FileWriter(file));
+            Writer output = new BufferedWriter(new FileWriter(file));
             output.write(recordingNotes.toString());
             output.close();
 
-
         } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            Log.e(TAG, "exception", ex);
         }
     }
 
@@ -1356,16 +1331,16 @@ class Util {
     public static File getNotesFileForLatestRecording(Context context){
         Prefs prefs = new Prefs(context);
         String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
-        if (latestRecordingFileNameWithOutExtension == null){
+        if (latestRecordingFileNameWithOutExtension == null) {
             return null;
-        }else{
+        } else {
             String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension + ".json";
             return new File(notesFilePathName);
         }
     }
 
     public static JSONObject getNotesFromNoteFile(File notesFile){
-        if (!notesFile.exists()){
+        if (!notesFile.exists()) {
             return null;
         }
         StringBuilder jsonText = new StringBuilder();

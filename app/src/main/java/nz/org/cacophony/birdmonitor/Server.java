@@ -3,7 +3,8 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-
+import info.guardianproject.netcipher.NetCipher;
+import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,15 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import info.guardianproject.netcipher.NetCipher;
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
@@ -474,7 +466,6 @@ class Server {
     }
 
     static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-        uploadFilesIdlingResource.increment();
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
@@ -490,6 +481,7 @@ class Server {
             return false;
         }
         uploading = true;
+        uploadFilesIdlingResource.increment();
 
         String charset = "UTF-8";
 
@@ -532,6 +524,7 @@ class Server {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             uploading = false;
+            uploadFilesIdlingResource.decrement();
         }
 
         return uploadSuccess;
