@@ -39,17 +39,19 @@ public class RegisterPhoneTest {
     public static void registerIdlingResource() {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @AfterClass
     public static void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
 
     @Before
-    public void setUpAndLogIn() {
+    public void setUpAndLogIn() throws InterruptedException {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -71,6 +73,7 @@ public class RegisterPhoneTest {
 
         // Need to sign in
         HelperCode.signInUserTimhot();
+        Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
         nowSwipeLeft(); // takes you to Groups screen
     }
 
@@ -81,7 +84,7 @@ public class RegisterPhoneTest {
     }
 
     @Test
-    public void registerPhoneTest() {
+    public void registerPhoneTest() throws InterruptedException {
         HelperCode.registerPhone(prefs);
 
         assertTrue(Util.isPhoneRegistered(targetContext));
@@ -90,7 +93,7 @@ public class RegisterPhoneTest {
     }
 
     @Test
-    public void unRegisterPhoneTest() {
+    public void unRegisterPhoneTest() throws InterruptedException {
         HelperCode.registerPhone(prefs);
 
         nowSwipeLeft(); // need to go to next screen and back so that Un-register button displays

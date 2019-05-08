@@ -41,16 +41,18 @@ public class DeleteRecordingsTest {
     public static void registerIdlingResource() {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @AfterClass
     public static void unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @Before
-    public void setUpForDeleteAllRecordings() {
+    public void setUpForDeleteAllRecordings() throws InterruptedException {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
 
@@ -76,6 +78,7 @@ public class DeleteRecordingsTest {
 
         // Need to sign in
         HelperCode.signInUserTimhot();
+        Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 
         nowSwipeLeft(); // takes you to Groups screen
 

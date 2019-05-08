@@ -31,6 +31,7 @@ public class SignInUserTest {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @AfterClass
@@ -38,6 +39,7 @@ public class SignInUserTest {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @Before
@@ -63,7 +65,7 @@ public class SignInUserTest {
     }
 
     @Test
-    public void signInTest() {
+    public void signInTest() throws InterruptedException {
         HelperCode.signInUserTimhot();
 
         boolean userSignedIn = prefs.getUserSignedIn();

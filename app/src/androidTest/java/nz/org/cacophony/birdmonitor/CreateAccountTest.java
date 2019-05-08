@@ -32,6 +32,7 @@ public class CreateAccountTest {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @AfterClass
@@ -39,6 +40,7 @@ public class CreateAccountTest {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @Before

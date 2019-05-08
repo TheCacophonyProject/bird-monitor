@@ -46,7 +46,9 @@ class HelperCode {
         onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(), click());
     }
 
-    public static void signInUserTimhot() {
+    public static void signInUserTimhot() throws InterruptedException {
+        Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
+
         onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
 
         onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
@@ -54,7 +56,9 @@ class HelperCode {
     }
 
 
-    public static void registerPhone(Prefs prefs) {
+    public static void registerPhone(Prefs prefs) throws InterruptedException {
+        Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
+
         onData(allOf(is(instanceOf(String.class)), is("tim1"))).perform(click());
 
         // App automatically moves to Register Phone screen
@@ -70,8 +74,10 @@ class HelperCode {
         onView(withId(R.id.btnRegister)).perform(click());
     }
 
-    public static void unRegisterPhone() {
+    public static void unRegisterPhone() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.btnUnRegister)).perform(click());
+        Thread.sleep(1000);
         dismissDialogWithYes();
     }
 

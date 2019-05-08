@@ -18,5 +18,6 @@ interface IdlingResourceForEspressoTesting {
     CountingIdlingResource recordIdlingResource = new CountingIdlingResource("RECORD");
     CountingIdlingResource uploadFilesIdlingResource = new CountingIdlingResource("UPLOAD_FILES");
     CountingIdlingResource rootedIdlingResource = new CountingIdlingResource("ROOT");
+    CountingIdlingResource anyWebRequestResource = new CountingIdlingResource("ANY_WEB_REQUEST");
 
 }

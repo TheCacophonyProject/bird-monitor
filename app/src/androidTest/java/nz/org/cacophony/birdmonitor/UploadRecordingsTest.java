@@ -42,6 +42,7 @@ public class UploadRecordingsTest {
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @AfterClass
@@ -49,10 +50,11 @@ public class UploadRecordingsTest {
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
         IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.anyWebRequestResource);
     }
 
     @Before
-    public void setUpForUploadAllRecordings() {
+    public void setUpForUploadAllRecordings() throws InterruptedException {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -74,6 +76,7 @@ public class UploadRecordingsTest {
 
         // Need to sign in
         HelperCode.signInUserTimhot();
+        Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 
         nowSwipeLeft(); // takes you to Groups screen
 
