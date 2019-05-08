@@ -2,13 +2,10 @@ package nz.org.cacophony.birdmonitor.views;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import nz.org.cacophony.birdmonitor.Prefs;
-import nz.org.cacophony.birdmonitor.R;
-import nz.org.cacophony.birdmonitor.Server;
-import nz.org.cacophony.birdmonitor.Util;
+import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
@@ -28,7 +23,14 @@ import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.sign
 
 public class SignInFragment extends Fragment {
 
-    public static final String SERVER_USER_LOGIN_ACTION = "SERVER_USER_LOGIN";
+    public enum MessageType {
+        SUCCESSFULLY_SIGNED_IN,
+        NETWORK_ERROR,
+        INVALID_CREDENTIALS,
+        UNABLE_TO_SIGNIN
+    }
+
+    public static final Action SERVER_USER_LOGIN_ACTION = new Action("SERVER_USER_LOGIN");
 
     private static final String TAG = "SignInFragment";
 
@@ -40,6 +42,8 @@ public class SignInFragment extends Fragment {
     private TextInputLayout tilUserNameOrPassword;
     private TextInputLayout tilPassword;
     private TextView tvTitleMessage;
+
+    private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,12 +121,10 @@ public class SignInFragment extends Fragment {
             return;
         }
         if (visible) {
-            //  signInGUIIdlingResource.increment();
-            IntentFilter iff = new IntentFilter(SERVER_USER_LOGIN_ACTION);
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+            MessageHelper.registerMessageHandler(SERVER_USER_LOGIN_ACTION, messageHandler, getActivity());
             displayOrHideGUIObjects();
         } else {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+            MessageHelper.unregisterMessageHandler(messageHandler, getActivity());
         }
     }
 
@@ -162,38 +164,30 @@ public class SignInFragment extends Fragment {
     }
 
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+    private void onMessage(Intent intent) {
+        Prefs prefs = new Prefs(getActivity());
+        tvMessages.setText("");
 
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Prefs prefs = new Prefs(context);
-            tvMessages.setText("");
-
-            String userNameOrEmailAddress = "";
-            if (prefs.getUserNameOrEmailAddress() != null) {
-                userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
-            } else if (prefs.getUsername() != null) {
-                userNameOrEmailAddress = prefs.getUsername();
+        String userNameOrEmailAddress = "";
+        if (prefs.getUserNameOrEmailAddress() != null) {
+            userNameOrEmailAddress = prefs.getUserNameOrEmailAddress();
+        } else if (prefs.getUsername() != null) {
+            userNameOrEmailAddress = prefs.getUsername();
+        }
+        try {
+            if (getView() == null) {
+                return;
             }
-            try {
-                if (getView() == null) {
-                    return;
-                }
 
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            if (jsonStringMessage != null) {
 
-                if (jsonStringMessage != null) {
-
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
-
-                    if (messageType.equalsIgnoreCase("SUCCESSFULLY_SIGNED_IN")) {
-
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
+                MessageType messageType = MessageType.valueOf(messageTypeStr);
+                switch (messageType) {
+                    case SUCCESSFULLY_SIGNED_IN:
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
 
                         tvMessages.setText(messageToDisplay + userNameOrEmailAddress + "\n\n \'Swipe\' to the next step.");
@@ -208,36 +202,31 @@ public class SignInFragment extends Fragment {
 
                         Util.getGroupsFromServer(getActivity().getApplicationContext());
                         signInIdlingResource.decrement();
-
-                    } else if (messageType.equalsIgnoreCase("NETWORK_ERROR")) {
+                        break;
+                    case NETWORK_ERROR:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         signInIdlingResource.decrement();
-                        return;
-
-                    } else if (messageType.equalsIgnoreCase("INVALID_CREDENTIALS")) {
+                        break;
+                    case INVALID_CREDENTIALS:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         signInIdlingResource.decrement();
-                        return;
-
-                    } else if (messageType.equalsIgnoreCase("UNABLE_TO_SIGNIN")) {
-
+                        break;
+                    case UNABLE_TO_SIGNIN:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         etUserNameOrPasswordInput.setText(userNameOrEmailAddress);
                         signInIdlingResource.decrement();
-                        return;
-                    }
-
+                        break;
                 }
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-                ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login.");
-                signInIdlingResource.decrement();
             }
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", "Could not login: " + ex.getLocalizedMessage());
+            signInIdlingResource.decrement();
         }
-    };
+    }
 
     public void signinButtonPressed() {
 

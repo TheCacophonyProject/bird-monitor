@@ -7,8 +7,8 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_SUCCESS;
 
 
 /**
@@ -42,18 +42,10 @@ class GPSLocationListener implements LocationListener {
             prefs.setLatitude(lat);
             prefs.setLongitude(lon);
 
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_SUCCESS");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
-
+            MessageHelper.broadcastMessage("Success", GPS_UPDATE_SUCCESS, GPS_ACTION, context);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
-
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}

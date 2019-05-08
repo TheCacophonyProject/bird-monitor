@@ -3,8 +3,10 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.NO_PERMISSION_TO_RECORD;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORD_AND_UPLOAD_FAILED;
 
 //import android.util.Log;
 
@@ -30,45 +32,24 @@ class MainThread implements Runnable {
 
     @Override
     public void run() {
-
         Looper.prepare();
-        //        if (context == null || handler == null) {
         if (context == null) {
-            Log.w(TAG, "Context or Handler were null.");
-
-
+            Log.w(TAG, "Context was null.");
             return;
         }
         if (!Util.checkPermissionsForRecording(context)) {
             Log.e(TAG, "App does not have permission to record.");
-
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "NO_PERMISSION_TO_RECORD");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "You do not have permission to record.");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-
+            String messageToDisplay = "You do not have permission to record.";
+            MessageHelper.broadcastMessage(messageToDisplay, NO_PERMISSION_TO_RECORD, MANAGE_RECORDINGS_ACTION, context);
             return;
         }
 
-
         try {
-
             RecordAndUpload.doRecord(context, alarmIntentType);
-
         } catch (Exception e) {
-
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageToType", "RECORD_AND_UPLOAD_FAILED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", e.getLocalizedMessage());
-            } catch (JSONException ex) {
-                ex.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            Log.e(TAG, "Unknown error when recording", e);
+            String messageToDisplay = "Unknown error: " + e.getLocalizedMessage();
+            MessageHelper.broadcastMessage(messageToDisplay, RECORD_AND_UPLOAD_FAILED, MANAGE_RECORDINGS_ACTION, context);
 
             return;
         }

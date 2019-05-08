@@ -5,10 +5,8 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -26,10 +24,17 @@ import nz.org.cacophony.birdmonitor.Util;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
+import static nz.org.cacophony.birdmonitor.MessageHelper.*;
 
 public class RegisterFragment extends Fragment {
 
-    public static final String SERVER_REGISTER_ACTION = "SERVER_REGISTER";
+    public enum MessageType {
+        REGISTER_SUCCESS,
+        REGISTER_FAIL,
+        REGISTER_ERROR_ALERT
+    }
+
+    public static final Action SERVER_REGISTER_ACTION = new Action("SERVER_REGISTER");
 
     private static final String TAG = "RegisterFragment";
 
@@ -40,6 +45,8 @@ public class RegisterFragment extends Fragment {
     private EditText etGroupNameInput;
     private EditText etDeviceNameInput;
     private TextView tvTitleMessage;
+
+    private final BroadcastReceiver messageHandler = createReceiver(this::onMessage);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,19 +78,7 @@ public class RegisterFragment extends Fragment {
             return;
         }
         if (visible) {
-
-            IntentFilter iff = new IntentFilter(SERVER_REGISTER_ACTION);
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
-
-            // Set next pages
-
-//            Prefs prefs = new Prefs(getActivity());
-//            String groupNameFromPrefs = prefs.getGroupName();
-//            String deviceNameFromPrefs = prefs.getDeviceName();
-//            if (groupNameFromPrefs != null && deviceNameFromPrefs != null){
-//                ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-//            }
+            registerMessageHandler(SERVER_REGISTER_ACTION, messageHandler, getActivity());
 
             if (Util.isPhoneRegistered(getActivity())) {
                 ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
@@ -93,64 +88,53 @@ public class RegisterFragment extends Fragment {
 
 
         } else {
-
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+            unregisterMessageHandler(messageHandler, getActivity());
         }
     }
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-                if (getView() == null) {
-                    return;
-                }
-
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
-                    if (messageType != null) {
-
-                        if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
-                            tvMessages.setText(messageToDisplay + " Swipe to next screen.");
-                            ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
-                            etGroupNameInput.setEnabled(false);
-                            etDeviceNameInput.setEnabled(false);
-                            registerPhoneIdlingResource.decrement();
-
-                        } else if (messageType.equalsIgnoreCase("REGISTER_FAIL")) {
-                            tvMessages.setText(messageToDisplay);
-                            ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-                            etGroupNameInput.setEnabled(true);
-                            etDeviceNameInput.setEnabled(true);
-                            registerPhoneIdlingResource.decrement();
-                        } else {
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-                        }
-
-                    }
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-
-                tvMessages.setText("Oops, your phone did not register - not sure why");
-                displayOrHideGUIObjects(true);
-                registerPhoneIdlingResource.decrement();
+    private void onMessage(Intent intent) {
+        try {
+            if (getView() == null) {
+                return;
             }
+
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            if (jsonStringMessage != null) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                MessageType messageType = MessageType.valueOf(messageTypeStr);
+                switch (messageType) {
+                    case REGISTER_SUCCESS:
+                        tvMessages.setText(messageToDisplay + " Swipe to next screen.");
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
+                        etGroupNameInput.setEnabled(false);
+                        etDeviceNameInput.setEnabled(false);
+                        registerPhoneIdlingResource.decrement();
+                        break;
+                    case REGISTER_FAIL:
+                        tvMessages.setText(messageToDisplay);
+                        ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
+                        etGroupNameInput.setEnabled(true);
+                        etDeviceNameInput.setEnabled(true);
+                        registerPhoneIdlingResource.decrement();
+                        break;
+                    default:
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+
+            tvMessages.setText("Oops, your phone did not register for an unknown reason: " + ex.getLocalizedMessage());
+            displayOrHideGUIObjects(true);
+            registerPhoneIdlingResource.decrement();
         }
-    };
+    }
 
     void displayOrHideGUIObjects() {
-
         displayOrHideGUIObjects(false);
     }
 

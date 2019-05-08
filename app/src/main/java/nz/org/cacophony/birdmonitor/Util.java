@@ -21,7 +21,6 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
@@ -47,9 +46,12 @@ import java.util.*;
 
 import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
 
 
 /**
@@ -606,18 +608,9 @@ public class Util {
             executeAsRootBaseTim.execute(context);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "error_do_not_have_root");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-                Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            MessageHelper.broadcastMessage("error", ERROR_DO_NOT_HAVE_ROOT, ROOT_ACTION, context);
         }
     }
-
 
     public static String getSimStateAsString(int simState) {
         String simStateStr;
@@ -673,14 +666,6 @@ public class Util {
         @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, "There is a problem writing to the memory - please fix", Toast.LENGTH_LONG);
         toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         return toast;
-    }
-
-    public static void broadcastAMessage(Context context, String action, JSONObject jsonStringMessage) {
-        // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        Intent intent = new Intent(action);
-        intent.putExtra("jsonStringMessage", jsonStringMessage.toString());
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
@@ -851,14 +836,8 @@ public class Util {
 
         //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "GPS_UPDATE_FAILED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "GPS", jsonObjectMessageToBroadcast);
+            String messageToDisplay = "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.";
+            MessageHelper.broadcastMessage(messageToDisplay, GPS_UPDATE_FAILED, GPS_ACTION, context);
             return;
         }
 
@@ -980,30 +959,17 @@ public class Util {
             try {
 //              testUploadRecordingsIdlingResource.increment();
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
-
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                if (uploadedSuccessfully) {
-
-                    if (RecordAndUpload.isCancelUploadingRecordings()){
-                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
-                    }else{
-                        jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been uploaded to the server.");
-                    }
-
+                if (RecordAndUpload.isCancelUploadingRecordings()){
+                    String messageToDisplay = "Uploading of recordings has been stopped";
+                    MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_STOPPED, MANAGE_RECORDINGS_ACTION, context);
+                } else if (uploadedSuccessfully) {
+                    Log.i(TAG, "Upload complete");
+                    String messageToDisplay = "Recordings have been uploaded to the server.";
+                    MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON, MANAGE_RECORDINGS_ACTION, context);
                 } else {
-
-                    if (RecordAndUpload.isCancelUploadingRecordings()){
-                        jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_STOPPED");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Uploading of recordings has been stopped");
-                    }else{
-                        jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON");
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT uploaded.");
-                    }
-
+                    String messageToDisplay = "There was a problem. The recordings were NOT uploaded.";
+                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON, MANAGE_RECORDINGS_ACTION, context);
                 }
-                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
@@ -1104,10 +1070,9 @@ public class Util {
                     file.delete();
                 }
 
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
                 if (getNumberOfRecordings(context) == 0) {
-                    jsonObjectMessageToBroadcast.put("messageType", SUCCESSFULLY_DELETED_RECORDINGS);
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "All recordings on the phone have been deleted.");
+                    String messageToDisplay = "All recordings on the phone have been deleted.";
+                    MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_DELETED_RECORDINGS, MANAGE_RECORDINGS_ACTION, context);
 
                     // Delete any recording notes files
                     File recordingNotesFolder = Util.getRecordingNotesFolder(context);
@@ -1120,10 +1085,9 @@ public class Util {
                     prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
 
                 } else {
-                    jsonObjectMessageToBroadcast.put("messageType", FAILED_RECORDINGS_NOT_DELETED);
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "There was a problem. The recordings were NOT deleted.");
+                    String messageToDisplay ="There was a problem. The recordings were NOT deleted.";
+                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_DELETED, MANAGE_RECORDINGS_ACTION, context);
                 }
-                Util.broadcastAMessage(context, MANAGE_RECORDINGS_ACTION, jsonObjectMessageToBroadcast);
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }

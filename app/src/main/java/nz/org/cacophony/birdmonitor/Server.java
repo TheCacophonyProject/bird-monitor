@@ -15,8 +15,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.FAILED_TO_CREATE_USER;
+import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.SUCCESSFULLY_CREATED_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.SERVER_SIGNUP_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.SERVER_GROUPS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.CONNECTED_TO_SERVER;
+import static nz.org.cacophony.birdmonitor.views.RegisterFragment.MessageType.*;
 import static nz.org.cacophony.birdmonitor.views.RegisterFragment.SERVER_REGISTER_ACTION;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.*;
 import static nz.org.cacophony.birdmonitor.views.SignInFragment.SERVER_USER_LOGIN_ACTION;
 
 
@@ -29,8 +37,6 @@ public class Server {
     private static final String TAG = Server.class.getName();
 
     private static final int HTTP_422_UNPROCESSABLE_ENTITY = 422;
-
-    public static final String SERVER_GROUPS_ACTION = "SERVER_GROUPS";
 
     private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
@@ -116,9 +122,6 @@ public class Server {
             } else { // STATUS not OK
                 Log.e(TAG, "Invalid devicename or password for login.");
                 prefs.setDeviceToken(null);
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "untick_logged_in_to_server");
-                Util.broadcastAMessage(context, "SERVER_DEVICE_LOGIN", jsonObjectMessageToBroadcast);
             }
 
         } catch (Exception e) {
@@ -137,14 +140,9 @@ public class Server {
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("responseCode", -1);
-                jsonObjectMessageToBroadcast.put("messageType", "NETWORK_ERROR");
+                JSONObject extraInfo = new JSONObject().put("responseCode", -1);
                 String messageToDisplay = "Unable to get an internet connection";
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-
-                Util.broadcastAMessage(context, SERVER_USER_LOGIN_ACTION, jsonObjectMessageToBroadcast);
-
+                MessageHelper.broadcastMessage(messageToDisplay, extraInfo, NETWORK_ERROR, SERVER_USER_LOGIN_ACTION, context);
                 return;
             }
 
@@ -160,12 +158,9 @@ public class Server {
 
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "INVALID_CREDENTIALS");
-                jsonObjectMessageToBroadcast.put("responseCode", -1);
+                JSONObject extraInfo = new JSONObject().put("responseCode", -1);
                 String messageToDisplay = "Error: Username/email address or password can not be missing";
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, SERVER_USER_LOGIN_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, extraInfo, INVALID_CREDENTIALS, SERVER_USER_LOGIN_ACTION, context);
 
                 return;
             }
@@ -180,10 +175,8 @@ public class Server {
             WebResponse postResponse = makePost(loginUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
 
             if (response.isSuccessful()) {
-                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_SIGNED_IN");
 
                 String userToken = responseJson.getString("token");
                 prefs.setUserToken(userToken);
@@ -194,8 +187,7 @@ public class Server {
                 Log.e(TAG, "isItSignedIn" + isItSignedIn);
 
                 String messageToDisplay = "You have successfully signed in as ";
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, "SERVER_USER_LOGIN", jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_SIGNED_IN, SERVER_USER_LOGIN_ACTION, context);
 
             } else if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
                 prefs.setUserToken(null);
@@ -210,35 +202,22 @@ public class Server {
                             }
                         }
                     }
-
                 } catch (Exception e) {
                     Log.w(TAG, e.getLocalizedMessage(), e);
                 }
-
-                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", message);
-                Util.broadcastAMessage(context, SERVER_USER_LOGIN_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(message, UNABLE_TO_SIGNIN, SERVER_USER_LOGIN_ACTION, context);
 
             } else {
                 prefs.setUserToken(null);
                 JSONArray messages = responseJson.getJSONArray("messages");
                 String firstMessage = messages.optString(0, "Error, unable to sign in.");
-                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", firstMessage);
-                Util.broadcastAMessage(context, SERVER_USER_LOGIN_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(firstMessage, UNABLE_TO_SIGNIN, SERVER_USER_LOGIN_ACTION, context);
             }
 
         } catch (Exception e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
-            try {
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "UNABLE_TO_SIGNIN");
-                String messageToDisplay = "Error, unable to sign in.";
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, SERVER_USER_LOGIN_ACTION, jsonObjectMessageToBroadcast);
-            } catch (JSONException e2) {
-                Log.e(TAG, e2.getLocalizedMessage(), e2);
-            }
+            String messageToDisplay = "Error, unable to sign in: " + e.getLocalizedMessage();
+            MessageHelper.broadcastMessage(messageToDisplay, UNABLE_TO_SIGNIN, SERVER_USER_LOGIN_ACTION, context);
         }
     }
 
@@ -254,7 +233,8 @@ public class Server {
         // Check that the group name is valid, at least 4 characters.
         if (group == null || group.length() < 4) {
             Log.i(TAG, "Invalid group name: " + group);
-            broadcastGenericError(context, "Group name must be at least 4 characters", "REGISTER_FAIL", SERVER_REGISTER_ACTION);
+            String messageToDisplay = "Group name must be at least 4 characters";
+            MessageHelper.broadcastMessage(messageToDisplay, REGISTER_FAIL, SERVER_REGISTER_ACTION, context);
             return;
         }
 
@@ -273,12 +253,9 @@ public class Server {
 
             if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
                 Log.i(TAG, "Register device response from server is 422");
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "422_FAILED_TO_CREATE_USER");
                 String serverMessage = responseJson.getString("message");
                 String messageToDisplay = "Sorry, you had the following issues: " + serverMessage.replace("; ", " and ").toLowerCase();
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, SERVER_REGISTER_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, REGISTER_ERROR_ALERT, SERVER_REGISTER_ACTION, context);
                 return;
             }
 
@@ -294,10 +271,8 @@ public class Server {
                 prefs.setDevicePassword(password);
 
                 prefs.setDeviceId(deviceID);
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "REGISTER_SUCCESS");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Success - Your phone has been registered with the server :-)");
-                Util.broadcastAMessage(context, SERVER_REGISTER_ACTION, jsonObjectMessageToBroadcast);
+                String messageToDisplay = "Success - Your phone has been registered with the server :-)";
+                MessageHelper.broadcastMessage(messageToDisplay, REGISTER_SUCCESS, SERVER_REGISTER_ACTION, context);
 
                 return;
             }
@@ -308,11 +283,12 @@ public class Server {
             String errorType = responseJson.getString("errorType");
             String serverMessage = responseJson.getString("message");
             String messageToDisplay = String.format("Unable to register with an unknown error. errorType is %s, and message is %s", errorType, serverMessage);
-            broadcastGenericError(context, messageToDisplay, "REGISTER_FAIL", SERVER_REGISTER_ACTION);
+            MessageHelper.broadcastMessage(messageToDisplay, REGISTER_FAIL, SERVER_REGISTER_ACTION, context);
 
         } catch (Exception e) {
             Log.w(TAG, e);
-            broadcastGenericError(context, "An unknown error occurred: " + e.toString(), "REGISTER_FAIL", SERVER_REGISTER_ACTION);
+            String messageToDisplay = "An unknown error occurred: " + e.toString();
+            MessageHelper.broadcastMessage(messageToDisplay, REGISTER_FAIL, SERVER_REGISTER_ACTION, context);
         }
     }
 
@@ -356,12 +332,9 @@ public class Server {
 
             if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
                 Log.i(TAG, "Signup response from server is 422");
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "422_FAILED_TO_CREATE_USER");
                 String serverMessage = responseJson.getString("message");
                 String messageToDisplay = "Sorry, you had the following issues: " + serverMessage.replace("; ", " and ").toLowerCase();
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, SERVER_SIGNUP_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, FAILED_TO_CREATE_USER, SERVER_SIGNUP_ACTION, context);
                 return;
             }
 
@@ -372,11 +345,8 @@ public class Server {
                 prefs.setUsernamePassword(password);
                 prefs.setEmailAddress(emailAddress);
 
-                JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_CREATED_USER");
                 String messageToDisplay = "Success, you have successfully created a new user account";
-                jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-                Util.broadcastAMessage(context, SERVER_SIGNUP_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_CREATED_USER, SERVER_SIGNUP_ACTION, context);
                 return;
             }
 
@@ -387,25 +357,12 @@ public class Server {
             String errorType = responseJson.getString("errorType");
             String serverMessage = responseJson.getString("message");
             String messageToDisplay = String.format("Unable to signup with an unknown error. errorType is %s, and message is %s", errorType, serverMessage);
-            broadcastGenericError(context, messageToDisplay, "FAILED_TO_CREATE_USER", SERVER_SIGNUP_ACTION);
+            MessageHelper.broadcastMessage(messageToDisplay, FAILED_TO_CREATE_USER, SERVER_SIGNUP_ACTION, context);
 
         } catch (Exception e) {
             Log.w(TAG, e);
-            broadcastGenericError(context, "An unknown error occured: " + e.toString(), "FAILED_TO_CREATE_USER", SERVER_SIGNUP_ACTION);
-        }
-    }
-
-    private static void broadcastGenericError(Context context, String messageToDisplay, String messageType, String action) {
-        broadcastGenericError(context, messageToDisplay, messageType, action, new JSONObject());
-    }
-
-    private static void broadcastGenericError(Context context, String messageToDisplay, String messageType, String action, JSONObject jsonObjectMessageToBroadcast) {
-        try {
-            jsonObjectMessageToBroadcast.put("messageType", messageType);
-            jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-            Util.broadcastAMessage(context, action, jsonObjectMessageToBroadcast);
-        } catch (JSONException e) {
-            Log.w(TAG, e);
+            String messageToDisplay = "An unknown error occurred: " + e.getLocalizedMessage();
+            MessageHelper.broadcastMessage(messageToDisplay, FAILED_TO_CREATE_USER, SERVER_SIGNUP_ACTION, context);
         }
     }
 
@@ -451,7 +408,7 @@ public class Server {
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
-            broadcastGenericError(context, "Connected to Server", "CONNECTED_TO_SERVER", "MANAGE_RECORDINGS");
+            MessageHelper.broadcastMessage("Connected to Server", CONNECTED_TO_SERVER, MANAGE_RECORDINGS_ACTION, context);
             Log.i(TAG, "SERVER REPLIED:");
             uploadSuccess = false;
             long recordingId = responseJson.getLong("recordingId");
@@ -495,15 +452,11 @@ public class Server {
             JSONObject responseJson = getResponse.responseJson;
             Log.i(TAG, "Got groups with response code: " + response.code() + ", and body: " + getResponse.body);
 
-            //Set message to broadcast
-            String messageToDisplay;
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            jsonObjectMessageToBroadcast.put("responseCode", response.code());
+            JSONObject extraInfo = new JSONObject().put("responseCode", response.code());
 
             if (response.isSuccessful() && !getResponse.body.isEmpty()) {
 
                 // Get groups from responseBody
-                jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
                 JSONArray groupsJSONArray = responseJson.getJSONArray("groups");
                 if (groupsJSONArray != null) {
                     for (int i = 0; i < groupsJSONArray.length(); i++) {
@@ -513,14 +466,13 @@ public class Server {
                     }
                 }
 
-                messageToDisplay = "Success, groups have been updated from server";
+                String messageToDisplay = "Success, groups have been updated from server";
+                MessageHelper.broadcastMessage(messageToDisplay, extraInfo, SUCCESSFULLY_RETRIEVED_GROUPS, SERVER_GROUPS_ACTION, context);
 
             } else { // not success
-                messageToDisplay = "Error, unable to get groups from server";
-                jsonObjectMessageToBroadcast.put("messageType", "FAILED_TO_RETRIEVE_GROUPS");
+                String messageToDisplay = "Error, unable to get groups from server";
+                MessageHelper.broadcastMessage(messageToDisplay, extraInfo, FAILED_TO_RETRIEVE_GROUPS, SERVER_GROUPS_ACTION, context);
             }
-            jsonObjectMessageToBroadcast.put("messageToDisplay", messageToDisplay);
-            Util.broadcastAMessage(context, SERVER_GROUPS_ACTION, jsonObjectMessageToBroadcast);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
@@ -549,11 +501,11 @@ public class Server {
                 String messageToDisplay = "Success, the group " + groupName + " has been added to the server";
                 // Now add it to local storage
                 Util.addGroup(context, groupName);
-                broadcastGenericError(context, messageToDisplay, "SUCCESSFULLY_ADDED_GROUP", SERVER_GROUPS_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, jsonObjectMessageToBroadcast, SUCCESSFULLY_ADDED_GROUP, SERVER_GROUPS_ACTION, context);
                 return true;
             } else {
                 String messageToDisplay = "Sorry, the group " + groupName + " could not be added to the server";
-                broadcastGenericError(context, messageToDisplay, "FAILED_TO_ADD_GROUP", SERVER_GROUPS_ACTION, jsonObjectMessageToBroadcast);
+                MessageHelper.broadcastMessage(messageToDisplay, jsonObjectMessageToBroadcast, FAILED_TO_ADD_GROUP, SERVER_GROUPS_ACTION, context);
                 return false;
             }
         } catch (Exception ex) {

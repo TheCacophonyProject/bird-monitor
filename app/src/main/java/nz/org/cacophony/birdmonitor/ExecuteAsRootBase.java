@@ -2,14 +2,14 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.util.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
 
 /**
  * The app is designed to run on rooted phones so that it can toggle airplane/flight mode on and off
@@ -21,6 +21,9 @@ import java.util.ArrayList;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 abstract class ExecuteAsRootBase {
+    
+    private static final String TAG = "ROOT";
+    
     public static boolean canRunRootCommands() {
         boolean returnValue = false;
         Process suProcess;
@@ -44,15 +47,15 @@ abstract class ExecuteAsRootBase {
                 if (null == currUid) {
                     returnValue = false;
                     exitSu = false;
-                    Log.d("ROOT", "Can't get root access or denied by user");
+                    Log.d(TAG, "Can't get root access or denied by user");
                 } else if (currUid.contains("uid=0")) {
                     returnValue = true;
                     exitSu = true;
-                    Log.d("ROOT", "Root access granted");
+                    Log.d(TAG, "Root access granted");
                 } else {
                     returnValue = false;
                     exitSu = true;
-                    Log.d("ROOT", "Root access rejected: " + currUid);
+                    Log.d(TAG, "Root access rejected: " + currUid);
                 }
 
                 if (exitSu) {
@@ -65,15 +68,13 @@ abstract class ExecuteAsRootBase {
             // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
 
             returnValue = false;
-            Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+            Log.d(TAG, "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
         }
 
         return returnValue;
     }
 
     public final boolean execute(Context context) {
-        boolean returnValue = false;
-
         try {
             ArrayList<String> commands = getCommandsToExecute();
             if (null != commands && commands.size() > 0) {
@@ -92,60 +93,21 @@ abstract class ExecuteAsRootBase {
 
                 try {
                     int suProcessRetval = suProcess.waitFor();
-                    //noinspection RedundantIfStatement
                     if (255 != suProcessRetval) {
                         // Root access granted
-                        returnValue = true;
-                    } else {
-                        // Root access denied
-                        returnValue = false;
+                        return true;
                     }
                 } catch (Exception ex) {
-                    Log.e("ROOT", "Error executing root action", ex);
-                    String messageToDisplay = "";
-                    JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-                    Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+                    Log.e(TAG, "Error executing root action", ex);
+                    MessageHelper.broadcastMessage("error", ERROR_DO_NOT_HAVE_ROOT, ROOT_ACTION, context);
                 }
             }
-        } catch (IOException ex) {
-            Log.w("ROOT", "Can't get root access", ex);
-
-            String messageToDisplay = "";
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
-        } catch (SecurityException ex) {
-            Log.w("ROOT", "Can't get root access", ex);
-            String messageToDisplay = "";
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
         } catch (Exception ex) {
-            Log.w("ROOT", "Error executing internal operation", ex);
-            String messageToDisplay = "";
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageToType", "error_do_not_have_root");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "error_do_not_have_root");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "ROOT", jsonObjectMessageToBroadcast);
+            Log.w(TAG, "Can't get root access", ex);
+            MessageHelper.broadcastMessage("error", ERROR_DO_NOT_HAVE_ROOT, ROOT_ACTION, context);
         }
 
-        return returnValue;
+        return false;
     }
 
     protected abstract ArrayList<String> getCommandsToExecute();

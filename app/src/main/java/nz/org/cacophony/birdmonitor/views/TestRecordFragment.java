@@ -3,11 +3,9 @@ package nz.org.cacophony.birdmonitor.views;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.text.util.LinkifyCompat;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import nz.org.cacophony.birdmonitor.*;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
 public class TestRecordFragment extends Fragment {
@@ -75,12 +72,11 @@ public class TestRecordFragment extends Fragment {
             return;
         }
         if (visible) {
-            IntentFilter iff = new IntentFilter(MANAGE_RECORDINGS_ACTION);
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageHandler, iff);
+            MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, getActivity());
             checkPermissions();
             displayOrHideGUIObjects();
         } else {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageHandler);
+            MessageHelper.unregisterMessageHandler(messageHandler, getActivity());
         }
     }
 
