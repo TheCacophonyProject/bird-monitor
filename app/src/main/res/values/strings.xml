@@ -1,7 +1,7 @@
 <resources>
 
 
-    <string name="test_record_link_to_server_recordings2">Visit the following page to listen to your recordings on the Cacophony Server</string>
+    <string name="test_record_link_to_server_recordings2">Listen to your recordings at</string>
     <string name="app_name">Bird Monitor</string>
     <string name="app_icon_name">Bird Monitor</string>
 
@@ -169,7 +169,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."</string>
     <string name="register_title_unregistered">Please Register your phone.</string>
-    <string name="register_title_registered">Great - your phone has been registered. Swipe to next screen.</string>
+    <string name="register_title_registered">"Phone is registered. Swipe to next screen.</string>
 
     <string name="group_name_unregistered">Group name.</string>
     <string name="group_name_registered">Group name is: </string>

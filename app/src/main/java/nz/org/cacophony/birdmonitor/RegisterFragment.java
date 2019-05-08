@@ -114,6 +114,7 @@ public class RegisterFragment extends Fragment {
                     if (messageType != null) {
 
                         if (messageType.equalsIgnoreCase("REGISTER_SUCCESS")) {
+                            tvTitleMessage.setText("Phone is registered");
                             tvMessages.setText(messageToDisplay + " Swipe to next screen.");
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
                             etGroupNameInput.setEnabled(false);
@@ -156,6 +157,7 @@ public class RegisterFragment extends Fragment {
         String deviceNameFromPrefs = prefs.getDeviceName();
 
         tvTitleMessage.setText(getString(R.string.register_title_unregistered));
+        tvMessages.setText("");
 
         if (groupNameFromPrefs == null) {
             // First time user has used this app
@@ -268,6 +270,10 @@ public class RegisterFragment extends Fragment {
                 }
             }
         }
+    }
+
+    void displaySuccessMessage(){
+
     }
 
     public void registerButtonPressed() {
