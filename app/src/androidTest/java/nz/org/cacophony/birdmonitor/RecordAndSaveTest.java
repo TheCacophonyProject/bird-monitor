@@ -1,55 +1,63 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
+import android.support.test.rule.GrantPermissionRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.*;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static android.Manifest.permission.*;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowSwipeLeft;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Tim Hunt on 16-Mar-18.
- */
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class RecordAndSaveTest {
 
-@SuppressWarnings("unused")
-class Record {
+    private Context targetContext;
+    private Prefs prefs;
 
-    private static Context targetContext;
-    private static Prefs prefs;
-    private static File recordingsFolder;
-    private static File[] recordingFiles;
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
+            WRITE_EXTERNAL_STORAGE,
+            RECORD_AUDIO,
+            ACCESS_FINE_LOCATION,
+            READ_PHONE_STATE);
 
-    public static void RecordAndSaveOnPhone(ActivityTestRule<MainActivity> mActivityTestRule) {
+    @Rule
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-
-        setUpForRecord(mActivityTestRule);
-
-        recordAndSaveOnPhone();
-
-        tearDownForRecord(mActivityTestRule);
+    @BeforeClass
+    public static void registerIdlingResource() {
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.signInIdlingResource);
     }
 
-    public static void RecordAndSaveOnServer(ActivityTestRule<MainActivity> mActivityTestRule) {
-
-        setUpForRecord(mActivityTestRule);
-
-        recordAndSaveOnServer();
-
-        tearDownForRecord(mActivityTestRule);
+    @AfterClass
+    public static void unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.createAccountIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.registerPhoneIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.uploadFilesIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.recordIdlingResource);
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.signInIdlingResource);
     }
 
-    private static void setUpForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
-
-        // Seems sometimes particualar idling resources are not idle e.g. [RECORD]
-
-
+    @Before
+    public void setUpForRecord() {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -72,11 +80,7 @@ class Record {
 
         // Need to sign in
         HelperCode.signInUserTimhot();
-        try {
-            Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
-        } catch (Exception ignored) {
 
-        }
         nowSwipeLeft(); // takes you to Groups screen
 
         HelperCode.registerPhone(prefs);
@@ -84,12 +88,10 @@ class Record {
         nowSwipeLeft(); // takes you to GPS
         prefs.setIsDisabled(false);
         nowSwipeLeft(); // takes you to Test RecordAndSaveOnPhone
-
-
     }
 
-    private static void tearDownForRecord(ActivityTestRule<MainActivity> mActivityTestRule) {
-
+    @After
+    public void tearDownForRecord() {
         prefs.setInternetConnectionMode("normal");
         Util.signOutUser(targetContext);
 
@@ -99,16 +101,15 @@ class Record {
         }
 
         prefs.setIsDisabled(false);
-
     }
 
 
-    private static void recordAndSaveOnPhone() {
+    @Test
+    public void recordAndSaveOnPhone() {
         // Need to put phone into offline mode so it doesn't try to upload the recording
         prefs.setInternetConnectionMode("offline");
 
         int numberOfRecordingsBeforeTestRecord = Util.getNumberOfRecordings(targetContext);
-
 
         onView(withId(R.id.btnRecordNow)).perform(click());
         prefs.setIsDisabled(true);
@@ -118,7 +119,8 @@ class Record {
         assertEquals(numberOfRecordingsBeforeTestRecord + 1, numberOfRecordingsAfterTestRecord);
     }
 
-    private static void recordAndSaveOnServer() {
+    @Test
+    public void recordAndSaveOnServer() {
         // Need to put phone into normal mode so it uploads the recording
         prefs.setInternetConnectionMode("normal");
 
@@ -131,19 +133,11 @@ class Record {
 
         onView(withId(R.id.btnRecordNow)).perform(click());
         prefs.setIsDisabled(true);
-        try {
-            Thread.sleep(10000); // Espresso says shouldn't do this, but I needed a way to wait for file to be uploaded.  Espresso only waits for counting resource to be idle IF/FOR simulated user interaction.
-        } catch (Exception ex) {
-            Log.e("Record", ex.getLocalizedMessage());
-        }
+
+        Espresso.onIdle();
 
         long lastRecordingIdFromServer = prefs.getLastRecordIdReturnedFromServer();
         assertTrue(lastRecordingIdFromServer > -1); // Don't know what the recording ID will be, so just check it exists
-    }
-
-
-    private static void nowSwipeLeft() {
-        onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
     }
 
 }
