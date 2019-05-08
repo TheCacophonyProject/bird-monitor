@@ -3,8 +3,6 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.util.Log;
 import okhttp3.*;
-import info.guardianproject.netcipher.NetCipher;
-import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,8 +13,6 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
-
-import java.util.List;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
@@ -103,7 +99,7 @@ class Server {
                     .add("devicename", devicename)
                     .add("password", devicePassword)
                     .build();
-            PostResponse postResponse = makePost(loginUrl, requestBody);
+            WebResponse postResponse = makePost(loginUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
@@ -190,7 +186,7 @@ class Server {
                     .add("nameOrEmail", usernameOrEmailAddress)
                     .add("password", userNamePassword)
                     .build();
-            PostResponse postResponse = makePost(loginUrl, requestBody);
+            WebResponse postResponse = makePost(loginUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
@@ -280,7 +276,7 @@ class Server {
                     .add("password", password)
                     .add("group", group)
                     .build();
-            PostResponse postResponse = makePost(registerUrl, requestBody);
+            WebResponse postResponse = makePost(registerUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
@@ -329,27 +325,27 @@ class Server {
         }
     }
 
-    private static PostResponse makePost(String url, RequestBody requestBody, String authToken) throws IOException, JSONException {
+    private static WebResponse makePost(String url, RequestBody requestBody, String authToken) throws IOException, JSONException {
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", authToken)
                 .post(requestBody)
                 .build();
-        return submitPost(request);
+        return submitRequest(request);
     }
 
-    private static PostResponse makePost(String url, RequestBody requestBody) throws IOException, JSONException {
+    private static WebResponse makePost(String url, RequestBody requestBody) throws IOException, JSONException {
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
-        return submitPost(request);
+        return submitRequest(request);
     }
 
-    private static PostResponse submitPost(Request request) throws IOException, JSONException {
+    private static WebResponse submitRequest(Request request) throws IOException, JSONException {
         Response response = client.newCall(request).execute();
         Log.i("MSG", response.message());
-        return new PostResponse(response);
+        return new WebResponse(response);
     }
 
     static void signUp(final String username, final String emailAddress, final String password, final Context context) {
@@ -363,7 +359,7 @@ class Server {
                     .add("password", password)
                     .add("email", emailAddress)
                     .build();
-            PostResponse postResponse = makePost(signupUrl, requestBody);
+            WebResponse postResponse = makePost(signupUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
@@ -460,7 +456,7 @@ class Server {
                 return false;
             }
 
-            PostResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
+            WebResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
 
@@ -494,46 +490,30 @@ class Server {
 
         ArrayList<String> groups = new ArrayList<>();
         try {
-
-            // Setup the query to run on the server
-            // For now this is just an empty json object, but in future will be able to add
-            // search terms
-
-            JSONObject jsonSearchTerms = new JSONObject();
-            String jsonSearchTermsString = jsonSearchTerms.toString();
-
-            HttpUrl url = new HttpUrl.Builder()
-                    .scheme(prefs.getServerScheme())
-                    .host(prefs.getServerHost())
-                    .addPathSegments(GROUPS_URL)
-                    .addQueryParameter("where", jsonSearchTermsString)
-                    .build();
+            String emptyWhereClause = "?where={}"; // API requires a WHERE json blob even though we want all matches
+            String groupsUrl = prefs.getServerUrl() + GROUPS_URL + emptyWhereClause;
 
             String authorization = prefs.getUserToken();
             Request request = new Request.Builder()
-                    .url(url)
+                    .url(groupsUrl)
                     .header("Authorization", authorization)
                     .build();
 
-            String responseBody;
-
-            Response response = client.newCall(request).execute();
-            int responseCode = response.code();
-            Log.e(TAG, "responseCode: " + responseCode);
+            WebResponse getResponse = submitRequest(request);
+            Response response = getResponse.response;
+            JSONObject responseJson = getResponse.responseJson;
+            Log.i(TAG, "Got groups with response code: " + response.code() + ", and body: " + getResponse.body);
 
             //Set message to broadcast
             String messageToDisplay;
             JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            jsonObjectMessageToBroadcast.put("responseCode", responseCode);
+            jsonObjectMessageToBroadcast.put("responseCode", response.code());
 
-
-            if (responseCode == 200 && response.body() != null) {
-                responseBody = response.body().string();
+            if (response.isSuccessful() && !getResponse.body.isEmpty()) {
 
                 // Get groups from responseBody
-                JSONObject joRes = new JSONObject(responseBody);
                 jsonObjectMessageToBroadcast.put("messageType", "SUCCESSFULLY_RETRIEVED_GROUPS");
-                JSONArray groupsJSONArray = joRes.getJSONArray("groups");
+                JSONArray groupsJSONArray = responseJson.getJSONArray("groups");
                 if (groupsJSONArray != null) {
                     for (int i = 0; i < groupsJSONArray.length(); i++) {
                         JSONObject groupJSONObject = new JSONObject(groupsJSONArray.getString(i));
@@ -568,7 +548,7 @@ class Server {
                     .add("groupname", groupName)
                     .build();
 
-            PostResponse postResponse = makePost(groupsUrl, requestBody, prefs.getUserToken());
+            WebResponse postResponse = makePost(groupsUrl, requestBody, prefs.getUserToken());
             Response response = postResponse.response;
 
             Log.i("MSG", response.message());
@@ -593,12 +573,12 @@ class Server {
 
 
 
-    static class PostResponse {
+    static class WebResponse {
         final Response response;
         final String body;
         final JSONObject responseJson;
 
-        PostResponse(Response response) throws IOException, JSONException {
+        WebResponse(Response response) throws IOException, JSONException {
             this.response = response;
             ResponseBody responseBody = response.body();
             body = responseBody != null ? responseBody.string() : "";
