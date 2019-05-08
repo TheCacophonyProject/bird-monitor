@@ -1,7 +1,7 @@
 <resources>
 
 
-    <string name="test_record_link_to_server_recordings2">Visit the following page to listen to your recordings on the Cacophony Server</string>
+    <string name="test_record_link_to_server_recordings2">Listen to your recordings at</string>
     <string name="app_name">Bird Monitor</string>
     <string name="app_icon_name">Bird Monitor</string>
 

@@ -79,6 +79,7 @@ public class TestRecordFragment extends Fragment {
     }
 
     void displayOrHideGUIObjects() {
+        tvMessages.setText("");
 
         if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
