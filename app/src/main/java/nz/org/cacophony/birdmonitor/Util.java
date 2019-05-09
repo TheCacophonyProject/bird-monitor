@@ -957,7 +957,6 @@ public class Util {
     public static void uploadFilesUsingUploadButton(final Context context) {
         new Thread(() -> {
             try {
-//              testUploadRecordingsIdlingResource.increment();
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
                 if (RecordAndUpload.isCancelUploadingRecordings()){
                     String messageToDisplay = "Uploading of recordings has been stopped";

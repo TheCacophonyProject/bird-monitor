@@ -14,6 +14,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.anyWebRequestResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.FAILED_TO_CREATE_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.SUCCESSFULLY_CREATED_USER;
@@ -310,7 +311,9 @@ public class Server {
     }
 
     private static WebResponse submitRequest(Request request) throws IOException, JSONException {
+        anyWebRequestResource.increment();
         Response response = client.newCall(request).execute();
+        anyWebRequestResource.decrement();
         Log.i("MSG", response.message());
         return new WebResponse(response);
     }
