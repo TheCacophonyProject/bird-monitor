@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
@@ -119,14 +118,12 @@ public class RegisterFragment extends Fragment {
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
                             etGroupNameInput.setEnabled(false);
                             etDeviceNameInput.setEnabled(false);
-                            registerPhoneIdlingResource.decrement();
 
                         } else if (messageType.equalsIgnoreCase("REGISTER_FAIL")) {
                             tvMessages.setText(messageToDisplay);
                             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
                             etGroupNameInput.setEnabled(true);
                             etDeviceNameInput.setEnabled(true);
-                            registerPhoneIdlingResource.decrement();
                         } else {
                             ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         }
@@ -139,7 +136,6 @@ public class RegisterFragment extends Fragment {
 
                 tvMessages.setText("Oops, your phone did not register - not sure why");
                 displayOrHideGUIObjects(true);
-                registerPhoneIdlingResource.decrement();
             }
         }
     };
@@ -273,7 +269,6 @@ public class RegisterFragment extends Fragment {
     }
 
     public void registerButtonPressed() {
-        //  registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
@@ -403,11 +398,11 @@ public class RegisterFragment extends Fragment {
         try {
             Util.unregisterPhone(getActivity().getApplicationContext());
             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-            tvMessages.setText("Success - Device is no longer registered");
             etGroupNameInput.setText("");
             etDeviceNameInput.setText("");
 
             displayOrHideGUIObjects(true);
+            tvMessages.setText("Success - Device is no longer registered");
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");

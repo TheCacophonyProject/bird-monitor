@@ -20,13 +20,15 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
+
 
 /**
  * This is where the action is - however the code starts, it gets here to do a recording and then
  * sends recording to server.
  */
 
-class RecordAndUpload implements IdlingResourceForEspressoTesting {
+class RecordAndUpload {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
     private static boolean cancelUploadingRecordings = false;

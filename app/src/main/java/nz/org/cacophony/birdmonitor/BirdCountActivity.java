@@ -28,7 +28,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class BirdCountActivity extends AppCompatActivity {
 
     private static final String TAG = BirdCountActivity.class.getName();
 

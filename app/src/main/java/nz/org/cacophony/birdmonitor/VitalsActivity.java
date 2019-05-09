@@ -32,7 +32,7 @@ import java.util.List;
  * app and the GPS loction.
  */
 @SuppressWarnings("NullableProblems")
-public class VitalsActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class VitalsActivity extends AppCompatActivity {
     // Register with idling counter
 // https://developer.android.com/training/testing/espresso/idling-resource.html
 // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
@@ -170,7 +170,7 @@ public class VitalsActivity extends AppCompatActivity implements IdlingResourceF
         // Update time of next recording
         TextView tvNextRecording = findViewById(R.id.tvNextRecording);
 
-        if (prefs.getIsDisabled()) {
+        if (prefs.getAutomaticRecordingsDisabled()) {
             tvNextRecording.setText("Next Recording: Disabled - no next recording");
         } else {
             String nextAlarm = Util.getNextAlarm(getApplicationContext());

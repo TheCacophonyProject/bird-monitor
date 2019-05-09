@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -93,7 +92,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             wakeLock.acquire(wakeLockDuration);
 
 
-            if (prefs.getIsDisabled() && !recordButtonWasPressed) {
+            if (prefs.getAutomaticRecordingsDisabled() && !recordButtonWasPressed) {
                 jsonObjectMessageToBroadcast = new JSONObject();
                 jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
                 jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");

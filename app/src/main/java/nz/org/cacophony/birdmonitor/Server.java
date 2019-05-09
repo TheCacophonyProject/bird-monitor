@@ -14,8 +14,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.anyWebRequestResource;
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.*;
 
 
 /**
@@ -138,6 +137,7 @@ class Server {
     }
 
     static void loginUser(Context context) {
+        signInIdlingResource.increment();
 
         final Prefs prefs = new Prefs(context);
 
@@ -249,6 +249,8 @@ class Server {
             } catch (JSONException e2) {
                 Log.e(TAG, e2.getLocalizedMessage(), e2);
             }
+        } finally {
+            signInIdlingResource.decrement();
         }
     }
 
@@ -265,6 +267,7 @@ class Server {
         if (group == null || group.length() < 4) {
             Log.i(TAG, "Invalid group name: " + group);
             broadcastGenericError(context, "Group name must be at least 4 characters", "REGISTER_FAIL", "SERVER_REGISTER");
+            registerPhoneIdlingResource.decrement();
             return;
         }
 
@@ -323,6 +326,8 @@ class Server {
         } catch (Exception e) {
             Log.w(TAG, e);
             broadcastGenericError(context, "An unknown error occurred: " + e.toString(), "REGISTER_FAIL", "SERVER_REGISTER");
+        } finally {
+            registerPhoneIdlingResource.decrement();
         }
     }
 
@@ -352,6 +357,8 @@ class Server {
     }
 
     static void signUp(final String username, final String emailAddress, final String password, final Context context) {
+        createAccountIdlingResource.increment();
+
         final Prefs prefs = new Prefs(context);
 
         String signupUrl = prefs.getServerUrl() + SIGNUP_URL;
@@ -404,6 +411,8 @@ class Server {
         } catch (Exception e) {
             Log.w(TAG, e);
             broadcastGenericError(context, "An unknown error occured: " + e.toString(), "FAILED_TO_CREATE_USER", "SERVER_SIGNUP");
+        } finally {
+            createAccountIdlingResource.decrement();
         }
     }
 
@@ -489,6 +498,8 @@ class Server {
     }
 
     static ArrayList<String> getGroups(Context context) {
+        getGroupsIdlingResource.increment();
+
         final Prefs prefs = new Prefs(context);
 
         ArrayList<String> groups = new ArrayList<>();
@@ -536,6 +547,8 @@ class Server {
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
+        } finally {
+            getGroupsIdlingResource.decrement();
         }
 
         return groups;

@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.*;
 import org.json.JSONObject;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
-
 public class GroupsFragment extends Fragment {
     private static final String TAG = "GroupsFragment";
 
@@ -142,35 +140,24 @@ public class GroupsFragment extends Fragment {
                         tvMessages.setText("");
                         resetGroups();
 
-                        getGroupsIdlingResource.decrement();
-
                     } else if (messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         resetGroups();
-                        getGroupsIdlingResource.decrement();
                     } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
 
                         resetGroups();
-                        getGroupsIdlingResource.decrement();
 
                     } else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-                        getGroupsIdlingResource.decrement();
                     }
 
                 }
 
 
             } catch (Exception ex) {
-
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
-                try {
-                    getGroupsIdlingResource.decrement();
-                } catch (Exception e) {
-                    Log.e(TAG, e.getLocalizedMessage(), e);
-                }
             }
         }
     };

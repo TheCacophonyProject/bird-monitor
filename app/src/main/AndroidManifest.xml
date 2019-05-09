@@ -68,7 +68,7 @@
             android:label="@string/activity_or_fragment_title_gps_location"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DisableActivity"
+            android:name=".DisableAutomaticRecordingActivity"
             android:label="@string/activity_or_fragment_title_turn_off_or_on"
             android:screenOrientation="portrait" />
         <activity
