@@ -272,10 +272,6 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    void displaySuccessMessage(){
-
-    }
-
     public void registerButtonPressed() {
         //  registerIdlingResource.increment();
 
