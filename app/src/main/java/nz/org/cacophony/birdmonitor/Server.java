@@ -14,6 +14,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.anyWebRequestResource;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 
 
@@ -343,7 +344,9 @@ class Server {
     }
 
     private static WebResponse submitRequest(Request request) throws IOException, JSONException {
+        anyWebRequestResource.increment();
         Response response = client.newCall(request).execute();
+        anyWebRequestResource.decrement();
         Log.i("MSG", response.message());
         return new WebResponse(response);
     }

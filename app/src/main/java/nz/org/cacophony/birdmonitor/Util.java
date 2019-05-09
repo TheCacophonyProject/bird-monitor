@@ -975,7 +975,6 @@ class Util {
     static void uploadFilesUsingUploadButton(final Context context) {
         new Thread(() -> {
             try {
-//              testUploadRecordingsIdlingResource.increment();
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
 
                 JSONObject jsonObjectMessageToBroadcast = new JSONObject();

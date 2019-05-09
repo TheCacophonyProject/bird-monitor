@@ -1,33 +1,38 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.*;
+import org.junit.runner.RunWith;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Tim Hunt on 16-Mar-18.
- */
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class RootedTest {
 
-@SuppressWarnings("unused")
-class Rooted {
+    private Context targetContext;
+    private Prefs prefs;
 
-    private static Context targetContext;
-    private static Prefs prefs;
+    @Rule
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-
-    public static void rooted(ActivityTestRule<MainActivity> mActivityTestRule) {
-        setUpForRooted(mActivityTestRule);
-
-        rooted();
-
-        tearDownForRooted(mActivityTestRule);
+    @BeforeClass
+    public static void registerIdlingResource() {
+        IdlingRegistry.getInstance().register(IdlingResourceForEspressoTesting.rootedIdlingResource);
     }
 
+    @AfterClass
+    public static void unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(IdlingResourceForEspressoTesting.rootedIdlingResource);
+    }
 
-    private static void setUpForRooted(ActivityTestRule<MainActivity> mActivityTestRule) {
-
+    @Before
+    public void setUpForRooted() {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -37,11 +42,10 @@ class Rooted {
             // Welcome Dialog WILL be displayed - and SetupWizard will be running
             HelperCode.dismissWelcomeDialog();
         }
-
     }
 
-
-    private static void tearDownForRooted(ActivityTestRule<MainActivity> mActivityTestRule) {
+    @After
+    public void tearDownForRooted() {
         // Leave with network access
 
         // Turn off airplane mode
@@ -53,13 +57,13 @@ class Rooted {
 
         // To prevent other tests failing due to phone going into airplane mode, change hasRoot to no
         prefs.setHasRootAccess(false);
-
         prefs.setIsDisabled(true);
-
     }
 
 
-    private static void rooted() {
+    @Test
+    @Ignore("This test will fail on non rooted devices, so it should only be run manually")
+    public void rootedTest() {
         // idlingresource is not a suitable way of waiting for network connection in these tests,
         // because the test doesn't actually interact with the GUI which is what idlingresource is
         // supposed to be used with.
