@@ -20,12 +20,16 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
+/**
+ * This test class provides a base for any UI test. It resets the state to fully reset on the setup screen before each test.
+ * The default initial state is on the setup screen, logged out, with automatic recording disabled, test server and short recordings enabled.
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public abstract class TestBaseStartingOnSetupScreen {
 
-    protected Context targetContext;
-    protected Prefs prefs;
+    Context targetContext;
+    Prefs prefs;
 
     private Map<String, ?> prefsBackup;
 

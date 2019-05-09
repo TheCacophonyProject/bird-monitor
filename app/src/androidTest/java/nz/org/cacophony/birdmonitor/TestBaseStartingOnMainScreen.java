@@ -8,6 +8,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRight;
 import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRightTimes;
 
+/**
+ * This test class provides all the same initial state as {@link TestBaseStartingOnSetupScreen}.
+ * In addition, these test cases will be logged in to the test user, device registered, and on the main screen.
+ */
 public abstract class TestBaseStartingOnMainScreen extends TestBaseStartingOnSetupScreen {
 
     @Before

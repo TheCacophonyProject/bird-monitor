@@ -1,6 +1,5 @@
 package nz.org.cacophony.birdmonitor;
 
-import android.support.test.espresso.Espresso;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
