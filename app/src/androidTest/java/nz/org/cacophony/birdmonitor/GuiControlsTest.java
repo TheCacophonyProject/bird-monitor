@@ -1,45 +1,42 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
+import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.*;
+import org.junit.runner.RunWith;
 
-import java.io.File;
-
+import static android.Manifest.permission.*;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowSwipeLeft;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowSwipeRight;
+import static org.junit.Assert.*;
 
-/**
- * Created by Tim Hunt on 16-Mar-18.
- */
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class GuiControlsTest {
 
-@SuppressWarnings("unused")
-class GuiControls {
+    private Context targetContext;
+    private Prefs prefs;
 
-    private static Context targetContext;
-    private static Prefs prefs;
-    private static File recordingsFolder;
-    private static File[] recordingFiles;
+    @Rule
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-    public static void guiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
-        setUpForGuiControls(mActivityTestRule);
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
+            WRITE_EXTERNAL_STORAGE,
+            RECORD_AUDIO,
+            ACCESS_FINE_LOCATION,
+            READ_PHONE_STATE);
 
-        guiControls();
-
-        tearDownForGuiControls(mActivityTestRule);
-    }
-
-
-    private static void setUpForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
+    @Before
+    public void setUpForGuiControls() {
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
         prefs.setInternetConnectionMode("normal");
@@ -51,48 +48,33 @@ class GuiControls {
         }
     }
 
-    private static void tearDownForGuiControls(ActivityTestRule<MainActivity> mActivityTestRule) {
-
+    @After
+    public void tearDownForGuiControls() {
         Util.signOutUser(targetContext);
         prefs.setIsDisabled(true);
-
     }
 
 
-    private static void guiControls() {
-
-        enableOrDisableRecording();
-        internetConnection();
-        warningSound();
-        ignoreLowBattery();
-        frequencyRecord();
-        frequencyUpload();
-        frequenyGPS();
-        rooted();
-    }
-
-    private static void enableOrDisableRecording() {
+    @Test
+    public void enableOrDisableRecordingTest() {
         prefs.setIsDisabled(false);
         onView(withId(R.id.btnDisable)).perform(click());
         onView(withId(R.id.swDisable)).perform(click());
         onView(withId(R.id.btnFinished)).perform(click());
 
-        boolean isDisabled = prefs.getIsDisabled();
-
-        assertTrue(isDisabled);
+        assertTrue(prefs.getIsDisabled());
 
         // Now enable the app
         onView(withId(R.id.btnDisable)).perform(click());
         onView(withId(R.id.swDisable)).perform(click());
         onView(withId(R.id.btnFinished)).perform(click());
 
-        isDisabled = prefs.getIsDisabled();
-
-        assertTrue(!isDisabled);
-
+        assertFalse(prefs.getIsDisabled());
     }
 
-    private static void internetConnection() {
+
+    @Test
+    public void internetConnectionTest() {
         prefs.setInternetConnectionMode("normal");
         onView(withId(R.id.btnAdvanced)).perform(click());
         nowSwipeLeft(); // takes you to Internet Connection
@@ -127,9 +109,13 @@ class GuiControls {
         prefs.setInternetConnectionMode("normal"); // finished testing interconnection mode so return to normal
     }
 
-    private static void warningSound() {
+    @Test
+    public void warningSoundTest() {
         prefs.setPlayWarningSound(false);
-        nowSwipeLeft();  // to get to Warning sound page
+
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(2);
+
         onView(withId(R.id.swPlayWarningSound)).check(matches(isNotChecked())); // warning sound should be off
 
         // Now turn warning sound on
@@ -154,9 +140,13 @@ class GuiControls {
         // Finished so leave warning sound off
     }
 
-    private static void ignoreLowBattery() {
+    @Test
+    public void ignoreLowBatteryTest() {
         prefs.setIgnoreLowBattery(false);
-        nowSwipeLeft();  // to get to Ignore Low Battery screen
+
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(3);
+
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isNotChecked())); // Ignore Low Battery should be off
 
         // Now turn warning sound on
@@ -171,7 +161,6 @@ class GuiControls {
         ignoreLowBattery = prefs.getIgnoreLowBattery();
         assertTrue(ignoreLowBattery);
 
-
         // Turn Ignore Low Battery back off
         onView(withId(R.id.swIgnoreLowBattery)).perform(click()); // turn Ignore Low Battery off
         onView(withId(R.id.swIgnoreLowBattery)).check(matches(isNotChecked())); // Ignore Low Battery should be off
@@ -181,11 +170,13 @@ class GuiControls {
         // Finished so leave Ignore Low Battery off
     }
 
-    private static void frequencyRecord() {
+    @Test
+    public void frequencyRecordTest() {
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
-        nowSwipeLeft();  // to get to Frequency screen
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(4);
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked())); // Record more often should be off
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked())); // Upload after every recording should be off
@@ -225,13 +216,13 @@ class GuiControls {
         onView(withId(R.id.swRecordMoreOften)).perform(click());
     }
 
-    private static void frequencyUpload() {
-        nowSwipeRight(); // to go to screen before frequency
-
+    @Test
+    public void frequencyUploadTest() {
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
-        nowSwipeLeft();  // to get to Frequency screen
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(4);
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
@@ -270,13 +261,14 @@ class GuiControls {
         onView(withId(R.id.swUseFrequentUploads)).perform(click());
     }
 
-    private static void frequenyGPS() {
-        nowSwipeRight(); // to go to screen before frequency
-
+    @Test
+    @Ignore("This feature of periodically updating GPS seems to no longer exist")
+    public void frequencyGPSTest() {
         Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
-        nowSwipeLeft();  // to get to Frequency screen
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(4);
 
         onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
@@ -308,12 +300,15 @@ class GuiControls {
 
         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         assertTrue(periodicallyUpdateGPS);
-
     }
 
-    private static void rooted() {
+    @Test
+    public void rootedTest() {
         prefs.setHasRootAccess(false);
-        nowSwipeLeft();  // to get to Rooted sound page
+
+        onView(withId(R.id.btnAdvanced)).perform(click());
+        HelperCode.nowSwipeLeftTimes(5);
+
         onView(withId(R.id.swRooted)).check(matches(isNotChecked())); // warning sound should be off
 
         // Now turn on
@@ -336,37 +331,6 @@ class GuiControls {
         assertFalse(isRooted);
 
         // Finished so leave off
-
-    }
-
-    private static boolean areAllPrefsForWalkingSet() {
-        boolean walkingMode = true; // if any of the following are false, then change walking mode to false
-
-        if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {
-            walkingMode = false;
-        } else if (!prefs.getUseFrequentRecordings()) {
-            walkingMode = false;
-        } else if (!prefs.getIgnoreLowBattery()) {
-            walkingMode = false;
-        } else if (!prefs.getPlayWarningSound()) {
-            walkingMode = false;
-        } else if (!prefs.getPeriodicallyUpdateGPS()) {
-            walkingMode = false;
-        } else if (!prefs.getIsDisableDawnDuskRecordings()) {
-            walkingMode = false;
-        } else if (prefs.getUseFrequentUploads()) {
-            walkingMode = false;
-        }
-
-        return walkingMode;
-    }
-
-    private static void nowSwipeLeft() {
-        onView(withId(R.id.SetUpWizard)).perform(swipeLeft());
-    }
-
-    private static void nowSwipeRight() {
-        onView(withId(R.id.SetUpWizard)).perform(swipeRight());
     }
 
 }
