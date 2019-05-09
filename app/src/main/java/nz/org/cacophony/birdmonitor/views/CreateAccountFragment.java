@@ -1,14 +1,12 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +14,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
 
 public class CreateAccountFragment extends Fragment {
+
+    public enum MessageType {
+        SUCCESSFULLY_CREATED_USER,
+        FAILED_TO_CREATE_USER
+    }
+
+    public static final Action SERVER_SIGNUP_ACTION = new Action("SERVER_SIGNUP");
+
     private static final String TAG = "CreateAccountFragment";
 
     private TextView tvTitle;
@@ -39,8 +46,9 @@ public class CreateAccountFragment extends Fragment {
     private TextInputEditText etPassword2;
 
     private Button btnSignUp;
-  //  private Button btnForgetUser;
     private TextView tvMessages;
+
+    private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
 
     @Override
@@ -83,12 +91,11 @@ public class CreateAccountFragment extends Fragment {
             return;
         }
         if (visible) {
-            IntentFilter iff = new IntentFilter("SERVER_SIGNUP");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+            MessageHelper.registerMessageHandler(SERVER_SIGNUP_ACTION, messageHandler, getActivity());
             displayOrHideGUIObjects();
 
         } else {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+            MessageHelper.unregisterMessageHandler(messageHandler, getActivity());
         }
     }
 
@@ -186,70 +193,60 @@ public class CreateAccountFragment extends Fragment {
         }
     }
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Prefs prefs = new Prefs(getActivity().getApplicationContext());
-            try {
-                if (getView() == null) {
-                    return;
-                }
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-
-                if (jsonStringMessage != null) {
-
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
-                    if (messageType.equalsIgnoreCase("SUCCESSFULLY_CREATED_USER")) {
-
-                        Util.signOutUser(getActivity().getApplicationContext());
-                        prefs.setUsername(etUsername.getText().toString());
-                        prefs.setUserNameOrEmailAddress(etUsername.getText().toString());
-
-                        tvTitle.setVisibility(View.GONE);
-
-                        btnSignUp.setVisibility(View.GONE);
-
-                        etUsername.setText("");
-                        etEmail.setText("");
-                        etPassword1.setText("");
-                        etPassword2.setText("");
-
-                        // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
-                        tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
-                        createAccountIdlingResource.decrement();
-
-                    } else {
-                        tilUsername.setVisibility(View.VISIBLE);
-                        tilEmail.setVisibility(View.VISIBLE);
-                        tilPassword1.setVisibility(View.VISIBLE);
-                        tilPassword2.setVisibility(View.VISIBLE);
-                        tvMessages.setText("");
-                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-                        createAccountIdlingResource.decrement();
-                    }
-
-                }
-
-
-            } catch (Exception ex) {
-
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-
-                tilUsername.setVisibility(View.VISIBLE);
-                tilEmail.setVisibility(View.VISIBLE);
-                tilPassword1.setVisibility(View.VISIBLE);
-                tilPassword2.setVisibility(View.VISIBLE);
-                createAccountIdlingResource.decrement();
+    private void onMessage(Intent intent) {
+        Prefs prefs = new Prefs(getActivity());
+        try {
+            if (getView() == null) {
+                return;
             }
-        }
-    };
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
+            if (jsonStringMessage != null) {
+
+
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageType = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
+
+                if (messageType.equalsIgnoreCase("SUCCESSFULLY_CREATED_USER")) {
+
+                    Util.signOutUser(getActivity().getApplicationContext());
+                    prefs.setUsername(etUsername.getText().toString());
+                    prefs.setUserNameOrEmailAddress(etUsername.getText().toString());
+
+                    tvTitle.setVisibility(View.GONE);
+
+                    btnSignUp.setVisibility(View.GONE);
+
+                    etUsername.setText("");
+                    etEmail.setText("");
+                    etPassword1.setText("");
+                    etPassword2.setText("");
+
+                    // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
+                    tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
+                    createAccountIdlingResource.decrement();
+
+                } else {
+                    tilUsername.setVisibility(View.VISIBLE);
+                    tilEmail.setVisibility(View.VISIBLE);
+                    tilPassword1.setVisibility(View.VISIBLE);
+                    tilPassword2.setVisibility(View.VISIBLE);
+                    tvMessages.setText("");
+                    ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
+                    createAccountIdlingResource.decrement();
+                }
+
+            }
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+            tilUsername.setVisibility(View.VISIBLE);
+            tilEmail.setVisibility(View.VISIBLE);
+            tilPassword1.setVisibility(View.VISIBLE);
+            tilPassword2.setVisibility(View.VISIBLE);
+            createAccountIdlingResource.decrement();
+        }
+    }
 
 }

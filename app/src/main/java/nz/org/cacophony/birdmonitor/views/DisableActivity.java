@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 public class DisableActivity extends AppCompatActivity {
     private static final String TAG = DisableActivity.class.getName();

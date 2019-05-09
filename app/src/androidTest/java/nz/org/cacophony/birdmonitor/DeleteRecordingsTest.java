@@ -6,6 +6,7 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 import org.junit.*;
 import org.junit.runner.RunWith;
 

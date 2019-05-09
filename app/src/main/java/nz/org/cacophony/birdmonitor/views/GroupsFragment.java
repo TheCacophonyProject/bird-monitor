@@ -1,23 +1,34 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
 
 public class GroupsFragment extends Fragment {
+
+    public enum MessageType {
+        SUCCESSFULLY_RETRIEVED_GROUPS,
+        FAILED_TO_RETRIEVE_GROUPS,
+        SUCCESSFULLY_ADDED_GROUP,
+        FAILED_TO_ADD_GROUP
+    }
+
+    public static final Action SERVER_GROUPS_ACTION = new Action("SERVER_GROUPS");
+
     private static final String TAG = "GroupsFragment";
 
     private EditText etNewGroupInput;
@@ -25,6 +36,8 @@ public class GroupsFragment extends Fragment {
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
+
+    private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,36 +114,28 @@ public class GroupsFragment extends Fragment {
             tvMessages.setText("");
             resetGroups();
 
-            IntentFilter iff = new IntentFilter("SERVER_GROUPS");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
+            MessageHelper.registerMessageHandler(SERVER_GROUPS_ACTION, messageHandler, getActivity());
         } else {
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+            MessageHelper.unregisterMessageHandler(messageHandler, getActivity());
         }
     }
 
+    private void onMessage(Intent intent) {
+        try {
+            if (getView() == null) {
+                return;
+            }
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+            if (jsonStringMessage != null) {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
 
-            try {
-
-                if (getView() == null) {
-                    return;
-                }
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-
-                if (jsonStringMessage != null) {
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
-
-                    if (messageType.equalsIgnoreCase("SUCCESSFULLY_ADDED_GROUP")) {
+                MessageType messageType = MessageType.valueOf(messageTypeStr);
+                switch (messageType) {
+                    case SUCCESSFULLY_ADDED_GROUP:
                         // update the list of groups from server
                         tvMessages.setText(messageToDisplay);
                         ((EditText) getView().findViewById(R.id.etNewGroupInput)).setText("");
@@ -143,36 +148,33 @@ public class GroupsFragment extends Fragment {
                         resetGroups();
 
                         getGroupsIdlingResource.decrement();
-
-                    } else if (messageType.equalsIgnoreCase("FAILED_TO_ADD_GROUP")) {
+                        break;
+                    case FAILED_TO_ADD_GROUP:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         resetGroups();
                         getGroupsIdlingResource.decrement();
-                    } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_RETRIEVED_GROUPS")) {
-
+                        break;
+                    case SUCCESSFULLY_RETRIEVED_GROUPS:
                         resetGroups();
                         getGroupsIdlingResource.decrement();
-
-                    } else if (messageType.equalsIgnoreCase("FAILED_TO_RETRIEVE_GROUPS")) {
+                        break;
+                    case FAILED_TO_RETRIEVE_GROUPS:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         getGroupsIdlingResource.decrement();
-                    }
-
-                }
-
-
-            } catch (Exception ex) {
-
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-                try {
-                    getGroupsIdlingResource.decrement();
-                } catch (Exception e) {
-                    Log.e(TAG, e.getLocalizedMessage(), e);
+                        break;
                 }
             }
+        } catch (Exception ex) {
+
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+            try {
+                getGroupsIdlingResource.decrement();
+            } catch (Exception e) {
+                Log.e(TAG, e.getLocalizedMessage(), e);
+            }
         }
-    };
+    }
 
 }

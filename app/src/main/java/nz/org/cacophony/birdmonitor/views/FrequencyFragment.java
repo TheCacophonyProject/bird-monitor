@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 public class FrequencyFragment extends Fragment {
 

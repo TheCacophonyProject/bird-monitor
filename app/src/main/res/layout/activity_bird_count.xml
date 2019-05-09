@@ -5,7 +5,7 @@
     android:id="@+id/swWalking"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
+    tools:context="nz.org.cacophony.birdmonitor.views.BirdCountActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
