@@ -1,16 +1,14 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -23,10 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
 public class BirdCountActivity extends AppCompatActivity {
 
@@ -52,12 +53,9 @@ public class BirdCountActivity extends AppCompatActivity {
 
     CountDownTimer countDownTimer = null;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
-    }
+    private final BroadcastReceiver messageHandler =
+            RecordingsHelper.createMessageHandler(TAG, message -> tvMessages.setText(message), this::onRecordingFinished);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,17 +123,9 @@ public class BirdCountActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+        MessageHelper.unregisterMessageHandler(messageHandler, this);
     }
 
     @Override
@@ -148,6 +138,7 @@ public class BirdCountActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         displayOrHideGUIObjects();
+        MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, this);
     }
 
     public void recordNow() {
@@ -294,58 +285,15 @@ public class BirdCountActivity extends AppCompatActivity {
         }
     }
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.optString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
-
-                    if (messageType.equalsIgnoreCase("RECORDING_DISABLED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("NO_PERMISSION_TO_RECORD")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FINISHED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("GETTING_READY_TO_RECORD")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_UPLOADED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("RECORD_AND_UPLOAD_FAILED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("UPLOADING_FAILED_NOT_REGISTERED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("RECORDING_STARTED")) {
-                        tvMessages.setText(messageToDisplay);
-                    } else if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
-                        recording = false;
-                        if (countDownTimer != null) {
-                            countDownTimer.cancel();
-                        }
-                        tvTitle.setText(getResources().getString(R.string.bird_count_message));
-                        tvMessages.setText(messageToDisplay);
-                        btnRecordNow.setEnabled(true);
-                        btnRecordNow.setVisibility(View.VISIBLE);
-                        btnRecordNow.setText("Record Now");
-                        btnFinished.setText("Finished");
-                    }
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, "exception", ex);
-                tvMessages.setText("Could not record");
-            }
-        }
-    };
+    private void onRecordingFinished() {
+        recording = false;
+        countDownTimer.cancel();
+        tvTitle.setText(getResources().getString(R.string.bird_count_message));
+        btnRecordNow.setEnabled(true);
+        btnRecordNow.setVisibility(View.VISIBLE);
+        btnRecordNow.setText("Record Now");
+        btnFinished.setText("Finished");
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -1,15 +1,12 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.*;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
@@ -24,6 +22,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_FINISHED;
 
 
 /**
@@ -44,11 +45,12 @@ public class VitalsActivity extends AppCompatActivity {
 
     private PermissionsHelper permissionsHelper;
 
+    private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
+
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+        MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, this);
     }
 
     @Override
@@ -60,9 +62,7 @@ public class VitalsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+        MessageHelper.unregisterMessageHandler(messageHandler, this);
     }
 
     @Override
@@ -110,9 +110,7 @@ public class VitalsActivity extends AppCompatActivity {
         String versionNameTextToDisplay = getString(R.string.version) + " " + versionName;
         versionNameText.setText(versionNameTextToDisplay);
 
-        // listens for events broadcast from ?
-        IntentFilter iff = new IntentFilter("event");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
+        MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, this);
 
         disableFlightMode();
     }
@@ -204,29 +202,22 @@ public class VitalsActivity extends AppCompatActivity {
     }
 
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.optString("messageType");
-
-                    if (messageType.equalsIgnoreCase("RECORDING_FINISHED")) {
-                        refreshVitalsDisplayedText();
-                    }
+    private void onMessage(Intent intent) {
+        try {
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            if (jsonStringMessage != null) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageType = joMessage.optString("messageType");
+                if (messageType.equalsIgnoreCase(RECORDING_FINISHED.name())) {
+                    refreshVitalsDisplayedText();
                 }
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-                tvMessages.setText("Could not record");
             }
 
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+            tvMessages.setText("Could not record");
         }
-    };
+    }
 
     public void finished(@SuppressWarnings("UnusedParameters") View v) {
         try {

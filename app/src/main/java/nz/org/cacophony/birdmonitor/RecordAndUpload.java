@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
 
 
 /**
@@ -28,7 +30,7 @@ import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.reco
  * sends recording to server.
  */
 
-class RecordAndUpload {
+public class RecordAndUpload {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
     private static boolean cancelUploadingRecordings = false;
@@ -38,9 +40,6 @@ class RecordAndUpload {
     }
 
     static void doRecord(Context context, String typeOfRecording) {
-        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-
-
         if (typeOfRecording == null) {
             Log.e(TAG, "typeOfRecording is null");
             return;
@@ -52,57 +51,35 @@ class RecordAndUpload {
 
 
         if (isRecording) {
-            jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "ALREADY_RECORDING");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Can not record, as a recording is already in progress.");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            String messageToDisplay = "Can not record, as a recording is already in progress.";
+            MessageHelper.broadcastMessage(messageToDisplay, ALREADY_RECORDING, MANAGE_RECORDINGS_ACTION, context);
             return;
         } else {
             makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
         }
 
 
-// Checked that it has a webToken before trying to upload
+        // Checked that it has a webToken before trying to upload
         if (prefs.getToken() == null) {
-
-            jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FAILED_NOT_REGISTERED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "The Phone is NOT registered - could not upload the files.");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+            String messageToDisplay = "The Phone is NOT registered - could not upload the files.";
+            MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FAILED_NOT_REGISTERED, MANAGE_RECORDINGS_ACTION, context);
         } else {
             // only upload recordings if sufficient time has passed since last upload
             long dateTimeLastUpload = prefs.getDateTimeLastUpload();
             long now = new Date().getTime();
             long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
-            //noinspection UnusedAssignment
-            boolean uploadedFilesSuccessfully = false;
-
 
             if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
 
                 if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
-                    uploadedFilesSuccessfully = uploadFiles(context);
+                    boolean uploadedFilesSuccessfully = uploadFiles(context);
                     if (uploadedFilesSuccessfully) {
                         prefs.setDateTimeLastUpload(now);
                     } else {
 
                         Log.e(TAG, "Files failed to upload");
-                        jsonObjectMessageToBroadcast = new JSONObject();
-                        try {
-                            jsonObjectMessageToBroadcast.put("messageType", "FAILED_RECORDINGS_NOT_UPLOADED");
-                            jsonObjectMessageToBroadcast.put("messageToDisplay", "Files failed to upload to server.");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                        String messageToDisplay = "Files failed to upload to server.";
+                        MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_UPLOADED, MANAGE_RECORDINGS_ACTION, context);
                     }
 
                 }
@@ -113,14 +90,8 @@ class RecordAndUpload {
     private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
         recordIdlingResource.increment();
         isRecording = true;
-        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-        try {
-            jsonObjectMessageToBroadcast.put("messageType", "GETTING_READY_TO_RECORD");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Getting ready to record.");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        String messageToDisplay = "Getting ready to record.";
+        MessageHelper.broadcastMessage(messageToDisplay, GETTING_READY_TO_RECORD, MANAGE_RECORDINGS_ACTION, context);
         String timeOfRecordingForBirdCountMessage = "";
         String locationForBirdCountMessage = "";
         try {
@@ -265,14 +236,8 @@ class RecordAndUpload {
             // Start recording.
             try {
                 mRecorder.start();
-                jsonObjectMessageToBroadcast = new JSONObject();
-                try {
-                    jsonObjectMessageToBroadcast.put("messageType", "RECORDING_STARTED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has started");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                messageToDisplay = "Recording has started";
+                MessageHelper.broadcastMessage(messageToDisplay, RECORDING_STARTED, MANAGE_RECORDINGS_ACTION, context);
             } catch (Exception e) {
 
                 Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
@@ -326,18 +291,12 @@ class RecordAndUpload {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             if (isRecording) {
-                try {
-                    jsonObjectMessageToBroadcast = new JSONObject();
-                    jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-                    if (Util.isBirdCountRecording(typeOfRecording)) {
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.");
-                    } else {
-                        jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has finished");
-                    }
-                    Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-                } catch (JSONException e) {
-                    Log.e(TAG, e.getLocalizedMessage(), e);
+                if (Util.isBirdCountRecording(typeOfRecording)) {
+                    messageToDisplay = "Recording successful at " + timeOfRecordingForBirdCountMessage + " and GPS " + locationForBirdCountMessage + " . Use the 'Advanced - Recordings' screen to upload the recordings when you have an internet connection.";
+                } else {
+                    messageToDisplay = "Recording has finished";
                 }
+                MessageHelper.broadcastMessage(messageToDisplay, RECORDING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
             }
             recordIdlingResource.decrement();
             isRecording = false;
@@ -352,14 +311,8 @@ class RecordAndUpload {
         if (!file.delete()) {
             Log.w(TAG, "Failed to delete cancelled recording: " + file.getAbsolutePath());
         }
-        try {
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            jsonObjectMessageToBroadcast.put("messageType", "RECORDING_FINISHED");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording has been cancelled.");
-            Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
-        } catch (JSONException e) {
-            Log.e(TAG, e.getLocalizedMessage(), e);
-        }
+        String messageToDisplay = "Recording has been cancelled.";
+        MessageHelper.broadcastMessage(messageToDisplay, RECORDING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
     }
 
     private static void endRecording(MediaRecorder mRecorder, Context context) {
@@ -381,14 +334,8 @@ class RecordAndUpload {
     }
 
     public static boolean uploadFiles(Context context) {
-        JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-        try {
-            jsonObjectMessageToBroadcast.put("messageType", "PREPARING_TO_UPLOAD");
-            jsonObjectMessageToBroadcast.put("messageToDisplay", "Preparing to upload.");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+        String messageToDisplay = "Preparing to upload.";
+        MessageHelper.broadcastMessage(messageToDisplay, PREPARING_TO_UPLOAD, MANAGE_RECORDINGS_ACTION, context);
         boolean returnValue = true;
         try {
             File recordingsFolder = Util.getRecordingsFolder(context);
@@ -442,16 +389,7 @@ class RecordAndUpload {
 
                             if (fileSuccessfullyDeleted) {
                                 // Send a broadcast to inform GUI that the number of files on phone has changed
-                                JSONObject jsonObjectMessageToBroadcast2 = new JSONObject();
-                                try {
-                                    jsonObjectMessageToBroadcast2.put("messageType", "RECORDING_DELETED");
-                                    jsonObjectMessageToBroadcast2.put("messageToDisplay", "RECORDING_DELETED"); // not used, but stops error when broadcast read
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast2);
-
-
+                                MessageHelper.broadcastMessage("", RECORDING_DELETED, MANAGE_RECORDINGS_ACTION, context);
 
                                 // Delete the recording notes file if it exists.
                                 String recordingFileExtension = Util.getRecordingFileExtension();
@@ -495,16 +433,8 @@ class RecordAndUpload {
                 }
             }
             if (returnValue) {
-
-                jsonObjectMessageToBroadcast = new JSONObject();
-                try {
-                    jsonObjectMessageToBroadcast.put("messageType", "UPLOADING_FINISHED");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "Recordings have been successfully uploaded to the server.");
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                messageToDisplay = "Recordings have been successfully uploaded to the server.";
+                MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
             }
             return returnValue;
         } catch (Exception ex) {

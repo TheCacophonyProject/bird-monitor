@@ -1,12 +1,8 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +11,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import nz.org.cacophony.birdmonitor.*;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,19 +21,9 @@ public class MainActivity extends AppCompatActivity {
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
-    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
     private static long advancedButtonDownTime = 0;
     private static long advancedButtonUpTime = 0;
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(intentAction);
-    }
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -128,18 +115,11 @@ public class MainActivity extends AppCompatActivity {
         Util.createCreateAlarms(getApplicationContext());
 
 
-// Open the Setup wizard if the app does not yet have device name
+        // Open the Setup wizard if the app does not yet have device name
         if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
     @Override
@@ -155,24 +135,6 @@ public class MainActivity extends AppCompatActivity {
             ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.disable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
-        // listens for events broadcast from ?
-        IntentFilter iff = new IntentFilter("event");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
-
-
-    }
-
-
-    @SuppressWarnings("EmptyMethod")
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @SuppressWarnings("EmptyMethod")
-    @Override
-    protected void onRestart() {
-        super.onRestart();
     }
 
     @Override
@@ -241,25 +203,5 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
-
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
-
-                }
-
-            } catch (Exception ex) {
-
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-            }
-        }
-    };
-
 
 }

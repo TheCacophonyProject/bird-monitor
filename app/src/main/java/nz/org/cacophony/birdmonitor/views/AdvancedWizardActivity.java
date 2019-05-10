@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -7,6 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.SectionsStatePagerAdapter;
+import nz.org.cacophony.birdmonitor.Util;
 
 public class AdvancedWizardActivity extends AppCompatActivity {
 
