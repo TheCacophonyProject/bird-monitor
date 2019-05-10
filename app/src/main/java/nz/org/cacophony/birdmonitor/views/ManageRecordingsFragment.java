@@ -1,17 +1,15 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -20,11 +18,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import org.json.JSONObject;
 
 import java.io.File;
 
 public class ManageRecordingsFragment extends Fragment {
+
+    public enum MessageType {
+        RECORDING_DISABLED,
+        NO_PERMISSION_TO_RECORD,
+        UPLOADING_FAILED,
+        UPLOADING_FINISHED,
+        GETTING_READY_TO_RECORD,
+        FAILED_RECORDINGS_NOT_UPLOADED,
+        RECORD_AND_UPLOAD_FAILED,
+        UPLOADING_FAILED_NOT_REGISTERED,
+        RECORDING_STARTED,
+        RECORDING_FINISHED,
+        ALREADY_RECORDING,
+        SUCCESSFULLY_DELETED_RECORDINGS,
+        FAILED_RECORDINGS_NOT_DELETED,
+        UPLOADING_RECORDINGS,
+        SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON,
+        FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON,
+        PREPARING_TO_UPLOAD,
+        CONNECTED_TO_SERVER,
+        UPLOADING_STOPPED,
+        RECORDING_DELETED
+    }
+
+    public static final Action MANAGE_RECORDINGS_ACTION = new Action("MANAGE_RECORDINGS");
 
     private static final String TAG = "ManageRecordFragment";
 
@@ -35,13 +60,14 @@ public class ManageRecordingsFragment extends Fragment {
     private PermissionsHelper permissionsHelper;
     private Button btnCancel;
 
+    private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage_recordings, container, false);
 
-        IntentFilter iff = new IntentFilter("MANAGE_RECORDINGS");
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
+        MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, getActivity());
 
         setUserVisibleHint(false);
         tvMessages = view.findViewById(R.id.tvMessagesManageRecordings);
@@ -71,9 +97,15 @@ public class ManageRecordingsFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
+    public void onPause() {
+        super.onPause();
+        MessageHelper.unregisterMessageHandler(messageHandler, getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, getActivity());
     }
 
     @Override
@@ -186,56 +218,52 @@ public class ManageRecordingsFragment extends Fragment {
         Util.deleteAllRecordingsOnPhoneUsingDeleteButton(getActivity().getApplicationContext());
     }
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
+    private void onMessage(Intent intent) {
+        try {
+            if (getView() == null) {
+                return;
+            }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                if (getView() == null) {
-                    return;
-                }
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            if (jsonStringMessage != null) {
 
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.optString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
 
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-                    String messageToDisplay = joMessage.getString("messageToDisplay");
+                // Need to handle broadcasts
 
-                    // Need to handle broadcasts
-
-                    if (messageType != null) {
-                        if (messageType.equalsIgnoreCase("SUCCESSFULLY_DELETED_RECORDINGS")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("RECORDING_DELETED")) {
-                            displayOrHideGUIObjects();
-                        } else if (messageType.equalsIgnoreCase("FAILED_RECORDINGS_NOT_DELETED")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("UPLOADING_RECORDINGS")) {
-                            btnCancel.setEnabled(true);
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("UPLOADING_STOPPED")) {
-                            btnCancel.setEnabled(false);
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("PREPARING_TO_UPLOAD")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("CONNECTED_TO_SERVER")) {
-                            tvMessages.setText(messageToDisplay);
-                        } else if (messageType.equalsIgnoreCase("SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON")) {
-                            btnCancel.setEnabled(false);
-                            tvMessages.setText(messageToDisplay);
+                    if (!messageTypeStr.isEmpty()) {
+                        MessageType messageType = MessageType.valueOf(messageTypeStr);
+                        switch (messageType) {
+                            case FAILED_RECORDINGS_NOT_DELETED:
+                            case SUCCESSFULLY_DELETED_RECORDINGS:
+                            case FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON:
+                            case PREPARING_TO_UPLOAD:
+                            case CONNECTED_TO_SERVER:
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case UPLOADING_RECORDINGS:
+                                btnCancel.setEnabled(true);
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case UPLOADING_STOPPED:
+                            case SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON:
+                                btnCancel.setEnabled(false);
+                                tvMessages.setText(messageToDisplay);
+                                break;
+                            case RECORDING_DELETED:
+                                displayOrHideGUIObjects();
+                                break;
                         }
-
                         displayOrHideGUIObjects();
                     }
                 }
 
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-            }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
-    };
+    }
 
 
     private boolean haveAllPermissions(Context context) {

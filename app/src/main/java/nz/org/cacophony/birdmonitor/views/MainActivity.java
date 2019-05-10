@@ -1,12 +1,8 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,28 +11,19 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import nz.org.cacophony.birdmonitor.*;
 
 
-public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class MainActivity extends AppCompatActivity {
     // Register with idling counter
     // https://developer.android.com/training/testing/espresso/idling-resource.html
     // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
-    private static final String intentAction = "nz.org.cacophony.cacophonometerlite.MainActivity";
 
     private static long advancedButtonDownTime = 0;
     private static long advancedButtonUpTime = 0;
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(intentAction);
-    }
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -76,16 +63,16 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
             prefs.setAudioSource("MIC");
-            prefs.setIsDisabled(false);
+            prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
-            prefs.setSettingsForTestServerEnabled(false);
+            prefs.setVeryAdvancedSettingsEnabled(false);
 
             prefs.setIsFirstTimeFalse();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
 
-        if (prefs.getSettingsForTestServerEnabled()) {
+        if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));
         }
 
@@ -100,13 +87,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     long timeBetweenDownAndUp = advancedButtonUpTime - advancedButtonDownTime;
 
                     if (timeBetweenDownAndUp > 5000) {
-                        if (prefs.getSettingsForTestServerEnabled()) {
+                        if (prefs.getVeryAdvancedSettingsEnabled()) {
                             advancedButton.setText(getResources().getString(R.string.advanced));
-                            prefs.setSettingsForTestServerEnabled(false);
+                            prefs.setVeryAdvancedSettingsEnabled(false);
 
                         } else {
                             advancedButton.setText(getResources().getString(R.string.very_advanced));
-                            prefs.setSettingsForTestServerEnabled(true);
+                            prefs.setVeryAdvancedSettingsEnabled(true);
 
                         }
 
@@ -128,18 +115,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Util.createCreateAlarms(getApplicationContext());
 
 
-// Open the Setup wizard if the app does not yet have device name
+        // Open the Setup wizard if the app does not yet have device name
         if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
     @Override
@@ -148,31 +128,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Prefs prefs = new Prefs(this.getApplicationContext());
 
 
-        if (prefs.getIsDisabled()) {
+        if (prefs.getAutomaticRecordingsDisabled()) {
             ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.enable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         } else {
             ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.disable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
-        // listens for events broadcast from ?
-        IntentFilter iff = new IntentFilter("event");
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, iff);
-
-
-    }
-
-
-    @SuppressWarnings("EmptyMethod")
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @SuppressWarnings("EmptyMethod")
-    @Override
-    protected void onRestart() {
-        super.onRestart();
     }
 
     @Override
@@ -235,31 +197,11 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, DisableActivity.class);
+            Intent intent = new Intent(this, DisableAutomaticRecordingActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
-
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        // broadcast notification coming from ??
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String message = intent.getStringExtra("message");
-                if (message != null) {
-
-                }
-
-            } catch (Exception ex) {
-
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-            }
-        }
-    };
-
 
 }

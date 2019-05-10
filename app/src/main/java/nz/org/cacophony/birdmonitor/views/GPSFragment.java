@@ -1,17 +1,15 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -20,13 +18,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
+import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class GPSFragment extends Fragment {
+
+    public enum GpsMessageType {
+        GPS_UPDATE_SUCCESS,
+        GPS_UPDATE_FAILED
+    }
+
+    public enum RootMessageType {
+        ERROR_DO_NOT_HAVE_ROOT
+    }
+
+    public static final Action GPS_ACTION = new Action("GPS");
+
+    public static final Action ROOT_ACTION = new Action("ROOT");
 
     private static final String TAG = "GPSFragment";
 
@@ -36,6 +48,9 @@ public class GPSFragment extends Fragment {
     private TextView longitudeDisplay;
 
     private PermissionsHelper permissionsHelper;
+
+    private final BroadcastReceiver rootMessageHandler = MessageHelper.createReceiver(this::onRootMessage);
+    private final BroadcastReceiver gpsMessageHandler = MessageHelper.createReceiver(this::onGpsMessage);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,21 +76,17 @@ public class GPSFragment extends Fragment {
             return;
         }
         if (visible) {
-
-            IntentFilter iff = new IntentFilter("GPS");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNotice, iff);
-
-            IntentFilter iffRoot = new IntentFilter("ROOT");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(onNoticeRoot, iffRoot);
+            MessageHelper.registerMessageHandler(ROOT_ACTION, rootMessageHandler, getActivity());
+            MessageHelper.registerMessageHandler(GPS_ACTION, gpsMessageHandler, getActivity());
 
             checkPermissions();
 
-            updateGpsDisplay(getActivity().getApplicationContext());
+            updateGpsDisplay();
 
         } else {
 
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNotice);
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(onNoticeRoot);
+            MessageHelper.unregisterMessageHandler(rootMessageHandler, getActivity());
+            MessageHelper.unregisterMessageHandler(gpsMessageHandler, getActivity());
         }
     }
 
@@ -97,75 +108,62 @@ public class GPSFragment extends Fragment {
         Util.updateGPSLocation(getActivity().getApplicationContext());
     }
 
-    private final BroadcastReceiver onNotice = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-                if (getView() == null) {
-                    return;
-                }
-
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
-
-                    JSONObject joMessage = new JSONObject(jsonStringMessage);
-                    String messageType = joMessage.getString("messageType");
-
-                    if (messageType != null) {
-                        if (messageType.equalsIgnoreCase("GPS_UPDATE_SUCCESS")) {
-                            updateGpsDisplay(context);
-                        } else {
-                            String messageToDisplay = joMessage.getString("messageToDisplay");
-
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
-
-                            tvSearching.setVisibility(View.GONE);
-                        }
-                    }
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
+    private void onGpsMessage(Intent intent) {
+        try {
+            if (getView() == null) {
+                return;
             }
-        }
-    };
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
 
+            if (jsonStringMessage != null) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
 
-    private final BroadcastReceiver onNoticeRoot = new BroadcastReceiver() {
-        //https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                if (getView() == null) {
-                    return;
+                GpsMessageType messageType = GpsMessageType.valueOf(messageTypeStr);
+                switch (messageType) {
+                    case GPS_UPDATE_SUCCESS:
+                        updateGpsDisplay();
+                        break;
+                    case GPS_UPDATE_FAILED:
+                        ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
+                        tvSearching.setVisibility(View.GONE);
+                        break;
                 }
-
-                String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
-                if (jsonStringMessage != null) {
-                    String messageType = intent.getStringExtra("messageType");
-                    if (messageType != null) {
-                        if (messageType.equalsIgnoreCase("error_do_not_have_root")) {
-                            ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", "It looks like you have incorrectly indicated in settings that this phone has been rooted");
-                        }
-                    }
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
+    }
 
-    };
+    private void onRootMessage(Intent intent) {
+        try {
+            if (getView() == null) {
+                return;
+            }
 
+            String jsonStringMessage = intent.getStringExtra("jsonStringMessage");
+            if (jsonStringMessage != null) {
+                JSONObject joMessage = new JSONObject(jsonStringMessage);
+                String messageTypeStr = joMessage.getString("messageType");
+                String messageToDisplay = joMessage.getString("messageToDisplay");
+                RootMessageType messageType = RootMessageType.valueOf(messageTypeStr);
+                if (messageType == RootMessageType.ERROR_DO_NOT_HAVE_ROOT) {
+                    messageToDisplay = "It looks like you have incorrectly indicated in settings that this phone has been rooted";
+                    ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Oops", messageToDisplay);
+                }
+            }
 
-    private void updateGpsDisplay(Context context) {
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    private void updateGpsDisplay() {
         try {
 
-            Prefs prefs = new Prefs(context);
+            Prefs prefs = new Prefs(getActivity());
             tvMessages.setText("");
             latitudeDisplay = getView().findViewById(R.id.tvLatitude);
             longitudeDisplay = getView().findViewById(R.id.tvLongitude);

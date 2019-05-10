@@ -1,4 +1,4 @@
-package nz.org.cacophony.birdmonitor;
+package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
 
 public class RootedFragment extends Fragment {
 
@@ -62,7 +64,7 @@ public class RootedFragment extends Fragment {
             swRooted.setText("NO");
         }
 
-        if (prefs.getSettingsForTestServerEnabled()) {
+        if (prefs.getVeryAdvancedSettingsEnabled()) {
             btnFinished.setVisibility(View.INVISIBLE);
         } else {
             btnFinished.setVisibility(View.VISIBLE);

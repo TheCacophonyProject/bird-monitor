@@ -63,7 +63,7 @@
 
     <string name="text_1_welcome_fragment">\'Swipe\' the screen (left or right) to move through the setup wizard. You can exit the wizard at any stage by pressing your phone\'s back button.\n\nEach screen has extra information available from the help icon (top right).</string>
 
-    <string name="turn_off_the_bird_monitor">Turn off the Bird Monitor - No more recordings will be made (even after a restart).</string>
+    <string name="turn_off_the_bird_monitor">Turn off the Bird Monitor - No more automatic recordings will be made (even after a restart).</string>
     <string name="choose_the_internet_connection_mode">Choose the internet connection mode.  If you are not sure, read the help or just choose \'Normal\'.  Swipe to next screen when ready.</string>
 
     <string name="choose_the_audio_source_setting">Choose MediaRecorder.AudioSource setting</string>

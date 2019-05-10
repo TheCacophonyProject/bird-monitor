@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.NO_PERMISSION_TO_RECORD;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_DISABLED;
 
 /**
  * This class receives the intents that indicate that a recording is required to be made.  Before a
@@ -43,15 +43,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             Util.createTheNextSingleStandardAlarm(context);
             DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
 
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "alarms_updated");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "alarms_updated");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Util.broadcastAMessage(context, "ALARMS", jsonObjectMessageToBroadcast);
-
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
@@ -59,7 +50,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 return;
             }
             final String alarmIntentType = bundle.getString("type");
-            final String duration;
 
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
@@ -93,11 +83,9 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             wakeLock.acquire(wakeLockDuration);
 
 
-            if (prefs.getIsDisabled() && !recordButtonWasPressed) {
-                jsonObjectMessageToBroadcast = new JSONObject();
-                jsonObjectMessageToBroadcast.put("messageType", "RECORDING_DISABLED");
-                jsonObjectMessageToBroadcast.put("messageToDisplay", "Recording is currently disabled on this phone");
-                Util.broadcastAMessage(context, "RECORDING", jsonObjectMessageToBroadcast);
+            if (prefs.getAutomaticRecordingsDisabled() && !recordButtonWasPressed) {
+                String messageToDisplay = "Recording is currently disabled on this phone";
+                MessageHelper.broadcastMessage(messageToDisplay, RECORDING_DISABLED, MANAGE_RECORDINGS_ACTION, context);
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
             }
 
@@ -105,15 +93,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 Log.e(TAG, "Don't have proper permissions to record");
 
                 // Need to enable record button
-
-                jsonObjectMessageToBroadcast = new JSONObject();
-                try {
-                    jsonObjectMessageToBroadcast.put("messageType", "no_permission_to_record");
-                    jsonObjectMessageToBroadcast.put("messageToDisplay", "no_permission_to_record");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Util.broadcastAMessage(context, "MANAGE_RECORDINGS", jsonObjectMessageToBroadcast);
+                String messageToDisplay = "No permission to record";
+                MessageHelper.broadcastMessage(messageToDisplay, NO_PERMISSION_TO_RECORD, MANAGE_RECORDINGS_ACTION, context);
                 return;
             }
 

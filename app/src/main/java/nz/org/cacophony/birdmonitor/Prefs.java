@@ -9,11 +9,12 @@ import android.util.Log;
  * Expanded to keep all settings in one place
  */
 
-class Prefs {
+public class Prefs {
 
     private static final String TAG = Prefs.class.getName();
-    private final Context context;
-    private static final String PREFS_NAME = "CacophonyPrefs";
+
+    static final String PREFS_NAME = "CacophonyPrefs";
+
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
@@ -104,14 +105,15 @@ class Prefs {
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
     private static final String AUDIO_SOURCE_KEY = "AUDIO_SOURCE";
     private static final String BIRD_COUNT_DURATION_KEY = "BIRD_COUNT_DURATION";
-    private static final String DISABLED_KEY = "DISABLED";
+    private static final String AUTOMATIC_RECORDINGS_DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
-    private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
+    private static final String VERY_ADVANCED_SETTINGS_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
     private static final String GROUPS_KEY = "GROUPS";
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
     private static final String LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
+    private final Context context;
 
     public Prefs(Context context) {
         this.context = context;
@@ -205,7 +207,7 @@ class Prefs {
         preferences.edit().putBoolean(key, val).apply();
     }
 
-    String getBrowseRecordingsServerUrl() {
+    public String getBrowseRecordingsServerUrl() {
         if (getBoolean(USE_TEST_SERVER_KEY)) {
             return TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS;
         } else {
@@ -213,7 +215,7 @@ class Prefs {
         }
     }
 
-    String getServerUrl() {
+    public String getServerUrl() {
         if (getBoolean(USE_TEST_SERVER_KEY)) {
             return SCHEME + "://" + TEST_SERVER_HOST;
         } else {
@@ -221,11 +223,11 @@ class Prefs {
         }
     }
 
-    String getServerScheme() {
+    public String getServerScheme() {
         return SCHEME;
     }
 
-    String getServerHost() {
+    public String getServerHost() {
         if (getBoolean(USE_TEST_SERVER_KEY)) {
             return TEST_SERVER_HOST;
         } else {
@@ -233,12 +235,12 @@ class Prefs {
         }
     }
 
-    String getDevicePassword() {
+    public String getDevicePassword() {
         return getString(DEVICE_PASSWORD_KEY);
     }
 
 
-    void setDevicePassword(String devicePassword) {
+    public void setDevicePassword(String devicePassword) {
         setString(DEVICE_PASSWORD_KEY, devicePassword);
     }
 
@@ -246,133 +248,133 @@ class Prefs {
         return getString(DEVICE_NAME_KEY);
     }
 
-    String getUsernamePassword() {
+    public String getUsernamePassword() {
         return getString(USERNAME_PASSWORD_KEY);
     }
 
-    void setUsernamePassword(String usernamePassword) {
+    public void setUsernamePassword(String usernamePassword) {
         setString(USERNAME_PASSWORD_KEY, usernamePassword);
     }
 
-    void setUsername(String username) {
+    public void setUsername(String username) {
         setString(USERNAME_KEY, username);
     }
 
-    String getUsername() {
+    public String getUsername() {
         return getString(USERNAME_KEY);
     }
 
-    String getEmailAddress() {
+    public String getEmailAddress() {
         return getString(EMAIL_ADDRESS_KEY);
     }
 
-    void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
+    public void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
         setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
     }
 
 
-    String getUserNameOrEmailAddress() {
+    public String getUserNameOrEmailAddress() {
         return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
     }
 
-    void setEmailAddress(String emailAddress) {
+    public void setEmailAddress(String emailAddress) {
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
 
-    void setDeviceName(String name) {
+    public void setDeviceName(String name) {
         setString(DEVICE_NAME_KEY, name);
     }
 
-    void setDeviceToken(String deviceToken) {
+    public void setDeviceToken(String deviceToken) {
         setString(DEVICE_TOKEN_KEY, deviceToken);
     }
 
-    void setUserToken(String userToken) {
+    public void setUserToken(String userToken) {
         setString(USER_TOKEN_KEY, userToken);
     }
 
-    String getUserToken() {
+    public String getUserToken() {
         return getString(USER_TOKEN_KEY);
     }
 
 
-    void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
+    public void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
         setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
     }
 
-    String getDawnDuskAlarms() {
+    public String getDawnDuskAlarms() {
         return getString(DAWN_DUSK_ALARMS_KEY);
     }
 
-    void saveDawnDuskAlarms(String dawnDuskAlarms) {
+    public void saveDawnDuskAlarms(String dawnDuskAlarms) {
         setString(DAWN_DUSK_ALARMS_KEY, dawnDuskAlarms);
     }
 
-    void deleteDawnDuskAlarmList() {
+    public void deleteDawnDuskAlarmList() {
         setString(DAWN_DUSK_ALARMS_KEY, null);
     }
 
-    String getAlarmString() {
+    public String getAlarmString() {
         return getString(DAWN_DUSK_ALARMS_KEY);
     }
 
-    long getNextSingleStandardAlarm() {
+    public long getNextSingleStandardAlarm() {
         return getLong(NEXT_ALARM_KEY);
     }
 
-    String getToken() {
+    public String getToken() {
         return getString(DEVICE_TOKEN_KEY);
     }
 
-    long getTokenLastRefreshed() {
+    public long getTokenLastRefreshed() {
         return getLong(DEVICE_TOKEN_LAST_REFRESHED_KEY);
     }
 
-    void setTokenLastRefreshed(long timeTokenLastRefreshed) {
+    public void setTokenLastRefreshed(long timeTokenLastRefreshed) {
         setLong(DEVICE_TOKEN_LAST_REFRESHED_KEY, timeTokenLastRefreshed);
     }
 
-    void setUserTokenLastRefreshed(long timeUserTokenLastRefreshed) {
+    public void setUserTokenLastRefreshed(long timeUserTokenLastRefreshed) {
         setLong(USER_TOKEN_LAST_REFRESHED_KEY, timeUserTokenLastRefreshed);
     }
 
-    String getGroupName() {
+    public String getGroupName() {
         return getString(GROUP_NAME_KEY);
     }
 
-    void setGroupName(String name) {
+    public void setGroupName(String name) {
         setString(GROUP_NAME_KEY, name);
     }
 
-    double getLatitude() {
+    public double getLatitude() {
         return getDouble(LATITUDE_KEY);
     }
 
-    void setLatitude(double val) {
+    public void setLatitude(double val) {
         setDouble(LATITUDE_KEY, val);
     }
 
-    double getLongitude() {
+    public double getLongitude() {
         return getDouble(LONGITUDE_KEY);
     }
 
-    void setLongitude(double val) {
+    public void setLongitude(double val) {
         setDouble(LONGITUDE_KEY, val);
     }
 
-    void setDeviceId(String deviceID) {
+    public void setDeviceId(String deviceID) {
         setString(DEVICE_ID, deviceID);
     }
 
-    double getRecordingDuration() {
+    public double getRecordingDuration() {
         return getDouble(RECORDING_DURATION_SECONDS_KEY);
     }
 
-    void setRecordingDurationSeconds() {
+    public void setRecordingDurationSeconds() {
         setDouble(RECORDING_DURATION_SECONDS_KEY, RECORDING_DURATION_SECONDS);
     }
 
-    double getAdjustedTimeBetweenRecordingsSeconds() {
+    public double getAdjustedTimeBetweenRecordingsSeconds() {
         if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)) {
             return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
         } else if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)) {
@@ -382,27 +384,27 @@ class Prefs {
         }
     }
 
-    void setNormalTimeBetweenRecordingsSeconds() {
+    public void setNormalTimeBetweenRecordingsSeconds() {
         setDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY, NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS);
     }
 
-    void setTimeBetweenVeryFrequentRecordingsSeconds() {
+    public void setTimeBetweenVeryFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS);
     }
 
-    double getTimeBetweenVeryFrequentRecordingsSeconds() {
+    public double getTimeBetweenVeryFrequentRecordingsSeconds() {
         return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
-    void setTimeBetweenGPSLocationUpdatesSeconds() {
+    public void setTimeBetweenGPSLocationUpdatesSeconds() {
         setDouble(TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY, TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS);
     }
 
-    void setTimeBetweenFrequentRecordingsSeconds() {
+    public void setTimeBetweenFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS);
     }
 
-    double getTimeBetweenUploadsSeconds() {
+    public double getTimeBetweenUploadsSeconds() {
         if (getBoolean(USE_FREQUENT_UPLOADS_KEY)) {
             return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
         } else {
@@ -410,15 +412,15 @@ class Prefs {
         }
     }
 
-    void setTimeBetweenUploadsSeconds() {
+    public void setTimeBetweenUploadsSeconds() {
         setDouble(TIME_BETWEEN_UPLOADS_SECONDS_KEY, TIME_BETWEEN_UPLOADS_SECONDS);
     }
 
-    void setTimeBetweenFrequentUploadsSeconds() {
+    public void setTimeBetweenFrequentUploadsSeconds() {
         setDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS);
     }
 
-    double getBatteryLevelCutoffRepeatingRecordings() {
+    public double getBatteryLevelCutoffRepeatingRecordings() {
         if (getBoolean(IGNORE_LOW_BATTERY_KEY)) {
             return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY);
         } else {
@@ -426,7 +428,7 @@ class Prefs {
         }
     }
 
-    double getBatteryLevelCutoffDawnDuskRecordings() {
+    public double getBatteryLevelCutoffDawnDuskRecordings() {
         if (getBoolean(IGNORE_LOW_BATTERY_KEY)) {
             return getDouble(IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY);
         } else {
@@ -434,179 +436,179 @@ class Prefs {
         }
     }
 
-    void setBatteryLevelCutoffRepeatingRecordings() {
+    public void setBatteryLevelCutoffRepeatingRecordings() {
         setDouble(BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY, BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS);
     }
 
-    void setBatteryLevelCutoffDawnDuskRecordings() {
+    public void setBatteryLevelCutoffDawnDuskRecordings() {
         setDouble(BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY, BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS);
     }
 
-    double getDawnDuskOffsetMinutes() {
+    public double getDawnDuskOffsetMinutes() {
         return getDouble(DAWN_DUSK_OFFSET_MINUTES_KEY);
     }
 
-    void setDawnDuskOffsetMinutes() {
+    public void setDawnDuskOffsetMinutes() {
         setDouble(DAWN_DUSK_OFFSET_MINUTES_KEY, DAWN_DUSK_OFFSET_MINUTES);
     }
 
-    double getDawnDuskIncrementMinutes() {
+    public double getDawnDuskIncrementMinutes() {
         return getDouble(DAWN_DUSK_INCREMENT_MINUTES_KEY);
     }
 
-    void setDawnDuskIncrementMinutes() {
+    public void setDawnDuskIncrementMinutes() {
         setDouble(DAWN_DUSK_INCREMENT_MINUTES_KEY, DAWN_DUSK_INCREMENT_MINUTES);
     }
 
-    double getLengthOfTwilightSeconds() {
+    public double getLengthOfTwilightSeconds() {
         return getDouble(LENGTH_OF_TWILIGHT_KEY);
     }
 
-    void setLengthOfTwilightSeconds() {
+    public void setLengthOfTwilightSeconds() {
         setDouble(LENGTH_OF_TWILIGHT_KEY, LENGTH_OF_TWILIGHT_SECONDS);
     }
 
-    boolean getHasRootAccess() {
+    public boolean getHasRootAccess() {
         return getBoolean(HAS_ROOT_ACCESS_KEY);
     }
 
-    void setHasRootAccess(boolean hasRootAccess) {
+    public void setHasRootAccess(boolean hasRootAccess) {
         setBoolean(HAS_ROOT_ACCESS_KEY, hasRootAccess);
     }
 
-    boolean getUseShortRecordings() {
+    public boolean getUseShortRecordings() {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
-    boolean getPeriodicallyUpdateGPS() {
+    public boolean getPeriodicallyUpdateGPS() {
         return getBoolean(PERIODICALLY_UPDATE_GPS_KEY);
     }
 
-    boolean getUseTestServer() {
+    public boolean getUseTestServer() {
         return getBoolean(USE_TEST_SERVER_KEY);
     }
 
-    boolean getUseVeryFrequentRecordings() {
+    public boolean getUseVeryFrequentRecordings() {
         return getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY);
     }
 
-    boolean getUseFrequentRecordings() {
+    public boolean getUseFrequentRecordings() {
         return getBoolean(USE_FREQUENT_RECORDINGS_KEY);
     }
 
-    boolean getUseFrequentUploads() {
+    public boolean getUseFrequentUploads() {
         return getBoolean(USE_FREQUENT_UPLOADS_KEY);
     }
 
-    boolean getIgnoreLowBattery() {
+    public boolean getIgnoreLowBattery() {
         return getBoolean(IGNORE_LOW_BATTERY_KEY);
     }
 
-    boolean getOnLineMode() {
+    public boolean getOnLineMode() {
         return getBoolean(ONLINE_MODE_KEY);
     }
 
-    boolean getPlayWarningSound() {
+    public boolean getPlayWarningSound() {
         return getBoolean(PLAY_WARNING_SOUND_KEY);
     }
 
-    void setUseShortRecordings(boolean useShortRecordings) {
+    public void setUseShortRecordings(boolean useShortRecordings) {
         setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
     }
 
-    void setPeriodicallyUpdateGPS(boolean PeriodicallyUpdateGPS) {
+    public void setPeriodicallyUpdateGPS(boolean PeriodicallyUpdateGPS) {
         setBoolean(PERIODICALLY_UPDATE_GPS_KEY, PeriodicallyUpdateGPS);
     }
 
-    void setUseTestServer(boolean useTestServer) {
+    public void setUseTestServer(boolean useTestServer) {
         setBoolean(USE_TEST_SERVER_KEY, useTestServer);
     }
 
-    void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
+    public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
-    void setUseFrequentRecordings(boolean useFrequentRecordings) {
+    public void setUseFrequentRecordings(boolean useFrequentRecordings) {
         setBoolean(USE_FREQUENT_RECORDINGS_KEY, useFrequentRecordings);
     }
 
-    void setUseFrequentUploads(boolean useFrequentUploads) {
+    public void setUseFrequentUploads(boolean useFrequentUploads) {
         setBoolean(USE_FREQUENT_UPLOADS_KEY, useFrequentUploads);
     }
 
-    void setIgnoreLowBattery(boolean ignoreLowBattery) {
+    public void setIgnoreLowBattery(boolean ignoreLowBattery) {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-    void setPlayWarningSound(boolean playWarningSound) {
+    public void setPlayWarningSound(boolean playWarningSound) {
         setBoolean(PLAY_WARNING_SOUND_KEY, playWarningSound);
     }
 
-    void setBatteryLevel(double batteryLevel) {
+    public void setBatteryLevel(double batteryLevel) {
         setDouble(BATTERY_LEVEL_KEY, batteryLevel);
     }
 
-    double getMaximumBatteryLevel() {
+    public double getMaximumBatteryLevel() {
         return getDouble(MAXIMUM_BATTERY_LEVEL_KEY);
     }
 
-    void setMaximumBatteryLevel(double batteryLevel) {
+    public void setMaximumBatteryLevel(double batteryLevel) {
         setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
     }
 
-    void setDateTimeLastUpload(long dateTimeLastUpload) {
+    public void setDateTimeLastUpload(long dateTimeLastUpload) {
         setLong(DATE_TIME_LAST_UPLOAD_KEY, dateTimeLastUpload);
     }
 
-    long getDateTimeLastUpload() {
+    public long getDateTimeLastUpload() {
         return getLong(DATE_TIME_LAST_UPLOAD_KEY);
     }
 
-    long getDateTimeLastCalculatedDawnDusk() {
+    public long getDateTimeLastCalculatedDawnDusk() {
         return getLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY);
     }
 
-    void setDateTimeLastCalculatedDawnDusk(long dateTimeLastCalculatedDawnDusk) {
+    public void setDateTimeLastCalculatedDawnDusk(long dateTimeLastCalculatedDawnDusk) {
         setLong(DATE_TIME_LAST_CALCULATED_DAWN_DUSK_KEY, dateTimeLastCalculatedDawnDusk);
     }
 
-    void setDateTimeLastRepeatingAlarmFiredToZero() {
+    public void setDateTimeLastRepeatingAlarmFiredToZero() {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, (long) 0);
     }
 
-    void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer) {
+    public void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer) {
         setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
     }
 
-    long getLastRecordIdReturnedFromServer() {
+    public long getLastRecordIdReturnedFromServer() {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
     }
 
-    boolean getIsFirstTime() {
+    public boolean getIsFirstTime() {
         return getBooleanDefaultTrue();
     }
 
-    void setIsFirstTimeFalse() {
+    public void setIsFirstTimeFalse() {
         setBoolean(FIRST_TIME_KEY, false);
     }
 
-    long getTimeThatLastRecordingHappened() {
+    public long getTimeThatLastRecordingHappened() {
         return getLong(LAST_RECORDING_TIME_KEY);
     }
 
-    void setTimeThatLastRecordingHappened(long lastRecordingTime) {
+    public void setTimeThatLastRecordingHappened(long lastRecordingTime) {
         setLong(LAST_RECORDING_TIME_KEY, lastRecordingTime);
     }
 
-    String getInternetConnectionMode() {
+    public String getInternetConnectionMode() {
         return getString(INTERNET_CONNECTION_MODE_KEY);
     }
 
-    void setInternetConnectionMode(String internetConnectionMode) {
+    public void setInternetConnectionMode(String internetConnectionMode) {
         setString(INTERNET_CONNECTION_MODE_KEY, internetConnectionMode);
     }
 
-    String getAudioSource() {
+    public String getAudioSource() {
         String audioSource = getString(AUDIO_SOURCE_KEY);
         if (audioSource == null) {
             audioSource = "MIC";
@@ -614,11 +616,11 @@ class Prefs {
         return audioSource;
     }
 
-    void setAudioSource(String audioSource) {
+    public void setAudioSource(String audioSource) {
         setString(AUDIO_SOURCE_KEY, audioSource);
     }
 
-    String getBirdCountDuration() {
+    public String getBirdCountDuration() {
         String birdCountDuration = getString(BIRD_COUNT_DURATION_KEY);
         if (birdCountDuration == null) {
             birdCountDuration = "fiveMinute";
@@ -626,67 +628,67 @@ class Prefs {
         return birdCountDuration;
     }
 
-    void setBirdCountDuration(String birdCountDuration) {
+    public void setBirdCountDuration(String birdCountDuration) {
         setString(BIRD_COUNT_DURATION_KEY, birdCountDuration);
     }
 
-    void setIsDisabled(boolean isDisabled) {
-        setBoolean(DISABLED_KEY, isDisabled);
+    public void setAutomaticRecordingsDisabled(boolean isDisabled) {
+        setBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY, isDisabled);
     }
 
-    boolean getIsDisabled() {
-        return getBoolean(DISABLED_KEY);
+    public boolean getAutomaticRecordingsDisabled() {
+        return getBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY);
     }
 
-    void setIsDisableDawnDuskRecordings(boolean isDisabled) {
+    public void setIsDisableDawnDuskRecordings(boolean isDisabled) {
         setBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY, isDisabled);
     }
 
-    boolean getIsDisableDawnDuskRecordings() {
+    public boolean getIsDisableDawnDuskRecordings() {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
     }
 
-    void setSettingsForTestServerEnabled(boolean isEnabled) {
-        setBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY, isEnabled);
+    public void setVeryAdvancedSettingsEnabled(boolean isEnabled) {
+        setBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY, isEnabled);
     }
 
-    boolean getSettingsForTestServerEnabled() {
-        return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
+    public boolean getVeryAdvancedSettingsEnabled() {
+        return getBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY);
     }
 
-    void setGroups(String groups) {
+    public void setGroups(String groups) {
         setString(GROUPS_KEY, groups);
     }
 
-    String getGroups() {
+    public String getGroups() {
         return getString(GROUPS_KEY);
     }
 
-    void setUserSignedIn(boolean userSignedIn) {
+    public void setUserSignedIn(boolean userSignedIn) {
         setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
     }
 
-    boolean getUserSignedIn() {
+    public boolean getUserSignedIn() {
         return getBoolean(USER_SIGNED_IN_KEY);
     }
 
-    void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
+    public void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
         setString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY, lastDeviceNameUsedForTesting);
     }
 
-    boolean getCancelRecording() {
+    public boolean getCancelRecording() {
         return getBoolean(CANCEL_RECORDING_ACCESS_KEY);
     }
 
-    void setCancelRecording(boolean cancelRecording) {
+    public void setCancelRecording(boolean cancelRecording) {
         setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
     }
 
-    void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName){
+    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName){
         setString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY, latestBirdCountRecordingFileName);
     }
 
-    String getLatestBirdCountRecordingFileNameNoExtension(){
+    public String getLatestBirdCountRecordingFileNameNoExtension(){
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
 }

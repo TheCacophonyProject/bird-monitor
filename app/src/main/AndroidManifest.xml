@@ -46,7 +46,7 @@
         <service android:name=".MainService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".views.MainActivity"
             android:label="@string/app_icon_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -56,28 +56,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VitalsActivity"
+            android:name=".views.VitalsActivity"
             android:label="@string/activity_or_fragment_title_vitals"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".BirdCountActivity"
+            android:name=".views.BirdCountActivity"
             android:label="@string/activity_or_fragment_title_bird_count"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".GPSActivity"
+        <activity android:name=".views.GPSActivity"
             android:label="@string/activity_or_fragment_title_gps_location"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DisableActivity"
+            android:name=".views.DisableAutomaticRecordingActivity"
             android:label="@string/activity_or_fragment_title_turn_off_or_on"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SetupWizardActivity"
+            android:name=".views.SetupWizardActivity"
             android:label="@string/activity_or_fragment_title_setup"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".AdvancedWizardActivity"
+            android:name=".views.AdvancedWizardActivity"
             android:label="@string/activity_or_fragment_title_advanced_setup"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
