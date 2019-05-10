@@ -29,7 +29,7 @@ import java.io.File;
 
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
-public class BirdCountActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class BirdCountActivity extends AppCompatActivity {
 
     private static final String TAG = BirdCountActivity.class.getName();
 

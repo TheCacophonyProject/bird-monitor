@@ -14,8 +14,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.anyWebRequestResource;
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.*;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.FAILED_TO_CREATE_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.SUCCESSFULLY_CREATED_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.SERVER_SIGNUP_ACTION;
@@ -64,19 +63,6 @@ public class Server {
             login(context);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
-        } finally {
-
-            JSONObject jsonObjectMessageToBroadcast = new JSONObject();
-            try {
-                jsonObjectMessageToBroadcast.put("messageType", "refresh_vitals_displayed_text");
-                Util.broadcastAMessage(context, "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
-
-                jsonObjectMessageToBroadcast.put("messageType", "enable_vitals_button");
-                Util.broadcastAMessage(context, "SERVER_CONNECTION", jsonObjectMessageToBroadcast);
-
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-            }
         }
     }
 
@@ -132,6 +118,7 @@ public class Server {
     }
 
     public static void loginUser(Context context) {
+        signInIdlingResource.increment();
 
         final Prefs prefs = new Prefs(context);
 
@@ -219,6 +206,8 @@ public class Server {
             Log.e(TAG, e.getLocalizedMessage(), e);
             String messageToDisplay = "Error, unable to sign in: " + e.getLocalizedMessage();
             MessageHelper.broadcastMessage(messageToDisplay, UNABLE_TO_SIGNIN, SERVER_USER_LOGIN_ACTION, context);
+        } finally {
+            signInIdlingResource.decrement();
         }
     }
 
@@ -236,6 +225,7 @@ public class Server {
             Log.i(TAG, "Invalid group name: " + group);
             String messageToDisplay = "Group name must be at least 4 characters";
             MessageHelper.broadcastMessage(messageToDisplay, REGISTER_FAIL, SERVER_REGISTER_ACTION, context);
+            registerPhoneIdlingResource.decrement();
             return;
         }
 
@@ -290,6 +280,8 @@ public class Server {
             Log.w(TAG, e);
             String messageToDisplay = "An unknown error occurred: " + e.toString();
             MessageHelper.broadcastMessage(messageToDisplay, REGISTER_FAIL, SERVER_REGISTER_ACTION, context);
+        } finally {
+            registerPhoneIdlingResource.decrement();
         }
     }
 
@@ -319,6 +311,8 @@ public class Server {
     }
 
     public static void signUp(final String username, final String emailAddress, final String password, final Context context) {
+        createAccountIdlingResource.increment();
+
         final Prefs prefs = new Prefs(context);
 
         String signupUrl = prefs.getServerUrl() + SIGNUP_URL;
@@ -366,6 +360,8 @@ public class Server {
             Log.w(TAG, e);
             String messageToDisplay = "An unknown error occurred: " + e.getLocalizedMessage();
             MessageHelper.broadcastMessage(messageToDisplay, FAILED_TO_CREATE_USER, SERVER_SIGNUP_ACTION, context);
+        } finally {
+            createAccountIdlingResource.decrement();
         }
     }
 
@@ -437,6 +433,8 @@ public class Server {
     }
 
     public static ArrayList<String> getGroups(Context context) {
+        getGroupsIdlingResource.increment();
+
         final Prefs prefs = new Prefs(context);
 
         ArrayList<String> groups = new ArrayList<>();
@@ -479,6 +477,8 @@ public class Server {
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
+        } finally {
+            getGroupsIdlingResource.decrement();
         }
 
         return groups;

@@ -112,14 +112,12 @@ public class RegisterFragment extends Fragment {
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForRegisterd();
                         etGroupNameInput.setEnabled(false);
                         etDeviceNameInput.setEnabled(false);
-                        registerPhoneIdlingResource.decrement();
                         break;
                     case REGISTER_FAIL:
                         tvMessages.setText(messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
                         etGroupNameInput.setEnabled(true);
                         etDeviceNameInput.setEnabled(true);
-                        registerPhoneIdlingResource.decrement();
                         break;
                     default:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
@@ -131,7 +129,6 @@ public class RegisterFragment extends Fragment {
 
             tvMessages.setText("Oops, your phone did not register for an unknown reason: " + ex.getLocalizedMessage());
             displayOrHideGUIObjects(true);
-            registerPhoneIdlingResource.decrement();
         }
     }
 
@@ -263,7 +260,6 @@ public class RegisterFragment extends Fragment {
     }
 
     public void registerButtonPressed() {
-        //  registerIdlingResource.increment();
 
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
 
@@ -393,11 +389,11 @@ public class RegisterFragment extends Fragment {
         try {
             Util.unregisterPhone(getActivity().getApplicationContext());
             ((SetupWizardActivity) getActivity()).setNumberOfPagesForSignedInNotRegistered();
-            tvMessages.setText("Success - Device is no longer registered");
             etGroupNameInput.setText("");
             etDeviceNameInput.setText("");
 
             displayOrHideGUIObjects(true);
+            tvMessages.setText("Success - Device is no longer registered");
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");

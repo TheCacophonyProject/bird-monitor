@@ -12,8 +12,9 @@ import android.util.Log;
 public class Prefs {
 
     private static final String TAG = Prefs.class.getName();
-    private final Context context;
-    private static final String PREFS_NAME = "CacophonyPrefs";
+
+    static final String PREFS_NAME = "CacophonyPrefs";
+
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
@@ -104,14 +105,15 @@ public class Prefs {
     private static final String INTERNET_CONNECTION_MODE_KEY = "INTERNET_CONNECTION_MODE";
     private static final String AUDIO_SOURCE_KEY = "AUDIO_SOURCE";
     private static final String BIRD_COUNT_DURATION_KEY = "BIRD_COUNT_DURATION";
-    private static final String DISABLED_KEY = "DISABLED";
+    private static final String AUTOMATIC_RECORDINGS_DISABLED_KEY = "DISABLED";
     private static final String DISABLED_DAWN_DUSK_RECORDINGS_KEY = "DISABLED_DAWN_DUSK_RECORDINGS";
-    private static final String SETTINGS_FOR_TEST_SERVER_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
+    private static final String VERY_ADVANCED_SETTINGS_ENABLED_KEY = "SETTINGS_FOR_TEST_SERVER_ENABLED";
     private static final String GROUPS_KEY = "GROUPS";
     private static final String USER_SIGNED_IN_KEY = "USER_SIGNED_IN";
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
     private static final String LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
+    private final Context context;
 
     public Prefs(Context context) {
         this.context = context;
@@ -630,12 +632,12 @@ public class Prefs {
         setString(BIRD_COUNT_DURATION_KEY, birdCountDuration);
     }
 
-    public void setIsDisabled(boolean isDisabled) {
-        setBoolean(DISABLED_KEY, isDisabled);
+    public void setAutomaticRecordingsDisabled(boolean isDisabled) {
+        setBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY, isDisabled);
     }
 
-    public boolean getIsDisabled() {
-        return getBoolean(DISABLED_KEY);
+    public boolean getAutomaticRecordingsDisabled() {
+        return getBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY);
     }
 
     public void setIsDisableDawnDuskRecordings(boolean isDisabled) {
@@ -646,12 +648,12 @@ public class Prefs {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
     }
 
-    public void setSettingsForTestServerEnabled(boolean isEnabled) {
-        setBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY, isEnabled);
+    public void setVeryAdvancedSettingsEnabled(boolean isEnabled) {
+        setBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY, isEnabled);
     }
 
-    public boolean getSettingsForTestServerEnabled() {
-        return getBoolean(SETTINGS_FOR_TEST_SERVER_ENABLED_KEY);
+    public boolean getVeryAdvancedSettingsEnabled() {
+        return getBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY);
     }
 
     public void setGroups(String groups) {

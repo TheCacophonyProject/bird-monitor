@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
 
@@ -29,7 +30,7 @@ import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.Messag
  * sends recording to server.
  */
 
-public class RecordAndUpload implements IdlingResourceForEspressoTesting {
+public class RecordAndUpload {
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
     private static boolean cancelUploadingRecordings = false;

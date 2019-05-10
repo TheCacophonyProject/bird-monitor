@@ -14,7 +14,7 @@ import android.widget.Button;
 import nz.org.cacophony.birdmonitor.*;
 
 
-public class MainActivity extends AppCompatActivity implements IdlingResourceForEspressoTesting {
+public class MainActivity extends AppCompatActivity {
     // Register with idling counter
     // https://developer.android.com/training/testing/espresso/idling-resource.html
     // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
@@ -63,16 +63,16 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
             prefs.setAudioSource("MIC");
-            prefs.setIsDisabled(false);
+            prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
-            prefs.setSettingsForTestServerEnabled(false);
+            prefs.setVeryAdvancedSettingsEnabled(false);
 
             prefs.setIsFirstTimeFalse();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
 
-        if (prefs.getSettingsForTestServerEnabled()) {
+        if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));
         }
 
@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
                     long timeBetweenDownAndUp = advancedButtonUpTime - advancedButtonDownTime;
 
                     if (timeBetweenDownAndUp > 5000) {
-                        if (prefs.getSettingsForTestServerEnabled()) {
+                        if (prefs.getVeryAdvancedSettingsEnabled()) {
                             advancedButton.setText(getResources().getString(R.string.advanced));
-                            prefs.setSettingsForTestServerEnabled(false);
+                            prefs.setVeryAdvancedSettingsEnabled(false);
 
                         } else {
                             advancedButton.setText(getResources().getString(R.string.very_advanced));
-                            prefs.setSettingsForTestServerEnabled(true);
+                            prefs.setVeryAdvancedSettingsEnabled(true);
 
                         }
 
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
         Prefs prefs = new Prefs(this.getApplicationContext());
 
 
-        if (prefs.getIsDisabled()) {
+        if (prefs.getAutomaticRecordingsDisabled()) {
             ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.enable_recording));
             findViewById(R.id.btnDisable).setBackgroundColor(getResources().getColor(R.color.recordingDisabledButton));
         } else {
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements IdlingResourceFor
 
     public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
-            Intent intent = new Intent(this, DisableActivity.class);
+            Intent intent = new Intent(this, DisableAutomaticRecordingActivity.class);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);

@@ -18,8 +18,6 @@ import nz.org.cacophony.birdmonitor.*;
 import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import org.json.JSONObject;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
-
 public class CreateAccountFragment extends Fragment {
 
     public enum MessageType {
@@ -66,7 +64,7 @@ public class CreateAccountFragment extends Fragment {
         tilPassword2 = view.findViewById(R.id.tilPassword2);
         etPassword2 = view.findViewById(R.id.etPassword2);
         btnSignUp = view.findViewById(R.id.btnSignUp);
-      //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
+        //  btnForgetUser = (Button) view.findViewById(R.id.btnSignOutUser);
         tvMessages = view.findViewById(R.id.tvMessagesCreateAccount);
 
         setUserVisibleHint(false);
@@ -167,8 +165,6 @@ public class CreateAccountFragment extends Fragment {
 
         tvMessages.setText(getString(R.string.attempting_to_creat));
 
-        createAccountIdlingResource.increment();
-
         signUp(username, emailAddress, etPassword1, getActivity().getApplicationContext());
     }
 
@@ -225,7 +221,6 @@ public class CreateAccountFragment extends Fragment {
 
                     // tvMessages.setVisibility(View.VISIBLE); // not sure if setText will cause an error if it isn't visible?
                     tvMessages.setText(messageToDisplay + "\n\nSwipe to next screen to sign in.");
-                    createAccountIdlingResource.decrement();
 
                 } else {
                     tilUsername.setVisibility(View.VISIBLE);
@@ -234,19 +229,18 @@ public class CreateAccountFragment extends Fragment {
                     tilPassword2.setVisibility(View.VISIBLE);
                     tvMessages.setText("");
                     ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-                    createAccountIdlingResource.decrement();
                 }
 
             }
 
         } catch (Exception ex) {
+
             Log.e(TAG, ex.getLocalizedMessage(), ex);
+
             tilUsername.setVisibility(View.VISIBLE);
             tilEmail.setVisibility(View.VISIBLE);
             tilPassword1.setVisibility(View.VISIBLE);
             tilPassword2.setVisibility(View.VISIBLE);
-            createAccountIdlingResource.decrement();
         }
     }
-
 }

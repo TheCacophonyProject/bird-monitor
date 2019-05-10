@@ -16,8 +16,6 @@ import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Util;
 import org.json.JSONObject;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
-
 public class GroupsFragment extends Fragment {
 
     public enum MessageType {
@@ -147,33 +145,23 @@ public class GroupsFragment extends Fragment {
                         tvMessages.setText("");
                         resetGroups();
 
-                        getGroupsIdlingResource.decrement();
                         break;
                     case FAILED_TO_ADD_GROUP:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
                         ((SetupWizardActivity) getActivity()).setGroup(null);
 
                         resetGroups();
-                        getGroupsIdlingResource.decrement();
                         break;
                     case SUCCESSFULLY_RETRIEVED_GROUPS:
                         resetGroups();
-                        getGroupsIdlingResource.decrement();
                         break;
                     case FAILED_TO_RETRIEVE_GROUPS:
                         ((SetupWizardActivity) getActivity()).displayOKDialogMessage("Error", messageToDisplay);
-                        getGroupsIdlingResource.decrement();
                         break;
                 }
             }
         } catch (Exception ex) {
-
             Log.e(TAG, ex.getLocalizedMessage(), ex);
-            try {
-                getGroupsIdlingResource.decrement();
-            } catch (Exception e) {
-                Log.e(TAG, e.getLocalizedMessage(), e);
-            }
         }
     }
 

@@ -12,8 +12,8 @@ import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Util;
 
-public class DisableActivity extends AppCompatActivity {
-    private static final String TAG = DisableActivity.class.getName();
+public class DisableAutomaticRecordingActivity extends AppCompatActivity {
+    private static final String TAG = DisableAutomaticRecordingActivity.class.getName();
 
     private Switch switchDisable;
 
@@ -21,7 +21,7 @@ public class DisableActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_disable);
+        setContentView(R.layout.activity_disable_automatic_recording);
 
         //https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
@@ -35,7 +35,7 @@ public class DisableActivity extends AppCompatActivity {
             if (!buttonView.isShown()) {
                 return;
             }
-            prefs.setIsDisabled(!isChecked);
+            prefs.setAutomaticRecordingsDisabled(!isChecked);
             displayOrHideGUIObjects();
 
         });
@@ -59,7 +59,7 @@ public class DisableActivity extends AppCompatActivity {
 
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getApplicationContext());
-        boolean isDisabled = prefs.getIsDisabled();
+        boolean isDisabled = prefs.getAutomaticRecordingsDisabled();
 
         switchDisable.setChecked(!isDisabled);
 

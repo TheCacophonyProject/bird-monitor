@@ -95,7 +95,7 @@ public class AdvancedWizardActivity extends AppCompatActivity {
 
 
         Prefs prefs = new Prefs(this);
-        if (prefs.getSettingsForTestServerEnabled()) {
+        if (prefs.getVeryAdvancedSettingsEnabled()) {
             setNumberOfPagesForVeryAdvanced();
         } else {
             setNumberOfPagesForAdvanced();

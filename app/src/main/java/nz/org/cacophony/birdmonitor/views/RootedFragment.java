@@ -64,7 +64,7 @@ public class RootedFragment extends Fragment {
             swRooted.setText("NO");
         }
 
-        if (prefs.getSettingsForTestServerEnabled()) {
+        if (prefs.getVeryAdvancedSettingsEnabled()) {
             btnFinished.setVisibility(View.INVISIBLE);
         } else {
             btnFinished.setVisibility(View.VISIBLE);

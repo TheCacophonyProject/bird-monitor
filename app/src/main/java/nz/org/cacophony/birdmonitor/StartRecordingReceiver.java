@@ -83,7 +83,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             wakeLock.acquire(wakeLockDuration);
 
 
-            if (prefs.getIsDisabled() && !recordButtonWasPressed) {
+            if (prefs.getAutomaticRecordingsDisabled() && !recordButtonWasPressed) {
                 String messageToDisplay = "Recording is currently disabled on this phone";
                 MessageHelper.broadcastMessage(messageToDisplay, RECORDING_DISABLED, MANAGE_RECORDINGS_ACTION, context);
                 return;  // Don't do anything else if Turn Off has been enabled. (Very Important that next alarm has been created)
