@@ -23,6 +23,11 @@ import static org.hamcrest.Matchers.is;
 
 class HelperCode {
 
+    private static final String PRIMARY_TEST_USERNAME = "cacophonometer_primary_test_account";
+    private static final String PRIMARY_TEST_PASSWORD = "test_password";
+    private static final String PRIMARY_TEST_GROUP = "cacophonometer_primary_test_group";
+    private static final String TEST_DEVICE_PREFIX = "cacophonometer_test_device_";
+
     public static void useTestServerAndShortRecordings() {
 
         Context targetContext = getInstrumentation().getTargetContext();
@@ -39,6 +44,7 @@ class HelperCode {
         return preferences.getAll();
     }
 
+    @SuppressWarnings("unchecked")
     public static void restorePrefs(Context context, Map<String, ?> backup) {
         SharedPreferences preferences = context.getSharedPreferences(Prefs.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -84,12 +90,12 @@ class HelperCode {
         onView(allOf(withId(android.R.id.button1), withText("YES"))).perform(scrollTo(), click());
     }
 
-    public static void signInUserTimhot() throws InterruptedException {
+    public static void signInPrimaryTestUser() throws InterruptedException {
         Thread.sleep(1000); // had to put in sleep, as the GUI was replacing the username after I set it below
 
-        onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText("timhot"), closeSoftKeyboard());
+        onView(withId(R.id.etUserNameOrEmailInput)).perform(replaceText(PRIMARY_TEST_USERNAME), closeSoftKeyboard());
 
-        onView(withId(R.id.etPasswordInput)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+        onView(withId(R.id.etPasswordInput)).perform(replaceText(PRIMARY_TEST_PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.btnSignIn)).perform(click());
         Thread.sleep(1000);
     }
@@ -98,13 +104,13 @@ class HelperCode {
     public static void registerPhone(Prefs prefs) throws InterruptedException {
         Thread.sleep(1000); // had to put in sleep, as could not work out how to consistently get groups to display before testing code tries to choose a group
 
-        onData(allOf(is(instanceOf(String.class)), is("tim1"))).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is(PRIMARY_TEST_GROUP))).perform(click());
 
         // App automatically moves to Register Phone screen
         // Now enter the device name
 
         // Create a unique device name
-        String deviceName  = "cacophonometer_test_device_" + UUID.randomUUID();
+        String deviceName  = TEST_DEVICE_PREFIX + UUID.randomUUID();
         prefs.setLastDeviceNameUsedForTesting(deviceName); // save the device name so can find recordings for it later
 
         onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());

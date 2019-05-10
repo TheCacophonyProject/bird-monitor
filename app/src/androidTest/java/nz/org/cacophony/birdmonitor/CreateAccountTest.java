@@ -14,11 +14,15 @@ import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRight;
 
 public class CreateAccountTest extends TestBaseStartingOnSetupScreen {
 
+    private static final String TEST_USERNAME_PREFIX = "cacophonometer_test_";
+    private static final String TEST_EMAIL_DOMAIN = "@test.test";
+    private static final String TEST_PASSWORD = "test_password";
+
     private String uniqueId;
 
     @Before
     public void setUpForCreateAccount() {
-        uniqueId = "cacophonometer_test_" + UUID.randomUUID();
+        uniqueId = TEST_USERNAME_PREFIX + UUID.randomUUID();
 
         nowNavigateRight();// takes you to Create Account screen
     }
@@ -26,9 +30,9 @@ public class CreateAccountTest extends TestBaseStartingOnSetupScreen {
     @Test
     public void createAccountTest() {
         onView(withId(R.id.etUsername)).perform(replaceText(uniqueId), closeSoftKeyboard());
-        onView(withId(R.id.etEmail)).perform(replaceText(uniqueId + "@test.test"), closeSoftKeyboard());
-        onView(withId(R.id.etPassword1)).perform(replaceText("Pppother1"), closeSoftKeyboard());
-        onView(withId(R.id.etPassword2)).perform(replaceText("Pppother1"), closeSoftKeyboard());
+        onView(withId(R.id.etEmail)).perform(replaceText(uniqueId + TEST_EMAIL_DOMAIN), closeSoftKeyboard());
+        onView(withId(R.id.etPassword1)).perform(replaceText(TEST_PASSWORD), closeSoftKeyboard());
+        onView(withId(R.id.etPassword2)).perform(replaceText(TEST_PASSWORD), closeSoftKeyboard());
 
         onView(withId(R.id.btnSignUp)).perform(click());
 

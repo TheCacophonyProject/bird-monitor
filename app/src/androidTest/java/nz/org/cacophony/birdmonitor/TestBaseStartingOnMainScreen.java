@@ -17,7 +17,7 @@ public abstract class TestBaseStartingOnMainScreen extends TestBaseStartingOnSet
     @Before
     public final void goToMainScreen() throws InterruptedException {
         nowNavigateRightTimes(2);
-        HelperCode.signInUserTimhot();
+        HelperCode.signInPrimaryTestUser();
         nowNavigateRight();
         HelperCode.registerPhone(prefs);
         nowNavigateRightTimes(3);

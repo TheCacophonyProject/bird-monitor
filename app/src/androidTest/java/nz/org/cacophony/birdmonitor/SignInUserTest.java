@@ -19,7 +19,7 @@ public class SignInUserTest extends TestBaseStartingOnSetupScreen {
 
     @Test
     public void signInTest() throws InterruptedException {
-        HelperCode.signInUserTimhot();
+        HelperCode.signInPrimaryTestUser();
 
         boolean userSignedIn = prefs.getUserSignedIn();
 

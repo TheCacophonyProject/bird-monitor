@@ -18,7 +18,7 @@ public class RecordAndSaveTest extends TestBaseStartingOnSetupScreen {
     @Before
     public void setUpForRecord() throws InterruptedException {
         nowNavigateRightTimes(2);
-        HelperCode.signInUserTimhot();
+        HelperCode.signInPrimaryTestUser();
         nowNavigateRight();
         HelperCode.registerPhone(prefs);
 

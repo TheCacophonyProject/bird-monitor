@@ -17,7 +17,7 @@ public class RegisterPhoneTest extends TestBaseStartingOnSetupScreen {
     @Before
     public void setUpAndLogIn() throws InterruptedException {
         nowNavigateRightTimes(2);
-        HelperCode.signInUserTimhot();
+        HelperCode.signInPrimaryTestUser();
         nowNavigateRight();
     }
 

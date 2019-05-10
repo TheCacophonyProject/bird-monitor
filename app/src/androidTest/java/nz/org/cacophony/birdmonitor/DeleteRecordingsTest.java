@@ -18,7 +18,7 @@ public class DeleteRecordingsTest extends TestBaseStartingOnSetupScreen {
     @Before
     public void setUpForDeleteAllRecordings() throws InterruptedException {
         nowNavigateRightTimes(2);
-        HelperCode.signInUserTimhot();
+        HelperCode.signInPrimaryTestUser();
         nowNavigateRight();
         HelperCode.registerPhone(prefs);
 
