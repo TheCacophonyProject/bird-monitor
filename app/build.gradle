@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+ext.versionMajor = 1
+ext.versionMinor = 4
+ext.versionPatch = 1
+ext.versionClassifier = null
+ext.isSnapshot = false
+ext.minimumSdkVersion = 15
+
 repositories {
     //  mavenCentral()
     jcenter()
@@ -13,10 +20,13 @@ android {
         // minSdkVersion 10 // 10 is the version that AMR_WB in MediaRecorder.AudioEncoder.AMR_WB was added which gives a lower limit on quality of recordings
         // minSdkVersion 14 // ie Android 4.0 Icecream sandwich
         // Increased to 14 to allow use of com.android.support:appcompat-v7:27.1.1 which was recommended by ?
-        minSdkVersion 15 // ie Android 4.0 Icecream sandwich
+        minSdkVersion project.ext.minimumSdkVersion // ie Android 4.0 Icecream sandwich
         // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
         targetSdkVersion 28
         // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
+        versionCode generateVersionCode() // 150010401
+        versionName generateVersionName()
+
         versionCode 3
         versionName "1.4.1"
         archivesBaseName = "Bird Monitor-$versionName"
@@ -47,9 +57,26 @@ android {
     buildToolsVersion '28.0.3'
 }
 
+private Integer generateVersionCode() {
+    return ext.minimumSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
+}
+
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    if (ext.versionClassifier == null && ext.isSnapshot) {
+        ext.versionClassifier = "SNAPSHOT"
+    }
+
+    if (ext.versionClassifier != null) {
+        versionName += "-" + ext.versionClassifier
+    }
+    return versionName;
+}
+
 dependencies {
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'com.github.tony19:logback-android:2.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     //    implementation 'com.android.support:appcompat-v7:25.3.1'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.loopj.android:android-async-http:1.4.9'
