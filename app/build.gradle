@@ -5,6 +5,7 @@ ext.versionMinor = 4
 ext.versionPatch = 1
 ext.versionClassifier = null
 ext.isSnapshot = false
+// Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
 ext.minimumSdkVersion = 15
 
 repositories {
@@ -17,18 +18,11 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "nz.org.cacophony.birdmonitor"
-        // minSdkVersion 10 // 10 is the version that AMR_WB in MediaRecorder.AudioEncoder.AMR_WB was added which gives a lower limit on quality of recordings
-        // minSdkVersion 14 // ie Android 4.0 Icecream sandwich
-        // Increased to 14 to allow use of com.android.support:appcompat-v7:27.1.1 which was recommended by ?
-        minSdkVersion project.ext.minimumSdkVersion // ie Android 4.0 Icecream sandwich
-        // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
+        minSdkVersion project.ext.minimumSdkVersion
         targetSdkVersion 28
-        // less than 23 to prevent issue with asking for permissions. But if this is changed to 23 or greater, code already has logic to tell user to enable required permissions when record button is pressed.
-        versionCode generateVersionCode() // 150010401
+        versionCode generateVersionCode() 
         versionName generateVersionName()
 
-        versionCode 3
-        versionName "1.4.1"
         archivesBaseName = "Bird Monitor-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

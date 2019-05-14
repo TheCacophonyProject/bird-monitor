@@ -14,3 +14,9 @@ This project is licensed under the Affero General Public License
 * Ensure all required changes have been merged into the master branch on Github.
 * Ensure you have updated app/build.gradle version parameters eg. (ext.versionPatch)
 * VersionCode and VersionName will be automatically generated
+* VersionCode:
+	- First 2 digits represent minSDKVersion
+	- Third digit represents screen sizes
+	- Followed by 2 Digits for Major, Minor and Patch versions
+* Releasing a verison TODO....
+
