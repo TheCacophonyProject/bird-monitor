@@ -287,7 +287,9 @@ public class BirdCountActivity extends AppCompatActivity {
 
     private void onRecordingFinished() {
         recording = false;
-        countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         tvTitle.setText(getResources().getString(R.string.bird_count_message));
         btnRecordNow.setEnabled(true);
         btnRecordNow.setVisibility(View.VISIBLE);
