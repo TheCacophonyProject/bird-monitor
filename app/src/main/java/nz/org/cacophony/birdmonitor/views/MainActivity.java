@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setVeryAdvancedSettingsEnabled(false);
+            prefs.setUseBatSamplingFrequency(false);
 
             prefs.setIsFirstTimeFalse();
         }

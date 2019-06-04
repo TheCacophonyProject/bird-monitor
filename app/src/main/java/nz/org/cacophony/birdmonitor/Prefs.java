@@ -113,6 +113,9 @@ public class Prefs {
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
     private static final String LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
+    private static final String USE_BAT_SAMPLING_FREQUENCY_KEY = "USE_BAT_SAMPLING_FREQUENCY";
+
+
     private final Context context;
 
     public Prefs(Context context) {
@@ -690,5 +693,13 @@ public class Prefs {
 
     public String getLatestBirdCountRecordingFileNameNoExtension(){
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
+    }
+
+    public boolean getUseBatSamplingFrequency() {
+        return getBoolean(USE_BAT_SAMPLING_FREQUENCY_KEY);
+    }
+
+    public void setUseBatSamplingFrequency(boolean useBatSamplingFrequency) {
+        setBoolean(USE_BAT_SAMPLING_FREQUENCY_KEY, useBatSamplingFrequency);
     }
 }
