@@ -206,12 +206,22 @@ public class RecordAndUpload {
 
                 // Sampling configuration
                 mRecorder.setAudioChannels(1);
-                mRecorder.setAudioSamplingRate(16000);
+                if (prefs.getUseBatSamplingFrequency()){
+                    mRecorder.setAudioSamplingRate(44000);
+                }else{
+                    mRecorder.setAudioSamplingRate(16000);
+                }
+
 
                 // Encoding configuration
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
-                mRecorder.setAudioEncodingBitRate(256000);
+                if (prefs.getUseBatSamplingFrequency()){
+                    mRecorder.setAudioEncodingBitRate(704000);
+                }else{
+                    mRecorder.setAudioEncodingBitRate(256000);
+                }
+
 
                 mRecorder.prepare();
 

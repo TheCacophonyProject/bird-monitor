@@ -6,6 +6,8 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
+
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 
@@ -20,6 +22,7 @@ public class AudioSourceSettingsFragment extends Fragment {
     private AppCompatRadioButton rbUNPROCESSED;
     private AppCompatRadioButton rbVOICE_COMMUNICATION;
     private AppCompatRadioButton rbVOICE_RECOGNITION;
+    private Switch swUSE_BAT_SAMPLING_FREQUENCY;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class AudioSourceSettingsFragment extends Fragment {
         rbUNPROCESSED = view.findViewById(R.id.rbUNPROCESSED);
         rbVOICE_COMMUNICATION = view.findViewById(R.id.rbVOICE_COMMUNICATION);
         rbVOICE_RECOGNITION = view.findViewById(R.id.rbVOICE_RECOGNITION);
+        swUSE_BAT_SAMPLING_FREQUENCY = view.findViewById(R.id.swUSE_BAT_SAMPLING_FREQUENCY);
 
         displayOrHideGUIObjects();
 
@@ -66,6 +70,12 @@ public class AudioSourceSettingsFragment extends Fragment {
         rbVOICE_RECOGNITION.setOnClickListener(v -> {
             Prefs prefs = new Prefs(getActivity());
             prefs.setAudioSource("VOICE_RECOGNITION");
+        });
+
+        swUSE_BAT_SAMPLING_FREQUENCY.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Prefs prefs = new Prefs(getActivity());
+            prefs.setUseBatSamplingFrequency(swUSE_BAT_SAMPLING_FREQUENCY.isChecked());
+            displayOrHideGUIObjects();
         });
 
 
@@ -107,6 +117,13 @@ public class AudioSourceSettingsFragment extends Fragment {
             case "VOICE_RECOGNITION":
                 rbVOICE_RECOGNITION.setChecked(true);
                 break;
+        }
+
+        swUSE_BAT_SAMPLING_FREQUENCY.setChecked(prefs.getUseBatSamplingFrequency());
+        if (prefs.getUseBatSamplingFrequency()) {
+            swUSE_BAT_SAMPLING_FREQUENCY.setText("Bat Sampling is ON");
+        } else {
+            swUSE_BAT_SAMPLING_FREQUENCY.setText("Bat Sampling is OFF");
         }
     }
 

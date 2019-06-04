@@ -32,7 +32,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/swUseBatSamplingFrequency"
+        app:layout_constraintBottom_toTopOf="@+id/swUSE_BAT_SAMPLING_FREQUENCY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
@@ -158,7 +158,7 @@
     </ScrollView>
 
     <Switch
-        android:id="@+id/swUseBatSamplingFrequency"
+        android:id="@+id/swUSE_BAT_SAMPLING_FREQUENCY"
         style="@style/SwitchAndRadioButtonCompatTheme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
