@@ -167,60 +167,71 @@ public class RecordAndUpload {
             try {
 
                 // Automatic gain control setting
-                String audioSource = prefs.getAudioSource();
+//                String audioSource = prefs.getAudioSource();
 
-                switch (audioSource) {
-                    case "CAMCORDER":
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-                        break;
+//                switch (audioSource) {
+//                    case "CAMCORDER":
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+//                        break;
+//
+//                    case "DEFAULT":
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+//                        break;
+//
+//                    case "MIC":
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//                        break;
+//
+//                    case "UNPROCESSED":
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                            mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
+//                        } else {
+//                            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+//                        }
+//                        break;
+//
+//                    case "VOICE_COMMUNICATION":
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
+//                        break;
+//
+//                    case "VOICE_RECOGNITION":
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+//                        break;
+//                    default:
+//                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//                }
 
-                    case "DEFAULT":
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-                        break;
-
-                    case "MIC":
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                        break;
-
-                    case "UNPROCESSED":
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
-                        } else {
-                            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-                        }
-                        break;
-
-                    case "VOICE_COMMUNICATION":
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
-                        break;
-
-                    case "VOICE_RECOGNITION":
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
-                        break;
-                    default:
-                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                }
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED); // testing
 
 
                 mRecorder.setOutputFile(filePath);
 
                 // Sampling configuration
                 mRecorder.setAudioChannels(1);
-                if (prefs.getUseBatSamplingFrequency()){
-                    mRecorder.setAudioSamplingRate(44000);
-                }else{
-                    mRecorder.setAudioSamplingRate(16000);
-                }
+//                if (prefs.getUseBatSamplingFrequency()){
+//                    mRecorder.setAudioSamplingRate(44100);
+//                }else{
+//                    mRecorder.setAudioSamplingRate(16000);
+//                }
+
+//                mRecorder.setAudioSamplingRate(44100);
+              // mRecorder.setAudioSamplingRate(96000);
+                mRecorder.setAudioSamplingRate(48000);
 
 
                 // Encoding configuration
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
-                if (prefs.getUseBatSamplingFrequency()){
-                    mRecorder.setAudioEncodingBitRate(704000);
-                }else{
-                    mRecorder.setAudioEncodingBitRate(256000);
-                }
+//                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC); // AAC added in API 10
+
+//                if (prefs.getUseBatSamplingFrequency()){
+//                    mRecorder.setAudioEncodingBitRate(384000);
+//                    //mRecorder.setAudioEncodingBitRate(704000);
+//                }else{
+//                    mRecorder.setAudioEncodingBitRate(256000);
+//                }
+
+                mRecorder.setAudioEncodingBitRate(384000);
 
 
                 mRecorder.prepare();
