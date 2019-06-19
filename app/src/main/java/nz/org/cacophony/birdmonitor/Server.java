@@ -91,12 +91,16 @@ public class Server {
 
             String loginUrl = prefs.getServerUrl() + LOGIN_URL;
 
-            RequestBody requestBody = new FormBody.Builder()
-                    .add("deviceID", Long.toString(deviceID))
-                    .add("groupname", group)
-                    .add("devicename", devicename)
-                    .add("password", devicePassword)
-                    .build();
+            FormBody.Builder builder = new FormBody.Builder();
+            if(deviceID > 0) {
+                builder.add("deviceID", Long.toString(deviceID));
+            }else {
+                builder.add("groupname", group);
+                builder.add("devicename", devicename);
+            }
+            builder.add("password", devicePassword);
+            RequestBody requestBody = builder.build();
+
             WebResponse postResponse = makePost(loginUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
