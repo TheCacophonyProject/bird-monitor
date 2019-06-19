@@ -234,14 +234,18 @@ public class Util {
      * @return
      * @throws Exception
      */
-    public static String getDeviceID(String webToken) throws Exception {
+    public static long getDeviceID(String webToken) throws Exception {
         if (webToken == null) {
-            return "";
+            return 0;
         }
 
         String webTokenBody = Util.decoded(webToken);
         JSONObject jObject = new JSONObject(webTokenBody);
-        return jObject.getString("id");
+        try {
+            return Long.parseLong(jObject.getString("id"));
+        }catch (NumberFormatException ex){
+            return 0;
+        }
     }
 
     /**

@@ -253,13 +253,19 @@ public class Server {
             }
 
             if (response.isSuccessful()) {
-
+                long deviceID = 0;
+                //makes backwards compatible
+                if(responseJson.has("id")) {
+                    deviceID = responseJson.getLong("id");
+                }else {
+                    deviceID = Util.getDeviceID(prefs.getToken());
+                }
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
                 prefs.setDeviceName(deviceName);
                 prefs.setGroupName(group);
                 prefs.setDevicePassword(password);
-                prefs.setDeviceId(responseJson.getLong("id"));
+                prefs.setDeviceId(deviceID);
                 String messageToDisplay = "Success - Your phone has been registered with the server :-)";
                 MessageHelper.broadcastMessage(messageToDisplay, REGISTER_SUCCESS, SERVER_REGISTER_ACTION, context);
 
