@@ -81,8 +81,8 @@ public class Server {
             String devicename = prefs.getDeviceName();
             String devicePassword = prefs.getDevicePassword();
             String group = prefs.getGroupName();
-
-            if (devicename == null || devicePassword == null || group == null) {
+            long deviceID = prefs.getDeviceId();
+            if ( (deviceID == 0 && (devicename == null || group == null)) || devicePassword == null) {
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
                 return false;
@@ -92,6 +92,8 @@ public class Server {
             String loginUrl = prefs.getServerUrl() + LOGIN_URL;
 
             RequestBody requestBody = new FormBody.Builder()
+                    .add("deviceID", Long.toString(deviceID))
+                    .add("groupname", group)
                     .add("devicename", devicename)
                     .add("password", devicePassword)
                     .build();
@@ -254,14 +256,10 @@ public class Server {
 
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
-
-                String deviceID = Util.getDeviceID(prefs.getToken());
-
                 prefs.setDeviceName(deviceName);
                 prefs.setGroupName(group);
                 prefs.setDevicePassword(password);
-
-                prefs.setDeviceId(deviceID);
+                prefs.setDeviceId(responseJson.getLong("id"));
                 String messageToDisplay = "Success - Your phone has been registered with the server :-)";
                 MessageHelper.broadcastMessage(messageToDisplay, REGISTER_SUCCESS, SERVER_REGISTER_ACTION, context);
 
