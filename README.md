@@ -18,5 +18,13 @@ This project is licensed under the Affero General Public License
 	- First 2 digits represent minSDKVersion
 	- Third digit represents screen sizes
 	- Followed by 2 Digits for Major, Minor and Patch versions
-* Releasing a verison TODO....
-
+* Ensure all required changes have been merged into the master branch on Github.
+* Ensure your local repository has the required release revision checked out.
+* Tag the release (starting with a "v"), e.g.: `git tag -a v1.2.3 -m "1.2.3 release"`
+* Push the tag to Github, e.g.: `git push origin v1.2.3`
+* TravisCI will run the tests, create a release package and create a
+  [Github Release](https://github.com/TheCacophonyProject/bird-monitor/releases)
+* To publish to playstore, download unsigned apk
+* Sign apk
+* Upload to google play or ```fastlane release``` which looks for ./bird-monitor-signed.apk
+* To update metadata run ```fastlane update_meta```

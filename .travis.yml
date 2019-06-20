@@ -1,0 +1,41 @@
+env:
+  global:
+  - ADB_INSTALL_TIMEOUT=8
+  - EMU_FLAVOR=default
+  - ANDROID_HOME=/usr/local/android-sdk
+  - TOOLS=${ANDROID_HOME}/tools
+  - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
+  - API=28
+  - ABI=x86
+  - AUDIO=-no-audio
+language: android
+dist: trusty
+android:
+  components:
+  - tools
+licenses:
+- android-sdk-preview-license-.+
+- android-sdk-license-.+
+- google-gdk-license-.+
+before_install:
+- chmod +x gradlew
+- gem update --system
+- gem install bundler
+- bundle install
+- echo 'count=0' > /home/travis/.android/repositories.cfg
+- echo y | sdkmanager "platform-tools" >/dev/null
+- echo y | sdkmanager "tools" >/dev/null
+- echo y | sdkmanager "build-tools;28.0.3" >/dev/null
+- echo y | sdkmanager "platforms;android-$API" >/dev/null
+- echo y | sdkmanager --channel=4 "emulator"
+- echo y | sdkmanager "extras;android;m2repository" >/dev/null
+script:
+- "./gradlew clean assembleRelease"
+deploy:
+  provider: releases
+  api_key:
+    secure: ip/r3Bz+Hshxg2a3SeCcT+hmJdr4DEQJ94/61kpTczXFX/oRzGLVs3E2qSoqh3ZSaEIlZbybHa3d23eSQDi+7zJ1Z8AmMBE13mgvYdASJouHhDmxeCxgbZSfVSI3YU5aOUGo7mxYrdXnuTv+8I8KB4VV5X/DLirhO2KC5Lwqt/jhHoHMsY0MMrDRfsjKIfrBWmHC/gg+JHV44x+G5BPLDLCGUP+FhapC6m5V8RYvGw+cDPcU/yZ55J715+WCjjlfX7aBjWKgTuPyrL05ZKqBZcezo0KT4FIxv6YF4KW3iaHW9litK7TkXPEdDyVygnHI5lFYV8vs3VEvCAdvf+eppkUFFzSCu6BizGZ6J5f/4VsJH2QeZ+b7th1SmQCqv/iTnaJWgejlF61PtQ1nJ6L54oGOspGaxWWveCNBpQmdvLDXih8V3SNCSdOu79EU/siU8GGXh8RtOXEXkyjHIvz2ZoCg5zl6V7/rbPvJxdp+9ofs+jF4KIiDfK10sz2kO83/CiYlblxeUM8CTTv5b9c73ATUXDI61pcoTaeWBQ6upMaxbpik+wz5De4uqllEzpnCP1htBSUeDeYmSBLKxcfFaw7X+C0vZXSqqYBu6dBRCVG7USIYaZQEb4tw5+UEtVxExQFVO/Y89+fFWgeR7BA8ULlYX3lsVD3+1ZDZv3Bu7pQ=
+  file: 'app/build/outputs/apk/release/*.apk'
+  on:
+    repo: TheCacophonyProject/bird-monitor
+    tags: true
