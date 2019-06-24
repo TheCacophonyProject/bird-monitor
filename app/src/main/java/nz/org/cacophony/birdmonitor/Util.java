@@ -243,7 +243,7 @@ public class Util {
         JSONObject jObject = new JSONObject(webTokenBody);
         try {
             return Long.parseLong(jObject.getString("id"));
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex){
             return 0;
         }
     }

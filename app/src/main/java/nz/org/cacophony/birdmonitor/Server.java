@@ -92,9 +92,9 @@ public class Server {
             String loginUrl = prefs.getServerUrl() + LOGIN_URL;
 
             FormBody.Builder builder = new FormBody.Builder();
-            if(deviceID > 0) {
+            if (deviceID > 0) {
                 builder.add("deviceID", Long.toString(deviceID));
-            }else {
+            } else {
                 builder.add("groupname", group);
                 builder.add("devicename", devicename);
             }
@@ -259,9 +259,9 @@ public class Server {
             if (response.isSuccessful()) {
                 long deviceID = 0;
                 //makes backwards compatible
-                if(responseJson.has("id")) {
+                if (responseJson.has("id")) {
                     deviceID = responseJson.getLong("id");
-                }else {
+                } else {
                     deviceID = Util.getDeviceID(prefs.getToken());
                 }
                 prefs.setDeviceToken(responseJson.getString("token"));
