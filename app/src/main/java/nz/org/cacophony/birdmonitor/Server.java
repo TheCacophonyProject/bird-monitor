@@ -81,8 +81,8 @@ public class Server {
             String devicename = prefs.getDeviceName();
             String devicePassword = prefs.getDevicePassword();
             String group = prefs.getGroupName();
-
-            if (devicename == null || devicePassword == null || group == null) {
+            long deviceID = prefs.getDeviceId();
+            if ( (deviceID == 0 && (devicename == null || group == null)) || devicePassword == null) {
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
                 return false;
@@ -91,10 +91,16 @@ public class Server {
 
             String loginUrl = prefs.getServerUrl() + LOGIN_URL;
 
-            RequestBody requestBody = new FormBody.Builder()
-                    .add("devicename", devicename)
-                    .add("password", devicePassword)
-                    .build();
+            FormBody.Builder builder = new FormBody.Builder();
+            if (deviceID > 0) {
+                builder.add("deviceID", Long.toString(deviceID));
+            } else {
+                builder.add("groupname", group);
+                builder.add("devicename", devicename);
+            }
+            builder.add("password", devicePassword);
+            RequestBody requestBody = builder.build();
+
             WebResponse postResponse = makePost(loginUrl, requestBody);
             Response response = postResponse.response;
             JSONObject responseJson = postResponse.responseJson;
@@ -251,16 +257,18 @@ public class Server {
             }
 
             if (response.isSuccessful()) {
-
+                long deviceID = 0;
+                //makes backwards compatible
+                if (responseJson.has("id")) {
+                    deviceID = responseJson.getLong("id");
+                } else {
+                    deviceID = Util.getDeviceID(prefs.getToken());
+                }
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
-
-                String deviceID = Util.getDeviceID(prefs.getToken());
-
                 prefs.setDeviceName(deviceName);
                 prefs.setGroupName(group);
                 prefs.setDevicePassword(password);
-
                 prefs.setDeviceId(deviceID);
                 String messageToDisplay = "Success - Your phone has been registered with the server :-)";
                 MessageHelper.broadcastMessage(messageToDisplay, REGISTER_SUCCESS, SERVER_REGISTER_ACTION, context);

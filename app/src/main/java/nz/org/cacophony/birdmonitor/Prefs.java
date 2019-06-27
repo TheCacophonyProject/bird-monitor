@@ -362,8 +362,12 @@ public class Prefs {
         setDouble(LONGITUDE_KEY, val);
     }
 
-    public void setDeviceId(String deviceID) {
-        setString(DEVICE_ID, deviceID);
+    public void setDeviceId(long deviceID) {
+        setLong(DEVICE_ID, deviceID);
+    }
+
+    public long getDeviceId() {
+        return getLong(DEVICE_ID);
     }
 
     public double getRecordingDuration() {
