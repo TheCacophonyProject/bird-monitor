@@ -1,8 +1,14 @@
-# bird-monitor
+# Bird Monitor
 
 bird-monitor is an android app that makes periodic sound recordings and uploads them to the cloud, noting the time and location.
-These recordings will be analysed to detect the volume of birdsong and how it changes over time, giving you an objective measure of
- the impact of predator control or reforestation.
+These recordings will be analysed to detect the volume of birdsong and how it changes over time, giving you an objective measure of the impact of predator control or reforestation.
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/nz.org.cacophony.birdmonitor/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=nz.org.cacophony.birdmonitor)
 
 ## License
 
