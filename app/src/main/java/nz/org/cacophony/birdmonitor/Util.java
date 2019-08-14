@@ -555,6 +555,13 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
+    public static void checkSuperUserAccess(){
+        try {
+            Runtime.getRuntime().exec("su");
+        }catch (IOException ex){
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
+    }
 
     public static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);

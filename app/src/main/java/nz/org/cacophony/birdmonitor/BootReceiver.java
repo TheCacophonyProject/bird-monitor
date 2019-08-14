@@ -25,13 +25,11 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-
         if (intent.getAction() == null) {
             Log.e(TAG, "intent.getAction() is null");
             return;
         }
-
-        if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+        if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) && !intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
             return;
         }
 
@@ -57,11 +55,9 @@ public class BootReceiver extends BroadcastReceiver {
 
                         ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
                         toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
-
                         Util.createTheNextSingleStandardAlarm(context);
 
                         DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
-
                         Util.createCreateAlarms(context);
 
                         Util.enableFlightMode(context);
