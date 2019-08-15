@@ -31,7 +31,7 @@ This project is licensed under the Affero General Public License
 * TravisCI will run the tests, create a release package and create a
   [Github Release](https://github.com/TheCacophonyProject/bird-monitor/releases)
 * To publish to playstore, download unsigned aab bundle
-* Sign aab using jarsigner ```jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore <path to android keystore> Bird.Monitor-x.x.x.aab <keyalias>``
+* Sign aab using jarsigner `jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore <path to android keystore> Bird.Monitor-x.x.x.aab <keyalias>`
 * Upload to google play beta track using Google Play Console
 * When happy with testing realse to production from Google Play Console
-* To update metadata run ```fastlane update_meta```
+* To update metadata run `fastlane update_meta`
