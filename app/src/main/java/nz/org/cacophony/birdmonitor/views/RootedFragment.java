@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 public class RootedFragment extends Fragment {
 
@@ -38,6 +39,9 @@ public class RootedFragment extends Fragment {
             Prefs prefs = new Prefs(getActivity());
             prefs.setHasRootAccess(swRooted.isChecked());
             displayOrHideGUIObjects();
+            if (swRooted.isChecked()) {
+                Util.checkSuperUserAccess();
+            }
         });
 
         return view;
