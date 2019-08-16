@@ -206,16 +206,12 @@ public class RecordAndUpload {
 
                 // Sampling configuration
                 mRecorder.setAudioChannels(1);
-                mRecorder.setAudioSamplingRate(48000);
+                mRecorder.setAudioSamplingRate(16000);
 
                 // Encoding configuration
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); // MPEG_4 added in API 1
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC); // HE_AAC added in API 16 (JELLY_BEAN)
-                }else{
-                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
-                }
-                mRecorder.setAudioEncodingBitRate(384000);
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // AAC added in API 10
+                mRecorder.setAudioEncodingBitRate(256000);
 
                 mRecorder.prepare();
 
