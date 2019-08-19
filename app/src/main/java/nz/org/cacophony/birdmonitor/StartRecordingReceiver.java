@@ -41,8 +41,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
         try {
             Util.createTheNextSingleStandardAlarm(context);
-            DawnDuskAlarms.configureDawnAndDuskAlarms(context, false);
-
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
@@ -65,7 +63,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                     "Cacophonometer:StartRecordingReceiverWakelockTag");
 
             long wakeLockDuration = 10 * 60 * 1000L; /*10 minutes*/
-
             boolean recordButtonWasPressed = false;
 
             if (alarmIntentType.equalsIgnoreCase("recordNowButton")) {
@@ -123,14 +120,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                     Log.w(TAG, "Battery level too low to do a recording");
                     return;
                 }
-            }
-
-
-            if (alarmIntentType.equalsIgnoreCase("dawn") || alarmIntentType.equalsIgnoreCase("dusk")) {
-                if (prefs.getIsDisableDawnDuskRecordings()) {
-                    return; // exit onReceive method
-                }
-
             }
 
             // need to determine the source of the intent ie Main UI or boot receiver

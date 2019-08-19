@@ -763,19 +763,36 @@ public class Util {
         }
     }
 
-    public static void createCreateAlarms(Context context) { // Because each alarm now creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
+    public static void setAlarmManagerWakeUp(AlarmManager alarmManager, long wakeUpTime, PendingIntent pendingIntent) {
+        // https://developer.android.com/reference/android/app/AlarmManager.html
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+            return;
+        }
+
+        // Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+    }
+
+    public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra("type", "repeating");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("createCreateAlarms"); // cf dawn dusk offsets created in DawnDuskAlarms
+            timeUri = Uri.parse("failSafe"); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -784,58 +801,61 @@ public class Util {
         }
 
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
 
+    public static long getMilliSecondsBetweenRecordings() {
+        //TODO: Put these in prefs..
+        float minPauseMinutes = 2.0f;   // About double the recording length.
+        float maxPauseMinutes = 55.0f;  // Just *under* an hour.
+        float spreadMinutes = 20.0f;
+
+        float chance = new Random().nextFloat() * spreadMinutes;
+
+        if(chance < 5.0f) {
+            // About a quarter of the time, record fairly often ...
+            return (long) (1000 * (minPauseMinutes + chance));
+        }
+
+        // ... but still save battery over the course of a day.
+        return (long) (1000 * (maxPauseMinutes + chance - spreadMinutes));
     }
 
     /**
      * Creates Android OS alarms that when fired by the OS, create and send intents to the
      * StartRecordingReceiver class which in turn initiate a recording.
      * <p>
-     * This method creates the 'normal' alarms which fire on a regular interval through out the day
-     * and night.  There are also dawn/dusk alarms for extra recordings either side of dawn and
-     * dusk.
-     * <p>
      * There is also a method called createCreateAlarms that kick starts this method.
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context) { // Standard repeating as apposed to Dawn or Dusk
+    public static void createTheNextSingleStandardAlarm(Context context) {
         Prefs prefs = new Prefs(context);
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
-        myIntent.putExtra("callingCode", "tim"); // for debugging
 
         try {
             myIntent.putExtra("type", "repeating");
-            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("normal"); // cf dawn dusk offsets created in DawnDuskAlarms
+            Uri timeUri; // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            timeUri = Uri.parse("normal");
             myIntent.setData(timeUri);
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
             Log.e(TAG, "alarmManager is null");
             return;
         }
-        long timeBetweenRecordingsSeconds = (long) prefs.getAdjustedTimeBetweenRecordingsSeconds();
-        long delay = 1000 * timeBetweenRecordingsSeconds;
 
-        long currentElapsedRealTime = SystemClock.elapsedRealtime();
-        long startWindowTime = currentElapsedRealTime + delay;
+        long delayMS = getMilliSecondsBetweenRecordings();
+        long wakeUpTime = SystemClock.elapsedRealtime() + delayMS;
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-            // https://developer.android.com/reference/android/app/AlarmManager.html
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
 
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
-            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-        } else {// Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, startWindowTime, pendingIntent);
-        }
-        setTheNextSingleStandardAlarmUsingDelay(context, delay);
+        long nextAlarmInUnixTime = new Date().getTime() + delayMS;
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
     }
 
     public static void updateGPSLocation(Context context) {
@@ -862,67 +882,10 @@ public class Util {
         }
     }
 
-    public static long[] getDawnDuskAlarmList(Context context) {
-        Prefs prefs = new Prefs(context);
-        String alarmsString = prefs.getAlarmString();
-        if (alarmsString == null) {
-            return null;
-        }
-        String[] tempArray;
-
-        String delimiter = ",";
-        /* given string will be split by the argument delimiter provided. */
-        tempArray = alarmsString.split(delimiter);
-        Arrays.sort(tempArray);
-
-        long[] alarmTimes = new long[tempArray.length];
-        for (int i = 0; i < tempArray.length; i++) {
-            alarmTimes[i] = Long.parseLong(tempArray[i]);
-        }
-
-        return alarmTimes;
-    }
-
     public static String getNextAlarm(Context context) {
         Prefs prefs = new Prefs(context);
         long nextAlarm = prefs.getNextSingleStandardAlarm();
-        long[] dawnDuskAlarms = getDawnDuskAlarmList(context);
-        if (dawnDuskAlarms != null) {
-            Date now = new Date();
-            for (long dawnDuskAlarm : dawnDuskAlarms) {
-                if (dawnDuskAlarm < nextAlarm && dawnDuskAlarm > now.getTime()) {
-                    nextAlarm = dawnDuskAlarm;
-                }
-            }
-        }
         return convertUnixTimeToString(nextAlarm);
-    }
-
-    public static void addDawnDuskAlarm(Context context, long alarmInUnixTime) {
-        Prefs prefs = new Prefs(context);
-        // First Ignore it if this time has already passed
-        Date now = new Date();
-        if (alarmInUnixTime < now.getTime()) {
-            return;
-        }
-
-        String alarmInUnixTimeStr = Long.toString(alarmInUnixTime);
-        String currentAlarms = prefs.getDawnDuskAlarms();
-        if (currentAlarms == null) {
-            currentAlarms = alarmInUnixTimeStr;
-        } else {
-            currentAlarms = currentAlarms + "," + alarmInUnixTimeStr;
-        }
-        prefs.saveDawnDuskAlarms(currentAlarms);
-    }
-
-    public static void setTheNextSingleStandardAlarmUsingDelay(Context context, long delayInMillisecs) {
-        Prefs prefs = new Prefs(context);
-        // need to covert this delay into unix time
-        Date date = new Date();
-        long currentUnixTime = date.getTime();
-        long nextHourlyAlarmInUnixTime = currentUnixTime + delayInMillisecs;
-        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextHourlyAlarmInUnixTime);
     }
 
     public static String getTimeThatLastRecordingHappened(Context context) {
@@ -934,7 +897,6 @@ public class Util {
     public static void setTimeThatLastRecordingHappened(Context context, long timeLastRecordingHappened) {
         Prefs prefs = new Prefs(context);
         prefs.setTimeThatLastRecordingHappened(timeLastRecordingHappened);
-
     }
 
     public static String convertUnixTimeToString(long unixTimeToConvert) {
