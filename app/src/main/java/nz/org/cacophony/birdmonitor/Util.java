@@ -783,7 +783,7 @@ public class Util {
     public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
-            myIntent.putExtra("type", "repeating");
+            myIntent.putExtra("type", "failSafe");
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse("failSafe"); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
@@ -813,11 +813,11 @@ public class Util {
 
         if(chance < 5.0f) {
             // About a quarter of the time, record fairly often ...
-            return (long) (1000 * (minPauseMinutes + chance));
+            return (long) (1000 * 60 * (minPauseMinutes + chance));
         }
 
         // ... but still save battery over the course of a day.
-        return (long) (1000 * (maxPauseMinutes + chance - spreadMinutes));
+        return (long) (1000 * 60 * (maxPauseMinutes + chance - spreadMinutes));
     }
 
     /**
@@ -855,6 +855,7 @@ public class Util {
         setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
 
         long nextAlarmInUnixTime = new Date().getTime() + delayMS;
+        Log.d("NextAlarm","Delay is " + delayMS);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
     }
 

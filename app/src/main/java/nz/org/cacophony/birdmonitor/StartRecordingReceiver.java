@@ -52,6 +52,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 return;
+            }else if (alarmIntentType == "failSafe"){
+                return;
             }
 
             // A wake lock stops the Android OS trying to save power by stopping a process.
