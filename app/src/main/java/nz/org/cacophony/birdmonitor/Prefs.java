@@ -81,7 +81,6 @@ public class Prefs {
     private static final String CANCEL_RECORDING_ACCESS_KEY = "CANCEL_RECORDING_ACCESS";
 
     private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
-    private static final String USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
 
     private static final String USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
     private static final String USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
@@ -381,9 +380,7 @@ public class Prefs {
     public double getAdjustedTimeBetweenRecordingsSeconds() {
         if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)) {
             return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
-        } else if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)) {
-            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
-        } else {
+        }else{
             return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
         }
     }
@@ -496,10 +493,6 @@ public class Prefs {
         return getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY);
     }
 
-    public boolean getUseFrequentRecordings() {
-        return getBoolean(USE_FREQUENT_RECORDINGS_KEY);
-    }
-
     public boolean getUseFrequentUploads() {
         return getBoolean(USE_FREQUENT_UPLOADS_KEY);
     }
@@ -530,10 +523,6 @@ public class Prefs {
 
     public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
-    }
-
-    public void setUseFrequentRecordings(boolean useFrequentRecordings) {
-        setBoolean(USE_FREQUENT_RECORDINGS_KEY, useFrequentRecordings);
     }
 
     public void setUseFrequentUploads(boolean useFrequentUploads) {

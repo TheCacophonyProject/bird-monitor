@@ -120,7 +120,6 @@
     <string name="online_mode_title">Online Mode (keep internet connection alive)</string>
     <string name="warning_sound_title">Warning Sound</string>
     <string name="ignore_low_battery_title">Ignore Low Battery</string>
-    <string name="frequent_recordings_title">Frequent Recordings</string>
     <string name="short_recordings_message">The following settings are for testing various aspects of the app.</string>
     <string name="offline_mode_message">If you know that you will not have a network connection, use this so you do not have to register with the server.  It will also save power.  You may want to use a micro SD card to make it easier to retrieve the recordings</string>
     <string name="online_mode_message">If you are using remote access software, select this to prevent \'airplane mode\' activating.</string>

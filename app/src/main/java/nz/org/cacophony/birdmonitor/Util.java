@@ -772,7 +772,8 @@ public class Util {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
-            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+            int windowSize = 1000 * 60 * 2;
+            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime-windowSize,wakeUpTime+windowSize, pendingIntent);
             return;
         }
 
@@ -913,12 +914,6 @@ public class Util {
     public static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
-        createTheNextSingleStandardAlarm(context);
-    }
-
-    public static void setUseFrequentRecordings(Context context, boolean useFrequentRecordings) {
-        Prefs prefs = new Prefs(context);
-        prefs.setUseFrequentRecordings(useFrequentRecordings);
         createTheNextSingleStandardAlarm(context);
     }
 

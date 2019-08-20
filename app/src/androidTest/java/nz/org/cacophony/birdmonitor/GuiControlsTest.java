@@ -131,21 +131,12 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
 
     @Test
     public void frequencyRecordTest() {
-        Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
         onView(withId(R.id.btnAdvanced)).perform(click());
         HelperCode.nowNavigateRightTimes(4);
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked())); // Record more often should be off
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked())); // Upload after every recording should be off
-
-        // Now turn record more often on
-        onView(withId(R.id.swRecordMoreOften)).perform(click());
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isChecked())); // confirm it is checked
-        // Check correct prefs variable was set and others were not set
-        boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertTrue(recordMoreOften);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
         assertFalse(useFrequentUploads);
@@ -158,39 +149,28 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
         nowNavigateLeft(); // leave page
         nowNavigateRight();  // return to page
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-
-        // and check prefs are still correct
-        recordMoreOften = prefs.getUseFrequentRecordings();
-        assertTrue(recordMoreOften);
 
         useFrequentUploads = prefs.getUseFrequentUploads();
         assertFalse(useFrequentUploads);
 
         periodicallyUpdateGPS = prefs.getPeriodicallyUpdateGPS();
         assertFalse(periodicallyUpdateGPS);
-
-        // Finished so leave all off
-        onView(withId(R.id.swRecordMoreOften)).perform(click());
     }
 
     @Test
     public void frequencyUploadTest() {
-        Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
         onView(withId(R.id.btnAdvanced)).perform(click());
         HelperCode.nowNavigateRightTimes(4);
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
 
         onView(withId(R.id.swUseFrequentUploads)).perform(click());
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isChecked())); // confirm it is checked
         // Check correct prefs variable was set and others were not set
-        boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertFalse(recordMoreOften);
+
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
         assertTrue(useFrequentUploads);
@@ -203,12 +183,7 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
         nowNavigateLeft(); // leave page
         nowNavigateRight();  // return to page
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isChecked()));
-
-        // and check prefs are still correct
-        recordMoreOften = prefs.getUseFrequentRecordings();
-        assertFalse(recordMoreOften);
 
         useFrequentUploads = prefs.getUseFrequentUploads();
         assertTrue(useFrequentUploads);
@@ -223,18 +198,12 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
     @Test
     @Ignore("This feature of periodically updating GPS seems to no longer exist")
     public void frequencyGPSTest() {
-        Util.setUseFrequentRecordings(targetContext, false);
         Util.setUseFrequentUploads(targetContext, false);
 
         onView(withId(R.id.btnAdvanced)).perform(click());
         HelperCode.nowNavigateRightTimes(4);
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-
-        // Check correct prefs variable was set and others were not set
-        boolean recordMoreOften = prefs.getUseFrequentRecordings();
-        assertFalse(recordMoreOften);
 
         boolean useFrequentUploads = prefs.getUseFrequentUploads();
         assertFalse(useFrequentUploads);
@@ -247,12 +216,7 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
         nowNavigateLeft(); // leave page
         nowNavigateRight();  // return to page
 
-        onView(withId(R.id.swRecordMoreOften)).check(matches(isNotChecked()));
         onView(withId(R.id.swUseFrequentUploads)).check(matches(isNotChecked()));
-
-        // and check prefs are still correct
-        recordMoreOften = prefs.getUseFrequentRecordings();
-        assertFalse(recordMoreOften);
 
         useFrequentUploads = prefs.getUseFrequentUploads();
         assertFalse(useFrequentUploads);
@@ -282,14 +246,11 @@ public class GuiControlsTest extends TestBaseStartingOnMainScreen {
         isRooted = prefs.getHasRootAccess();
         assertTrue(isRooted);
 
-
         // Turn off
         onView(withId(R.id.swRooted)).perform(click()); // turn off
         onView(withId(R.id.swRooted)).check(matches(isNotChecked())); //  should be off
         isRooted = prefs.getHasRootAccess();
         assertFalse(isRooted);
-
-        // Finished so leave off
     }
 
 }
