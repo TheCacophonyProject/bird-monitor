@@ -39,9 +39,6 @@ public class Prefs {
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
 
-    private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-    private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
 
@@ -377,24 +374,8 @@ public class Prefs {
         setDouble(RECORDING_DURATION_SECONDS_KEY, RECORDING_DURATION_SECONDS);
     }
 
-    public double getAdjustedTimeBetweenRecordingsSeconds() {
-        if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)) {
-            return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
-        }else{
-            return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
-        }
-    }
-
-    public void setNormalTimeBetweenRecordingsSeconds() {
-        setDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY, NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS);
-    }
-
     public void setTimeBetweenVeryFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS);
-    }
-
-    public double getTimeBetweenVeryFrequentRecordingsSeconds() {
-        return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
     public void setTimeBetweenGPSLocationUpdatesSeconds() {

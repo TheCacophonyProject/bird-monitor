@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         final Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
-        prefs.setNormalTimeBetweenRecordingsSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
         prefs.setTimeBetweenVeryFrequentRecordingsSeconds();
         prefs.setTimeBetweenGPSLocationUpdatesSeconds();
