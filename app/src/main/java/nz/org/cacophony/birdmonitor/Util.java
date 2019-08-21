@@ -804,21 +804,20 @@ public class Util {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public static long getMilliSecondsBetweenRecordings() {
-        //TODO: Put these in prefs..
-        float minPauseMinutes = 2.0f;   // About double the recording length.
-        float maxPauseMinutes = 55.0f;  // Just *under* an hour.
-        float spreadMinutes = 20.0f;
-
-        float chance = new Random().nextFloat() * spreadMinutes;
-
-        if(chance < 5.0f) {
-            // About a quarter of the time, record fairly often ...
-            return (long) (1000 * 60 * (minPauseMinutes + chance));
+    public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
+        if (prefs.getUseVeryFrequentRecordings()) {
+            return (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
         }
 
-        // ... but still save battery over the course of a day.
-        return (long) (1000 * 60 * (maxPauseMinutes + chance - spreadMinutes));
+        float chance = new Random().nextFloat();
+        float shortWindowChance = prefs.getshortRecordingWindowChance();
+        float percent;
+        if(chance < shortWindowChance) {
+            percent = chance / shortWindowChance;
+            return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + percent * prefs.getShortRecordingWindowMinutes()));
+        }
+        percent = (chance-shortWindowChance) / (1-shortWindowChance);
+        return (long) (1000 * 60 * (prefs.getLongRecordingPause() + percent * prefs.getLongRecordingWindowMinutes()));
     }
 
     /**
@@ -849,7 +848,7 @@ public class Util {
             return;
         }
 
-        long delayMS = getMilliSecondsBetweenRecordings();
+        long delayMS = getMilliSecondsBetweenRecordings(prefs);
         long wakeUpTime = SystemClock.elapsedRealtime() + delayMS;
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
