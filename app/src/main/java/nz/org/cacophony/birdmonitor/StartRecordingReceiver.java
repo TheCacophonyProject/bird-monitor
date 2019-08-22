@@ -172,7 +172,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
         // The battery level required to continue depends on the type of alarm
 
-        if ((alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) || (alarmType.equalsIgnoreCase("birdCountButton"))) {
+        if (alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
             // record now button was pressed
             return true;
         }
