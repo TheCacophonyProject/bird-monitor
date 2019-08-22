@@ -1209,7 +1209,7 @@ public class Util {
     }
 
     public static boolean isUIRecording(String type){
-        return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
+        return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isUIRecording(type);
   }
     public static long getRecordingDuration(Context context, String typeOfRecording) {
         Prefs prefs = new Prefs(context);

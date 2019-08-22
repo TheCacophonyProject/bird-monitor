@@ -148,8 +148,7 @@ public class BirdCountActivity extends AppCompatActivity {
 
         Intent myIntent = new Intent(this, StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
-        try {isBirdCountRecording
-
+        try {
             long durationInSeconds = 0;
 
             if (rbFiveMinute.isChecked()) {
