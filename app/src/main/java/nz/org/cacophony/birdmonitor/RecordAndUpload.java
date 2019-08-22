@@ -69,7 +69,7 @@ public class RecordAndUpload {
             long now = new Date().getTime();
             long timeIntervalBetweenUploads = 1000 * (long) prefs.getTimeBetweenUploadsSeconds();
 
-            if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || typeOfRecording.equalsIgnoreCase("recordNowButton")) { // don't upload if not enough time has passed
+            if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || Util.isUIRecording(typeOfRecording)) { // don't upload if not enough time has passed
 
                 if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
                     boolean uploadedFilesSuccessfully = uploadFiles(context);

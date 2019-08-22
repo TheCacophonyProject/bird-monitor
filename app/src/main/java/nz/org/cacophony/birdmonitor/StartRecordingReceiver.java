@@ -125,8 +125,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
 
             // need to determine the source of the intent ie Main UI or boot receiver
-
-            if (alarmIntentType.equalsIgnoreCase("recordNowButton") || alarmIntentType.equalsIgnoreCase("birdCountButton5") || alarmIntentType.equalsIgnoreCase("birdCountButton10") || alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
+            if ( Util.isUIRecording(alarmIntentType)) {
                 try {
                     // Start recording in new thread.
 

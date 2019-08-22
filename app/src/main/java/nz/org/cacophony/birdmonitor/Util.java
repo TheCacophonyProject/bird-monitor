@@ -1204,17 +1204,13 @@ public class Util {
         return grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static boolean isBirdCountRecording(String typeOfRecording) {
-        if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM)) {
-            return true;
-        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)) {
-            return true;
-        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
-            return true;
-        }
-        return false;
+    public static boolean isBirdCountRecording(String type) {
+        return type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
     }
 
+    public static boolean isUIRecording(String type){
+        return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
+  }
     public static long getRecordingDuration(Context context, String typeOfRecording) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
