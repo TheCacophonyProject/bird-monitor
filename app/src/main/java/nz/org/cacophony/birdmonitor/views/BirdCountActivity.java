@@ -159,7 +159,7 @@ public class BirdCountActivity extends AppCompatActivity {
             } else if (rbFifteenMinute.isChecked()) {
                 myIntent.putExtra("type",  Prefs.BIRD_COUNT_15_ALARM);
             }
-            durationInSeconds = Util.getRecordingDuration(getApplicationContext(),  Prefs.BIRD_COUNT_5_ALARM);
+            durationInSeconds = Util.getRecordingDuration(getApplicationContext(),  myIntent.getStringExtra("type"));
 
             long durationInMilliSeconds = durationInSeconds * 1000;
 
