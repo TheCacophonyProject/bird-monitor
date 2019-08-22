@@ -812,8 +812,10 @@ public class Util {
         float chance = new Random().nextFloat();
         float shortWindowChance = prefs.getshortRecordingWindowChance();
         if(chance < shortWindowChance) {
+            chance = new Random().nextFloat();
             return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
         }
+        chance = new Random().nextFloat();
         return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
     }
 
