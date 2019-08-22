@@ -52,7 +52,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 return;
-            }else if (alarmIntentType == "failSafe"){
+            }else if (alarmIntentType == Prefs.FAIL_SAFE_ALARM){
                 return;
             }
 
@@ -67,14 +67,14 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             long wakeLockDuration = 10 * 60 * 1000L; /*10 minutes*/
             boolean recordButtonWasPressed = false;
 
-            if (alarmIntentType.equalsIgnoreCase("recordNowButton")) {
+            if (alarmIntentType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
                 recordButtonWasPressed = true;
-            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton5")) {
+            } else if (alarmIntentType.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM)) {
                 recordButtonWasPressed = true;
-            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton10")) {
+            } else if (alarmIntentType.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)) {
                 recordButtonWasPressed = true;
                 wakeLockDuration = 12 * 60 * 1000L; // 10 minutes for recording plus margin of error/uploading
-            } else if (alarmIntentType.equalsIgnoreCase("birdCountButton15")) {
+            } else if (alarmIntentType.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
                 recordButtonWasPressed = true;
                 wakeLockDuration = 17 * 60 * 1000L; // 15 minutes for recording plus margin of error/uploading
             }
@@ -172,7 +172,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
         // The battery level required to continue depends on the type of alarm
 
-        if ((alarmType.equalsIgnoreCase("recordNowButton")) || (alarmType.equalsIgnoreCase("birdCountButton"))) {
+        if ((alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) || (alarmType.equalsIgnoreCase("birdCountButton"))) {
             // record now button was pressed
             return true;
         }
@@ -181,7 +181,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             return true;
         }
 
-        if (alarmType.equalsIgnoreCase("repeating")) {
+        if (alarmType.equalsIgnoreCase(prefs.REPEATING_ALARM)) {
 
             return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
         } else { // must be a dawn or dusk alarm

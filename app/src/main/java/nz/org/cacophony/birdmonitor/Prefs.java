@@ -14,7 +14,12 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-
+    public static final String FAIL_SAFE_ALARM = "failSafe";
+    public static final String REPEATING_ALARM = "repeating";
+    public static final String RECORD_NOW_ALARM = "recordNowButton";
+    public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
+    public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
+    public static final String BIRD_COUNT_15_ALARM = "birdCountButton15";
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";

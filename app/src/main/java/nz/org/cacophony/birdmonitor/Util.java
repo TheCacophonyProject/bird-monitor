@@ -784,9 +784,9 @@ public class Util {
     public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
-            myIntent.putExtra("type", "failSafe");
+            myIntent.putExtra("type", Prefs.FAIL_SAFE_ALARM);
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("failSafe"); // cf dawn dusk offsets created in DawnDuskAlarms
+            timeUri = Uri.parse(Prefs.FAIL_SAFE_ALARM); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
 
         } catch (Exception ex) {
@@ -811,13 +811,10 @@ public class Util {
 
         float chance = new Random().nextFloat();
         float shortWindowChance = prefs.getshortRecordingWindowChance();
-        float percent;
         if(chance < shortWindowChance) {
-            percent = chance / shortWindowChance;
-            return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + percent * prefs.getShortRecordingWindowMinutes()));
+            return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
         }
-        percent = (chance-shortWindowChance) / (1-shortWindowChance);
-        return (long) (1000 * 60 * (prefs.getLongRecordingPause() + percent * prefs.getLongRecordingWindowMinutes()));
+        return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
     }
 
     /**
@@ -833,7 +830,7 @@ public class Util {
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
 
         try {
-            myIntent.putExtra("type", "repeating");
+            myIntent.putExtra("type", prefs.REPEATING_ALARM);
             Uri timeUri; // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse("normal");
             myIntent.setData(timeUri);
@@ -1206,11 +1203,11 @@ public class Util {
     }
 
     public static boolean isBirdCountRecording(String typeOfRecording) {
-        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+        if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM)) {
             return true;
-        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)) {
             return true;
-        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
             return true;
         }
         return false;
@@ -1220,11 +1217,11 @@ public class Util {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
-        if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+        if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_5_ALARM)) {
             recordTimeSeconds = 60 * 5;
-        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+        } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_10_ALARM)) {
             recordTimeSeconds = 60 * 10;
-        } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+        } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
         }
 
@@ -1232,19 +1229,16 @@ public class Util {
         if (prefs.getUseShortRecordings()) { // for testing
             recordTimeSeconds = 1;
 
-            if (typeOfRecording.equalsIgnoreCase("birdCountButton5")) {
+            if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_5_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 5;
-            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton10")) {
+            } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_10_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 10;
-            } else if (typeOfRecording.equalsIgnoreCase("birdCountButton15")) {
+            } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
             }
         }
 
-        if (typeOfRecording.equalsIgnoreCase("dawn") || typeOfRecording.equalsIgnoreCase("dusk")) {
-            recordTimeSeconds += 2; // help to recognise dawn/dusk recordings
-            Log.d(TAG, "typeOfRecording is dawn or dusk");
-        } else if (typeOfRecording.equalsIgnoreCase("recordNowButton")) {
+        if (typeOfRecording.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
             recordTimeSeconds += 1; // help to recognise recordNowButton recordings
         }
         return recordTimeSeconds;
