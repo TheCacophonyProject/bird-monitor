@@ -51,19 +51,11 @@ public class BootReceiver extends BroadcastReceiver {
                     long timeout = 1000 * 60 * 2;  // give the boot stuff two minutes to run - but the enable flight mode does not seem to be working (however long I wait).
                     wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creation
                     try {
-
-
-                        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-                        toneGen1.startTone(ToneGenerator.TONE_CDMA_CALL_SIGNAL_ISDN_NORMAL, 1000);
                         Util.createTheNextSingleStandardAlarm(context);
-
-                        DawnDuskAlarms.configureDawnAndDuskAlarms(context, true);
-                        Util.createCreateAlarms(context);
-
+                        Util.createFailSafeAlarm(context);
                         Util.enableFlightMode(context);
-
                     } catch (Exception e) {
-                        Log.e(TAG, "Error disabling flight mode");
+                        Log.e(TAG, "Error setting boot alarms");
                     } finally {
                         wakeLock.release();
                     }
@@ -72,13 +64,7 @@ public class BootReceiver extends BroadcastReceiver {
             thread.start();
 
         } catch (Exception ex) {
-            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-            toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 5000);
-            try {
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                Log.e(TAG, ex.getLocalizedMessage(), ex);
-            }
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
 

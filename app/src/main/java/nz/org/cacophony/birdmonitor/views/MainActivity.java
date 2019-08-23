@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         final Prefs prefs = new Prefs(this.getApplicationContext());
         prefs.setRecordingDurationSeconds();
-        prefs.setNormalTimeBetweenRecordingsSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
         prefs.setTimeBetweenVeryFrequentRecordingsSeconds();
         prefs.setTimeBetweenGPSLocationUpdatesSeconds();
@@ -111,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Now create the alarms that will cause the recordings to happen
         Util.createTheNextSingleStandardAlarm(getApplicationContext());
-        DawnDuskAlarms.configureDawnAndDuskAlarms(getApplicationContext(), true);
-        Util.createCreateAlarms(getApplicationContext());
+        Util.createFailSafeAlarm(getApplicationContext());
 
 
         // Open the Setup wizard if the app does not yet have device name

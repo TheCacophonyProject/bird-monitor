@@ -14,7 +14,12 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-
+    public static final String FAIL_SAFE_ALARM = "failSafe";
+    public static final String REPEATING_ALARM = "repeating";
+    public static final String RECORD_NOW_ALARM = "recordNowButton";
+    public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
+    public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
+    public static final String BIRD_COUNT_15_ALARM = "birdCountButton15";
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
@@ -39,9 +44,6 @@ public class Prefs {
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
 
-    private static final String NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_RECORDINGS";
-    private static final double NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS = 3600;  //3600 is one hour!
-
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
 
@@ -51,10 +53,14 @@ public class Prefs {
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
 
+    private static final int shortRecordingPause = 2;
+    private static final int longRecordingPause= 40;
+    private static final int longRecordingWindowMinutes = 20;
+    private static final int shortRecordingWindowMinutes = 5;
+    private static final float shortRecordingWindowChance =0.25f;
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
-    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 70;
-
+    private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 30;
     private static final String IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
 
     private static final String BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
@@ -81,7 +87,6 @@ public class Prefs {
     private static final String CANCEL_RECORDING_ACCESS_KEY = "CANCEL_RECORDING_ACCESS";
 
     private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
-    private static final String USE_FREQUENT_RECORDINGS_KEY = "USE_FREQUENT_RECORDINGS";
 
     private static final String USE_SHORT_RECORDINGS_KEY = "USE_SHORT_RECORDINGS";
     private static final String USE_FREQUENT_UPLOADS_KEY = "USE_FREQUENT_UPLOADS";
@@ -378,26 +383,8 @@ public class Prefs {
         setDouble(RECORDING_DURATION_SECONDS_KEY, RECORDING_DURATION_SECONDS);
     }
 
-    public double getAdjustedTimeBetweenRecordingsSeconds() {
-        if (getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY)) {
-            return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
-        } else if (getBoolean(USE_FREQUENT_RECORDINGS_KEY)) {
-            return getDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY);
-        } else {
-            return getDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY);
-        }
-    }
-
-    public void setNormalTimeBetweenRecordingsSeconds() {
-        setDouble(NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS_KEY, NORMAL_TIME_BETWEEN_RECORDINGS_SECONDS);
-    }
-
     public void setTimeBetweenVeryFrequentRecordingsSeconds() {
         setDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS);
-    }
-
-    public double getTimeBetweenVeryFrequentRecordingsSeconds() {
-        return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
     public void setTimeBetweenGPSLocationUpdatesSeconds() {
@@ -408,6 +395,28 @@ public class Prefs {
         setDouble(TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY, TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS);
     }
 
+    public double getTimeBetweenVeryFrequentRecordingsSeconds() {
+        return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
+    }
+
+    public int getShortRecordingPause(){
+        return shortRecordingPause;
+    }
+
+    public int getLongRecordingPause(){
+        return longRecordingPause;
+    }
+
+    public int getShortRecordingWindowMinutes(){
+        return shortRecordingWindowMinutes;
+    }
+
+    public int getLongRecordingWindowMinutes(){
+        return longRecordingWindowMinutes;
+    }
+    public float getshortRecordingWindowChance(){
+        return shortRecordingWindowChance;
+    }
     public double getTimeBetweenUploadsSeconds() {
         if (getBoolean(USE_FREQUENT_UPLOADS_KEY)) {
             return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
@@ -496,10 +505,6 @@ public class Prefs {
         return getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY);
     }
 
-    public boolean getUseFrequentRecordings() {
-        return getBoolean(USE_FREQUENT_RECORDINGS_KEY);
-    }
-
     public boolean getUseFrequentUploads() {
         return getBoolean(USE_FREQUENT_UPLOADS_KEY);
     }
@@ -530,10 +535,6 @@ public class Prefs {
 
     public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
-    }
-
-    public void setUseFrequentRecordings(boolean useFrequentRecordings) {
-        setBoolean(USE_FREQUENT_RECORDINGS_KEY, useFrequentRecordings);
     }
 
     public void setUseFrequentUploads(boolean useFrequentUploads) {

@@ -149,19 +149,16 @@ public class BirdCountActivity extends AppCompatActivity {
         Intent myIntent = new Intent(this, StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
         try {
-
             long durationInSeconds = 0;
 
             if (rbFiveMinute.isChecked()) {
-                myIntent.putExtra("type", "birdCountButton5");
-                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton5");
+                myIntent.putExtra("type", Prefs.BIRD_COUNT_5_ALARM);
             } else if (rbTenMinute.isChecked()) {
-                myIntent.putExtra("type", "birdCountButton10");
-                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton10");
+                myIntent.putExtra("type",  Prefs.BIRD_COUNT_10_ALARM);
             } else if (rbFifteenMinute.isChecked()) {
-                myIntent.putExtra("type", "birdCountButton15");
-                durationInSeconds = Util.getRecordingDuration(getApplicationContext(), "birdCountButton15");
+                myIntent.putExtra("type",  Prefs.BIRD_COUNT_15_ALARM);
             }
+            durationInSeconds = Util.getRecordingDuration(getApplicationContext(),  myIntent.getStringExtra("type"));
 
             long durationInMilliSeconds = durationInSeconds * 1000;
 

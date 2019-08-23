@@ -16,7 +16,6 @@ public class FrequencyFragment extends Fragment {
     private static final String TAG = "FrequencyFragment";
 
 
-    private Switch swRecordMoreOften;
     private Switch swUseFrequentUploads;
     private TextView tvMessages;
 
@@ -24,20 +23,11 @@ public class FrequencyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_frequency, container, false);
-
         setUserVisibleHint(false);
 
         tvMessages = view.findViewById(R.id.tvMessages);
-        swRecordMoreOften = view.findViewById(R.id.swRecordMoreOften);
         swUseFrequentUploads = view.findViewById(R.id.swUseFrequentUploads);
-
         displayOrHideGUIObjects();
-
-        swRecordMoreOften.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.setUseFrequentRecordings(getActivity().getApplicationContext(), swRecordMoreOften.isChecked());
-            displayOrHideGUIObjects();
-        });
-
 
         swUseFrequentUploads.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Util.setUseFrequentUploads(getActivity().getApplicationContext(), swUseFrequentUploads.isChecked());
@@ -61,14 +51,6 @@ public class FrequencyFragment extends Fragment {
 
     void displayOrHideGUIObjects() {
         Prefs prefs = new Prefs(getActivity());
-        swRecordMoreOften.setChecked(prefs.getUseFrequentRecordings());
-        if (prefs.getUseFrequentRecordings()) {
-            swRecordMoreOften.setText("Record more often is ON");
-        } else {
-            swRecordMoreOften.setText("Record more often is OFF");
-        }
-
-
         swUseFrequentUploads.setChecked(prefs.getUseFrequentUploads());
 
         if (prefs.getUseFrequentUploads()) {
