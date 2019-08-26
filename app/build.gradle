@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 ext.versionMajor = 1
 ext.versionMinor = 6
-ext.versionPatch = 2
+ext.versionPatch = 3
 ext.versionClassifier = null
 ext.isSnapshot = false
 // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
