@@ -773,7 +773,7 @@ public class Util {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime-windowSize,wakeUpTime+windowSize, pendingIntent);
+            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime-windowSize, windowSize*2, pendingIntent);
             return;
         }
 
