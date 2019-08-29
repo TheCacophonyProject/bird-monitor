@@ -2,20 +2,20 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.test.espresso.Espresso;
+import androidx.test.espresso.Espresso;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.contrib.ViewPagerActions.scrollLeft;
-import static android.support.test.espresso.contrib.ViewPagerActions.scrollRight;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.*;
+import static androidx.test.espresso.contrib.ViewPagerActions.scrollLeft;
+import static androidx.test.espresso.contrib.ViewPagerActions.scrollRight;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;

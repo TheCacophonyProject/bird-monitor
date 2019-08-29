@@ -1,8 +1,8 @@
 package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatRadioButton;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.AppCompatRadioButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

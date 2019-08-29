@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/birdCountNotes"
@@ -27,7 +27,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
 
 
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilWeather"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etWeather"
             android:layout_width="match_parent"
             android:layout_height="32dp"
@@ -48,9 +48,9 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
             android:hint="Enter a description of the weather"
             android:singleLine="true" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCountedBy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilWeather">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCountedBy"
             android:layout_width="match_parent"
             android:layout_height="32dp"
@@ -71,9 +71,9 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
             android:hint="Enter your name"
             android:singleLine="true" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilOther"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -86,7 +86,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilCountedBy">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etOther"
             android:layout_width="match_parent"
             android:layout_height="32dp"
@@ -94,7 +94,7 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
             android:hint="Enter any other information"
             android:singleLine="true" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnOK"
@@ -123,4 +123,4 @@ tools:context="nz.org.cacophony.birdmonitor.BirdCountActivity">
         app:layout_constraintTop_toBottomOf="@+id/tilOther" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
