@@ -1,10 +1,4 @@
 apply plugin: 'com.android.application'
-
-ext.versionMajor = 1
-ext.versionMinor = 6
-ext.versionPatch = 4
-ext.versionClassifier = null
-ext.isSnapshot = false
 // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
 ext.minimumSdkVersion = 15
 
@@ -20,8 +14,9 @@ android {
         applicationId "nz.org.cacophony.birdmonitor"
         minSdkVersion project.ext.minimumSdkVersion
         targetSdkVersion 28
-        versionCode generateVersionCode() 
-        versionName generateVersionName()
+        versionCode 150010605
+        //minimumSdkVersion * 10000000 + versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "1.6.5"
 
         archivesBaseName = "Bird Monitor-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -49,22 +44,6 @@ android {
         animationsDisabled = true
     }
     buildToolsVersion '28.0.3'
-}
-
-private Integer generateVersionCode() {
-    return ext.minimumSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
-}
-
-private String generateVersionName() {
-    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
-    if (ext.versionClassifier == null && ext.isSnapshot) {
-        ext.versionClassifier = "SNAPSHOT"
-    }
-
-    if (ext.versionClassifier != null) {
-        versionName += "-" + ext.versionClassifier
-    }
-    return versionName;
 }
 
 dependencies {
