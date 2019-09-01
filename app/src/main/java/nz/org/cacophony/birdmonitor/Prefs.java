@@ -54,10 +54,10 @@ public class Prefs {
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
 
     private static final int shortRecordingPause = 2;
-    private static final int longRecordingPause= 40;
+    private static final int longRecordingPause = 40;
     private static final int longRecordingWindowMinutes = 20;
     private static final int shortRecordingWindowMinutes = 5;
-    private static final float shortRecordingWindowChance =0.25f;
+    private static final float shortRecordingWindowChance = 0.25f;
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 30;
@@ -399,24 +399,26 @@ public class Prefs {
         return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
-    public int getShortRecordingPause(){
+    public int getShortRecordingPause() {
         return shortRecordingPause;
     }
 
-    public int getLongRecordingPause(){
+    public int getLongRecordingPause() {
         return longRecordingPause;
     }
 
-    public int getShortRecordingWindowMinutes(){
+    public int getShortRecordingWindowMinutes() {
         return shortRecordingWindowMinutes;
     }
 
-    public int getLongRecordingWindowMinutes(){
+    public int getLongRecordingWindowMinutes() {
         return longRecordingWindowMinutes;
     }
-    public float getshortRecordingWindowChance(){
+
+    public float getshortRecordingWindowChance() {
         return shortRecordingWindowChance;
     }
+
     public double getTimeBetweenUploadsSeconds() {
         if (getBoolean(USE_FREQUENT_UPLOADS_KEY)) {
             return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
@@ -689,11 +691,11 @@ public class Prefs {
         setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
     }
 
-    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName){
+    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName) {
         setString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY, latestBirdCountRecordingFileName);
     }
 
-    public String getLatestBirdCountRecordingFileNameNoExtension(){
+    public String getLatestBirdCountRecordingFileNameNoExtension() {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
 }

@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.core.text.util.LinkifyCompat;
+
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.*;
 
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;

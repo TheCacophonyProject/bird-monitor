@@ -1,13 +1,16 @@
 package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
+
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.idling.CountingIdlingResource;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
+
 import nz.org.cacophony.birdmonitor.views.MainActivity;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

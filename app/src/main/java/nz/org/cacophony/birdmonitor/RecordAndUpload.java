@@ -9,6 +9,9 @@ import android.media.ToneGenerator;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +22,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import io.fabric.sdk.android.services.common.Crash;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
@@ -217,9 +222,9 @@ public class RecordAndUpload {
 
             } catch (Exception ex) {
 
-                Log.e(TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
+                Crashlytics.log(Log.ERROR, TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
-
+                Crashlytics.logException(ex);
                 return;
             }
 
@@ -239,7 +244,7 @@ public class RecordAndUpload {
                 messageToDisplay = "Recording has started";
                 MessageHelper.broadcastMessage(messageToDisplay, RECORDING_STARTED, MANAGE_RECORDINGS_ACTION, context);
             } catch (Exception e) {
-
+                Crashlytics.logException(e);
                 Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
                 return;
             }
@@ -275,6 +280,7 @@ public class RecordAndUpload {
                 try {
                     Thread.sleep(recordTimeSeconds * 1000);
                 } catch (InterruptedException e) {
+                    Crashlytics.logException(e);
                     Log.e(TAG, "Failed sleeping in recording thread.");
                     return;
                 }
@@ -288,6 +294,7 @@ public class RecordAndUpload {
             endRecording(mRecorder, context);
 
         } catch (Exception ex) {
+            Crashlytics.logException(ex);
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             if (isRecording) {
@@ -327,7 +334,8 @@ public class RecordAndUpload {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Log.e(TAG, "Failed sleeping in recording thread.", ex);
+            Log.e(TAG, "Failed sleeping in recording thread.");
+            Crashlytics.logException(ex);
         }
 
         Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
@@ -350,8 +358,7 @@ public class RecordAndUpload {
 
                 // Now wait for network connection as setFlightMode takes a while
                 if (!Util.waitForNetworkConnection(context, true)) {
-
-                    Log.e(TAG, "Failed to disable airplane mode");
+                    Crashlytics.logException(new Throwable("NoInternet"));
                     return false;
                 }
 
@@ -373,8 +380,8 @@ public class RecordAndUpload {
                 }
 
                 for (File aFile : recordingFiles) {
-                    if (isCancelUploadingRecordings()){
-                       break;
+                    if (isCancelUploadingRecordings()) {
+                        break;
                     }
 
                     if (sendFile(context, aFile)) {
@@ -413,6 +420,7 @@ public class RecordAndUpload {
 
                         } catch (Exception ex) {
                             Log.e(TAG, ex.getLocalizedMessage(), ex);
+                            Crashlytics.logException(ex);
                         }
                         if (!fileSuccessfullyDeleted) {
                             // for some reason file did not delete so exit for loop
@@ -423,7 +431,7 @@ public class RecordAndUpload {
                         }
                     } else {
                         // Did not upload, but reason may have been that the user pressed cancel
-                        if (!isCancelUploadingRecordings()){
+                        if (!isCancelUploadingRecordings()) {
                             Log.e(TAG, "Failed to upload file to server");
                         }
 
@@ -439,6 +447,7 @@ public class RecordAndUpload {
             return returnValue;
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
+            Crashlytics.logException(ex);
             return false;
         }
     }

@@ -2,6 +2,7 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.test.espresso.Espresso;
 
 import java.util.Map;
@@ -110,7 +111,7 @@ class HelperCode {
         // Now enter the device name
 
         // Create a unique device name
-        String deviceName  = TEST_DEVICE_PREFIX + UUID.randomUUID();
+        String deviceName = TEST_DEVICE_PREFIX + UUID.randomUUID();
         prefs.setLastDeviceNameUsedForTesting(deviceName); // save the device name so can find recordings for it later
 
         onView(withId(R.id.etDeviceNameInput)).perform(replaceText(deviceName), closeSoftKeyboard());

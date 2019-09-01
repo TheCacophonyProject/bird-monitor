@@ -1,12 +1,15 @@
 package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
+
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.SectionsStatePagerAdapter;

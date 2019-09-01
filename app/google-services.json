@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "728802018764",
+    "firebase_url": "https://bird-monitor.firebaseio.com",
+    "project_id": "bird-monitor",
+    "storage_bucket": "bird-monitor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728802018764:android:e19885613b2b0a3a",
+        "android_client_info": {
+          "package_name": "nz.org.cacophony.birdmonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728802018764-dthnjgttk52ubgbbv8rgkhb69q21u24u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApWAAebXQpOvvEGqvwH4u4XunHAFHJUCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728802018764-dthnjgttk52ubgbbv8rgkhb69q21u24u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,18 +8,22 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.*;
 import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;

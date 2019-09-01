@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.core.util.Consumer;
+
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,9 +22,10 @@ public class MessageHelper {
 
     /**
      * Register a {@link BroadcastReceiver} to trigger on the given {@link Action}.
-     * @param action The Action to listen for.
+     *
+     * @param action            The Action to listen for.
      * @param broadcastReceiver The receiver to trigger upon message.
-     * @param context Any context within the app to get the LocalBroadcastManager instance.
+     * @param context           Any context within the app to get the LocalBroadcastManager instance.
      */
     public static void registerMessageHandler(Action action, BroadcastReceiver broadcastReceiver, Context context) {
         IntentFilter intentFilter = new IntentFilter(action.name);
@@ -30,8 +34,9 @@ public class MessageHelper {
 
     /**
      * Unregister a {@link BroadcastReceiver}.
+     *
      * @param receiver The receiver to unregister.
-     * @param context Any context within the app to get the LocalBroadcastManager instance.
+     * @param context  Any context within the app to get the LocalBroadcastManager instance.
      */
     public static void unregisterMessageHandler(BroadcastReceiver receiver, Context context) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver);
@@ -39,6 +44,7 @@ public class MessageHelper {
 
     /**
      * Creates and returns an {@link BroadcastReceiver} that will call the given function upon receiving a message.
+     *
      * @param onMessage The function to call upon message.
      * @return The {@link BroadcastReceiver} instance.
      */
@@ -53,10 +59,11 @@ public class MessageHelper {
 
     /**
      * Send a message on the LocalBroadcastManager stream targeted at the given Action.
+     *
      * @param messageToDisplay The message that any given receiver should display.
-     * @param messageType The type of message, must match the appropriate Action.
-     * @param action The Action that the message relates to.
-     * @param context Any context within the app to get the LocalBroadcastManager instance.
+     * @param messageType      The type of message, must match the appropriate Action.
+     * @param action           The Action that the message relates to.
+     * @param context          Any context within the app to get the LocalBroadcastManager instance.
      */
     public static void broadcastMessage(String messageToDisplay, Enum messageType, Action action, Context context) {
         broadcastMessage(messageToDisplay, new JSONObject(), messageType, action, context);
@@ -65,11 +72,12 @@ public class MessageHelper {
     /**
      * Send a message on the LocalBroadcastManager stream targeted at the given Action. Includes any extras included.
      * messageType and messageToDisplay will be overwritten by the parameters if they are already set in the JSONObject.
-     * @param messageToDisplay The message that any given receiver should display.
+     *
+     * @param messageToDisplay             The message that any given receiver should display.
      * @param jsonObjectMessageToBroadcast Any additional extra information to include in the broadcast.
-     * @param messageType The type of message, must match the appropriate Action.
-     * @param action The Action that the message relates to.
-     * @param context Any context within the app to get the LocalBroadcastManager instance.
+     * @param messageType                  The type of message, must match the appropriate Action.
+     * @param action                       The Action that the message relates to.
+     * @param context                      Any context within the app to get the LocalBroadcastManager instance.
      */
     public static void broadcastMessage(String messageToDisplay, JSONObject jsonObjectMessageToBroadcast, Enum messageType, Action action, Context context) {
         try {
@@ -84,9 +92,10 @@ public class MessageHelper {
     /**
      * Actually responsible for broadcasting the message.
      * This method is private to enforce the Enum + Action classes to prevent basic String inputs.
+     *
      * @param jsonStringMessage The entire message, must include messageType and messageToDisplay
-     * @param action The action to trigger as a String.
-     * @param context Any context within the app to get the LocalBroadcastManager instance.
+     * @param action            The action to trigger as a String.
+     * @param context           Any context within the app to get the LocalBroadcastManager instance.
      */
     private static void broadcastMessage(JSONObject jsonStringMessage, String action, Context context) {
         // https://stackoverflow.com/questions/8802157/how-to-use-localbroadcastmanager

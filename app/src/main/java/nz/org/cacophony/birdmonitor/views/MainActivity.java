@@ -3,14 +3,19 @@ package nz.org.cacophony.birdmonitor.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+
+import com.crashlytics.android.Crashlytics;
+
 import nz.org.cacophony.birdmonitor.*;
 
 
@@ -31,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
         //https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);

@@ -62,8 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="5 Minute"
-            />
+            android:text="5 Minute" />
 
         <View
             android:id="@+id/divider9"
@@ -79,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="10 Minute"/>
+            android:text="10 Minute" />
 
         <View
             android:id="@+id/divider4"

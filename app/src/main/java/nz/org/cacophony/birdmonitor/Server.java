@@ -2,7 +2,11 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+
 import okhttp3.*;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,6 +79,7 @@ public class Server {
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
                 Log.e(TAG, "Failed to disable airplane mode");
+                Crashlytics.logException(new Throwable("NoInternet"));
                 return false;
             }
 
@@ -82,7 +87,7 @@ public class Server {
             String devicePassword = prefs.getDevicePassword();
             String group = prefs.getGroupName();
             long deviceID = prefs.getDeviceId();
-            if ( (deviceID == 0 && (devicename == null || group == null)) || devicePassword == null) {
+            if ((deviceID == 0 && (devicename == null || group == null)) || devicePassword == null) {
                 // One or more credentials are null, so can not attempt to login.
                 Log.e(TAG, "No credentials to login with.");
                 return false;
@@ -119,6 +124,7 @@ public class Server {
 
         } catch (Exception e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
+            Crashlytics.logException(e);
         }
         return prefs.getToken() != null;
     }
@@ -406,7 +412,7 @@ public class Server {
         try {
             RequestBody requestBody = createAudioPostBody(audioFile, data);
 
-            if (RecordAndUpload.isCancelUploadingRecordings()){
+            if (RecordAndUpload.isCancelUploadingRecordings()) {
                 Log.w(TAG, "User cancelled uploading of recordings.");
                 return false;
             }

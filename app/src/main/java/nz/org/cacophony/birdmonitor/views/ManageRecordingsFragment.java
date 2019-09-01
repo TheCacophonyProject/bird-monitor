@@ -7,19 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.*;
 import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -150,7 +154,6 @@ public class ManageRecordingsFragment extends Fragment {
         }
 
 
-
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
         int numberOfFilesToUpload = recordingFiles.length;
@@ -233,32 +236,32 @@ public class ManageRecordingsFragment extends Fragment {
 
                 // Need to handle broadcasts
 
-                    if (!messageTypeStr.isEmpty()) {
-                        MessageType messageType = MessageType.valueOf(messageTypeStr);
-                        switch (messageType) {
-                            case FAILED_RECORDINGS_NOT_DELETED:
-                            case SUCCESSFULLY_DELETED_RECORDINGS:
-                            case FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON:
-                            case PREPARING_TO_UPLOAD:
-                            case CONNECTED_TO_SERVER:
-                                tvMessages.setText(messageToDisplay);
-                                break;
-                            case UPLOADING_RECORDINGS:
-                                btnCancel.setEnabled(true);
-                                tvMessages.setText(messageToDisplay);
-                                break;
-                            case UPLOADING_STOPPED:
-                            case SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON:
-                                btnCancel.setEnabled(false);
-                                tvMessages.setText(messageToDisplay);
-                                break;
-                            case RECORDING_DELETED:
-                                displayOrHideGUIObjects();
-                                break;
-                        }
-                        displayOrHideGUIObjects();
+                if (!messageTypeStr.isEmpty()) {
+                    MessageType messageType = MessageType.valueOf(messageTypeStr);
+                    switch (messageType) {
+                        case FAILED_RECORDINGS_NOT_DELETED:
+                        case SUCCESSFULLY_DELETED_RECORDINGS:
+                        case FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON:
+                        case PREPARING_TO_UPLOAD:
+                        case CONNECTED_TO_SERVER:
+                            tvMessages.setText(messageToDisplay);
+                            break;
+                        case UPLOADING_RECORDINGS:
+                            btnCancel.setEnabled(true);
+                            tvMessages.setText(messageToDisplay);
+                            break;
+                        case UPLOADING_STOPPED:
+                        case SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON:
+                            btnCancel.setEnabled(false);
+                            tvMessages.setText(messageToDisplay);
+                            break;
+                        case RECORDING_DELETED:
+                            displayOrHideGUIObjects();
+                            break;
                     }
+                    displayOrHideGUIObjects();
                 }
+            }
 
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
