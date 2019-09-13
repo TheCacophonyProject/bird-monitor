@@ -221,7 +221,6 @@ public class RecordAndUpload {
                 mRecorder.prepare();
 
             } catch (Exception ex) {
-
                 Crashlytics.log(Log.ERROR, TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
                 Crashlytics.logException(ex);
@@ -280,7 +279,6 @@ public class RecordAndUpload {
                 try {
                     Thread.sleep(recordTimeSeconds * 1000);
                 } catch (InterruptedException e) {
-                    Crashlytics.logException(e);
                     Log.e(TAG, "Failed sleeping in recording thread.");
                     return;
                 }
@@ -334,8 +332,7 @@ public class RecordAndUpload {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Log.e(TAG, "Failed sleeping in recording thread.");
-            Crashlytics.logException(ex);
+            Log.e(TAG, "Failed sleeping in recording thread.", ex);
         }
 
         Util.setTimeThatLastRecordingHappened(context, new Date().getTime());
@@ -345,111 +342,104 @@ public class RecordAndUpload {
         String messageToDisplay = "Preparing to upload.";
         MessageHelper.broadcastMessage(messageToDisplay, PREPARING_TO_UPLOAD, MANAGE_RECORDINGS_ACTION, context);
         boolean returnValue = true;
-        try {
-            File recordingsFolder = Util.getRecordingsFolder(context);
-            if (recordingsFolder == null) {
-
-                Log.e(TAG, "Error getting recordings folder.");
-                return false;
-            }
-            File recordingFiles[] = recordingsFolder.listFiles();
-            if (recordingFiles != null) {
-                Util.disableFlightMode(context);
-
-                // Now wait for network connection as setFlightMode takes a while
-                if (!Util.waitForNetworkConnection(context, true)) {
-                    Crashlytics.logException(new Throwable("NoInternet"));
-                    return false;
-                }
-
-
-                // Check here to see if can connect to server and abort (for all files) if can't
-                // Check that there is a JWT (JSON Web Token)
-
-                Prefs prefs = new Prefs(context);
-
-                // check to see if webToken needs updating
-                boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
-
-                if ((prefs.getToken() == null) || !tokenIsCurrent) {
-
-                    if (!Server.login(context)) {
-                        Log.w(TAG, "sendFile: no JWT. Aborting upload");
-                        return false; // Can't upload without JWT, login/register device to get JWT.
-                    }
-                }
-
-                for (File aFile : recordingFiles) {
-                    if (isCancelUploadingRecordings()) {
-                        break;
-                    }
-
-                    if (sendFile(context, aFile)) {
-
-                        // deleting files can cause app to crash when phone connected to pc, so put in try catch
-                        boolean fileSuccessfullyDeleted = false;
-                        try {
-
-                            String recordingFileNameWithOutPath = aFile.getName();
-
-                            fileSuccessfullyDeleted = aFile.delete();
-
-                            if (fileSuccessfullyDeleted) {
-                                // Send a broadcast to inform GUI that the number of files on phone has changed
-                                MessageHelper.broadcastMessage("", RECORDING_DELETED, MANAGE_RECORDINGS_ACTION, context);
-
-                                // Delete the recording notes file if it exists.
-                                String recordingFileExtension = Util.getRecordingFileExtension();
-                                String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
-                                String notesFileName = recordingFileNameWithOutPathOrExtension + ".json";
-                                String notesFilePathName = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
-
-                                File notesFile = new File(notesFilePathName);
-
-                                if (notesFile.exists()) {
-                                    notesFile.delete();
-
-                                    // If this file was the latest bird count file, then need to set the latest bird count file to null
-                                    String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
-                                    if (notesFileName.equals(fileNameOfLatestBirdCountFile)) {
-                                        prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
-                                    }
-                                }
-                            }
-
-
-                        } catch (Exception ex) {
-                            Log.e(TAG, ex.getLocalizedMessage(), ex);
-                            Crashlytics.logException(ex);
-                        }
-                        if (!fileSuccessfullyDeleted) {
-                            // for some reason file did not delete so exit for loop
-
-                            Log.e(TAG, "Failed to delete file");
-                            returnValue = false;
-                            break;
-                        }
-                    } else {
-                        // Did not upload, but reason may have been that the user pressed cancel
-                        if (!isCancelUploadingRecordings()) {
-                            Log.e(TAG, "Failed to upload file to server");
-                        }
-
-                        return false;
-                    }
-
-                }
-            }
-            if (returnValue) {
-                messageToDisplay = "Recordings have been successfully uploaded to the server.";
-                MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
-            }
-            return returnValue;
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-            Crashlytics.logException(ex);
+        File recordingsFolder = Util.getRecordingsFolder(context);
+        if (recordingsFolder == null) {
+            Log.e(TAG, "Error getting recordings folder.");
             return false;
         }
+
+        File recordingFiles[] = recordingsFolder.listFiles();
+        if (recordingFiles != null) {
+            Util.disableFlightMode(context);
+
+            // Now wait for network connection as setFlightMode takes a while
+            if (!Util.waitForNetworkConnection(context, true)) {
+                return false;
+            }
+
+
+            // Check here to see if can connect to server and abort (for all files) if can't
+            // Check that there is a JWT (JSON Web Token)
+
+            Prefs prefs = new Prefs(context);
+
+            // check to see if webToken needs updating
+            boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
+
+            if ((prefs.getToken() == null) || !tokenIsCurrent) {
+
+                if (!Server.login(context)) {
+                    Log.w(TAG, "sendFile: no JWT. Aborting upload");
+                    return false; // Can't upload without JWT, login/register device to get JWT.
+                }
+            }
+
+            for (File aFile : recordingFiles) {
+                if (isCancelUploadingRecordings()) {
+                    break;
+                }
+
+                if (sendFile(context, aFile)) {
+
+                    // deleting files can cause app to crash when phone connected to pc, so put in try catch
+                    boolean fileSuccessfullyDeleted = false;
+                    try {
+
+                        String recordingFileNameWithOutPath = aFile.getName();
+
+                        fileSuccessfullyDeleted = aFile.delete();
+
+                        if (fileSuccessfullyDeleted) {
+                            // Send a broadcast to inform GUI that the number of files on phone has changed
+                            MessageHelper.broadcastMessage("", RECORDING_DELETED, MANAGE_RECORDINGS_ACTION, context);
+
+                            // Delete the recording notes file if it exists.
+                            String recordingFileExtension = Util.getRecordingFileExtension();
+                            String recordingFileNameWithOutPathOrExtension = recordingFileNameWithOutPath.split(recordingFileExtension)[0];
+                            String notesFileName = recordingFileNameWithOutPathOrExtension + ".json";
+                            String notesFilePathName = Util.getRecordingNotesFolder(context) + "/" + notesFileName;
+
+                            File notesFile = new File(notesFilePathName);
+
+                            if (notesFile.exists()) {
+                                notesFile.delete();
+
+                                // If this file was the latest bird count file, then need to set the latest bird count file to null
+                                String fileNameOfLatestBirdCountFile = prefs.getLatestBirdCountRecordingFileNameNoExtension() + ".json";
+                                if (notesFileName.equals(fileNameOfLatestBirdCountFile)) {
+                                    prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
+                                }
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getLocalizedMessage(), ex);
+                        Crashlytics.logException(ex);
+                    }
+                    if (!fileSuccessfullyDeleted) {
+                        // for some reason file did not delete so exit for loop
+
+                        Log.e(TAG, "Failed to delete file");
+                        returnValue = false;
+                        break;
+                    }
+                } else {
+                    // Did not upload, but reason may have been that the user pressed cancel
+                    if (!isCancelUploadingRecordings()) {
+                        Log.e(TAG, "Failed to upload file to server");
+                    }
+
+                    return false;
+                }
+            }
+        }
+        if (returnValue) {
+            messageToDisplay = "Recordings have been successfully uploaded to the server.";
+            MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
+        }
+        return returnValue;
+
     }
 
     @SuppressLint("HardwareIds")

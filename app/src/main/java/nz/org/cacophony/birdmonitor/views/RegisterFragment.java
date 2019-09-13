@@ -348,7 +348,7 @@ public class RegisterFragment extends Fragment {
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)) {
-            Log.e(TAG, "Failed to disable airplane mode");
+            Log.e(TAG, "Failed to get internet connection");
             return;
         }
         registerPhoneIdlingResource.increment();

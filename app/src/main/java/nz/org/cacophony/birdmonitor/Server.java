@@ -60,7 +60,7 @@ public class Server {
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
-                Log.e(TAG, "Failed to disable airplane mode");
+                Log.e(TAG, "Failed to get internet connection");
                 return;
             }
 
@@ -78,8 +78,7 @@ public class Server {
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
-                Log.e(TAG, "Failed to disable airplane mode");
-                Crashlytics.logException(new Throwable("NoInternet"));
+                Log.e(TAG, "Failed to get internet connection");
                 return false;
             }
 
@@ -139,7 +138,7 @@ public class Server {
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
-                Log.e(TAG, "Failed to disable airplane mode");
+                Log.e(TAG, "Failed to get internet connection");
                 JSONObject extraInfo = new JSONObject().put("responseCode", -1);
                 String messageToDisplay = "Unable to get an internet connection";
                 MessageHelper.broadcastMessage(messageToDisplay, extraInfo, NETWORK_ERROR, SERVER_USER_LOGIN_ACTION, context);

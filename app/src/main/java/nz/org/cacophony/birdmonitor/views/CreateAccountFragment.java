@@ -178,7 +178,7 @@ public class CreateAccountFragment extends Fragment {
 
         // Now wait for network connection as disableFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)) {
-            Log.e(TAG, "Failed to disable airplane mode");
+            Log.e(TAG, "Failed to get internet connection");
             return;
         }
 
