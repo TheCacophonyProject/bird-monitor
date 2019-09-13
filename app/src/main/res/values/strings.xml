@@ -56,7 +56,14 @@
 
     <string name="gps_message_fragment">Press the button and then wait for the phone to get a new GPS location.  You may need to go outside.  Swipe to next screen when ready.</string>
     <string name="gps_message_activity">Press the button and then wait for the phone to get a new GPS location.  You may need to go outside.  Press Finished when done.</string>
-    <string name="has_your_phone_been_rooted">Has your phone been rooted?</string>
+    <string name="rooted">Your phone has root permissions</string>
+    <string name="not_rooted">Your phone does not have root permissions</string>
+    <string name="root_check">Check for root permissions</string>
+    <string name="update_check">Check for update</string>
+    <string name="can_auto_update">Bird Monitor Update Service is Installed</string>
+    <string name="no_autoupdate">Bird Monitor Update Service cannot be Found</string>
+    <string name="up_to_date">Bird Monitor is up to date</string>
+
     <string name="play_a_warning_sound">Play a warning sound before a recording starts.  Swipe to next screen when ready.</string>
     <string name="use_the_test_server">Use the test server?</string>
     <string name="upload_or_delete_recordings">Upload or delete all the recordings on the phone or swipe to next screen when ready.</string>
