@@ -35,7 +35,6 @@ public class MainService extends IntentService {
         wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
 
         try {
-
             Bundle bundle = intent != null ? intent.getExtras() : null;
             if (bundle != null) {
                 String alarmIntentType = bundle.getString("type");
@@ -45,13 +44,9 @@ public class MainService extends IntentService {
                 }
                 RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType);
             } else {
-                Log.e(TAG, "MainService error");
+                Log.e(TAG, "MainService bundle is null");
             }
-
-        } catch (Exception ex) {
-
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        } finally {
+        }finally {
             Util.enableFlightMode(getApplicationContext());
             wakeLock.release();
         }
