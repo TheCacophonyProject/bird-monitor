@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -220,7 +221,7 @@ public class RecordAndUpload {
 
                 mRecorder.prepare();
 
-            } catch (Exception ex) {
+            } catch (IllegalStateException | IOException ex) {
                 Crashlytics.log(Log.ERROR, TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
                 Crashlytics.logException(ex);
@@ -232,7 +233,7 @@ public class RecordAndUpload {
                 toneGen1.startTone(ToneGenerator.TONE_CDMA_NETWORK_BUSY, 2000);
                 try {
                     Thread.sleep(2000);
-                } catch (Exception ex) {
+                } catch (InterruptedException ex) {
                     Log.e(TAG, ex.getLocalizedMessage(), ex);
                 }
             }
@@ -242,7 +243,7 @@ public class RecordAndUpload {
                 mRecorder.start();
                 messageToDisplay = "Recording has started";
                 MessageHelper.broadcastMessage(messageToDisplay, RECORDING_STARTED, MANAGE_RECORDINGS_ACTION, context);
-            } catch (Exception e) {
+            } catch (IllegalStateException e) {
                 Crashlytics.logException(e);
                 Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
                 return;
@@ -290,10 +291,6 @@ public class RecordAndUpload {
             }
 
             endRecording(mRecorder, context);
-
-        } catch (Exception ex) {
-            Crashlytics.logException(ex);
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
         } finally {
             if (isRecording) {
                 if (Util.isBirdCountRecording(typeOfRecording)) {
@@ -306,7 +303,6 @@ public class RecordAndUpload {
             recordIdlingResource.decrement();
             isRecording = false;
         }
-
     }
 
     private static void cancelRecording(MediaRecorder mRecorder, Context context, File file, Prefs prefs) {
@@ -429,7 +425,6 @@ public class RecordAndUpload {
                     if (!isCancelUploadingRecordings()) {
                         Log.e(TAG, "Failed to upload file to server");
                     }
-
                     return false;
                 }
             }
