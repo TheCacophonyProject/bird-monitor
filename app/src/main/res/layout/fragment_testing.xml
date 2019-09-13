@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -74,7 +74,6 @@
         app:layout_constraintTop_toBottomOf="@+id/divider6" />
 
 
-
     <View
         android:id="@+id/divider2"
         android:layout_width="368dp"
@@ -122,7 +121,7 @@
         android:layout_marginTop="8dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swUseVeryFrequentRecordings"/>
+        app:layout_constraintTop_toBottomOf="@+id/swUseVeryFrequentRecordings" />
 
     <TextView
         android:id="@+id/tvMessages"
@@ -148,4 +147,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

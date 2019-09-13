@@ -3,10 +3,10 @@ package nz.org.cacophony.birdmonitor;
 import org.junit.Before;
 import org.junit.Test;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRightTimes;
 import static org.junit.Assert.assertTrue;
 

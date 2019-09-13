@@ -7,13 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.textfield.TextInputEditText;
+
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -154,11 +160,11 @@ public class BirdCountActivity extends AppCompatActivity {
             if (rbFiveMinute.isChecked()) {
                 myIntent.putExtra("type", Prefs.BIRD_COUNT_5_ALARM);
             } else if (rbTenMinute.isChecked()) {
-                myIntent.putExtra("type",  Prefs.BIRD_COUNT_10_ALARM);
+                myIntent.putExtra("type", Prefs.BIRD_COUNT_10_ALARM);
             } else if (rbFifteenMinute.isChecked()) {
-                myIntent.putExtra("type",  Prefs.BIRD_COUNT_15_ALARM);
+                myIntent.putExtra("type", Prefs.BIRD_COUNT_15_ALARM);
             }
-            durationInSeconds = Util.getRecordingDuration(getApplicationContext(),  myIntent.getStringExtra("type"));
+            durationInSeconds = Util.getRecordingDuration(getApplicationContext(), myIntent.getStringExtra("type"));
 
             long durationInMilliSeconds = durationInSeconds * 1000;
 
@@ -309,12 +315,12 @@ public class BirdCountActivity extends AppCompatActivity {
     }
 
 
-    private void addNotes(){
+    private void addNotes() {
         Prefs prefs = new Prefs(this);
 
         String latestRecordingFileName = prefs.getLatestBirdCountRecordingFileNameNoExtension();
 
-        if (latestRecordingFileName == null){
+        if (latestRecordingFileName == null) {
             displayNoRecordingAlertDialog();
             return;
         }
@@ -324,9 +330,9 @@ public class BirdCountActivity extends AppCompatActivity {
 
     }
 
-    private AlertDialog createNotesDialog(Context context, String latestRecordingFileName){
+    private AlertDialog createNotesDialog(Context context, String latestRecordingFileName) {
 
-        AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+        AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View birdCountNotesDialogView = inflater.inflate(R.layout.dialog_bird_count_notes, null);
         alertDialogBuilder.setView(birdCountNotesDialogView);
@@ -373,10 +379,10 @@ public class BirdCountActivity extends AppCompatActivity {
         return alertDialog;
     }
 
-    void displayNoRecordingAlertDialog(){
+    void displayNoRecordingAlertDialog() {
 
         final AlertDialog dialog = new AlertDialog.Builder(this)
-                .setPositiveButton("OK",null)
+                .setPositiveButton("OK", null)
                 .setMessage("Sorry - There is no recording for you to attach notes to.")
                 .setTitle("No Recording")
                 .create();

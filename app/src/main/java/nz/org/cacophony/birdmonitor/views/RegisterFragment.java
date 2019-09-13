@@ -6,9 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.fragment.app.Fragment;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Server;
 import nz.org.cacophony.birdmonitor.Util;
+
 import org.json.JSONObject;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
@@ -344,7 +348,7 @@ public class RegisterFragment extends Fragment {
 
         // Now wait for network connection as setFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)) {
-            Log.e(TAG, "Failed to disable airplane mode");
+            Log.e(TAG, "Failed to get internet connection");
             return;
         }
         registerPhoneIdlingResource.increment();

@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import nz.org.cacophony.birdmonitor.*;
 import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+
 import org.json.JSONObject;
 
 public class CreateAccountFragment extends Fragment {
@@ -173,7 +178,7 @@ public class CreateAccountFragment extends Fragment {
 
         // Now wait for network connection as disableFlightMode takes a while
         if (!Util.waitForNetworkConnection(getActivity().getApplicationContext(), true)) {
-            Log.e(TAG, "Failed to disable airplane mode");
+            Log.e(TAG, "Failed to get internet connection");
             return;
         }
 

@@ -16,13 +16,16 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -32,9 +35,14 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,7 +99,7 @@ public class Util {
             return true;
         } else {
             Log.w(TAG, String.format("Missing permission for recording." +
-                        "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
+                            "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
                     canWriteExternalStorage, canRecordAudio, canAccessFineLocation, canReadPhoneState));
             return false;
         }
@@ -548,6 +556,7 @@ public class Util {
                 }
 
             } catch (Exception ex) {
+                Crashlytics.logException(ex);
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
 
@@ -555,10 +564,10 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static void checkSuperUserAccess(){
+    public static void checkSuperUserAccess() {
         try {
             Runtime.getRuntime().exec("su");
-        }catch (IOException ex){
+        } catch (IOException ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
@@ -773,7 +782,7 @@ public class Util {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime-windowSize, windowSize*2, pendingIntent);
+            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
             return;
         }
 
@@ -806,14 +815,14 @@ public class Util {
 
     public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
         if (prefs.getUseVeryFrequentRecordings()) {
-            return (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
         }
 
         float chance = new Random().nextFloat();
         float shortWindowChance = prefs.getshortRecordingWindowChance();
-        if(chance < shortWindowChance) {
+        if (chance < shortWindowChance) {
             chance = new Random().nextFloat();
-            return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            return (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
         }
         chance = new Random().nextFloat();
         return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
@@ -854,7 +863,7 @@ public class Util {
         setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
 
         long nextAlarmInUnixTime = new Date().getTime() + delayMS;
-        Log.d("NextAlarm","Delay is " + delayMS);
+        Log.d("NextAlarm", "Delay is " + delayMS);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
     }
 
@@ -925,7 +934,7 @@ public class Util {
         new Thread(() -> {
             try {
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
-                if (RecordAndUpload.isCancelUploadingRecordings()){
+                if (RecordAndUpload.isCancelUploadingRecordings()) {
                     String messageToDisplay = "Uploading of recordings has been stopped";
                     MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_STOPPED, MANAGE_RECORDINGS_ACTION, context);
                 } else if (uploadedSuccessfully) {
@@ -1047,11 +1056,11 @@ public class Util {
                         file.delete();
                     }
 
-                   Prefs prefs = new Prefs(context);
+                    Prefs prefs = new Prefs(context);
                     prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
 
                 } else {
-                    String messageToDisplay ="There was a problem. The recordings were NOT deleted.";
+                    String messageToDisplay = "There was a problem. The recordings were NOT deleted.";
                     MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_DELETED, MANAGE_RECORDINGS_ACTION, context);
                 }
             } catch (Exception ex) {
@@ -1208,9 +1217,10 @@ public class Util {
         return type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
     }
 
-    public static boolean isUIRecording(String type){
+    public static boolean isUIRecording(String type) {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
-  }
+    }
+
     public static long getRecordingDuration(Context context, String typeOfRecording) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
@@ -1242,12 +1252,12 @@ public class Util {
         return recordTimeSeconds;
     }
 
-    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
+    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String otherNote) {
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
 
         JSONObject recordingNotes = new JSONObject();
         try {
-        recordingNotes.put("Weather", weatherNote);
+            recordingNotes.put("Weather", weatherNote);
             recordingNotes.put("Counted By", countedByNote);
             recordingNotes.put("Other", otherNote);
 
@@ -1265,7 +1275,7 @@ public class Util {
         return RECORDING_FILE_EXTENSION;
     }
 
-    public static File getNotesFileForLatestRecording(Context context){
+    public static File getNotesFileForLatestRecording(Context context) {
         Prefs prefs = new Prefs(context);
         String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
         if (latestRecordingFileNameWithOutExtension == null) {
@@ -1276,7 +1286,7 @@ public class Util {
         }
     }
 
-    public static JSONObject getNotesFromNoteFile(File notesFile){
+    public static JSONObject getNotesFromNoteFile(File notesFile) {
         if (!notesFile.exists()) {
             return null;
         }
@@ -1293,10 +1303,10 @@ public class Util {
             }
             br.close();
 
-             jsonNotes = new JSONObject(jsonText.toString());
+            jsonNotes = new JSONObject(jsonText.toString());
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-     return jsonNotes;
+        return jsonNotes;
     }
 }
