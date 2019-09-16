@@ -14,8 +14,19 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-    public static final String FAIL_SAFE_ALARM = "failSafe";
-    public static final String REPEATING_ALARM = "repeating";
+     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
+    static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
+    static final String UPDATE_INTENT = "nz.org.cacophony.birdmonitor.UPDATE";
+     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/gferraro/bird-monitor/releases/latest";
+     static final String UPDATE_URI = "URI";
+     static final double TIME_BETEWEEN_UPDATES_MS = 1000*60*60*24;  //once a day
+    private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
+    private static final String AUTO_UPDATE = "autoUpdate";
+    private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
+    private static final String DATE_TIME_LAST_UPDATE_CHECK ="lastUpdateCheck";
+
+     static final String FAIL_SAFE_ALARM = "failSafe";
+     static final String REPEATING_ALARM = "repeating";
     public static final String RECORD_NOW_ALARM = "recordNowButton";
     public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
     public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
@@ -54,10 +65,10 @@ public class Prefs {
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
 
     private static final int shortRecordingPause = 2;
-    private static final int longRecordingPause= 40;
+    private static final int longRecordingPause = 40;
     private static final int longRecordingWindowMinutes = 20;
     private static final int shortRecordingWindowMinutes = 5;
-    private static final float shortRecordingWindowChance =0.25f;
+    private static final float shortRecordingWindowChance = 0.25f;
 
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 30;
@@ -399,24 +410,26 @@ public class Prefs {
         return getDouble(TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY);
     }
 
-    public int getShortRecordingPause(){
+    public int getShortRecordingPause() {
         return shortRecordingPause;
     }
 
-    public int getLongRecordingPause(){
+    public int getLongRecordingPause() {
         return longRecordingPause;
     }
 
-    public int getShortRecordingWindowMinutes(){
+    public int getShortRecordingWindowMinutes() {
         return shortRecordingWindowMinutes;
     }
 
-    public int getLongRecordingWindowMinutes(){
+    public int getLongRecordingWindowMinutes() {
         return longRecordingWindowMinutes;
     }
-    public float getshortRecordingWindowChance(){
+
+    public float getshortRecordingWindowChance() {
         return shortRecordingWindowChance;
     }
+
     public double getTimeBetweenUploadsSeconds() {
         if (getBoolean(USE_FREQUENT_UPLOADS_KEY)) {
             return getDouble(TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY);
@@ -689,11 +702,44 @@ public class Prefs {
         setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
     }
 
-    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName){
+    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName) {
         setString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY, latestBirdCountRecordingFileName);
     }
 
-    public String getLatestBirdCountRecordingFileNameNoExtension(){
+    public String getLatestBirdCountRecordingFileNameNoExtension() {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
+
+    public boolean getAutoUpdate() {
+        return getBoolean(AUTO_UPDATE);
+    }
+
+    public void setAutoUpdate(boolean autoUpdate) {
+        setBoolean(AUTO_UPDATE, autoUpdate);
+    }
+
+    public boolean getAeroplaneMode() {
+        return getBoolean(USE_AEROPLANE_MODE);
+    }
+
+    public void setAeroplaneMode(boolean aeroplaneMode) {
+        setBoolean(USE_AEROPLANE_MODE, aeroplaneMode);
+    }
+
+    public void setDateTimeLastUpdateCheck(long dateTimeLastUpload) {
+        setLong(DATE_TIME_LAST_UPDATE_CHECK, dateTimeLastUpload);
+    }
+
+    public long getDateTimeLastUpdateCheck() {
+        return getLong(DATE_TIME_LAST_UPDATE_CHECK);
+    }
+
+    public void setFlightModePending(boolean pendingUpdate) {
+        setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
+    }
+
+    public boolean getFlightModePending() {
+        return getBoolean(FLIGHT_MODE_PENDING_UPDATE);
+    }
+
 }

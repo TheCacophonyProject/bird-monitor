@@ -3,24 +3,29 @@
     <color name="colorPrimaryDark">#000000</color>    <!--Top banner ie status bar (above app)  -->
     <color name="colorPrimary">#A5D6A7</color>    <!-- App title ie action bar background  -->
 
-    <color name="colorAccent">#A5D6A7</color>    <!-- Button background, Dialog OK button (but overriden by code see dialogButtonText, Http link in Dialog Http link in Test Record-->
+    <color name="colorAccent">#A5D6A7
+    </color>    <!-- Button background, Dialog OK button (but overriden by code see dialogButtonText, Http link in Dialog Http link in Test Record-->
     <color name="dialogButtonText">#000000</color>    <!--  -->
-    <color name="colorControlHighlight">#A5D6A7</color>    <!-- Divider lines on Dialog, Temporary colour on switch/radio/Help icon buttons when changed  -->
+    <color name="colorControlHighlight">#A5D6A7
+    </color>    <!-- Divider lines on Dialog, Temporary colour on switch/radio/Help icon buttons when changed  -->
     <color name="colorBackgroundFloating">#FFFFFF</color>    <!-- Dialog background  -->
-    <color name="testRecordLinkifyLink">#1A237E</color>    <!-- Link to Server in Test record screen - set via xml  -->
+    <color name="testRecordLinkifyLink">#1A237E
+    </color>    <!-- Link to Server in Test record screen - set via xml  -->
     <color name="linkToServerInHelp">#1A237E</color>    <!-- Link to Server in Help Dialog -->
-
 
 
     <color name="windowBackground">#FFFFFF</color> <!-- Main app background -->
 
-    <color name="textInputEditTextBackground">#C5E1A5</color>    <!-- Uses Material 200:  Edit box background (via rect_text_edit in drawable) -->
+    <color name="textInputEditTextBackground">#C5E1A5
+    </color>    <!-- Uses Material 200:  Edit box background (via rect_text_edit in drawable) -->
 
-    <color name="colorControlActivated">#558B2F</color>    <!-- Edit box hint text when above box, Radio button selected, Switch track when switch on, Switch thumb circle when selected -->
+    <color name="colorControlActivated">#558B2F
+    </color>    <!-- Edit box hint text when above box, Radio button selected, Switch track when switch on, Switch thumb circle when selected -->
 
     <color name="listDivider">#A5D6A7</color>    <!-- Divider between radio buttons -->
 
-    <color name="colorButtonNormal">#DCEDC8</color>    <!--Uses Material 200: Disabled button background  -->
+    <color name="colorButtonNormal">#DCEDC8
+    </color>    <!--Uses Material 200: Disabled button background  -->
 
     <color name="alert">#E64A19</color>    <!--  -->
 
@@ -28,14 +33,16 @@
     <color name="recordingDisabledButton">#A5D6A7</color>    <!--  -->
 
 
-
-    <color name="textColor">#000000</color>    <!-- Text below swipe headings, Dialog forground Title, Button foreground text  -->
-    <color name="textColorPrimary">#000000</color>    <!-- Text on switches (before actual switch), Dialog forground Main text, App title forground, Typed text in edit boxes -->
+    <color name="textColor">#000000
+    </color>    <!-- Text below swipe headings, Dialog forground Title, Button foreground text  -->
+    <color name="textColorPrimary">#000000
+    </color>    <!-- Text on switches (before actual switch), Dialog forground Main text, App title forground, Typed text in edit boxes -->
 
     <color name="textColorSecondary">#000000</color>    <!-- Text on actual switch  -->
     <color name="textColorHint">#000000</color>    <!-- Hint in edit boxes  -->
 
-    <color name="colorForeground">#000000</color>    <!-- Show password icon in password edit box  -->
+    <color name="colorForeground">#000000
+    </color>    <!-- Show password icon in password edit box  -->
     <color name="editTextColor">#FFFFFF</color>    <!--  -->
     <color name="colorControlNormal">#000000</color>    <!-- Radio button not selected -->
 
@@ -52,7 +59,6 @@
     <color name="primary_text">#D50000</color>    <!--  -->
     <color name="secondary_text">#D50000</color>    <!--  -->
     <color name="icons">#00B8D4</color>    <!--  -->
-
 
 
     <color name="green">#00B8D4</color>    <!--  -->
@@ -74,11 +80,6 @@
 
     <color name="user_input_color">#AEEA00</color>    <!--  -->
     <color name="unfocused_color">#AEEA00</color>    <!--  -->
-
-
-
-
-
 
 
 </resources>

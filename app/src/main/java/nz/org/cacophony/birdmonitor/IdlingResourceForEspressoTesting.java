@@ -1,6 +1,6 @@
 package nz.org.cacophony.birdmonitor;
 
-import android.support.test.espresso.idling.CountingIdlingResource;
+import androidx.test.espresso.idling.CountingIdlingResource;
 
 import java.util.Arrays;
 import java.util.List;

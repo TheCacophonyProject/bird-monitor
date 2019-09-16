@@ -21,9 +21,9 @@ import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERR
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 abstract class ExecuteAsRootBase {
-    
+
     private static final String TAG = "ROOT";
-    
+
     public static boolean canRunRootCommands() {
         boolean returnValue = false;
         Process suProcess;

@@ -4,70 +4,77 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
->>>>>>> Stashed changes
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import io.fabric.sdk.android.services.common.CommonUtils;
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Util;
 
-import org.fdroid.fdroid.privileged.IPrivilegedCallback;
 import org.fdroid.fdroid.privileged.IPrivilegedService;
 
-import java.net.URI;
-
 public class RootedFragment extends Fragment {
-//
-     private IPrivilegedService service;
-//    private RemoteServiceConnection serviceConnection;
     private static final String TAG = "RootedFragment";
-    private static final String PRIVILEGED_EXTENSION_SERVICE_INTENT
-            = "org.fdroid.fdroid.privileged.IPrivilegedService";
-    public static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
+    private Switch swAeroplane, swAutoUpdate;
+    private Button btnRoot, btnInstall, btnUpdateCheck;
+    private TextView tvMessages, tvRooted, tvUpdateStatus, tvPrivStatus, tvVersion;
+    private ServiceConnection mServiceConnection;
+    private String versionName;
+    private ConstraintLayout rootView;
+    private Util.LatestVersion latestVersion;
 
-    private Switch swRooted;
-    private Button btnFinished;
-    private TextView tvMessages;
+    void checkRootAccess() {
+        Prefs prefs = new Prefs(this.getContext());
+        if (CommonUtils.isRooted(this.getContext())) {
+            tvRooted.setText(getString(R.string.rooted));
+            prefs.setHasRootAccess(true);
+            rootView.setVisibility(View.VISIBLE);
+            btnRoot.setVisibility(View.GONE);
+        } else {
+            prefs.setHasRootAccess(false);
+            tvRooted.setText(getString(R.string.not_rooted));
+            rootView.setVisibility(View.INVISIBLE);
+            btnRoot.setVisibility(View.VISIBLE);
+        }
+    }
 
-    protected void installPackageInternal(Context context) {
-        Log.e("install","install packaged internal");
-        ServiceConnection mServiceConnection = new ServiceConnection() {
+
+    void checkSystemService() {
+        mServiceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.e("Install","Connected");
                 IPrivilegedService privService = IPrivilegedService.Stub.asInterface(service);
-
-                IPrivilegedCallback callback = new IPrivilegedCallback.Stub() {
-                    @Override
-                    public void handleResult(String packageName, int returnCode) throws RemoteException {
-                      Log.d("install", "return ccode " + returnCode);
-                    }
-                };
-
                 try {
                     boolean hasPermissions = privService.hasPrivilegedPermissions();
-                    Log.e("Install","permissions?" + hasPermissions);
 
-                    if (!hasPermissions) {
-                        return;
-                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (hasPermissions) {
+                            tvPrivStatus.setText(getString(R.string.can_auto_update));
+                        } else {
+                            tvPrivStatus.setText(getString(R.string.can_auto_update) + ", without permission");
+                            btnInstall.setEnabled(false);
 
-                    privService.installPackage(Uri.parse("http://www.google.com"), ACTION_INSTALL_REPLACE_EXISTING,
-                            null, callback);
+                        }
+                    });
                 } catch (RemoteException e) {
                     Log.e(TAG, "RemoteException", e);
 
-                }catch(Exception e){
+                } catch (Exception e) {
                     Log.e(TAG, "RemoteException", e);
 
                 }
@@ -77,12 +84,54 @@ public class RootedFragment extends Fragment {
             }
         };
 
-        Intent serviceIntent = new Intent(PRIVILEGED_EXTENSION_SERVICE_INTENT);
+        Intent serviceIntent = new Intent(Prefs.PRIVILEGED_EXTENSION_SERVICE_INTENT);
         serviceIntent.setPackage("org.fdroid.fdroid.privileged");
-        context.getApplicationContext().bindService(serviceIntent, mServiceConnection,
+        this.getContext().bindService(serviceIntent, mServiceConnection,
                 Context.BIND_AUTO_CREATE);
     }
 
+    void checkUpdate() {
+        new CheckUpdateTask().execute();
+    }
+
+    void checkDownloadStatus() {
+        if (Util.isDownloading(this.getContext())) {
+            tvUpdateStatus.setText("Downloading " + versionName);
+            btnInstall.setEnabled(false);
+        }
+    }
+
+    void installUpdates() {
+        Util.downloadAPK(this.getContext(), latestVersion);
+        tvUpdateStatus.setText("Downloading " + versionName);
+        checkDownloadStatus();
+    }
+
+    void setVersionInfo() {
+        versionName = Util.getVersionName();
+        if (versionName == null) {
+            tvVersion.setText("");
+        } else {
+            versionName = "v" + versionName;
+            tvVersion.setText(versionName);
+        }
+    }
+
+    void applySavedSettings() {
+        Prefs prefs = new Prefs(this.getContext());
+        swAeroplane.setChecked(prefs.getAeroplaneMode());
+        swAutoUpdate.setChecked(prefs.getAutoUpdate());
+    }
+
+    void setAeroplaneMode(boolean checked) {
+        Prefs prefs = new Prefs(this.getContext());
+        prefs.setAeroplaneMode(checked);
+    }
+
+    void setAutoUpdate(boolean checked) {
+        Prefs prefs = new Prefs(this.getContext());
+        prefs.setAutoUpdate(checked);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,50 +140,53 @@ public class RootedFragment extends Fragment {
 
         setUserVisibleHint(false);
         tvMessages = view.findViewById(R.id.tvMessages);
-        swRooted = view.findViewById(R.id.swRooted);
-        btnFinished = view.findViewById(R.id.btnFinished);
+        btnRoot = view.findViewById(R.id.btnRoot);
+        tvRooted = view.findViewById(R.id.tvRooted);
+        tvUpdateStatus = view.findViewById(R.id.tvUpdateStatus);
+        btnInstall = view.findViewById(R.id.btnInstall);
+        btnUpdateCheck = view.findViewById(R.id.btnUpdateCheck);
+        tvPrivStatus = view.findViewById(R.id.tvPrivStatus);
+        swAeroplane = view.findViewById(R.id.swAeroplane);
+        swAutoUpdate = view.findViewById(R.id.swAutoUpdate);
+        tvVersion = view.findViewById(R.id.tvVersion);
+        rootView = view.findViewById(R.id.rootOptions);
 
-        displayOrHideGUIObjects();
+        checkRootAccess();
+        setVersionInfo();
+        checkSystemService();
+        checkUpdate();
+        applySavedSettings();
+        checkDownloadStatus();
+        swAeroplane.setOnCheckedChangeListener((buttonView, isChecked) -> setAeroplaneMode(isChecked));
+        swAutoUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> setAutoUpdate(isChecked));
+        btnRoot.setOnClickListener(v -> checkRootAccess());
+        btnUpdateCheck.setOnClickListener(v -> checkUpdate());
+        btnInstall.setOnClickListener(v -> installUpdates());
 
-        btnFinished.setOnClickListener(v -> ((AdvancedWizardActivity) getActivity()).nextPageView());
-
-        swRooted.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Prefs prefs = new Prefs(getActivity());
-            prefs.setHasRootAccess(swRooted.isChecked());
-            displayOrHideGUIObjects();
-            if (swRooted.isChecked()) {
-                Util.checkSuperUserAccess();
-            }
-        });
-        installPackageInternal(this.getContext());
         return view;
     }
 
-    @Override
-    public void setUserVisibleHint(final boolean visible) {
-        super.setUserVisibleHint(visible);
-        if (getActivity() == null) {
-            return;
-        }
-        if (visible) {
-            displayOrHideGUIObjects();
-        }
-    }
+    class CheckUpdateTask extends AsyncTask<Void, Void, Util.LatestVersion> {
 
-    void displayOrHideGUIObjects() {
-        Prefs prefs = new Prefs(getActivity());
-        swRooted.setChecked(prefs.getHasRootAccess());
-
-        if (prefs.getHasRootAccess()) {
-            swRooted.setText("YES");
-        } else {
-            swRooted.setText("NO");
+        protected Util.LatestVersion doInBackground(Void... voids) {
+            latestVersion = Util.getLatestVersion();
+            return latestVersion;
         }
 
-        if (prefs.getVeryAdvancedSettingsEnabled()) {
-            btnFinished.setVisibility(View.INVISIBLE);
-        } else {
-            btnFinished.setVisibility(View.VISIBLE);
+        protected void onPostExecute(Util.LatestVersion version) {
+
+            if (version != null) {
+                if ( Util.isNewerVersion(version.Name)) {
+                    tvUpdateStatus.setText(version.Name + " of Bird Monitor is available");
+                    btnInstall.setEnabled(true);
+                } else {
+                    tvUpdateStatus.setText(getString(R.string.up_to_date));
+                    btnInstall.setEnabled(false);
+                }
+            } else {
+                btnInstall.setEnabled(false);
+                tvUpdateStatus.setText("Can't connect to check updates");
+            }
         }
     }
 

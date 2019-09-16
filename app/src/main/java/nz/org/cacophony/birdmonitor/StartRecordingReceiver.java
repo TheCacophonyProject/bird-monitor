@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
@@ -31,10 +34,10 @@ public class StartRecordingReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
-
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");
+            Crashlytics.logException(new Throwable("PowerManger is null"));
             return;
         }
         PowerManager.WakeLock wakeLock = null;
@@ -45,14 +48,15 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
                 Log.e(TAG, "bundle is null");
+                Crashlytics.logException(new Throwable("Bundle is null"));
                 return;
             }
             final String alarmIntentType = bundle.getString("type");
-
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
+                Crashlytics.logException(new Throwable("No Intent Type"));
                 return;
-            }else if (alarmIntentType == Prefs.FAIL_SAFE_ALARM){
+            } else if (alarmIntentType == Prefs.FAIL_SAFE_ALARM) {
                 return;
             }
 
@@ -90,6 +94,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
             if (!Util.checkPermissionsForRecording(context)) {
                 Log.e(TAG, "Don't have proper permissions to record");
+                Crashlytics.logException(new Throwable("Inccorect Permissions"));
 
                 // Need to enable record button
                 String messageToDisplay = "No permission to record";
@@ -125,7 +130,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
 
             // need to determine the source of the intent ie Main UI or boot receiver
-            if ( Util.isUIRecording(alarmIntentType)) {
+            if (Util.isUIRecording(alarmIntentType)) {
                 try {
                     // Start recording in new thread.
 
@@ -143,19 +148,13 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
 
             } else { // intent came from boot receiver or app (not test record, or bird count )
-
                 Intent mainServiceIntent = new Intent(context, MainService.class);
-                try {
-                    mainServiceIntent.putExtra("type", alarmIntentType);
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Error setting up intent");
-
-                }
+                mainServiceIntent.putExtra("type", alarmIntentType);
                 context.startService(mainServiceIntent);
             }
 
         } catch (Exception ex) {
+            Crashlytics.logException(ex);
             Log.e(TAG, ex.getLocalizedMessage(), ex);
 
         } finally {

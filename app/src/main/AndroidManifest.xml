@@ -41,7 +41,12 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".StartRecordingReceiver" />
-
+        <receiver android:name=".UpdateInstaller">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".UpdateService" />
         <service android:name=".MainService" />
 
         <activity
@@ -63,7 +68,8 @@
             android:label="@string/activity_or_fragment_title_bird_count"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".views.GPSActivity"
+        <activity
+            android:name=".views.GPSActivity"
             android:label="@string/activity_or_fragment_title_gps_location"
             android:screenOrientation="portrait" />
         <activity

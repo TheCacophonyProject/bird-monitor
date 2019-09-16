@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swWalking"
@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="nz.org.cacophony.birdmonitor.views.BirdCountActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -55,15 +55,14 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rbFiveMinute"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="5 Minute"
-            />
+            android:text="5 Minute" />
 
         <View
             android:id="@+id/divider9"
@@ -72,14 +71,14 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rbTenMinute"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/fab_margin_small"
-            android:text="10 Minute"/>
+            android:text="10 Minute" />
 
         <View
             android:id="@+id/divider4"
@@ -88,7 +87,7 @@
             android:layout_weight="1"
             android:background="?android:attr/listDivider" />
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rbFifteenMinute"
             style="@style/SwitchAndRadioButtonCompatTheme"
             android:layout_width="match_parent"
@@ -166,4 +165,4 @@
         app:layout_constraintEnd_toStartOf="@+id/btnFinished" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,24 +5,31 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -32,17 +39,27 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import nz.org.cacophony.birdmonitor.views.RootedFragment;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.*;
 import static android.content.Context.ALARM_SERVICE;
@@ -91,7 +108,7 @@ public class Util {
             return true;
         } else {
             Log.w(TAG, String.format("Missing permission for recording." +
-                        "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
+                            "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
                     canWriteExternalStorage, canRecordAudio, canAccessFineLocation, canReadPhoneState));
             return false;
         }
@@ -224,6 +241,46 @@ public class Util {
         }
     }
 
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static File getUpdateFolder(Context context) {
+
+        File localFolderFile;
+        try {
+            File appDataFolder = getAppDataFolder(context);
+            if (appDataFolder == null) {
+
+                return null;
+            }
+
+            localFolderFile = new File(appDataFolder, "updates");
+
+            if (!localFolderFile.exists()) {
+                localFolderFile.mkdirs();
+
+                // now check it exists
+                if (!localFolderFile.exists()) {
+                    localFolderFile = null;
+                }
+            }
+
+            // now check it is there
+
+
+            if (localFolderFile == null) {
+                Log.e(TAG, "There is a problem writing to the memory - please fix");
+                getToast(context).show();
+            }
+
+            return localFolderFile;
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+            getToast(context).show();
+            return null;
+        }
+    }
 
     /**
      * Returns the device id of this phone.  The device id has been allocated by the server when
@@ -517,6 +574,10 @@ public class Util {
     }
 
     public static void disableFlightMode(final Context context) {
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
+
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -548,6 +609,7 @@ public class Util {
                 }
 
             } catch (Exception ex) {
+                Crashlytics.logException(ex);
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
 
@@ -555,16 +617,19 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static void checkSuperUserAccess(){
+    public static void checkSuperUserAccess() {
         try {
             Runtime.getRuntime().exec("su");
-        }catch (IOException ex){
+        } catch (IOException ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
 
     public static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
 
         boolean onlineMode = prefs.getOnLineMode();
 
@@ -584,6 +649,11 @@ public class Util {
             }
         }
 
+        if (Util.isDownloading(context)) {
+            Log.d(TAG, "Flight mode pending as am downloading update");
+            prefs.setFlightModePending(true);
+            return;
+        }
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
@@ -773,7 +843,7 @@ public class Util {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime-windowSize, windowSize*2, pendingIntent);
+            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
             return;
         }
 
@@ -806,14 +876,14 @@ public class Util {
 
     public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
         if (prefs.getUseVeryFrequentRecordings()) {
-            return (long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
         }
 
         float chance = new Random().nextFloat();
         float shortWindowChance = prefs.getshortRecordingWindowChance();
-        if(chance < shortWindowChance) {
+        if (chance < shortWindowChance) {
             chance = new Random().nextFloat();
-            return (long) (1000 * 60 * ( prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            return (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
         }
         chance = new Random().nextFloat();
         return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
@@ -854,7 +924,7 @@ public class Util {
         setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
 
         long nextAlarmInUnixTime = new Date().getTime() + delayMS;
-        Log.d("NextAlarm","Delay is " + delayMS);
+        Log.d("NextAlarm", "Delay is " + delayMS);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
     }
 
@@ -925,7 +995,7 @@ public class Util {
         new Thread(() -> {
             try {
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
-                if (RecordAndUpload.isCancelUploadingRecordings()){
+                if (RecordAndUpload.isCancelUploadingRecordings()) {
                     String messageToDisplay = "Uploading of recordings has been stopped";
                     MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_STOPPED, MANAGE_RECORDINGS_ACTION, context);
                 } else if (uploadedSuccessfully) {
@@ -1047,11 +1117,11 @@ public class Util {
                         file.delete();
                     }
 
-                   Prefs prefs = new Prefs(context);
+                    Prefs prefs = new Prefs(context);
                     prefs.setLatestBirdCountRecordingFileNameNoExtension(null);
 
                 } else {
-                    String messageToDisplay ="There was a problem. The recordings were NOT deleted.";
+                    String messageToDisplay = "There was a problem. The recordings were NOT deleted.";
                     MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_DELETED, MANAGE_RECORDINGS_ACTION, context);
                 }
             } catch (Exception ex) {
@@ -1208,9 +1278,10 @@ public class Util {
         return type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
     }
 
-    public static boolean isUIRecording(String type){
+    public static boolean isUIRecording(String type) {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
-  }
+    }
+
     public static long getRecordingDuration(Context context, String typeOfRecording) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
@@ -1242,12 +1313,12 @@ public class Util {
         return recordTimeSeconds;
     }
 
-    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String  otherNote){
+    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String otherNote) {
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
 
         JSONObject recordingNotes = new JSONObject();
         try {
-        recordingNotes.put("Weather", weatherNote);
+            recordingNotes.put("Weather", weatherNote);
             recordingNotes.put("Counted By", countedByNote);
             recordingNotes.put("Other", otherNote);
 
@@ -1265,7 +1336,7 @@ public class Util {
         return RECORDING_FILE_EXTENSION;
     }
 
-    public static File getNotesFileForLatestRecording(Context context){
+    public static File getNotesFileForLatestRecording(Context context) {
         Prefs prefs = new Prefs(context);
         String latestRecordingFileNameWithOutExtension = prefs.getLatestBirdCountRecordingFileNameNoExtension();
         if (latestRecordingFileNameWithOutExtension == null) {
@@ -1276,7 +1347,7 @@ public class Util {
         }
     }
 
-    public static JSONObject getNotesFromNoteFile(File notesFile){
+    public static JSONObject getNotesFromNoteFile(File notesFile) {
         if (!notesFile.exists()) {
             return null;
         }
@@ -1293,10 +1364,125 @@ public class Util {
             }
             br.close();
 
-             jsonNotes = new JSONObject(jsonText.toString());
+            jsonNotes = new JSONObject(jsonText.toString());
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage());
         }
-     return jsonNotes;
+        return jsonNotes;
+    }
+
+
+    public static boolean isDownloading(Context context) {
+        DownloadManager downloadManager = (DownloadManager)
+                context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Query query = new DownloadManager.Query();
+
+        query.setFilterByStatus(DownloadManager.STATUS_RUNNING);
+        Cursor c = downloadManager.query(query);
+        if (c.moveToFirst()) {
+            c.close();
+            return true;
+        }
+        return false;
+    }
+
+    public static void downloadAPK(Context context, LatestVersion latestVersion) {
+        if (isDownloading(context)) {
+            Log.d(TAG, "Not downlaoding as already am");
+            return;
+        }
+        File foldername = Util.getUpdateFolder(context);
+        String fileName = foldername.getAbsolutePath() + "/latest.apk";
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(latestVersion.DownloadURL));
+        request.setDescription("Getting Bird Monitor " + latestVersion.Name);
+        request.setTitle("Updating Bird Monitor");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "bird-monitor-latest.apk");
+        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+    }
+
+    public static boolean isNewerVersion(String versionName) {
+        Pattern p = Pattern.compile(".*(\\d+)[\\.](\\d+)[\\.](\\d+)");
+        Matcher currentMatches = p.matcher(Util.getVersionName());
+        Matcher newVersionMatches = p.matcher(versionName);
+
+        int curV, newV;
+        if (newVersionMatches.matches() && currentMatches.matches()) {
+            for (int i = 0; i < currentMatches.groupCount(); i++) {
+                curV = Integer.parseInt(currentMatches.group(i+1));
+                if (i < newVersionMatches.groupCount()) {
+                    newV = Integer.parseInt(newVersionMatches.group(i+1));
+                    if (newV > curV) {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean updateIfAvailable(Context context) {
+        LatestVersion latestVersion = getLatestVersion();
+        if (latestVersion != null && isNewerVersion(latestVersion.Name)) {
+            downloadAPK(context, latestVersion);
+            return true;
+        }
+        return false;
+    }
+
+    public static LatestVersion getLatestVersion() {
+        try {
+            URL u = new URL(Prefs.UPDATE_CHECK_URL);
+            HttpURLConnection conn = null;
+
+            conn = (HttpURLConnection) u.openConnection();
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 8192);
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                reader.close();
+
+                JSONObject jObj = new JSONObject(sb.toString());
+                JSONArray assets = jObj.getJSONArray("assets");
+                String latestDownload = "";
+                for (int i = 0; i < assets.length(); i++) {
+                    JSONObject asset = assets.getJSONObject(i);
+                    String downloadURL = asset.getString("browser_download_url");
+                    if (downloadURL.endsWith(("apk"))) {
+                        latestDownload = downloadURL;
+                        break;
+                    }
+                }
+                if (latestDownload == null) {
+                    return null;
+                }
+                String version = jObj.getString("tag_name");
+                return new LatestVersion(version, latestDownload);
+            }
+        } catch (JSONException | IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static class LatestVersion {
+        public String Name;
+        public String DownloadURL;
+
+        public LatestVersion(String name, String downloadURL) {
+            this.Name = name;
+            this.DownloadURL = downloadURL;
+        }
     }
 }
