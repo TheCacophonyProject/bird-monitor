@@ -34,8 +34,6 @@ public class BootReceiver extends BroadcastReceiver {
         }
 
         try {
-
-
             final Thread thread = new Thread() {
                 @Override
                 public void run() {

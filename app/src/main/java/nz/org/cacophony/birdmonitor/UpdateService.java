@@ -31,7 +31,6 @@ public class UpdateService  extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
         String action = intent.getAction();
         Log.d(TAG,"Received intent" + action);
         if(action.equals(Prefs.UPDATE_INTENT)) {
@@ -51,9 +50,6 @@ public class UpdateService  extends IntentService {
                         public void handleResult(String packageName, int returnCode) throws RemoteException {
                             Log.d("install", "return code " + returnCode);
                             unbindService(mServiceConnection);
-                            if(new Prefs(getApplicationContext()).getFlightModePending()) {
-                                Util.enableFlightMode(getApplicationContext());
-                            }
                         }
                     };
 
@@ -62,6 +58,13 @@ public class UpdateService  extends IntentService {
                         if (!hasPermissions) {
                             return;
                         }
+
+                        Prefs prefs = new Prefs(getApplicationContext());
+                        if(prefs.getFlightModePending()) {
+                            Util.enableFlightMode(getApplicationContext());
+                        }
+                        Util.createFailSafeAlarm(getApplicationContext());
+
                         privService.installPackage(Uri.parse(updateURL), Prefs.ACTION_INSTALL_REPLACE_EXISTING,
                                 null, callback);
 

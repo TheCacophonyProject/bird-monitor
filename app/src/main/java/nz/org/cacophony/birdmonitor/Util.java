@@ -654,6 +654,8 @@ public class Util {
             prefs.setFlightModePending(true);
             return;
         }
+        
+        prefs.setFlightModePending(false);
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
