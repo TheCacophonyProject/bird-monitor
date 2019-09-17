@@ -40,7 +40,7 @@ public class Prefs {
 
     private static final String LATITUDE_KEY = "LATITUDE";
     private static final String LONGITUDE_KEY = "LONGITUDE";
-    private static final String DEVICE_ID = "UNKNOWN";
+    private static final String DEVICE_ID = "DEVICE_ID";
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
 
