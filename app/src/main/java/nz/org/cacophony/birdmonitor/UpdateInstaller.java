@@ -42,6 +42,7 @@ public class UpdateInstaller extends BroadcastReceiver {
             }
             c.close();
             if(localPath != null) {
+                Log.d(TAG,"Finished downloading update, requesting install service");
                 Intent mainServiceIntent = new Intent(Prefs.UPDATE_INTENT,null,context, UpdateService.class);
                 mainServiceIntent.putExtra(Prefs.UPDATE_URI, localPath);
                 context.startService(mainServiceIntent);

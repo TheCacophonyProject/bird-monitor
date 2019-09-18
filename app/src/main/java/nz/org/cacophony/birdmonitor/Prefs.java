@@ -735,6 +735,7 @@ public class Prefs {
     }
 
     public void setFlightModePending(boolean pendingUpdate) {
+        Log.e(TAG,"setting flight mode pending"+ pendingUpdate);
         setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
     }
 

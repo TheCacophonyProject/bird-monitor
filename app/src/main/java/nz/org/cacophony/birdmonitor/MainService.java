@@ -65,12 +65,12 @@ public class MainService extends IntentService {
             long lastUpdate = prefs.getDateTimeLastUpdateCheck();
             long now = new Date().getTime();
 
-            if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {
+//            if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {
                 Util.disableFlightMode(context);
                 prefs.setDateTimeLastUpdateCheck(now);
                 prefs.setFlightModePending(prefs.getAeroplaneMode());
                 return Util.updateIfAvailable(context);
-            }
+//            }
         }
         return false;
     }

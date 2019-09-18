@@ -1388,20 +1388,25 @@ public class Util {
         return false;
     }
 
+    private static void deleteIfExists( String filename){
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
     public static void downloadAPK(Context context, LatestVersion latestVersion) {
         if (isDownloading(context)) {
-            Log.d(TAG, "Not downlaoding as already am");
+            Log.d(TAG, "Not downloading as already am");
             return;
         }
-        File foldername = Util.getUpdateFolder(context);
-        String fileName = foldername.getAbsolutePath() + "/latest.apk";
+        deleteIfExists("bird-monitor-latest.apk");
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(latestVersion.DownloadURL));
         request.setDescription("Getting Bird Monitor " + latestVersion.Name);
         request.setTitle("Updating Bird Monitor");
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
         }
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "bird-monitor-latest.apk");
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);

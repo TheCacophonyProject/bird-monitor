@@ -61,7 +61,6 @@ public class RootedFragment extends Fragment {
                 IPrivilegedService privService = IPrivilegedService.Stub.asInterface(service);
                 try {
                     boolean hasPermissions = privService.hasPrivilegedPermissions();
-
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (hasPermissions) {
                             tvPrivStatus.setText(getString(R.string.can_auto_update));
@@ -103,7 +102,7 @@ public class RootedFragment extends Fragment {
 
     void installUpdates() {
         Util.downloadAPK(this.getContext(), latestVersion);
-        tvUpdateStatus.setText("Downloading " + versionName);
+        tvUpdateStatus.setText("Downloading " + latestVersion.Name);
         checkDownloadStatus();
     }
 

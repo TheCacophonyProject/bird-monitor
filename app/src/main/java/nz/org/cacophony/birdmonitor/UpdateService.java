@@ -48,8 +48,8 @@ public class UpdateService  extends IntentService {
                     IPrivilegedCallback callback = new IPrivilegedCallback.Stub() {
                         @Override
                         public void handleResult(String packageName, int returnCode) throws RemoteException {
-                            Log.d("install", "return code " + returnCode);
-                            unbindService(mServiceConnection);
+                            Log.d("install", "return code "  +packageName + " with return " + returnCode);
+//                            unbindService(mServiceConnection);
                         }
                     };
 
@@ -60,13 +60,15 @@ public class UpdateService  extends IntentService {
                         }
 
                         Prefs prefs = new Prefs(getApplicationContext());
+                        Log.e(TAG,"FLight mode pending? "+ prefs.getFlightModePending());
                         if(prefs.getFlightModePending()) {
+                            Log.e(TAG, "Setting flight mode");
                             Util.enableFlightMode(getApplicationContext());
                         }
                         Util.createFailSafeAlarm(getApplicationContext());
 
-                        privService.installPackage(Uri.parse(updateURL), Prefs.ACTION_INSTALL_REPLACE_EXISTING,
-                                null, callback);
+//                        privService.installPackage(Uri.parse(updateURL), Prefs.ACTION_INSTALL_REPLACE_EXISTING,
+//                                null, callback);
 
                     } catch (RemoteException e) {
                         Log.e(TAG, "RemoteException", e);
@@ -85,6 +87,6 @@ public class UpdateService  extends IntentService {
             serviceIntent.setPackage("org.fdroid.fdroid.privileged");
             this.bindService(serviceIntent, mServiceConnection,
                     Context.BIND_AUTO_CREATE);
-            }
+        }
     }
 }
