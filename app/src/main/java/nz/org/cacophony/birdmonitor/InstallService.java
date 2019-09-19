@@ -85,7 +85,7 @@ public class InstallService extends Service {
         };
 
         Intent serviceIntent = new Intent(Prefs.PRIVILEGED_EXTENSION_SERVICE_INTENT);
-        serviceIntent.setPackage("org.fdroid.fdroid.privileged");
+        serviceIntent.setPackage(Prefs.PRIVILEGED_EXTENSION_PACKAGE);
         this.bindService(serviceIntent, mServiceConnection,
                 Context.BIND_AUTO_CREATE);
 

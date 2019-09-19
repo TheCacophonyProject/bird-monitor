@@ -38,36 +38,42 @@ public class RootedFragment extends Fragment {
     private Boolean updateAvailable = false;
     private Boolean isDownloading = false;
 
-    private Button btnRoot, btnInstall, btnUpdateCheck;
+    private Button btnRootCheck, btnInstall, btnUpdateCheck;
     private TextView tvRooted, tvUpdateStatus, tvPrivStatus, tvVersion;
     private ServiceConnection mServiceConnection;
     private String versionName;
-    private ConstraintLayout rootView;
+    private ConstraintLayout updateView;
     private Util.LatestVersion latestVersion;
 
     void checkRootAccess() {
         Prefs prefs = new Prefs(this.getContext());
-        if (CommonUtils.isRooted(this.getContext())) {
+        boolean rooted = CommonUtils.isRooted(this.getContext());
+        if (rooted) {
             tvRooted.setText(getString(R.string.rooted));
+            btnRootCheck.setVisibility(View.GONE);
+        } else {
+            tvRooted.setText(getString(R.string.not_rooted));
+            btnRootCheck.setVisibility(View.VISIBLE);
+        }
+
+        if (prefs.getAutoUpdateAllowed() && rooted) {
             prefs.setHasRootAccess(true);
-            rootView.setVisibility(View.VISIBLE);
-            btnRoot.setVisibility(View.GONE);
+            updateView.setVisibility(View.VISIBLE);
         } else {
             prefs.setHasRootAccess(false);
-            tvRooted.setText(getString(R.string.not_rooted));
-            rootView.setVisibility(View.INVISIBLE);
-            btnRoot.setVisibility(View.VISIBLE);
+            updateView.setVisibility(View.INVISIBLE);
         }
     }
 
-    void toggleInstallButton(){
-        if(!hasInstallPermission || !updateAvailable){
+    void toggleInstallButton() {
+        if (!hasInstallPermission || !updateAvailable) {
             btnInstall.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             btnInstall.setVisibility(View.VISIBLE);
         }
         btnInstall.setEnabled(hasInstallPermission && updateAvailable && !isDownloading);
     }
+
     void checkSystemService() {
         mServiceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -88,7 +94,6 @@ public class RootedFragment extends Fragment {
 
                 } catch (Exception e) {
                     Log.e(TAG, "RemoteException", e);
-
                 }
             }
 
@@ -97,7 +102,7 @@ public class RootedFragment extends Fragment {
         };
 
         Intent serviceIntent = new Intent(Prefs.PRIVILEGED_EXTENSION_SERVICE_INTENT);
-        serviceIntent.setPackage("org.fdroid.fdroid.privileged");
+        serviceIntent.setPackage(Prefs.PRIVILEGED_EXTENSION_PACKAGE);
         this.getContext().bindService(serviceIntent, mServiceConnection,
                 Context.BIND_AUTO_CREATE);
     }
@@ -110,7 +115,7 @@ public class RootedFragment extends Fragment {
         if (Util.isDownloading(this.getContext())) {
             tvUpdateStatus.setText("Downloading " + versionName);
             isDownloading = true;
-        }else{
+        } else {
             isDownloading = false;
         }
         toggleInstallButton();
@@ -118,8 +123,7 @@ public class RootedFragment extends Fragment {
     }
 
     void installUpdates() {
-        boolean newDownload = Util.downloadAPK(this.getContext(), latestVersion);
-        if(newDownload){
+        if (Util.downloadAPK(this.getContext(), latestVersion)) {
             new Prefs(this.getContext()).setRelaunchOnUpdate(true);
         }
         tvUpdateStatus.setText("Downloading " + latestVersion.Name);
@@ -153,18 +157,12 @@ public class RootedFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.getContext().unbindService(mServiceConnection);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
-        btnRoot = view.findViewById(R.id.btnRoot);
+        btnRootCheck = view.findViewById(R.id.btnRootCheck);
         tvRooted = view.findViewById(R.id.tvRooted);
         tvUpdateStatus = view.findViewById(R.id.tvUpdateStatus);
         btnInstall = view.findViewById(R.id.btnInstall);
@@ -173,7 +171,7 @@ public class RootedFragment extends Fragment {
         swAeroplane = view.findViewById(R.id.swAeroplane);
         swAutoUpdate = view.findViewById(R.id.swAutoUpdate);
         tvVersion = view.findViewById(R.id.tvVersion);
-        rootView = view.findViewById(R.id.rootOptions);
+        updateView = view.findViewById(R.id.updateOptions);
 
         checkRootAccess();
         setVersionInfo();
@@ -181,13 +179,22 @@ public class RootedFragment extends Fragment {
         checkUpdate();
         applySavedSettings();
         checkDownloadStatus();
+
         swAeroplane.setOnCheckedChangeListener((buttonView, isChecked) -> setAeroplaneMode(isChecked));
         swAutoUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> setAutoUpdate(isChecked));
-        btnRoot.setOnClickListener(v -> checkRootAccess());
+        btnRootCheck.setOnClickListener(v -> checkRootAccess());
         btnUpdateCheck.setOnClickListener(v -> checkUpdate());
         btnInstall.setOnClickListener(v -> installUpdates());
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mServiceConnection != null) {
+            this.getContext().unbindService(mServiceConnection);
+        }
     }
 
     class CheckUpdateTask extends AsyncTask<Void, Void, Util.LatestVersion> {
@@ -198,10 +205,10 @@ public class RootedFragment extends Fragment {
         }
 
         protected void onPostExecute(Util.LatestVersion version) {
-            updateAvailable= false;
+            updateAvailable = false;
             if (version != null) {
-                if ( Util.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
-                    updateAvailable= true;
+                if (Util.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
+                    updateAvailable = true;
                     tvUpdateStatus.setText(version.Name + " of Bird Monitor is available");
                 } else {
                     tvUpdateStatus.setText(getString(R.string.up_to_date));

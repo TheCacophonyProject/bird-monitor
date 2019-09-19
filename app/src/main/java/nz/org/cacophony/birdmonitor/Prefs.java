@@ -14,6 +14,7 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
+    public static final String PRIVILEGED_EXTENSION_PACKAGE="org.fdroid.fdroid.privileged";
     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
@@ -24,6 +25,13 @@ public class Prefs {
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
     private static final String DATE_TIME_LAST_UPDATE_CHECK = "lastUpdateCheck";
+    private static final String AUTO_UPDATE_ALLOWED = "autoUpdateAllowed";
+    public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
+    //F-Droid Bird Monitor
+    public static final String FDROID_BIRD ="91f0ada061b91fc4ae2e45640a7452b38a93d8c864307872f2432f86ea6617e3";
+    //Debug key
+    public static final String DEBUG_BIRD ="700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
+    public static final String[] ALLOWED_UPDATES = new String[] { GITHUB_BIRD, DEBUG_BIRD};
 
     static final String FAIL_SAFE_ALARM = "failSafe";
     static final String REPEATING_ALARM = "repeating";
@@ -750,4 +758,11 @@ public class Prefs {
         setBoolean(RELAUNCH_ON_UPDATE, relaunch);
     }
 
+    public void setAutoUpdateAllowed(){
+        setBoolean(AUTO_UPDATE_ALLOWED, Util.isAutoUpdateAllowed(this.context));
+    }
+
+    public boolean getAutoUpdateAllowed(){
+        return getBoolean(AUTO_UPDATE_ALLOWED);
+    }
 }

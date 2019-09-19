@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -54,8 +55,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1419,6 +1423,61 @@ public class Util {
         }
         return false;
     }
+
+
+    public static boolean isAutoUpdateAllowed(Context context) {
+        try {
+            byte[] currentPackageCert = getPackageCertificate(context,BuildConfig.APPLICATION_ID);
+            for(String whitelistHashString : Prefs.ALLOWED_UPDATES) {
+                byte[] whitelistHash = hexStringToByteArray(whitelistHashString);
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] packageHash = digest.digest(currentPackageCert);
+
+                boolean packageCertMatches = Arrays.equals(whitelistHash, packageHash);
+                if (packageCertMatches) {
+                    Log.d(TAG, "Auto update is allowed");
+                    return true;
+                }
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        Log.d(TAG, "Auto update is not allowed");
+        return false;
+    }
+
+    private static  byte[] getPackageCertificate(Context context, String packageName) {
+        try {
+            // we do check the byte array of *all* signatures
+            @SuppressLint("PackageManagerGetSignatures")
+            PackageInfo pkgInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+
+            // NOTE: Silly Android API naming: Signatures are actually certificates
+            Signature[] certificates = pkgInfo.signatures;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            for (Signature cert : certificates) {
+                outputStream.write(cert.toByteArray());
+            }
+
+            // Even if an apk has several certificates, these certificates should never change
+            // Google Play does not allow the introduction of new certificates into an existing apk
+            // Also see this attack: http://stackoverflow.com/a/10567852
+            return outputStream.toByteArray();
+        } catch (PackageManager.NameNotFoundException | IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }
+
 
     public static LatestVersion getLatestVersion() {
         try {
