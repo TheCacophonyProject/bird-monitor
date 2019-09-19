@@ -32,7 +32,6 @@ public class Prefs {
     //Debug key
     public static final String DEBUG_BIRD ="700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
     public static final String[] ALLOWED_UPDATES = new String[] { GITHUB_BIRD, DEBUG_BIRD};
-
     static final String FAIL_SAFE_ALARM = "failSafe";
     static final String REPEATING_ALARM = "repeating";
     public static final String RECORD_NOW_ALARM = "recordNowButton";

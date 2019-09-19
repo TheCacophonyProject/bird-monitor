@@ -30,7 +30,7 @@ before_install:
 - echo y | sdkmanager --channel=4 "emulator"
 - echo y | sdkmanager "extras;android;m2repository" >/dev/null
 script:
-- "./gradlew clean asssembleDebug"
+- "./gradlew clean assembleDebug"
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_07c92ad84bea_key -iv $encrypted_07c92ad84bea_iv
 - in signing.tar.enc -out signing.tar -d
