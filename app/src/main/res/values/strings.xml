@@ -63,7 +63,11 @@
     <string name="version_title">Bird Monitor</string>
     <string name="aeroplane_mode">Use Aeroplane Mode</string>
     <string name="auto_update">Auto update Bird Monitor</string>
+    <string name="update_available">Bird Monitor %1$s is available</string>
+    <string name="update_no_connection">Cannot connect to update server</string>
+    <string name="downloading_version">Downloading %1$s</string>
 
+    <string name="no_update_permissions">Bird Monitor does not have permission to update</string>
     <string name="can_auto_update">Bird Monitor Update Service is Installed</string>
     <string name="no_autoupdate">Bird Monitor Update Service cannot be Found</string>
     <string name="up_to_date">Bird Monitor is up to date</string>

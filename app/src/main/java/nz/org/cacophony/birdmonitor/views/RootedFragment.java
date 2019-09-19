@@ -84,7 +84,7 @@ public class RootedFragment extends Fragment {
                         if (hasInstallPermission) {
                             tvPrivStatus.setText(getString(R.string.can_auto_update));
                         } else {
-                            tvPrivStatus.setText(getString(R.string.can_auto_update) + ", without permission");
+                            tvPrivStatus.setText(getString(R.string.no_update_permissions));
                         }
                         toggleInstallButton();
 
@@ -113,7 +113,7 @@ public class RootedFragment extends Fragment {
 
     void checkDownloadStatus() {
         if (Util.isDownloading(this.getContext())) {
-            tvUpdateStatus.setText("Downloading " + versionName);
+            tvUpdateStatus.setText(getString(R.string.downloading_version, versionName));
             isDownloading = true;
         } else {
             isDownloading = false;
@@ -126,7 +126,6 @@ public class RootedFragment extends Fragment {
         if (Util.downloadAPK(this.getContext(), latestVersion)) {
             new Prefs(this.getContext()).setRelaunchOnUpdate(true);
         }
-        tvUpdateStatus.setText("Downloading " + latestVersion.Name);
         checkDownloadStatus();
     }
 
@@ -209,12 +208,12 @@ public class RootedFragment extends Fragment {
             if (version != null) {
                 if (Util.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
                     updateAvailable = true;
-                    tvUpdateStatus.setText(version.Name + " of Bird Monitor is available");
+                    tvUpdateStatus.setText(getString(R.string.update_available, version.Name));
                 } else {
                     tvUpdateStatus.setText(getString(R.string.up_to_date));
                 }
             } else {
-                tvUpdateStatus.setText("Can't connect to check updates");
+                tvUpdateStatus.setText(getString(R.string.update_no_connection));
             }
             toggleInstallButton();
         }
