@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,10 +31,15 @@ import nz.org.cacophony.birdmonitor.Util;
 import org.fdroid.fdroid.privileged.IPrivilegedService;
 
 public class RootedFragment extends Fragment {
+
     private static final String TAG = "RootedFragment";
     private Switch swAeroplane, swAutoUpdate;
+    private Boolean hasInstallPermission = false;
+    private Boolean updateAvailable = false;
+    private Boolean isDownloading = false;
+
     private Button btnRoot, btnInstall, btnUpdateCheck;
-    private TextView tvMessages, tvRooted, tvUpdateStatus, tvPrivStatus, tvVersion;
+    private TextView tvRooted, tvUpdateStatus, tvPrivStatus, tvVersion;
     private ServiceConnection mServiceConnection;
     private String versionName;
     private ConstraintLayout rootView;
@@ -54,21 +60,28 @@ public class RootedFragment extends Fragment {
         }
     }
 
-
+    void toggleInstallButton(){
+        if(!hasInstallPermission || !updateAvailable){
+            btnInstall.setVisibility(View.INVISIBLE);
+        }else{
+            btnInstall.setVisibility(View.VISIBLE);
+        }
+        btnInstall.setEnabled(hasInstallPermission && updateAvailable && !isDownloading);
+    }
     void checkSystemService() {
         mServiceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 IPrivilegedService privService = IPrivilegedService.Stub.asInterface(service);
                 try {
-                    boolean hasPermissions = privService.hasPrivilegedPermissions();
+                    hasInstallPermission = privService.hasPrivilegedPermissions();
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if (hasPermissions) {
+                        if (hasInstallPermission) {
                             tvPrivStatus.setText(getString(R.string.can_auto_update));
                         } else {
                             tvPrivStatus.setText(getString(R.string.can_auto_update) + ", without permission");
-                            btnInstall.setEnabled(false);
-
                         }
+                        toggleInstallButton();
+
                     });
                 } catch (RemoteException e) {
                     Log.e(TAG, "RemoteException", e);
@@ -96,8 +109,12 @@ public class RootedFragment extends Fragment {
     void checkDownloadStatus() {
         if (Util.isDownloading(this.getContext())) {
             tvUpdateStatus.setText("Downloading " + versionName);
-            btnInstall.setEnabled(false);
+            isDownloading = true;
+        }else{
+            isDownloading = false;
         }
+        toggleInstallButton();
+
     }
 
     void installUpdates() {
@@ -147,7 +164,6 @@ public class RootedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rooted, container, false);
 
         setUserVisibleHint(false);
-        tvMessages = view.findViewById(R.id.tvMessages);
         btnRoot = view.findViewById(R.id.btnRoot);
         tvRooted = view.findViewById(R.id.tvRooted);
         tvUpdateStatus = view.findViewById(R.id.tvUpdateStatus);
@@ -182,19 +198,18 @@ public class RootedFragment extends Fragment {
         }
 
         protected void onPostExecute(Util.LatestVersion version) {
-
+            updateAvailable= false;
             if (version != null) {
-                if ( Util.isNewerVersion(version.Name)) {
+                if ( Util.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
+                    updateAvailable= true;
                     tvUpdateStatus.setText(version.Name + " of Bird Monitor is available");
-                    btnInstall.setEnabled(true);
                 } else {
                     tvUpdateStatus.setText(getString(R.string.up_to_date));
-                    btnInstall.setEnabled(false);
                 }
             } else {
-                btnInstall.setEnabled(false);
                 tvUpdateStatus.setText("Can't connect to check updates");
             }
+            toggleInstallButton();
         }
     }
 

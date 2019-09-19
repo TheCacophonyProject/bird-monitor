@@ -18,17 +18,21 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 
 // Load your keystore.properties file into the keystoreProperties object.
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
+def performSigning = keystorePropertiesFile.exists()
+if (performSigning) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
     compileSdkVersion 28
-    signingConfigs{
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+    if (performSigning) {
+        signingConfigs{
+            config {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
     defaultConfig {
@@ -37,12 +41,10 @@ android {
         targetSdkVersion 28
         versionCode 150010700
         //minimumSdkVersion * 10000000 + versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName "1.7.0"
+        versionName "1.6.0"
 
         archivesBaseName = "Bird Monitor-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.config
-
     }
 
     buildTypes {
@@ -50,10 +52,15 @@ android {
             debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            if (performSigning) {
+                signingConfig signingConfigs.config
+            }
         }
         debug {
             debuggable true
+            if (performSigning) {
+                signingConfig signingConfigs.config
+            }
         }
 
     }

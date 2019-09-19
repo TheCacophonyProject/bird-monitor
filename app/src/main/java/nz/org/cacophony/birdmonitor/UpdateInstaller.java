@@ -11,6 +11,13 @@ import android.util.Log;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
+
+/**
+ * This receives ACTION_DOWNLOAD_COMPLETE broadcasts and then triggers InstallService to
+ * request the installation of the downloaded apk
+ */
+
+
 public class UpdateInstaller extends BroadcastReceiver {
 
 

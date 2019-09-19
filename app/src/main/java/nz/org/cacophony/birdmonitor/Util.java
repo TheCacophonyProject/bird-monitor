@@ -246,43 +246,6 @@ public class Util {
         return BuildConfig.VERSION_NAME;
     }
 
-    public static File getUpdateFolder(Context context) {
-
-        File localFolderFile;
-        try {
-            File appDataFolder = getAppDataFolder(context);
-            if (appDataFolder == null) {
-
-                return null;
-            }
-
-            localFolderFile = new File(appDataFolder, "updates");
-
-            if (!localFolderFile.exists()) {
-                localFolderFile.mkdirs();
-
-                // now check it exists
-                if (!localFolderFile.exists()) {
-                    localFolderFile = null;
-                }
-            }
-
-            // now check it is there
-
-
-            if (localFolderFile == null) {
-                Log.e(TAG, "There is a problem writing to the memory - please fix");
-                getToast(context).show();
-            }
-
-            return localFolderFile;
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-            getToast(context).show();
-            return null;
-        }
-    }
-
     /**
      * Returns the device id of this phone.  The device id has been allocated by the server when
      * the phone registers with the server, and is stored locally in a 'webtoken' string in the shared
@@ -1398,9 +1361,6 @@ public class Util {
     }
 
     private static void deleteIfExists( String filename){
-
-        File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
         if(file.exists()){
             Log.d(TAG,"deleting " + file.getAbsoluteFile());
@@ -1408,6 +1368,7 @@ public class Util {
         }
     }
 
+    // Request DownloadManager to downlaod the requested version
     public static boolean downloadAPK(Context context, LatestVersion latestVersion) {
         if (isDownloading(context)) {
             return false;
@@ -1415,7 +1376,7 @@ public class Util {
         deleteIfExists("bird-monitor-latest.apk");
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(latestVersion.DownloadURL));
         request.setDescription("Getting Bird Monitor " + latestVersion.Name);
-        request.setTitle("Updating Bird Monitor");
+        request.setTitle("Downloading Bird Monitor");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
@@ -1449,6 +1410,7 @@ public class Util {
         return false;
     }
 
+    // Download and install updated apk if a newer version exists
     public static boolean updateIfAvailable(Context context) {
         LatestVersion latestVersion = getLatestVersion();
         if (latestVersion != null && isNewerVersion(latestVersion.Name)) {

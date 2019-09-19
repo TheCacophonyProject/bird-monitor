@@ -18,7 +18,7 @@ public class Prefs {
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
     static final String UPDATE_URI = "URI";
-    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24;  //once a day
+    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
     private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
     private static final String AUTO_UPDATE = "autoUpdate";
@@ -34,7 +34,7 @@ public class Prefs {
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
-    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
+    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";
     private static final String SCHEME = "https";
     private static final String DEVICE_PASSWORD_KEY = "PASSWORD";
     private static final String USERNAME_PASSWORD_KEY = "USERNAME_PASSWORD";

@@ -13,6 +13,12 @@ import android.util.Log;
 import org.fdroid.fdroid.privileged.IPrivilegedCallback;
 import org.fdroid.fdroid.privileged.IPrivilegedService;
 
+/**
+ * This service is used to bind to privileged extension system app and request
+ * a local APK file to be installed. A full service is required to ensure it stays
+ * alive while binding and calling the privileged-extension service
+ */
+
 public class InstallService extends Service {
     private static final String TAG = InstallService.class.getName();
     private ServiceConnection mServiceConnection;

@@ -167,6 +167,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:enabled="false"
+            android:visibility="invisible"
             android:text="Update"
             app:layout_constraintTop_toBottomOf="@+id/tvUpdateStatus"
             />
