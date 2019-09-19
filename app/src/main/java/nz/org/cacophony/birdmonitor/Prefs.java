@@ -17,7 +17,7 @@ public class Prefs {
      public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_INTENT = "nz.org.cacophony.birdmonitor.UPDATE";
-     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/gferraro/bird-monitor/releases/latest";
+     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
      static final String UPDATE_URI = "URI";
      static final double TIME_BETEWEEN_UPDATES_MS = 1000*60*60*24;  //once a day
     private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
