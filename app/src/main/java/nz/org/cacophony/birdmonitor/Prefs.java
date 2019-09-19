@@ -21,6 +21,8 @@ public class Prefs {
      static final String UPDATE_URI = "URI";
      static final double TIME_BETEWEEN_UPDATES_MS = 1000*60*60*24;  //once a day
     private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
+    private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
+
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
     private static final String DATE_TIME_LAST_UPDATE_CHECK ="lastUpdateCheck";
@@ -735,12 +737,19 @@ public class Prefs {
     }
 
     public void setFlightModePending(boolean pendingUpdate) {
-        Log.e(TAG,"setting flight mode pending"+ pendingUpdate);
         setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
     }
 
     public boolean getFlightModePending() {
         return getBoolean(FLIGHT_MODE_PENDING_UPDATE);
+    }
+
+    public boolean getRelaunchOnUpdate() {
+        return getBoolean(RELAUNCH_ON_UPDATE);
+    }
+
+    public void setRelaunchOnUpdate(boolean relaunch) {
+        setBoolean(RELAUNCH_ON_UPDATE, relaunch);
     }
 
 }

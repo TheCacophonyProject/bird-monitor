@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 import nz.org.cacophony.birdmonitor.views.RootedFragment;
 
 import com.crashlytics.android.Crashlytics;
@@ -623,6 +624,14 @@ public class Util {
         } catch (IOException ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
+    }
+
+    public static  void relaunch(final Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        int mPendingIntentId = 1;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
 
     public static void enableFlightMode(final Context context) {
@@ -1389,16 +1398,19 @@ public class Util {
     }
 
     private static void deleteIfExists( String filename){
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+
+        File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
         if(file.exists()){
+            Log.d(TAG,"deleting " + file.getAbsoluteFile());
             file.delete();
         }
     }
 
-    public static void downloadAPK(Context context, LatestVersion latestVersion) {
+    public static boolean downloadAPK(Context context, LatestVersion latestVersion) {
         if (isDownloading(context)) {
-            Log.d(TAG, "Not downloading as already am");
-            return;
+            return false;
         }
         deleteIfExists("bird-monitor-latest.apk");
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(latestVersion.DownloadURL));
@@ -1411,6 +1423,7 @@ public class Util {
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "bird-monitor-latest.apk");
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+        return true;
     }
 
     public static boolean isNewerVersion(String versionName) {

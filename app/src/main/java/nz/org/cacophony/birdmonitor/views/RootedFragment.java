@@ -101,7 +101,10 @@ public class RootedFragment extends Fragment {
     }
 
     void installUpdates() {
-        Util.downloadAPK(this.getContext(), latestVersion);
+        boolean newDownload = Util.downloadAPK(this.getContext(), latestVersion);
+        if(newDownload){
+            new Prefs(this.getContext()).setRelaunchOnUpdate(true);
+        }
         tvUpdateStatus.setText("Downloading " + latestVersion.Name);
         checkDownloadStatus();
     }
