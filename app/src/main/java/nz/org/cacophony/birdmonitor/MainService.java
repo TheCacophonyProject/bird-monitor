@@ -36,7 +36,7 @@ public class MainService extends IntentService {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "Cacophonometer:MainServiceWakelockTag");
         wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
-        boolean updating =false;
+        boolean updating = false;
         try {
             Bundle bundle = intent != null ? intent.getExtras() : null;
             if (bundle != null) {
@@ -50,8 +50,8 @@ public class MainService extends IntentService {
             } else {
                 Log.e(TAG, "MainService bundle is null");
             }
-        }finally {
-            if(updating==false) {
+        } finally {
+            if (updating == false) {
                 Util.enableFlightMode(getApplicationContext());
             }
             wakeLock.release();
@@ -59,9 +59,9 @@ public class MainService extends IntentService {
     }
 
 
-    private static boolean checkForUpdates(Context context){
+    private static boolean checkForUpdates(Context context) {
         Prefs prefs = new Prefs(context);
-        if(prefs.getAutoUpdate()) {
+        if (prefs.getAutoUpdate()) {
             long lastUpdate = prefs.getDateTimeLastUpdateCheck();
             long now = new Date().getTime();
             if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {

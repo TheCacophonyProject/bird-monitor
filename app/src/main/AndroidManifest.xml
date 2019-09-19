@@ -49,6 +49,7 @@
             android:label="@string/activity_or_fragment_title_advanced_setup"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
+
         <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -61,6 +62,7 @@
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".InstallService"
             android:enabled="true"
@@ -68,6 +70,7 @@
         <service android:name=".MainService" />
     </application>
     <uses-feature android:name="android.hardware.location.gps" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

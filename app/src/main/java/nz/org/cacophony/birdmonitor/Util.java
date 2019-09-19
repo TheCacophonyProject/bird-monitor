@@ -1430,7 +1430,6 @@ public class Util {
         Pattern p = Pattern.compile(".*(\\d+)[\\.](\\d+)[\\.](\\d+)");
         Matcher currentMatches = p.matcher(Util.getVersionName());
         Matcher newVersionMatches = p.matcher(versionName);
-
         int curV, newV;
         if (newVersionMatches.matches() && currentMatches.matches()) {
             for (int i = 0; i < currentMatches.groupCount(); i++) {
@@ -1439,6 +1438,8 @@ public class Util {
                     newV = Integer.parseInt(newVersionMatches.group(i+1));
                     if (newV > curV) {
                         return true;
+                    }else if(newV < curV){
+                        return false;
                     }
                 } else {
                     return false;

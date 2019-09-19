@@ -22,7 +22,6 @@ public class UpdateInstaller extends BroadcastReceiver {
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
             long downloadId = intent.getLongExtra(
                     DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-
             DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
             DownloadManager.Query query = new DownloadManager.Query();
             query.setFilterById(downloadId);

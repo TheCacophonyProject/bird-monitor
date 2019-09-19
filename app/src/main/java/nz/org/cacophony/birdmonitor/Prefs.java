@@ -14,21 +14,19 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
+    public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
-    static final String UPDATE_INTENT = "nz.org.cacophony.birdmonitor.UPDATE";
-     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
-     static final String UPDATE_URI = "URI";
-     static final double TIME_BETEWEEN_UPDATES_MS = 1000*60*60*24;  //once a day
+    static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
+    static final String UPDATE_URI = "URI";
+    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24;  //once a day
     private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
-
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
-    private static final String DATE_TIME_LAST_UPDATE_CHECK ="lastUpdateCheck";
+    private static final String DATE_TIME_LAST_UPDATE_CHECK = "lastUpdateCheck";
 
-     static final String FAIL_SAFE_ALARM = "failSafe";
-     static final String REPEATING_ALARM = "repeating";
+    static final String FAIL_SAFE_ALARM = "failSafe";
+    static final String REPEATING_ALARM = "repeating";
     public static final String RECORD_NOW_ALARM = "recordNowButton";
     public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
     public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
