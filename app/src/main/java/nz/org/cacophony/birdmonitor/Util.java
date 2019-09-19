@@ -887,7 +887,7 @@ public class Util {
 
     public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
         if (prefs.getUseVeryFrequentRecordings()) {
-            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds() * 1000;
         }
 
         float chance = new Random().nextFloat();
