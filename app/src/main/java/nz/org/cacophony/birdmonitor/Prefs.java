@@ -14,8 +14,8 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-    public static final String PRIVILEGED_EXTENSION_PACKAGE="org.fdroid.fdroid.privileged";
-    public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "org.fdroid.fdroid.privileged.IPrivilegedService";
+    public static final String PRIVILEGED_EXTENSION_PACKAGE="nz.org.cacophony.privileged";
+    public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "nz.org.cacophony.privileged.IPrivilegedService";
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
     static final String UPDATE_URI = "URI";

@@ -21,7 +21,7 @@ This project is licensed under the Affero General Public License
 * Phone must be rooted
 * Bird Monitor Privileged Extension must be installed as a system app, via TWRP (or other recovery image).
   https://github.com/TheCacophonyProject/Bird-Monitor-Privileged-Extension
-
+* Playstore Play protect must be disabled, otherwise a warning popup will block auto update
 ## Releases
 
 * Ensure all required changes have been merged into the master branch on Github.
