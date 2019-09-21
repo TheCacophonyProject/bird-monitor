@@ -423,6 +423,15 @@ public class Util {
         return calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
     }
 
+    public static Calendar getNoon(Context context, Calendar todayOrTomorrow) {
+        Calendar sunrise = getSunrise(context, todayOrTomorrow);
+        Calendar sunset = getSunset(context, todayOrTomorrow);
+        long noonMillis = (sunrise.getTimeInMillis() + sunset.getTimeInMillis()) /2;
+        Calendar cal=GregorianCalendar.getInstance();
+        cal.setTimeInMillis(noonMillis);
+        return cal;
+    }
+
     public static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
         Prefs prefs = new Prefs(context);
         Calendar sunRise = getSunrise(context, todayOrTomorrow);
@@ -776,18 +785,18 @@ public class Util {
         // https://developer.android.com/reference/android/app/AlarmManager.html
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
             return;
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
+            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
             return;
         }
 
         // Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
     }
 
     public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
@@ -802,7 +811,7 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -813,19 +822,90 @@ public class Util {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
-        if (prefs.getUseVeryFrequentRecordings()) {
-            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
-        }
 
-        float chance = new Random().nextFloat();
-        float shortWindowChance = prefs.getshortRecordingWindowChance();
-        if (chance < shortWindowChance) {
-            chance = new Random().nextFloat();
-            return (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+    public static Alarm getNextAlarm(Context context, Prefs prefs, String curURI) {
+        long wakeUpTime;
+
+        if (prefs.getUseDuskDawnAlarms()) {
+            Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+
+            if(curURI == null){
+                wakeUpTime = System.currentTimeMillis();
+                long offset = getSunrise(context,calNow).getTimeInMillis() + prefs.getSunriseOffset()*1000;
+                if(offset > wakeUpTime){
+                    return new Alarm(offset, Prefs.SUNRISE_OFFSET);
+                }
+                 offset = getNoon(context,calNow).getTimeInMillis() + prefs.getNoonOffset()*1000;
+                if(offset > wakeUpTime){
+                    return new Alarm(offset, Prefs.NOON_OFFSET);
+                }
+                 offset = getSunset(context,calNow).getTimeInMillis() + prefs.getSunsetOffset()*1000;
+                if(offset > wakeUpTime){
+                    return new Alarm(offset, Prefs.SUNSET_OFFSET);
+                }
+                calNow.add(Calendar.DAY_OF_YEAR, 1);
+                offset = getSunrise(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
+                return new Alarm(offset, Prefs.SUNRISE_OFFSET);
+            }
+            Alarm alarm;
+            switch (curURI) {
+                case Prefs.SUNRISE_OFFSET:
+                    wakeUpTime = getNoon(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
+                    alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
+                case Prefs.NOON_OFFSET:
+                    wakeUpTime = getSunset(context,calNow ).getTimeInMillis()+ prefs.getSunsetOffset()*1000;
+                    alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
+                case Prefs.SUNSET_OFFSET:
+                default:
+                    calNow.add(Calendar.DAY_OF_YEAR, 1);
+                    wakeUpTime = getSunrise(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
+                    alarm = new Alarm(wakeUpTime, Prefs.SUNRISE_OFFSET);
+                    break;
+            }
+            return alarm;
+
+        } else {
+            wakeUpTime = System.currentTimeMillis();
+            if (prefs.getUseVeryFrequentRecordings()) {
+                 new Alarm((long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+            }
+
+            float chance = new Random().nextFloat();
+            float shortWindowChance = prefs.getshortRecordingWindowChance();
+            if (chance < shortWindowChance) {
+                chance = new Random().nextFloat();
+                wakeUpTime =  wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            }else {
+                chance = new Random().nextFloat();
+                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
+            }
         }
-        chance = new Random().nextFloat();
-        return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
+        return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
+    }
+
+    public static String getNextSunriseAlarmType(Context context, Prefs prefs) {
+        Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+            long wakeUpTime = System.currentTimeMillis();
+            long sunrise = getSunrise(context,calNow).getTimeInMillis() + prefs.getSunriseOffset();
+            if(sunrise < wakeUpTime){
+                return Prefs.SUNRISE_OFFSET;
+            }
+            long noon = getNoon(context,calNow).getTimeInMillis() + prefs.getNoonOffset();
+            if(noon < wakeUpTime){
+                return Prefs.NOON_OFFSET;
+            }
+            long sunset = getSunset(context,calNow).getTimeInMillis() + prefs.getNoonOffset();
+            if(sunset < wakeUpTime){
+                return Prefs.SUNSET_OFFSET;
+            }
+            return Prefs.SUNRISE_OFFSET;
+    }
+
+    public static Intent getRepeatingAlarmIntent(Context context, String data) {
+        Intent intent = new Intent(context, StartRecordingReceiver.class);
+        intent.putExtra("type", Prefs.REPEATING_ALARM);
+        intent.setData(Uri.parse(data));
+        return intent;
     }
 
     /**
@@ -836,19 +916,11 @@ public class Util {
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context) {
+    public static void createTheNextSingleStandardAlarm(Context context, String curURI) {
+        Log.d(TAG,"createTheNextSingleStandardAlarm cur URI" + curURI);
         Prefs prefs = new Prefs(context);
-        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
-
-        try {
-            myIntent.putExtra("type", prefs.REPEATING_ALARM);
-            Uri timeUri; // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("normal");
-            myIntent.setData(timeUri);
-
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
+        Alarm nextAlarm = getNextAlarm(context, prefs, curURI);
+        Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.UriType);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -856,15 +928,12 @@ public class Util {
             return;
         }
 
-        long delayMS = getMilliSecondsBetweenRecordings(prefs);
-        long wakeUpTime = SystemClock.elapsedRealtime() + delayMS;
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
-        setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
 
-        long nextAlarmInUnixTime = new Date().getTime() + delayMS;
-        Log.d("NextAlarm", "Delay is " + delayMS);
-        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
+        Log.d("NextAlarm", "Type is " + nextAlarm.UriType + " Delay is " + nextAlarm.TimeMillis);
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
 
     public static void updateGPSLocation(Context context) {
@@ -921,7 +990,7 @@ public class Util {
     public static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
-        createTheNextSingleStandardAlarm(context);
+        createTheNextSingleStandardAlarm(context, null);
     }
 
     public static void setUseFrequentUploads(Context context, boolean useFrequentUploads) {
@@ -1231,6 +1300,8 @@ public class Util {
             recordTimeSeconds = 60 * 10;
         } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
+        }else if(typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseDuskDawnAlarms()){
+            recordTimeSeconds = prefs.getRecLength() * 60;
         }
 
 
@@ -1243,12 +1314,15 @@ public class Util {
                 recordTimeSeconds = recordTimeSeconds * 10;
             } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
+            }else if(typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseDuskDawnAlarms()){
+                recordTimeSeconds = prefs.getRecLength();
             }
         }
 
         if (typeOfRecording.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
             recordTimeSeconds += 1; // help to recognise recordNowButton recordings
         }
+        Log.d(TAG, "recording duration is" + recordTimeSeconds);
         return recordTimeSeconds;
     }
 
@@ -1309,4 +1383,22 @@ public class Util {
         }
         return jsonNotes;
     }
+
+    public static void changeAlarmType(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent = getRepeatingAlarmIntent(context, Prefs.NORMAL_URI);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.cancel(pendingIntent);
+        createTheNextSingleStandardAlarm(context,null);
+    }
+
+    public static class Alarm{
+        public long TimeMillis;
+        public String UriType;
+        public Alarm(long timeMS, String uri){
+            this.TimeMillis = timeMS;
+            this.UriType = uri;
+        }
+    }
+
 }

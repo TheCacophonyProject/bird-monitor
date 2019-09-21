@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Now create the alarms that will cause the recordings to happen
-        Util.createTheNextSingleStandardAlarm(getApplicationContext());
+        Util.createTheNextSingleStandardAlarm(getApplicationContext(), null);
         Util.createFailSafeAlarm(getApplicationContext());
 
 

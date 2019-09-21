@@ -14,6 +14,11 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
+    public static final int MIN_REC_LENGTH = 1;
+    public static final int MAX_REC_LENGTH = 100;
+    public static final int MAX_ALARM_OFFSET = 120;
+    public static final String NORMAL_URI = "normal";
+
     public static final String FAIL_SAFE_ALARM = "failSafe";
     public static final String REPEATING_ALARM = "repeating";
     public static final String RECORD_NOW_ALARM = "recordNowButton";
@@ -118,6 +123,13 @@ public class Prefs {
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
     private static final String LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
+    public static final String USE_DUSK_DAWN_ALARMS = "useDuskDawnAlarms";
+    public static final String SUNRISE_OFFSET = "sunriseOffset";
+    public static final String NOON_OFFSET = "noonOffset";
+    public static final String SUNSET_OFFSET = "sunsetOffset";
+    public static final String REC_LENGTH = "recLength";
+
+
     private final Context context;
 
     public Prefs(Context context) {
@@ -157,6 +169,15 @@ public class Prefs {
         return Double.longBitsToDouble(preferences.getLong(key, 0));
     }
 
+    private int getInt(String key) {
+        if (context == null) {
+            Log.e(TAG, "Context was null when trying to get preferences.");
+            return 0;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return preferences.getInt(key, 0);
+    }
+
     private long getLong(String key) {
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
@@ -173,6 +194,16 @@ public class Prefs {
         }
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         preferences.edit().putLong(key, Double.doubleToRawLongBits(val)).apply();
+    }
+
+
+    private void setInt(String key, int val) {
+        if (context == null) {
+            Log.e(TAG, "Context was null when trying to get preferences.");
+            return;
+        }
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putInt(key, val).apply();
     }
 
     private void setLong(String key, long val) {
@@ -536,6 +567,7 @@ public class Prefs {
     }
 
     public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
+        setUseDuskDawnAlarms(false);
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
@@ -698,4 +730,55 @@ public class Prefs {
     public String getLatestBirdCountRecordingFileNameNoExtension() {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
+
+
+    public void setUseDuskDawnAlarms(boolean useDuskDawn){
+        setBoolean(USE_DUSK_DAWN_ALARMS, useDuskDawn);
+    }
+    public boolean getUseDuskDawnAlarms(){
+        return getBoolean(USE_DUSK_DAWN_ALARMS);
+    }
+
+
+    public int parseMinMaxInt(String value, int min, int max){
+        try {
+            int offset = Integer.parseInt(value);
+            if(offset >= min && offset <= max){
+                return  offset;
+            }else{
+                return min;
+            }
+        }catch(NumberFormatException ex){
+            return  min;
+        }
+    }
+
+    public void setRecLength(String recLength){
+        setInt(REC_LENGTH, parseMinMaxInt(recLength,MIN_REC_LENGTH,MAX_REC_LENGTH));
+    }
+    public int getRecLength(){
+        return getInt(REC_LENGTH);
+    }
+    public void setSunriseOffset(String offset){
+        setInt(SUNRISE_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+    }
+    public int getSunriseOffset(){
+        return getInt(SUNRISE_OFFSET);
+    }
+    public void setNoonOffset(String offset){
+        setInt(NOON_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+    }
+    public int getNoonOffset(){
+        return getInt(NOON_OFFSET);
+    }
+
+    public void setSunsetOffset(String offset){
+        setInt(SUNSET_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+    }
+
+    public int getSunsetOffset(){
+        return getInt(SUNSET_OFFSET);
+    }
+
+
 }

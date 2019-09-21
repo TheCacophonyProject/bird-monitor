@@ -90,6 +90,8 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new SoundFragment(), getResources().getString(R.string.activity_or_fragment_title_warning_sound));
         mSectionsStatePagerAdapter.addFragment(new BatteryFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery));
         mSectionsStatePagerAdapter.addFragment(new FrequencyFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_frequency));
+        mSectionsStatePagerAdapter.addFragment(new SunriseAlarmFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_dawn_dusk_alarms));
+
         mSectionsStatePagerAdapter.addFragment(new RootedFragment(), getResources().getString(R.string.activity_or_fragment_title_rooted));
 
         // And for Very Advanced

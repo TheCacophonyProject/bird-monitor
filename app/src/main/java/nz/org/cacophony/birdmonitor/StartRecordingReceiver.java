@@ -43,7 +43,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
 
         try {
-            Util.createTheNextSingleStandardAlarm(context);
+            Util.createTheNextSingleStandardAlarm(context, intent.getData().toString());
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
@@ -81,6 +81,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             } else if (alarmIntentType.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
                 recordButtonWasPressed = true;
                 wakeLockDuration = 17 * 60 * 1000L; // 15 minutes for recording plus margin of error/uploading
+            }else if(alarmIntentType.equalsIgnoreCase(Prefs.REPEATING_ALARM) &&prefs.getUseDuskDawnAlarms()){
+                wakeLockDuration+= prefs.getRecLength() *60 * 1000;
             }
 
             wakeLock.acquire(wakeLockDuration);
