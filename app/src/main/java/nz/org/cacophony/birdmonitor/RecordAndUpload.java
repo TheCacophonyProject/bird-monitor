@@ -45,7 +45,7 @@ public class RecordAndUpload {
 
     }
 
-    static void doRecord(Context context, String typeOfRecording) {
+    static void doRecord(Context context, String typeOfRecording, String offset) {
         if (typeOfRecording == null) {
             Log.e(TAG, "typeOfRecording is null");
             return;
@@ -61,7 +61,7 @@ public class RecordAndUpload {
             MessageHelper.broadcastMessage(messageToDisplay, ALREADY_RECORDING, MANAGE_RECORDINGS_ACTION, context);
             return;
         } else {
-            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
+            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording, offset);
         }
 
 
@@ -93,7 +93,7 @@ public class RecordAndUpload {
         }
     }
 
-    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
+    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording, String offset) {
         recordIdlingResource.increment();
         isRecording = true;
         String messageToDisplay = "Getting ready to record.";
@@ -152,6 +152,9 @@ public class RecordAndUpload {
             fileName += " " + latStr;
             fileName += " " + lonStr;
 
+            if(offset!=null) {
+                fileName += " " + offset + " " + prefs.getLong(offset);
+            }
             locationForBirdCountMessage = latStr + " " + lonStr;
 
             if (Util.isBirdCountRecording(typeOfRecording)) {
@@ -452,7 +455,7 @@ public class RecordAndUpload {
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
 
-        if (fileNameParts.length != 18) {
+        if (fileNameParts.length < 18) {
             if (aFile.delete()) {
                 return false;
             }
@@ -525,7 +528,9 @@ public class RecordAndUpload {
             additionalMetadata.put("App has root access", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
-
+            if(fileNameParts.length==20){
+                additionalMetadata.put(fileNameParts[17], fileNameParts[18]);
+            }
             // Add the recording notes if they exist.
             String recordingFileExtension = Util.getRecordingFileExtension();
             String recordingFileWithOutExtension = fileName.split(recordingFileExtension)[0];

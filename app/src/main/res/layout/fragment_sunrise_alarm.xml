@@ -43,7 +43,7 @@
 
         <EditText
             android:id="@+id/etSunriseOffset"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="numberSigned"
@@ -54,7 +54,7 @@
 
         <EditText
             android:id="@+id/etNoonOffset"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="numberSigned"
@@ -64,7 +64,7 @@
 
         <EditText
             android:id="@+id/etSunsetOffset"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="numberSigned"
@@ -74,7 +74,7 @@
 
         <EditText
             android:id="@+id/etRecLength"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:inputType="number"

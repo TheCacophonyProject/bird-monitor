@@ -42,7 +42,10 @@ public class MainService extends IntentService {
                     alarmIntentType = "unknown";
                     Log.w(TAG, "alarmIntentType = unknown");
                 }
-                RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType);
+
+                String relativeTo = bundle.getString(Prefs.RELATIVE);
+
+                RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType, relativeTo);
             } else {
                 Log.e(TAG, "MainService bundle is null");
             }

@@ -43,7 +43,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
 
         try {
-            Util.createTheNextSingleStandardAlarm(context, intent.getStringExtra(Prefs.OFFSET));
+            String relativeTo =intent.getStringExtra(Prefs.RELATIVE);
+            Util.createTheNextSingleStandardAlarm(context, relativeTo);
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
@@ -152,6 +153,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             } else { // intent came from boot receiver or app (not test record, or bird count )
                 Intent mainServiceIntent = new Intent(context, MainService.class);
                 mainServiceIntent.putExtra("type", alarmIntentType);
+                mainServiceIntent.putExtra(Prefs.RELATIVE,relativeTo);
                 context.startService(mainServiceIntent);
             }
 

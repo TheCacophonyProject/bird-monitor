@@ -18,7 +18,7 @@ public class Prefs {
     public static final int MAX_REC_LENGTH = 100;
     public static final int MAX_ALARM_OFFSET = 120;
     public static final String NORMAL_URI = "normal";
-    public static final String OFFSET = "offset";
+    public static final String RELATIVE = "relative";
 
     public static final String FAIL_SAFE_ALARM = "failSafe";
     public static final String REPEATING_ALARM = "repeating";
@@ -179,7 +179,7 @@ public class Prefs {
         return preferences.getInt(key, 0);
     }
 
-    private long getLong(String key) {
+    public long getLong(String key) {
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return 0;

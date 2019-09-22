@@ -20,8 +20,7 @@
     <string name="activity_or_fragment_title_warning_sound">Warning Sound</string>
     <string name="activity_or_fragment_title_activity_ignore_low_battery">Ignore Low Battery</string>
     <string name="activity_or_fragment_title_activity_frequency">Frequency</string>
-    <string name="activity_or_fragment_title_activity_sun_alarms">Dawn &amp; Dusk Alarms</string>
-
+    <string name="activity_or_fragment_title_activity_sun_alarms">Sun Alarms</string>
     <string name="activity_or_fragment_title_settings_for_testing">Settings for Testing</string>
     <string name="activity_or_fragment_title_settings_for_audio_source">Audio Source</string>
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
@@ -204,10 +203,10 @@
     <string name="bird_count_notes_message">Use this screen to add your own notes about the latest recording.</string>
 
     <string name="enable_sun_alarms">Use Sun Alarms</string>
-    <string name="rec_length">Recording Length</string>
-    <string name="sunrise_offset">Sunrise offset</string>
-    <string name="sunset_offset">Sunset offset</string>
-    <string name="noon_offset">Noon offset</string>
+    <string name="rec_length">Recording Length (Mins)</string>
+    <string name="sunrise_offset">Sunrise Offset (Mins)</string>
+    <string name="sunset_offset">Sunset Offset (Mins)</string>
+    <string name="noon_offset">Noon Offset (Mins)</string>
     <string name="update_alarms">Update Alarms</string>
     <string name="sun_alarms_updated">Sun Alarms Updated</string>
 

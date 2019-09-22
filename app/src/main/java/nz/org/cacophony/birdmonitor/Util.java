@@ -890,12 +890,12 @@ public class Util {
         return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
     }
 
-    public static Intent getRepeatingAlarmIntent(Context context, String offset) {
+    public static Intent getRepeatingAlarmIntent(Context context, String relativeTo) {
         Intent intent = new Intent(context, StartRecordingReceiver.class);
         intent.putExtra("type", Prefs.REPEATING_ALARM);
         intent.setData(Uri.parse(Prefs.NORMAL_URI));
-        if (offset != null) {
-            intent.putExtra(Prefs.OFFSET, offset);
+        if (relativeTo != null) {
+            intent.putExtra(Prefs.RELATIVE, relativeTo);
         }
         return intent;
     }
@@ -908,10 +908,10 @@ public class Util {
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context, String offset) {
-        Log.d(TAG, "createTheNextSingleStandardAlarm cur offset" + offset);
+    public static void createTheNextSingleStandardAlarm(Context context, String relativeTo) {
+        Log.d(TAG, "createTheNextSingleStandardAlarm cur relativeTo " + relativeTo);
         Prefs prefs = new Prefs(context);
-        Alarm nextAlarm = getNextAlarm(context, prefs, offset);
+        Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
         Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
