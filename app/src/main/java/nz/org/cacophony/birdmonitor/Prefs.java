@@ -732,7 +732,6 @@ public class Prefs {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
 
-
     public void setUseSunAlarms(boolean useDuskDawn) {
         setBoolean(USE_SUN_ALARMS, useDuskDawn);
     }
@@ -740,7 +739,6 @@ public class Prefs {
     public boolean getUseSunAlarms() {
         return getBoolean(USE_SUN_ALARMS);
     }
-
 
     public int parseMinMaxInt(String value, int min, int max) {
         try {
@@ -755,6 +753,9 @@ public class Prefs {
         }
     }
 
+    public int getOffsetMillis(String key){
+        return getInt(key) * 1000 * 60;
+    }
     public void setRecLength(String recLength) {
         setInt(REC_LENGTH, parseMinMaxInt(recLength, MIN_REC_LENGTH, MAX_REC_LENGTH));
     }
@@ -767,12 +768,20 @@ public class Prefs {
         setInt(SUNRISE_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
 
+    public int getSunriseOffsetMillis() {
+        return getInt(SUNRISE_OFFSET)*1000*60;
+    }
+
     public int getSunriseOffset() {
         return getInt(SUNRISE_OFFSET);
     }
 
     public void setNoonOffset(String offset) {
         setInt(NOON_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
+    }
+
+    public int getNoonOffsetMillis() {
+        return getInt(NOON_OFFSET)*1000*60;
     }
 
     public int getNoonOffset() {
@@ -783,9 +792,11 @@ public class Prefs {
         setInt(SUNSET_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
 
+    public int getSunsetOffsetMillis() {
+        return getInt(SUNSET_OFFSET) *1000 * 60;
+    }
     public int getSunsetOffset() {
         return getInt(SUNSET_OFFSET);
     }
-
 
 }

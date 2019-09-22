@@ -827,26 +827,25 @@ public class Util {
         Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
         long wakeUpTime = System.currentTimeMillis();
-        long offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+        long offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
         if (offset > wakeUpTime) {
             return new Alarm(offset, Prefs.SUNRISE_OFFSET);
         }
-        offset = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffset() * 60 * 1000;
+        offset = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffsetMillis();
         if (offset > wakeUpTime) {
             return new Alarm(offset, Prefs.NOON_OFFSET);
         }
-        offset = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffset() * 60 * 1000;
+        offset = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
         if (offset > wakeUpTime) {
             return new Alarm(offset, Prefs.SUNSET_OFFSET);
         }
         calNow.add(Calendar.DAY_OF_YEAR, 1);
-        offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+        offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
         return new Alarm(offset, Prefs.SUNRISE_OFFSET);
     }
 
     public static Alarm getNextAlarm(Context context, Prefs prefs, String curOffset) {
         long wakeUpTime;
-
         if (prefs.getUseSunAlarms()) {
             Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
             Alarm alarm;
@@ -855,14 +854,14 @@ public class Util {
             } else {
                 switch (curOffset) {
                     case Prefs.SUNRISE_OFFSET:
-                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
                     case Prefs.NOON_OFFSET:
-                        wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffset() * 60 * 1000;
+                        wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
                     case Prefs.SUNSET_OFFSET:
                         calNow.add(Calendar.DAY_OF_YEAR, 1);
-                        wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+                        wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.SUNRISE_OFFSET);
                         break;
                     default:
@@ -1055,7 +1054,7 @@ public class Util {
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
         } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
-        }  else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_sun_alarms);
         } else {
             dialogMessage = "Still to fix in Util.displayHelp";
