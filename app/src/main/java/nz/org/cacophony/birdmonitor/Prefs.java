@@ -18,6 +18,7 @@ public class Prefs {
     public static final int MAX_REC_LENGTH = 100;
     public static final int MAX_ALARM_OFFSET = 120;
     public static final String NORMAL_URI = "normal";
+    public static final String OFFSET = "offset";
 
     public static final String FAIL_SAFE_ALARM = "failSafe";
     public static final String REPEATING_ALARM = "repeating";
@@ -123,7 +124,7 @@ public class Prefs {
     private static final String LAST_DEVICE_NAME_USED_FOR_TESTING_KEY = "LAST_PASSWORD_USED_FOR_TESTING";
     private static final String LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY = "LATEST_RECORDING_FILE_NAME";
 
-    public static final String USE_DUSK_DAWN_ALARMS = "useDuskDawnAlarms";
+    public static final String USE_SUN_ALARMS = "useSunAlarms";
     public static final String SUNRISE_OFFSET = "sunriseOffset";
     public static final String NOON_OFFSET = "noonOffset";
     public static final String SUNSET_OFFSET = "sunsetOffset";
@@ -567,7 +568,7 @@ public class Prefs {
     }
 
     public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
-        setUseDuskDawnAlarms(false);
+        setUseSunAlarms(false);
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
@@ -732,51 +733,57 @@ public class Prefs {
     }
 
 
-    public void setUseDuskDawnAlarms(boolean useDuskDawn){
-        setBoolean(USE_DUSK_DAWN_ALARMS, useDuskDawn);
+    public void setUseSunAlarms(boolean useDuskDawn) {
+        setBoolean(USE_SUN_ALARMS, useDuskDawn);
     }
-    public boolean getUseDuskDawnAlarms(){
-        return getBoolean(USE_DUSK_DAWN_ALARMS);
+
+    public boolean getUseSunAlarms() {
+        return getBoolean(USE_SUN_ALARMS);
     }
 
 
-    public int parseMinMaxInt(String value, int min, int max){
+    public int parseMinMaxInt(String value, int min, int max) {
         try {
             int offset = Integer.parseInt(value);
-            if(offset >= min && offset <= max){
-                return  offset;
-            }else{
+            if (offset >= min && offset <= max) {
+                return offset;
+            } else {
                 return min;
             }
-        }catch(NumberFormatException ex){
-            return  min;
+        } catch (NumberFormatException ex) {
+            return min;
         }
     }
 
-    public void setRecLength(String recLength){
-        setInt(REC_LENGTH, parseMinMaxInt(recLength,MIN_REC_LENGTH,MAX_REC_LENGTH));
+    public void setRecLength(String recLength) {
+        setInt(REC_LENGTH, parseMinMaxInt(recLength, MIN_REC_LENGTH, MAX_REC_LENGTH));
     }
-    public int getRecLength(){
+
+    public int getRecLength() {
         return getInt(REC_LENGTH);
     }
-    public void setSunriseOffset(String offset){
-        setInt(SUNRISE_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+
+    public void setSunriseOffset(String offset) {
+        setInt(SUNRISE_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
-    public int getSunriseOffset(){
+
+    public int getSunriseOffset() {
         return getInt(SUNRISE_OFFSET);
     }
-    public void setNoonOffset(String offset){
-        setInt(NOON_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+
+    public void setNoonOffset(String offset) {
+        setInt(NOON_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
-    public int getNoonOffset(){
+
+    public int getNoonOffset() {
         return getInt(NOON_OFFSET);
     }
 
-    public void setSunsetOffset(String offset){
-        setInt(SUNSET_OFFSET, parseMinMaxInt(offset,-MAX_ALARM_OFFSET,MAX_ALARM_OFFSET));
+    public void setSunsetOffset(String offset) {
+        setInt(SUNSET_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
 
-    public int getSunsetOffset(){
+    public int getSunsetOffset() {
         return getInt(SUNSET_OFFSET);
     }
 

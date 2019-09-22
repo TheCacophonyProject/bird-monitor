@@ -426,8 +426,8 @@ public class Util {
     public static Calendar getNoon(Context context, Calendar todayOrTomorrow) {
         Calendar sunrise = getSunrise(context, todayOrTomorrow);
         Calendar sunset = getSunset(context, todayOrTomorrow);
-        long noonMillis = (sunrise.getTimeInMillis() + sunset.getTimeInMillis()) /2;
-        Calendar cal=GregorianCalendar.getInstance();
+        long noonMillis = (sunrise.getTimeInMillis() + sunset.getTimeInMillis()) / 2;
+        Calendar cal = GregorianCalendar.getInstance();
         cal.setTimeInMillis(noonMillis);
         return cal;
     }
@@ -822,60 +822,67 @@ public class Util {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
+    // Get the next sunrise/noon/sunset alarm closest to the current time
+    public static Alarm getClosestSunAlarm(Context context, Prefs prefs) {
+        Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
-    public static Alarm getNextAlarm(Context context, Prefs prefs, String curURI) {
+        long wakeUpTime = System.currentTimeMillis();
+        long offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.SUNRISE_OFFSET);
+        }
+        offset = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffset() * 60 * 1000;
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.NOON_OFFSET);
+        }
+        offset = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffset() * 60 * 1000;
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.SUNSET_OFFSET);
+        }
+        calNow.add(Calendar.DAY_OF_YEAR, 1);
+        offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+        return new Alarm(offset, Prefs.SUNRISE_OFFSET);
+    }
+
+    public static Alarm getNextAlarm(Context context, Prefs prefs, String curOffset) {
         long wakeUpTime;
 
-        if (prefs.getUseDuskDawnAlarms()) {
+        if (prefs.getUseSunAlarms()) {
             Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
-
-            if(curURI == null){
-                wakeUpTime = System.currentTimeMillis();
-                long offset = getSunrise(context,calNow).getTimeInMillis() + prefs.getSunriseOffset()*1000;
-                if(offset > wakeUpTime){
-                    return new Alarm(offset, Prefs.SUNRISE_OFFSET);
-                }
-                 offset = getNoon(context,calNow).getTimeInMillis() + prefs.getNoonOffset()*1000;
-                if(offset > wakeUpTime){
-                    return new Alarm(offset, Prefs.NOON_OFFSET);
-                }
-                 offset = getSunset(context,calNow).getTimeInMillis() + prefs.getSunsetOffset()*1000;
-                if(offset > wakeUpTime){
-                    return new Alarm(offset, Prefs.SUNSET_OFFSET);
-                }
-                calNow.add(Calendar.DAY_OF_YEAR, 1);
-                offset = getSunrise(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
-                return new Alarm(offset, Prefs.SUNRISE_OFFSET);
-            }
             Alarm alarm;
-            switch (curURI) {
-                case Prefs.SUNRISE_OFFSET:
-                    wakeUpTime = getNoon(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
-                    alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
-                case Prefs.NOON_OFFSET:
-                    wakeUpTime = getSunset(context,calNow ).getTimeInMillis()+ prefs.getSunsetOffset()*1000;
-                    alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
-                case Prefs.SUNSET_OFFSET:
-                default:
-                    calNow.add(Calendar.DAY_OF_YEAR, 1);
-                    wakeUpTime = getSunrise(context,calNow ).getTimeInMillis()+ prefs.getSunriseOffset()*1000;
-                    alarm = new Alarm(wakeUpTime, Prefs.SUNRISE_OFFSET);
-                    break;
+            if (curOffset == null || curOffset.equals(Prefs.FAIL_SAFE_ALARM)) {
+                alarm = getClosestSunAlarm(context, prefs);
+            } else {
+                switch (curOffset) {
+                    case Prefs.SUNRISE_OFFSET:
+                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+                        alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
+                    case Prefs.NOON_OFFSET:
+                        wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffset() * 60 * 1000;
+                        alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
+                    case Prefs.SUNSET_OFFSET:
+                        calNow.add(Calendar.DAY_OF_YEAR, 1);
+                        wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffset() * 60 * 1000;
+                        alarm = new Alarm(wakeUpTime, Prefs.SUNRISE_OFFSET);
+                        break;
+                    default:
+                        alarm = getClosestSunAlarm(context, prefs);
+                        break;
+                }
             }
             return alarm;
-
         } else {
             wakeUpTime = System.currentTimeMillis();
             if (prefs.getUseVeryFrequentRecordings()) {
-                 new Alarm((long)prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+                new Alarm((long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
             }
 
             float chance = new Random().nextFloat();
             float shortWindowChance = prefs.getshortRecordingWindowChance();
             if (chance < shortWindowChance) {
                 chance = new Random().nextFloat();
-                wakeUpTime =  wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
-            }else {
+                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            } else {
                 chance = new Random().nextFloat();
                 wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
             }
@@ -883,28 +890,13 @@ public class Util {
         return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
     }
 
-    public static String getNextSunriseAlarmType(Context context, Prefs prefs) {
-        Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
-            long wakeUpTime = System.currentTimeMillis();
-            long sunrise = getSunrise(context,calNow).getTimeInMillis() + prefs.getSunriseOffset();
-            if(sunrise < wakeUpTime){
-                return Prefs.SUNRISE_OFFSET;
-            }
-            long noon = getNoon(context,calNow).getTimeInMillis() + prefs.getNoonOffset();
-            if(noon < wakeUpTime){
-                return Prefs.NOON_OFFSET;
-            }
-            long sunset = getSunset(context,calNow).getTimeInMillis() + prefs.getNoonOffset();
-            if(sunset < wakeUpTime){
-                return Prefs.SUNSET_OFFSET;
-            }
-            return Prefs.SUNRISE_OFFSET;
-    }
-
-    public static Intent getRepeatingAlarmIntent(Context context, String data) {
+    public static Intent getRepeatingAlarmIntent(Context context, String offset) {
         Intent intent = new Intent(context, StartRecordingReceiver.class);
         intent.putExtra("type", Prefs.REPEATING_ALARM);
-        intent.setData(Uri.parse(data));
+        intent.setData(Uri.parse(Prefs.NORMAL_URI));
+        if (offset != null) {
+            intent.putExtra(Prefs.OFFSET, offset);
+        }
         return intent;
     }
 
@@ -916,11 +908,11 @@ public class Util {
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context, String curURI) {
-        Log.d(TAG,"createTheNextSingleStandardAlarm cur URI" + curURI);
+    public static void createTheNextSingleStandardAlarm(Context context, String offset) {
+        Log.d(TAG, "createTheNextSingleStandardAlarm cur offset" + offset);
         Prefs prefs = new Prefs(context);
-        Alarm nextAlarm = getNextAlarm(context, prefs, curURI);
-        Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.UriType);
+        Alarm nextAlarm = getNextAlarm(context, prefs, offset);
+        Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -928,11 +920,10 @@ public class Util {
             return;
         }
 
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
 
-        Log.d("NextAlarm", "Type is " + nextAlarm.UriType + " Delay is " + nextAlarm.TimeMillis);
+        Log.d("NextAlarm", "Type is " + nextAlarm.OffsetType + " Delay is " + nextAlarm.TimeMillis);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
 
@@ -1064,7 +1055,8 @@ public class Util {
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
         } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
-
+        }  else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
+            dialogMessage = context.getString(R.string.help_text_settings_for_sun_alarms);
         } else {
             dialogMessage = "Still to fix in Util.displayHelp";
         }
@@ -1300,7 +1292,7 @@ public class Util {
             recordTimeSeconds = 60 * 10;
         } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
-        }else if(typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseDuskDawnAlarms()){
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()) {
             recordTimeSeconds = prefs.getRecLength() * 60;
         }
 
@@ -1314,7 +1306,7 @@ public class Util {
                 recordTimeSeconds = recordTimeSeconds * 10;
             } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
-            }else if(typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseDuskDawnAlarms()){
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()) {
                 recordTimeSeconds = prefs.getRecLength();
             }
         }
@@ -1386,18 +1378,19 @@ public class Util {
 
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent myIntent = getRepeatingAlarmIntent(context, Prefs.NORMAL_URI);
+        Intent myIntent = getRepeatingAlarmIntent(context, null);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.cancel(pendingIntent);
-        createTheNextSingleStandardAlarm(context,null);
+        createTheNextSingleStandardAlarm(context, null);
     }
 
-    public static class Alarm{
+    public static class Alarm {
         public long TimeMillis;
-        public String UriType;
-        public Alarm(long timeMS, String uri){
+        public String OffsetType;
+
+        public Alarm(long timeMS, String offset) {
             this.TimeMillis = timeMS;
-            this.UriType = uri;
+            this.OffsetType = offset;
         }
     }
 

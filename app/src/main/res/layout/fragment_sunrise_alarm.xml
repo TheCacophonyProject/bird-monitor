@@ -15,7 +15,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:showText="true"
-        android:text="@string/enable_dawn_dusk"
+        android:text="@string/enable_sun_alarms"
         android:textOff=""
         android:textOn=""
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,24 +31,56 @@
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/swDawnDuskAlarms">
 
-        <TextView
-            android:id="@+id/tvRecTitle"
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/btnSave"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/rec_length"
-            app:layout_constraintTop_toTopOf="@id/etRecLength"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:text="@string/update_alarms"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSunsetOffset" />
+
+        <EditText
+            android:id="@+id/etSunriseOffset"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:inputType="numberSigned"
+            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etRecLength" />
+
+
+        <EditText
+            android:id="@+id/etNoonOffset"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:inputType="numberSigned"
+            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSunriseOffset" />
+
+        <EditText
+            android:id="@+id/etSunsetOffset"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:inputType="numberSigned"
+            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etNoonOffset" />
+
         <EditText
             android:id="@+id/etRecLength"
             android:layout_width="100dp"
-            android:layout_marginTop="16dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:inputType="number"
             app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
             app:layout_constraintRight_toRightOf="parent"
-            android:inputType="number"/>
-
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvSunrise"
@@ -56,35 +88,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/sunrise_offset"
-            app:layout_constraintTop_toTopOf="@+id/etSunriseOffset"
-            app:layout_constraintLeft_toLeftOf="parent" />
-        <EditText
-            android:id="@+id/etSunriseOffset"
-            android:layout_width="100dp"
-            android:layout_marginTop="16dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/etRecLength"
-            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
-            app:layout_constraintRight_toRightOf="parent"
-            android:inputType="numberSigned"/>
-
-        <TextView
-            android:id="@+id/tvNoon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/noon_offset"
-            app:layout_constraintTop_toTopOf="@+id/etNoonOffset"
-            app:layout_constraintLeft_toLeftOf="parent" />
-        <EditText
-            android:id="@+id/etNoonOffset"
-            android:layout_width="100dp"
-            android:layout_marginTop="16dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/etSunriseOffset"
-            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
-            app:layout_constraintRight_toRightOf="parent"
-            android:inputType="numberSigned"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/etSunriseOffset" />
 
         <TextView
             android:id="@+id/tvSunset"
@@ -92,27 +97,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/sunset_offset"
-            app:layout_constraintTop_toTopOf="@+id/etSunsetOffset"
-            app:layout_constraintLeft_toLeftOf="parent" />
-        <EditText
-            android:id="@+id/etSunsetOffset"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/etNoonOffset"
-            app:layout_constraintLeft_toRightOf="@+id/tvRecTitle"
-            app:layout_constraintRight_toRightOf="parent"
-            android:inputType="numberSigned"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/etSunsetOffset" />
 
-        <Button
-            android:id="@+id/btnSave"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvRecTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/update_alarms"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etSunsetOffset" />
+            android:layout_marginTop="16dp"
+            android:text="@string/rec_length"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/etRecLength" />
+
+        <TextView
+            android:id="@+id/tvNoon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/noon_offset"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/etNoonOffset" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

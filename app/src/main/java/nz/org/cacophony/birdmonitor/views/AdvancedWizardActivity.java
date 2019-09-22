@@ -73,13 +73,13 @@ public class AdvancedWizardActivity extends AppCompatActivity {
     }
 
     private void setNumberOfPagesForAdvanced() {
-        mSectionsStatePagerAdapter.setNumberOfPages(6);
+        mSectionsStatePagerAdapter.setNumberOfPages(7);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
 
     private void setNumberOfPagesForVeryAdvanced() {
-        mSectionsStatePagerAdapter.setNumberOfPages(8);
+        mSectionsStatePagerAdapter.setNumberOfPages(mSectionsStatePagerAdapter.getCount());
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
@@ -90,8 +90,7 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new SoundFragment(), getResources().getString(R.string.activity_or_fragment_title_warning_sound));
         mSectionsStatePagerAdapter.addFragment(new BatteryFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery));
         mSectionsStatePagerAdapter.addFragment(new FrequencyFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_frequency));
-        mSectionsStatePagerAdapter.addFragment(new SunriseAlarmFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_dawn_dusk_alarms));
-
+        mSectionsStatePagerAdapter.addFragment(new SunriseAlarmFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms));
         mSectionsStatePagerAdapter.addFragment(new RootedFragment(), getResources().getString(R.string.activity_or_fragment_title_rooted));
 
         // And for Very Advanced

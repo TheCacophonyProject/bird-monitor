@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -24,33 +25,40 @@ public class SunriseAlarmFragment extends Fragment {
     private Button btnSave;
     private ConstraintLayout dawkDuskView;
 
-    void updateValues(){
+    void updateValues() {
         Prefs prefs = new Prefs(this.getContext());
         prefs.setSunriseOffset(etSunriseOffset.getText().toString());
         prefs.setNoonOffset(etNoonOffset.getText().toString());
         prefs.setSunsetOffset(etSunsetOffset.getText().toString());
         prefs.setRecLength(etRecLength.getText().toString());
         loadValues();
-
+        showToast();
+        Util.changeAlarmType(this.getContext());
     }
-    void dawnDuskChecked(boolean checked){
+
+    void showToast() {
+        Toast.makeText(this.getContext(), R.string.sun_alarms_updated, Toast.LENGTH_SHORT).show();
+    }
+
+    void dawnDuskChecked(boolean checked) {
         Prefs prefs = new Prefs(this.getContext());
-        prefs.setUseDuskDawnAlarms(checked);
+        prefs.setUseSunAlarms(checked);
         toggleView(checked);
         Util.changeAlarmType(this.getContext());
+        showToast();
     }
 
     void toggleView(boolean useDawnDusk) {
         if (useDawnDusk) {
             dawkDuskView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             dawkDuskView.setVisibility(View.GONE);
         }
     }
 
-    void loadValues(){
+    void loadValues() {
         Prefs prefs = new Prefs(this.getContext());
-        boolean useDawkDusk = prefs.getUseDuskDawnAlarms();
+        boolean useDawkDusk = prefs.getUseSunAlarms();
         swUseDawnDusk.setChecked(useDawkDusk);
         toggleView(useDawkDusk);
         etRecLength.setText(String.valueOf(prefs.getRecLength()));
@@ -72,11 +80,11 @@ public class SunriseAlarmFragment extends Fragment {
         btnSave = view.findViewById(R.id.btnSave);
         dawkDuskView = view.findViewById(R.id.dawkDuskView);
 
-        InputFilter[] offsetFilters = new InputFilter[]{new InputFilterMinMax(-Prefs.MAX_ALARM_OFFSET,Prefs.MAX_ALARM_OFFSET)};
+        InputFilter[] offsetFilters = new InputFilter[]{new InputFilterMinMax(-Prefs.MAX_ALARM_OFFSET, Prefs.MAX_ALARM_OFFSET)};
         etSunriseOffset.setFilters(offsetFilters);
         etNoonOffset.setFilters(offsetFilters);
         etSunsetOffset.setFilters(offsetFilters);
-        etRecLength.setFilters(new InputFilter[]{new InputFilterMinMax(Prefs.MIN_REC_LENGTH,Prefs.MAX_REC_LENGTH)});
+        etRecLength.setFilters(new InputFilter[]{new InputFilterMinMax(Prefs.MIN_REC_LENGTH, Prefs.MAX_REC_LENGTH)});
 
 
         loadValues();
