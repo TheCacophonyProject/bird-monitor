@@ -170,7 +170,7 @@ public class Prefs {
         return Double.longBitsToDouble(preferences.getLong(key, 0));
     }
 
-    private int getInt(String key) {
+    public int getInt(String key) {
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return 0;
@@ -179,7 +179,7 @@ public class Prefs {
         return preferences.getInt(key, 0);
     }
 
-    public long getLong(String key) {
+    private long getLong(String key) {
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return 0;
@@ -568,7 +568,9 @@ public class Prefs {
     }
 
     public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
-        setUseSunAlarms(false);
+        if (useVeryFrequentRecordings) {
+            setUseSunAlarms(false);
+        }
         setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
@@ -732,8 +734,8 @@ public class Prefs {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
     }
 
-    public void setUseSunAlarms(boolean useDuskDawn) {
-        setBoolean(USE_SUN_ALARMS, useDuskDawn);
+    public void setUseSunAlarms(boolean useSunAlarms) {
+        setBoolean(USE_SUN_ALARMS, useSunAlarms);
     }
 
     public boolean getUseSunAlarms() {
@@ -753,9 +755,10 @@ public class Prefs {
         }
     }
 
-    public int getOffsetMillis(String key){
+    public int getOffsetMillis(String key) {
         return getInt(key) * 1000 * 60;
     }
+
     public void setRecLength(String recLength) {
         setInt(REC_LENGTH, parseMinMaxInt(recLength, MIN_REC_LENGTH, MAX_REC_LENGTH));
     }
@@ -769,7 +772,7 @@ public class Prefs {
     }
 
     public int getSunriseOffsetMillis() {
-        return getInt(SUNRISE_OFFSET)*1000*60;
+        return getInt(SUNRISE_OFFSET) * 1000 * 60;
     }
 
     public int getSunriseOffset() {
@@ -781,7 +784,7 @@ public class Prefs {
     }
 
     public int getNoonOffsetMillis() {
-        return getInt(NOON_OFFSET)*1000*60;
+        return getInt(NOON_OFFSET) * 1000 * 60;
     }
 
     public int getNoonOffset() {
@@ -793,8 +796,9 @@ public class Prefs {
     }
 
     public int getSunsetOffsetMillis() {
-        return getInt(SUNSET_OFFSET) *1000 * 60;
+        return getInt(SUNSET_OFFSET) * 1000 * 60;
     }
+
     public int getSunsetOffset() {
         return getInt(SUNSET_OFFSET);
     }

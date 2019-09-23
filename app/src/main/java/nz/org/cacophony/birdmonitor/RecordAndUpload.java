@@ -22,13 +22,23 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import io.fabric.sdk.android.services.common.Crash;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.recordIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.ALREADY_RECORDING;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.GETTING_READY_TO_RECORD;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.PREPARING_TO_UPLOAD;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_FINISHED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_STARTED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_FAILED_NOT_REGISTERED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_FINISHED;
 
 
 /**
@@ -152,8 +162,8 @@ public class RecordAndUpload {
             fileName += " " + latStr;
             fileName += " " + lonStr;
 
-            if(offset!=null) {
-                fileName += " " + offset + " " + prefs.getLong(offset);
+            if (offset != null) {
+                fileName += " " + offset + " " + prefs.getInt(offset);
             }
             locationForBirdCountMessage = latStr + " " + lonStr;
 
@@ -347,7 +357,7 @@ public class RecordAndUpload {
             return false;
         }
 
-        File recordingFiles[] = recordingsFolder.listFiles();
+        File[] recordingFiles = recordingsFolder.listFiles();
         if (recordingFiles != null) {
             Util.disableFlightMode(context);
 
@@ -528,7 +538,7 @@ public class RecordAndUpload {
             additionalMetadata.put("App has root access", prefs.getHasRootAccess());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
-            if(fileNameParts.length==20){
+            if (fileNameParts.length == 20) {
                 additionalMetadata.put(fileNameParts[17], fileNameParts[18]);
             }
             // Add the recording notes if they exist.
