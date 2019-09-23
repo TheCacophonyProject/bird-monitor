@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Methods used for auto updating Bird Monitor
+ * Helper methods used for auto updating Bird Monitor
  */
 public class UpdateUtil {
     private static final String TAG = UpdateUtil.class.getName();
