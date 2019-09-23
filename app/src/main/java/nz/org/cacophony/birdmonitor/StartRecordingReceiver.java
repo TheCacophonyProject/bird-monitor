@@ -56,7 +56,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 Log.e(TAG, "Intent does not have a type");
                 Crashlytics.logException(new Throwable("No Intent Type"));
                 return;
-            } else if (alarmIntentType == Prefs.FAIL_SAFE_ALARM) {
+            } else if (alarmIntentType.equals(Prefs.FAIL_SAFE_ALARM)) {
                 return;
             }
 

@@ -16,16 +16,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -36,10 +29,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
@@ -47,19 +42,46 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
-import static android.Manifest.permission.*;
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.Context.ALARM_SERVICE;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_STOPPED;
 
 
 /**
@@ -232,6 +254,9 @@ public class Util {
         }
     }
 
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
 
     /**
      * Returns the device id of this phone.  The device id has been allocated by the server when
@@ -525,6 +550,10 @@ public class Util {
     }
 
     public static void disableFlightMode(final Context context) {
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
+
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -564,16 +593,19 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static void checkSuperUserAccess() {
-        try {
-            Runtime.getRuntime().exec("su");
-        } catch (IOException ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
+    public static  void relaunch(final Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        int mPendingIntentId = 1;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
 
     public static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
 
         boolean onlineMode = prefs.getOnLineMode();
 
@@ -593,6 +625,13 @@ public class Util {
             }
         }
 
+        if (UpdateUtil.isDownloading(context)) {
+            Log.d(TAG, "Flight mode pending as am downloading update");
+            prefs.setFlightModePending(true);
+            return;
+        }
+        
+        prefs.setFlightModePending(false);
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
@@ -815,7 +854,7 @@ public class Util {
 
     public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
         if (prefs.getUseVeryFrequentRecordings()) {
-            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
+            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds() * 1000;
         }
 
         float chance = new Random().nextFloat();

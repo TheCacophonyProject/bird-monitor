@@ -346,6 +346,7 @@ public class RecordAndUpload {
 
         File recordingFiles[] = recordingsFolder.listFiles();
         if (recordingFiles != null) {
+
             Util.disableFlightMode(context);
 
             // Now wait for network connection as setFlightMode takes a while
@@ -523,6 +524,8 @@ public class RecordAndUpload {
             JSONObject additionalMetadata = new JSONObject();
             additionalMetadata.put("Android API Level", Build.VERSION.SDK_INT);
             additionalMetadata.put("App has root access", prefs.getHasRootAccess());
+            additionalMetadata.put("Auto Update", prefs.getAutoUpdate());
+            additionalMetadata.put("Flight Mode", prefs.getAeroplaneMode());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
 

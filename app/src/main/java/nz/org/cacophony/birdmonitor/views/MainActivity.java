@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
             prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setVeryAdvancedSettingsEnabled(false);
-
             prefs.setIsFirstTimeFalse();
+            prefs.setAutoUpdateAllowed();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
