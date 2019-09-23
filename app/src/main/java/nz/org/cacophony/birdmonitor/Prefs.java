@@ -14,8 +14,26 @@ public class Prefs {
     private static final String TAG = Prefs.class.getName();
 
     static final String PREFS_NAME = "CacophonyPrefs";
-    public static final String FAIL_SAFE_ALARM = "failSafe";
-    public static final String REPEATING_ALARM = "repeating";
+    public static final String PRIVILEGED_EXTENSION_PACKAGE="nz.org.cacophony.privileged";
+    public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "nz.org.cacophony.privileged.IPrivilegedService";
+    static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
+    static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
+    static final String UPDATE_URI = "URI";
+    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
+    private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
+    private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
+    private static final String AUTO_UPDATE = "autoUpdate";
+    private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
+    private static final String DATE_TIME_LAST_UPDATE_CHECK = "lastUpdateCheck";
+    private static final String AUTO_UPDATE_ALLOWED = "autoUpdateAllowed";
+    public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
+    //F-Droid Bird Monitor
+    public static final String FDROID_BIRD ="91f0ada061b91fc4ae2e45640a7452b38a93d8c864307872f2432f86ea6617e3";
+    //Debug key
+    public static final String DEBUG_BIRD ="700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
+    public static final String[] ALLOWED_UPDATES = new String[] { GITHUB_BIRD, DEBUG_BIRD};
+    static final String FAIL_SAFE_ALARM = "failSafe";
+    static final String REPEATING_ALARM = "repeating";
     public static final String RECORD_NOW_ALARM = "recordNowButton";
     public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
     public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
@@ -23,7 +41,7 @@ public class Prefs {
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
-    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";       // Test Server URL
+    private static final String TEST_SERVER_HOST = "api-test.cacophony.org.nz";
     private static final String SCHEME = "https";
     private static final String DEVICE_PASSWORD_KEY = "PASSWORD";
     private static final String USERNAME_PASSWORD_KEY = "USERNAME_PASSWORD";
@@ -697,5 +715,53 @@ public class Prefs {
 
     public String getLatestBirdCountRecordingFileNameNoExtension() {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
+    }
+
+    public boolean getAutoUpdate() {
+        return getBoolean(AUTO_UPDATE);
+    }
+
+    public void setAutoUpdate(boolean autoUpdate) {
+        setBoolean(AUTO_UPDATE, autoUpdate);
+    }
+
+    public boolean getAeroplaneMode() {
+        return getBoolean(USE_AEROPLANE_MODE);
+    }
+
+    public void setAeroplaneMode(boolean aeroplaneMode) {
+        setBoolean(USE_AEROPLANE_MODE, aeroplaneMode);
+    }
+
+    public void setDateTimeLastUpdateCheck(long dateTimeLastUpload) {
+        setLong(DATE_TIME_LAST_UPDATE_CHECK, dateTimeLastUpload);
+    }
+
+    public long getDateTimeLastUpdateCheck() {
+        return getLong(DATE_TIME_LAST_UPDATE_CHECK);
+    }
+
+    public void setFlightModePending(boolean pendingUpdate) {
+        setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
+    }
+
+    public boolean getFlightModePending() {
+        return getBoolean(FLIGHT_MODE_PENDING_UPDATE);
+    }
+
+    public boolean getRelaunchOnUpdate() {
+        return getBoolean(RELAUNCH_ON_UPDATE);
+    }
+
+    public void setRelaunchOnUpdate(boolean relaunch) {
+        setBoolean(RELAUNCH_ON_UPDATE, relaunch);
+    }
+
+    public void setAutoUpdateAllowed(){
+        setBoolean(AUTO_UPDATE_ALLOWED, UpdateUtil.isAutoUpdateAllowed(this.context));
+    }
+
+    public boolean getAutoUpdateAllowed(){
+        return getBoolean(AUTO_UPDATE_ALLOWED);
     }
 }
