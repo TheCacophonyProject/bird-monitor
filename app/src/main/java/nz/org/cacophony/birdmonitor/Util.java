@@ -5,32 +5,20 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.BatteryManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Settings;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -41,12 +29,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
-import nz.org.cacophony.birdmonitor.views.MainActivity;
-import nz.org.cacophony.birdmonitor.views.RootedFragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
@@ -54,26 +42,46 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
-import static android.Manifest.permission.*;
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.Context.ALARM_SERVICE;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_STOPPED;
 
 
 /**
@@ -585,14 +593,6 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static void checkSuperUserAccess() {
-        try {
-            Runtime.getRuntime().exec("su");
-        } catch (IOException ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
-    }
-
     public static  void relaunch(final Context context){
         Intent intent = new Intent(context, MainActivity.class);
         int mPendingIntentId = 1;
@@ -625,7 +625,7 @@ public class Util {
             }
         }
 
-        if (Util.isDownloading(context)) {
+        if (UpdateUtil.isDownloading(context)) {
             Log.d(TAG, "Flight mode pending as am downloading update");
             prefs.setFlightModePending(true);
             return;
@@ -1347,184 +1347,5 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return jsonNotes;
-    }
-
-
-    public static boolean isDownloading(Context context) {
-        DownloadManager downloadManager = (DownloadManager)
-                context.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Query query = new DownloadManager.Query();
-
-        query.setFilterByStatus(DownloadManager.STATUS_RUNNING);
-        Cursor c = downloadManager.query(query);
-        if (c.moveToFirst()) {
-            c.close();
-            return true;
-        }
-        return false;
-    }
-
-    private static void deleteIfExists( String filename){
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
-        if(file.exists()){
-            Log.d(TAG,"deleting " + file.getAbsoluteFile());
-            file.delete();
-        }
-    }
-
-    // Request DownloadManager to downlaod the requested version
-    public static boolean downloadAPK(Context context, LatestVersion latestVersion) {
-        if (isDownloading(context)) {
-            return false;
-        }
-        deleteIfExists("bird-monitor-latest.apk");
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(latestVersion.DownloadURL));
-        request.setDescription("Getting Bird Monitor " + latestVersion.Name);
-        request.setTitle("Downloading Bird Monitor");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        }
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "bird-monitor-latest.apk");
-        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-        return true;
-    }
-
-    public static boolean isNewerVersion(String versionName) {
-        Pattern p = Pattern.compile(".*(\\d+)[\\.](\\d+)[\\.](\\d+)");
-        Matcher currentMatches = p.matcher(Util.getVersionName());
-        Matcher newVersionMatches = p.matcher(versionName);
-        int curV, newV;
-        if (newVersionMatches.matches() && currentMatches.matches()) {
-            for (int i = 0; i < currentMatches.groupCount(); i++) {
-                curV = Integer.parseInt(currentMatches.group(i+1));
-                if (i < newVersionMatches.groupCount()) {
-                    newV = Integer.parseInt(newVersionMatches.group(i+1));
-                    if (newV > curV) {
-                        return true;
-                    }else if(newV < curV){
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
-    // Download and install updated apk if a newer version exists
-    public static boolean updateIfAvailable(Context context) {
-        LatestVersion latestVersion = getLatestVersion();
-        if (latestVersion != null && isNewerVersion(latestVersion.Name)) {
-            downloadAPK(context, latestVersion);
-            return true;
-        }
-        return false;
-    }
-
-
-    public static boolean isAutoUpdateAllowed(Context context) {
-        try {
-            byte[] currentPackageCert = getPackageCertificate(context,BuildConfig.APPLICATION_ID);
-            for(String whitelistHashString : Prefs.ALLOWED_UPDATES) {
-                byte[] whitelistHash = hexStringToByteArray(whitelistHashString);
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                byte[] packageHash = digest.digest(currentPackageCert);
-
-                boolean packageCertMatches = Arrays.equals(whitelistHash, packageHash);
-                if (packageCertMatches) {
-                    Log.d(TAG, "Auto update is allowed");
-                    return true;
-                }
-            }
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        Log.d(TAG, "Auto update is not allowed");
-        return false;
-    }
-
-    private static  byte[] getPackageCertificate(Context context, String packageName) {
-        try {
-            // we do check the byte array of *all* signatures
-            @SuppressLint("PackageManagerGetSignatures")
-            PackageInfo pkgInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
-
-            // NOTE: Silly Android API naming: Signatures are actually certificates
-            Signature[] certificates = pkgInfo.signatures;
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            for (Signature cert : certificates) {
-                outputStream.write(cert.toByteArray());
-            }
-
-            // Even if an apk has several certificates, these certificates should never change
-            // Google Play does not allow the introduction of new certificates into an existing apk
-            // Also see this attack: http://stackoverflow.com/a/10567852
-            return outputStream.toByteArray();
-        } catch (PackageManager.NameNotFoundException | IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    private static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i + 1), 16));
-        }
-        return data;
-    }
-
-
-    public static LatestVersion getLatestVersion() {
-        try {
-            URL u = new URL(Prefs.UPDATE_CHECK_URL);
-            HttpURLConnection conn = null;
-
-            conn = (HttpURLConnection) u.openConnection();
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 8192);
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                reader.close();
-
-                JSONObject jObj = new JSONObject(sb.toString());
-                JSONArray assets = jObj.getJSONArray("assets");
-                String latestDownload = "";
-                for (int i = 0; i < assets.length(); i++) {
-                    JSONObject asset = assets.getJSONObject(i);
-                    String downloadURL = asset.getString("browser_download_url");
-                    if (downloadURL.endsWith(("apk"))) {
-                        latestDownload = downloadURL;
-                        break;
-                    }
-                }
-                if (latestDownload == null) {
-                    return null;
-                }
-                String version = jObj.getString("tag_name");
-                return new LatestVersion(version, latestDownload);
-            }
-        } catch (JSONException | IOException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static class LatestVersion {
-        public String Name;
-        public String DownloadURL;
-
-        public LatestVersion(String name, String downloadURL) {
-            this.Name = name;
-            this.DownloadURL = downloadURL;
-        }
     }
 }

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import io.fabric.sdk.android.services.common.CommonUtils;
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.UpdateUtil;
 import nz.org.cacophony.birdmonitor.Util;
 
 import org.fdroid.fdroid.privileged.IPrivilegedService;
@@ -43,7 +44,7 @@ public class RootedFragment extends Fragment {
     private ServiceConnection mServiceConnection;
     private String versionName;
     private ConstraintLayout updateView;
-    private Util.LatestVersion latestVersion;
+    private UpdateUtil.LatestVersion latestVersion;
 
     void checkRootAccess() {
         Prefs prefs = new Prefs(this.getContext());
@@ -112,7 +113,7 @@ public class RootedFragment extends Fragment {
     }
 
     void checkDownloadStatus() {
-        if (Util.isDownloading(this.getContext())) {
+        if (UpdateUtil.isDownloading(this.getContext())) {
             tvUpdateStatus.setText(getString(R.string.downloading_version, versionName));
             isDownloading = true;
         } else {
@@ -123,7 +124,7 @@ public class RootedFragment extends Fragment {
     }
 
     void installUpdates() {
-        if (Util.downloadAPK(this.getContext(), latestVersion)) {
+        if (UpdateUtil.downloadAPK(this.getContext(), latestVersion)) {
             new Prefs(this.getContext()).setRelaunchOnUpdate(true);
         }
         checkDownloadStatus();
@@ -196,17 +197,17 @@ public class RootedFragment extends Fragment {
         }
     }
 
-    class CheckUpdateTask extends AsyncTask<Void, Void, Util.LatestVersion> {
+    class CheckUpdateTask extends AsyncTask<Void, Void, UpdateUtil.LatestVersion> {
 
-        protected Util.LatestVersion doInBackground(Void... voids) {
-            latestVersion = Util.getLatestVersion();
+        protected UpdateUtil.LatestVersion doInBackground(Void... voids) {
+            latestVersion = UpdateUtil.getLatestVersion();
             return latestVersion;
         }
 
-        protected void onPostExecute(Util.LatestVersion version) {
+        protected void onPostExecute(UpdateUtil.LatestVersion version) {
             updateAvailable = false;
             if (version != null) {
-                if (Util.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
+                if (UpdateUtil.isNewerVersion(version.Name) && !latestVersion.DownloadURL.isEmpty()) {
                     updateAvailable = true;
                     tvUpdateStatus.setText(getString(R.string.update_available, version.Name));
                 } else {

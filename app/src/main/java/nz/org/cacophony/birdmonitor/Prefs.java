@@ -758,7 +758,7 @@ public class Prefs {
     }
 
     public void setAutoUpdateAllowed(){
-        setBoolean(AUTO_UPDATE_ALLOWED, Util.isAutoUpdateAllowed(this.context));
+        setBoolean(AUTO_UPDATE_ALLOWED, UpdateUtil.isAutoUpdateAllowed(this.context));
     }
 
     public boolean getAutoUpdateAllowed(){

@@ -17,11 +17,13 @@ This project is licensed under the Affero General Public License
 
 ## Autoupdates
 
-* In order to allow bird monitor to auto update, the APK must be installed from the github releases page (https://github.com/TheCacophonyProject/bird-monitor/releases)
+In order to allow bird monitor to auto update:
+* The APK must be installed from the github releases page (https://github.com/TheCacophonyProject/bird-monitor/releases)
 * Phone must be rooted
 * Bird Monitor Privileged Extension must be installed as a system app, via TWRP (or other recovery image).
   https://github.com/TheCacophonyProject/Bird-Monitor-Privileged-Extension
 * Playstore Play protect must be disabled, otherwise a warning popup will block auto update
+
 ## Releases
 
 * Ensure all required changes have been merged into the master branch on Github.

@@ -20,7 +20,6 @@ import java.util.Date;
 public class MainService extends IntentService {
     private static final String TAG = MainService.class.getName();
 
-
     public MainService() {
         super("MainService");
     }
@@ -58,7 +57,6 @@ public class MainService extends IntentService {
         }
     }
 
-
     private static boolean checkForUpdates(Context context) {
         Prefs prefs = new Prefs(context);
         if (prefs.getAutoUpdate()) {
@@ -68,7 +66,7 @@ public class MainService extends IntentService {
                 Util.disableFlightMode(context);
                 prefs.setDateTimeLastUpdateCheck(now);
                 prefs.setFlightModePending(prefs.getAeroplaneMode());
-                return Util.updateIfAvailable(context);
+                return UpdateUtil.updateIfAvailable(context);
             }
         }
         return false;
