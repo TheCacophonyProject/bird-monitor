@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.util.UUID;
 
+import tools.fastlane.screengrab.Screengrab;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -23,6 +25,7 @@ public class CreateAccountTest extends TestBaseStartingOnSetupScreen {
     @Before
     public void setUpForCreateAccount() {
         uniqueId = TEST_USERNAME_PREFIX + UUID.randomUUID();
+        Screengrab.screenshot("welcome_message");
 
         nowNavigateRight();// takes you to Create Account screen
     }

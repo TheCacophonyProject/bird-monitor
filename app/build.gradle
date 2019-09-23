@@ -74,6 +74,7 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestImplementation 'tools.fastlane:screengrab:1.0.0'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
     // Optional -- UI testing with UI Automator
     //  androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
