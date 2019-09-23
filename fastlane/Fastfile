@@ -21,6 +21,26 @@ platform :android do
     gradle(task: "test")
   end
 
+  desc "Take screenshots for playstore"
+  lane :take_screenshots do
+    gradle(
+      task: 'assemble assembleAndroidTest'
+    )
+
+    apk_path = Dir.glob("../**/*-debug.apk").first
+    test_apk_path = Dir.glob("../**/*-debug-androidTest.apk").first
+
+    screengrab(
+      clear_previous_screenshots: true,
+      locales: ["en-AU"],
+      app_package_name: 'nz.org.cacophony.birdmonitor',
+      app_apk_path: File.absolute_path(apk_path),
+      tests_apk_path:  File.absolute_path(test_apk_path),
+      use_tests_in_classes:(['nz.org.cacophony.birdmonitor.ScreenshotGen']),
+      test_instrumentation_runner: 'androidx.test.runner.AndroidJUnitRunner'
+    )
+  end
+
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     gradle(task: "clean assembleRelease")
