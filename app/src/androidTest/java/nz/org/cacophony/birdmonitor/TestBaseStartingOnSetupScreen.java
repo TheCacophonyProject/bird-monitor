@@ -10,6 +10,8 @@ import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
 
 import nz.org.cacophony.birdmonitor.views.MainActivity;
+import tools.fastlane.screengrab.Screengrab;
+import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +52,7 @@ public abstract class TestBaseStartingOnSetupScreen {
     @Before
     public final void baseInit() {
         initIdlingResources();
+        Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);

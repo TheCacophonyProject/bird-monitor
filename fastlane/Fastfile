@@ -21,22 +21,40 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
+  desc "Take screenshots for playstore"
+  lane :take_screenshots do
+    gradle(
+      task: 'assemble assembleAndroidTest'
+    )
+
+    apk_path = Dir.glob("../**/*-debug.apk").first
+    test_apk_path = Dir.glob("../**/*-debug-androidTest.apk").first
+
+    screengrab(
+      clear_previous_screenshots: true,
+      locales: ["en-AU"],
+      app_package_name: 'nz.org.cacophony.birdmonitor',
+      app_apk_path: File.absolute_path(apk_path),
+      tests_apk_path:  File.absolute_path(test_apk_path),
+      use_tests_in_classes:(['nz.org.cacophony.birdmonitor.ScreenshotGen']),
+      test_instrumentation_runner: 'androidx.test.runner.AndroidJUnitRunner'
+    )
+  end
+
+  desc "Submit a new Beta Build to Playstore"
   lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+    gradle(task: 'assemble', build_type: 'Release')
+    upload_to_play_store(track: 'beta')
   end
 
   desc "Update meta data on playstore"
   lane :update_meta do
     upload_to_play_store(
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true,
-      skip_upload_apk: false,
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      skip_upload_apk: true,
+      skip_upload_aab: true,
     )
     end
 
