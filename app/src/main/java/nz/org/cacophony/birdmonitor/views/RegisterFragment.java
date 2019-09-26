@@ -6,11 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,36 +15,33 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+
+import org.json.JSONObject;
+
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Server;
 import nz.org.cacophony.birdmonitor.Util;
 
-import org.json.JSONObject;
-
 import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
-import static nz.org.cacophony.birdmonitor.MessageHelper.*;
+import static nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import static nz.org.cacophony.birdmonitor.MessageHelper.createReceiver;
+import static nz.org.cacophony.birdmonitor.MessageHelper.registerMessageHandler;
+import static nz.org.cacophony.birdmonitor.MessageHelper.unregisterMessageHandler;
 
 public class RegisterFragment extends Fragment {
 
-    public enum MessageType {
-        REGISTER_SUCCESS,
-        REGISTER_FAIL,
-        REGISTER_ERROR_ALERT
-    }
-
     public static final Action SERVER_REGISTER_ACTION = new Action("SERVER_REGISTER");
-
     private static final String TAG = "RegisterFragment";
-
-
     private Button btnRegister;
     private Button btnUnRegister;
     private TextView tvMessages;
     private EditText etGroupNameInput;
     private EditText etDeviceNameInput;
     private TextView tvTitleMessage;
-
     private final BroadcastReceiver messageHandler = createReceiver(this::onMessage);
 
     @Override
@@ -73,7 +65,6 @@ public class RegisterFragment extends Fragment {
 
         return view;
     }
-
 
     @Override
     public void setUserVisibleHint(final boolean visible) {
@@ -355,7 +346,6 @@ public class RegisterFragment extends Fragment {
         new Thread(() -> Server.registerDevice(group, deviceName, context)).start();
     }
 
-
     public void unregisterButtonPressed() {
         Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
@@ -413,6 +403,12 @@ public class RegisterFragment extends Fragment {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
             tvMessages.setText("Error disabling flight mode");
         }
+    }
+
+    public enum MessageType {
+        REGISTER_SUCCESS,
+        REGISTER_FAIL,
+        REGISTER_ERROR_ALERT
     }
 
 

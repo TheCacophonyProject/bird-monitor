@@ -49,7 +49,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -95,14 +94,13 @@ public class Util {
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
     private static final String RECORDING_FILE_EXTENSION = ".m4a";
+    // For airplane mode
+    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
     }
-
-    // For airplane mode
-    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
-    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     /**
      * Make sure user has given permission to record.
@@ -593,7 +591,7 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static  void relaunch(final Context context){
+    public static void relaunch(final Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         int mPendingIntentId = 1;
         PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -630,7 +628,7 @@ public class Util {
             prefs.setFlightModePending(true);
             return;
         }
-        
+
         prefs.setFlightModePending(false);
         new Thread(() -> {
             try {
@@ -1208,7 +1206,7 @@ public class Util {
             prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
-            Crashlytics.setUserIdentifier(String.format("%s-%s-%d", null,null, 0));
+            Crashlytics.setUserIdentifier(String.format("%s-%s-%d", null, null, 0));
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");

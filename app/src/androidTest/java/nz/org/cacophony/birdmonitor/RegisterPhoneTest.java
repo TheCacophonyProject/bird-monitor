@@ -8,7 +8,9 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static nz.org.cacophony.birdmonitor.HelperCode.*;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateLeft;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRight;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRightTimes;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

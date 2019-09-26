@@ -18,8 +18,8 @@
         android:text="@string/version_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvVersion"
         android:layout_width="wrap_content"
@@ -30,10 +30,9 @@
         android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvVersionTitle"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/tvVersionTitle"
-        />
+        app:layout_constraintStart_toStartOf="@+id/tvVersionTitle"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvRooted"
@@ -47,6 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvVersionTitle" />
+
     <Button
         android:id="@+id/btnRootCheck"
         android:layout_width="wrap_content"
@@ -54,10 +54,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:text="@string/root_check"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvRooted"
-        android:text="@string/root_check"
         tools:layout_editor_absoluteX="161dp" />
 
     <Switch
@@ -74,12 +74,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRootCheck"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnRootCheck" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/updateOptions" android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/swAeroplane"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/updateOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:layout_height="wrap_content">
+        app:layout_constraintTop_toBottomOf="@+id/swAeroplane">
+
         <TextView
             android:id="@+id/tvPrivStatus"
             android:layout_width="0dp"
@@ -91,8 +94,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Switch
             android:id="@+id/swAutoUpdate"
@@ -108,7 +110,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvPrivStatus"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvPrivStatus" />
 
         <Button
             android:id="@+id/btnUpdateCheck"
@@ -117,11 +119,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:text="Check"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="Check"
-            app:layout_constraintTop_toBottomOf="@+id/swAutoUpdate"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/swAutoUpdate" />
 
 
         <TextView
@@ -135,8 +136,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnUpdateCheck"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/btnUpdateCheck" />
 
 
         <Button
@@ -146,13 +146,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:enabled="false"
+            android:text="Update"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:enabled="false"
-            android:visibility="invisible"
-            android:text="Update"
-            app:layout_constraintTop_toBottomOf="@+id/tvUpdateStatus"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/tvUpdateStatus" />
 
         <TextView
             android:id="@+id/tvMessages"
@@ -163,6 +162,6 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnInstall"/>
+            app:layout_constraintTop_toBottomOf="@+id/btnInstall" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

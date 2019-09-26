@@ -4,8 +4,6 @@ package nz.org.cacophony.birdmonitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -54,7 +52,7 @@ public class BootReceiver extends BroadcastReceiver {
                         Util.enableFlightMode(context);
                         if (intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
                             Prefs prefs = new Prefs(context);
-                            if(prefs.getRelaunchOnUpdate()){
+                            if (prefs.getRelaunchOnUpdate()) {
                                 prefs.setRelaunchOnUpdate(false);
                                 Util.relaunch(context);
                             }

@@ -4,11 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.util.Consumer;
-
 import android.util.Log;
+
+import androidx.core.util.Consumer;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

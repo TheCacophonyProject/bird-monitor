@@ -4,10 +4,8 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.util.Log;
-
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -38,12 +36,12 @@ public class UpdateInstaller extends BroadcastReceiver {
                 localPath = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
             }
             c.close();
-            if(localPath != null) {
-                Log.d(TAG,"Finished downloading update, requesting install service");
+            if (localPath != null) {
+                Log.d(TAG, "Finished downloading update, requesting install service");
                 Intent mainServiceIntent = new Intent(context, InstallService.class);
                 mainServiceIntent.putExtra(Prefs.UPDATE_URI, localPath);
                 context.startService(mainServiceIntent);
-            }else{
+            } else {
                 Log.e(TAG, "Could not find downloaded path");
             }
 

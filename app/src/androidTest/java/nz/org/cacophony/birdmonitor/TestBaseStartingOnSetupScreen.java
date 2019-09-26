@@ -9,10 +9,6 @@ import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
 
-import nz.org.cacophony.birdmonitor.views.MainActivity;
-import tools.fastlane.screengrab.Screengrab;
-import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +16,14 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 
-import static android.Manifest.permission.*;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
+import tools.fastlane.screengrab.Screengrab;
+import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static androidx.test.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -34,20 +37,17 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 public abstract class TestBaseStartingOnSetupScreen {
 
-    Context targetContext;
-    Prefs prefs;
-
-    private Map<String, ?> prefsBackup;
-
     @Rule
     public final GrantPermissionRule permissionRule = GrantPermissionRule.grant(
             WRITE_EXTERNAL_STORAGE,
             RECORD_AUDIO,
             ACCESS_FINE_LOCATION,
             READ_PHONE_STATE);
-
     @Rule
     public final ActivityTestRule<MainActivity> initialActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    Context targetContext;
+    Prefs prefs;
+    private Map<String, ?> prefsBackup;
 
     @Before
     public final void baseInit() {

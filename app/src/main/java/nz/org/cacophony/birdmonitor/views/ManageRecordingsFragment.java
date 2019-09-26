@@ -7,13 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,49 +14,34 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
-import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import nz.org.cacophony.birdmonitor.PermissionsHelper;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.RecordAndUpload;
+import nz.org.cacophony.birdmonitor.Util;
+
 public class ManageRecordingsFragment extends Fragment {
 
-    public enum MessageType {
-        RECORDING_DISABLED,
-        NO_PERMISSION_TO_RECORD,
-        UPLOADING_FAILED,
-        UPLOADING_FINISHED,
-        GETTING_READY_TO_RECORD,
-        FAILED_RECORDINGS_NOT_UPLOADED,
-        RECORD_AND_UPLOAD_FAILED,
-        UPLOADING_FAILED_NOT_REGISTERED,
-        RECORDING_STARTED,
-        RECORDING_FINISHED,
-        ALREADY_RECORDING,
-        SUCCESSFULLY_DELETED_RECORDINGS,
-        FAILED_RECORDINGS_NOT_DELETED,
-        UPLOADING_RECORDINGS,
-        SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON,
-        FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON,
-        PREPARING_TO_UPLOAD,
-        CONNECTED_TO_SERVER,
-        UPLOADING_STOPPED,
-        RECORDING_DELETED
-    }
-
     public static final Action MANAGE_RECORDINGS_ACTION = new Action("MANAGE_RECORDINGS");
-
     private static final String TAG = "ManageRecordFragment";
-
+    TextView tvNumberOfRecordings;
     private Button btnUploadFiles;
     private Button btnDeleteAllRecordings;
-    TextView tvNumberOfRecordings;
     private TextView tvMessages;
     private PermissionsHelper permissionsHelper;
     private Button btnCancel;
-
     private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
     @Override
@@ -268,7 +246,6 @@ public class ManageRecordingsFragment extends Fragment {
         }
     }
 
-
     private boolean haveAllPermissions(Context context) {
         boolean allPermissionsAlreadyGranted = true;
 
@@ -299,6 +276,29 @@ public class ManageRecordingsFragment extends Fragment {
         RecordAndUpload.setCancelUploadingRecordings(true);
         btnCancel.setEnabled(false);
         tvMessages.setText("Stopping the uploading of Recordings.");
+    }
+
+    public enum MessageType {
+        RECORDING_DISABLED,
+        NO_PERMISSION_TO_RECORD,
+        UPLOADING_FAILED,
+        UPLOADING_FINISHED,
+        GETTING_READY_TO_RECORD,
+        FAILED_RECORDINGS_NOT_UPLOADED,
+        RECORD_AND_UPLOAD_FAILED,
+        UPLOADING_FAILED_NOT_REGISTERED,
+        RECORDING_STARTED,
+        RECORDING_FINISHED,
+        ALREADY_RECORDING,
+        SUCCESSFULLY_DELETED_RECORDINGS,
+        FAILED_RECORDINGS_NOT_DELETED,
+        UPLOADING_RECORDINGS,
+        SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON,
+        FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON,
+        PREPARING_TO_UPLOAD,
+        CONNECTED_TO_SERVER,
+        UPLOADING_STOPPED,
+        RECORDING_DELETED
     }
 
 }
