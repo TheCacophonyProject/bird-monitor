@@ -15,7 +15,7 @@ public class Prefs {
 
     static final String PREFS_NAME = "CacophonyPrefs";
     public static final int MIN_REC_LENGTH = 1;
-    public static final int MAX_REC_LENGTH = 100;
+    public static final int MAX_REC_LENGTH = 60;
     public static final int MAX_ALARM_OFFSET = 120;
     public static final String NORMAL_URI = "normal";
     public static final String RELATIVE = "relative";
@@ -753,10 +753,6 @@ public class Prefs {
         } catch (NumberFormatException ex) {
             return min;
         }
-    }
-
-    public int getOffsetMillis(String key) {
-        return getInt(key) * 1000 * 60;
     }
 
     public void setRecLength(String recLength) {

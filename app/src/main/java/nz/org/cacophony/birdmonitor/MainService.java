@@ -30,9 +30,11 @@ public class MainService extends IntentService {
             Log.e(TAG, "PowerManger is null");
             return;
         }
+
+
+
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "Cacophonometer:MainServiceWakelockTag");
-        wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
 
         try {
             Bundle bundle = intent != null ? intent.getExtras() : null;
@@ -42,8 +44,10 @@ public class MainService extends IntentService {
                     alarmIntentType = "unknown";
                     Log.w(TAG, "alarmIntentType = unknown");
                 }
-
                 String relativeTo = bundle.getString(Prefs.RELATIVE);
+                long recordTimeSeconds = Util.getRecordingDuration(getApplicationContext(), alarmIntentType);
+
+                wakeLock.acquire(recordTimeSeconds * 1000L /*10 minutes*/);
 
                 RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType, relativeTo);
             } else {
@@ -51,7 +55,9 @@ public class MainService extends IntentService {
             }
         }finally {
             Util.enableFlightMode(getApplicationContext());
-            wakeLock.release();
+            if (wakeLock.isHeld()) {
+                wakeLock.release();
+            }
         }
     }
 }
