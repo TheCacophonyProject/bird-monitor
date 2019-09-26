@@ -9,7 +9,9 @@ import java.io.File;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static nz.org.cacophony.birdmonitor.HelperCode.*;
+import static nz.org.cacophony.birdmonitor.HelperCode.awaitIdlingResources;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRight;
+import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRightTimes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

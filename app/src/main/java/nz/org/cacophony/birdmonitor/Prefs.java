@@ -13,33 +13,32 @@ import com.crashlytics.android.Crashlytics;
 
 public class Prefs {
 
-    private static final String TAG = Prefs.class.getName();
-
-    static final String PREFS_NAME = "CacophonyPrefs";
-    public static final String PRIVILEGED_EXTENSION_PACKAGE="nz.org.cacophony.privileged";
+    public static final String PRIVILEGED_EXTENSION_PACKAGE = "nz.org.cacophony.privileged";
     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "nz.org.cacophony.privileged.IPrivilegedService";
+    public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
+    //F-Droid Bird Monitor
+    public static final String FDROID_BIRD = "91f0ada061b91fc4ae2e45640a7452b38a93d8c864307872f2432f86ea6617e3";
+    //Debug key
+    public static final String DEBUG_BIRD = "700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
+    public static final String[] ALLOWED_UPDATES = new String[]{GITHUB_BIRD, DEBUG_BIRD};
+    public static final String RECORD_NOW_ALARM = "recordNowButton";
+    public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
+    public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
+    public static final String BIRD_COUNT_15_ALARM = "birdCountButton15";
+    static final String PREFS_NAME = "CacophonyPrefs";
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
     static final String UPDATE_URI = "URI";
     static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
+    static final String FAIL_SAFE_ALARM = "failSafe";
+    static final String REPEATING_ALARM = "repeating";
+    private static final String TAG = Prefs.class.getName();
     private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
     private static final String DATE_TIME_LAST_UPDATE_CHECK = "lastUpdateCheck";
     private static final String AUTO_UPDATE_ALLOWED = "autoUpdateAllowed";
-    public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
-    //F-Droid Bird Monitor
-    public static final String FDROID_BIRD ="91f0ada061b91fc4ae2e45640a7452b38a93d8c864307872f2432f86ea6617e3";
-    //Debug key
-    public static final String DEBUG_BIRD ="700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
-    public static final String[] ALLOWED_UPDATES = new String[] { GITHUB_BIRD, DEBUG_BIRD};
-    static final String FAIL_SAFE_ALARM = "failSafe";
-    static final String REPEATING_ALARM = "repeating";
-    public static final String RECORD_NOW_ALARM = "recordNowButton";
-    public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
-    public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
-    public static final String BIRD_COUNT_15_ALARM = "birdCountButton15";
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
     private static final String TEST_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse-test.cacophony.org.nz/";
     private static final String PRODUCTION_SERVER_HOST = "api.cacophony.org.nz";
@@ -273,6 +272,10 @@ public class Prefs {
         return getString(DEVICE_NAME_KEY);
     }
 
+    public void setDeviceName(String name) {
+        setString(DEVICE_NAME_KEY, name);
+    }
+
     public String getUsernamePassword() {
         return getString(USERNAME_PASSWORD_KEY);
     }
@@ -281,26 +284,16 @@ public class Prefs {
         setString(USERNAME_PASSWORD_KEY, usernamePassword);
     }
 
-    public void setUsername(String username) {
-        setString(USERNAME_KEY, username);
-    }
-
     public String getUsername() {
         return getString(USERNAME_KEY);
     }
 
+    public void setUsername(String username) {
+        setString(USERNAME_KEY, username);
+    }
+
     public String getEmailAddress() {
         return getString(EMAIL_ADDRESS_KEY);
-    }
-
-    public void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
-        Crashlytics.setUserName(userNameOrEmailAddress);
-        setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
-    }
-
-
-    public String getUserNameOrEmailAddress() {
-        return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
     }
 
     public void setEmailAddress(String emailAddress) {
@@ -308,22 +301,26 @@ public class Prefs {
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
 
-    public void setDeviceName(String name) {
-        setString(DEVICE_NAME_KEY, name);
+    public String getUserNameOrEmailAddress() {
+        return getString(USERNAME_OR_EMAIL_ADDRESS_KEY);
+    }
+
+    public void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
+        Crashlytics.setUserName(userNameOrEmailAddress);
+        setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
     }
 
     public void setDeviceToken(String deviceToken) {
         setString(DEVICE_TOKEN_KEY, deviceToken);
     }
 
-    public void setUserToken(String userToken) {
-        setString(USER_TOKEN_KEY, userToken);
-    }
-
     public String getUserToken() {
         return getString(USER_TOKEN_KEY);
     }
 
+    public void setUserToken(String userToken) {
+        setString(USER_TOKEN_KEY, userToken);
+    }
 
     public void setTheNextSingleStandardAlarmUsingUnixTime(long nextHourlyAlarmInUnixTime) {
         setLong(NEXT_ALARM_KEY, nextHourlyAlarmInUnixTime);
@@ -389,12 +386,12 @@ public class Prefs {
         setDouble(LONGITUDE_KEY, val);
     }
 
-    public void setDeviceId(long deviceID) {
-        setLong(DEVICE_ID, deviceID);
-    }
-
     public long getDeviceId() {
         return getLong(DEVICE_ID);
+    }
+
+    public void setDeviceId(long deviceID) {
+        setLong(DEVICE_ID, deviceID);
     }
 
     public double getRecordingDuration() {
@@ -517,24 +514,48 @@ public class Prefs {
         return getBoolean(USE_SHORT_RECORDINGS_KEY);
     }
 
+    public void setUseShortRecordings(boolean useShortRecordings) {
+        setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
+    }
+
     public boolean getPeriodicallyUpdateGPS() {
         return getBoolean(PERIODICALLY_UPDATE_GPS_KEY);
+    }
+
+    public void setPeriodicallyUpdateGPS(boolean PeriodicallyUpdateGPS) {
+        setBoolean(PERIODICALLY_UPDATE_GPS_KEY, PeriodicallyUpdateGPS);
     }
 
     public boolean getUseTestServer() {
         return getBoolean(USE_TEST_SERVER_KEY);
     }
 
+    public void setUseTestServer(boolean useTestServer) {
+        setBoolean(USE_TEST_SERVER_KEY, useTestServer);
+    }
+
     public boolean getUseVeryFrequentRecordings() {
         return getBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY);
+    }
+
+    public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
+        setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
     }
 
     public boolean getUseFrequentUploads() {
         return getBoolean(USE_FREQUENT_UPLOADS_KEY);
     }
 
+    public void setUseFrequentUploads(boolean useFrequentUploads) {
+        setBoolean(USE_FREQUENT_UPLOADS_KEY, useFrequentUploads);
+    }
+
     public boolean getIgnoreLowBattery() {
         return getBoolean(IGNORE_LOW_BATTERY_KEY);
+    }
+
+    public void setIgnoreLowBattery(boolean ignoreLowBattery) {
+        setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
     public boolean getOnLineMode() {
@@ -543,30 +564,6 @@ public class Prefs {
 
     public boolean getPlayWarningSound() {
         return getBoolean(PLAY_WARNING_SOUND_KEY);
-    }
-
-    public void setUseShortRecordings(boolean useShortRecordings) {
-        setBoolean(USE_SHORT_RECORDINGS_KEY, useShortRecordings);
-    }
-
-    public void setPeriodicallyUpdateGPS(boolean PeriodicallyUpdateGPS) {
-        setBoolean(PERIODICALLY_UPDATE_GPS_KEY, PeriodicallyUpdateGPS);
-    }
-
-    public void setUseTestServer(boolean useTestServer) {
-        setBoolean(USE_TEST_SERVER_KEY, useTestServer);
-    }
-
-    public void setUseVeryFrequentRecordings(boolean useVeryFrequentRecordings) {
-        setBoolean(USE_VERY_FREQUENT_RECORDINGS_KEY, useVeryFrequentRecordings);
-    }
-
-    public void setUseFrequentUploads(boolean useFrequentUploads) {
-        setBoolean(USE_FREQUENT_UPLOADS_KEY, useFrequentUploads);
-    }
-
-    public void setIgnoreLowBattery(boolean ignoreLowBattery) {
-        setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
     public void setPlayWarningSound(boolean playWarningSound) {
@@ -585,12 +582,12 @@ public class Prefs {
         setDouble(MAXIMUM_BATTERY_LEVEL_KEY, batteryLevel);
     }
 
-    public void setDateTimeLastUpload(long dateTimeLastUpload) {
-        setLong(DATE_TIME_LAST_UPLOAD_KEY, dateTimeLastUpload);
-    }
-
     public long getDateTimeLastUpload() {
         return getLong(DATE_TIME_LAST_UPLOAD_KEY);
+    }
+
+    public void setDateTimeLastUpload(long dateTimeLastUpload) {
+        setLong(DATE_TIME_LAST_UPLOAD_KEY, dateTimeLastUpload);
     }
 
     public long getDateTimeLastCalculatedDawnDusk() {
@@ -605,12 +602,12 @@ public class Prefs {
         setLong(DATE_TIME_LAST_REPEATING_ALARM_FIRED_KEY, (long) 0);
     }
 
-    public void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer) {
-        setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
-    }
-
     public long getLastRecordIdReturnedFromServer() {
         return getLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER);
+    }
+
+    public void setLastRecordIdReturnedFromServer(long lastRecordingIdReturnedFromServer) {
+        setLong(LAST_RECORDING_ID_RETURNED_FROM_SERVER, lastRecordingIdReturnedFromServer);
     }
 
     public boolean getIsFirstTime() {
@@ -661,44 +658,44 @@ public class Prefs {
         setString(BIRD_COUNT_DURATION_KEY, birdCountDuration);
     }
 
-    public void setAutomaticRecordingsDisabled(boolean isDisabled) {
-        setBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY, isDisabled);
-    }
-
     public boolean getAutomaticRecordingsDisabled() {
         return getBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY);
     }
 
-    public void setIsDisableDawnDuskRecordings(boolean isDisabled) {
-        setBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY, isDisabled);
+    public void setAutomaticRecordingsDisabled(boolean isDisabled) {
+        setBoolean(AUTOMATIC_RECORDINGS_DISABLED_KEY, isDisabled);
     }
 
     public boolean getIsDisableDawnDuskRecordings() {
         return getBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY);
     }
 
-    public void setVeryAdvancedSettingsEnabled(boolean isEnabled) {
-        setBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY, isEnabled);
+    public void setIsDisableDawnDuskRecordings(boolean isDisabled) {
+        setBoolean(DISABLED_DAWN_DUSK_RECORDINGS_KEY, isDisabled);
     }
 
     public boolean getVeryAdvancedSettingsEnabled() {
         return getBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY);
     }
 
-    public void setGroups(String groups) {
-        setString(GROUPS_KEY, groups);
+    public void setVeryAdvancedSettingsEnabled(boolean isEnabled) {
+        setBoolean(VERY_ADVANCED_SETTINGS_ENABLED_KEY, isEnabled);
     }
 
     public String getGroups() {
         return getString(GROUPS_KEY);
     }
 
-    public void setUserSignedIn(boolean userSignedIn) {
-        setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
+    public void setGroups(String groups) {
+        setString(GROUPS_KEY, groups);
     }
 
     public boolean getUserSignedIn() {
         return getBoolean(USER_SIGNED_IN_KEY);
+    }
+
+    public void setUserSignedIn(boolean userSignedIn) {
+        setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
     }
 
     public void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
@@ -713,12 +710,12 @@ public class Prefs {
         setBoolean(CANCEL_RECORDING_ACCESS_KEY, cancelRecording);
     }
 
-    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName) {
-        setString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY, latestBirdCountRecordingFileName);
-    }
-
     public String getLatestBirdCountRecordingFileNameNoExtension() {
         return getString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY);
+    }
+
+    public void setLatestBirdCountRecordingFileNameNoExtension(String latestBirdCountRecordingFileName) {
+        setString(LATEST_BIRD_COUNT_RECORDING_FILE_NAME_KEY, latestBirdCountRecordingFileName);
     }
 
     public boolean getAutoUpdate() {
@@ -737,20 +734,20 @@ public class Prefs {
         setBoolean(USE_AEROPLANE_MODE, aeroplaneMode);
     }
 
-    public void setDateTimeLastUpdateCheck(long dateTimeLastUpload) {
-        setLong(DATE_TIME_LAST_UPDATE_CHECK, dateTimeLastUpload);
-    }
-
     public long getDateTimeLastUpdateCheck() {
         return getLong(DATE_TIME_LAST_UPDATE_CHECK);
     }
 
-    public void setFlightModePending(boolean pendingUpdate) {
-        setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
+    public void setDateTimeLastUpdateCheck(long dateTimeLastUpload) {
+        setLong(DATE_TIME_LAST_UPDATE_CHECK, dateTimeLastUpload);
     }
 
     public boolean getFlightModePending() {
         return getBoolean(FLIGHT_MODE_PENDING_UPDATE);
+    }
+
+    public void setFlightModePending(boolean pendingUpdate) {
+        setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
     }
 
     public boolean getRelaunchOnUpdate() {
@@ -761,11 +758,11 @@ public class Prefs {
         setBoolean(RELAUNCH_ON_UPDATE, relaunch);
     }
 
-    public void setAutoUpdateAllowed(){
+    public void setAutoUpdateAllowed() {
         setBoolean(AUTO_UPDATE_ALLOWED, UpdateUtil.isAutoUpdateAllowed(this.context));
     }
 
-    public boolean getAutoUpdateAllowed(){
+    public boolean getAutoUpdateAllowed() {
         return getBoolean(AUTO_UPDATE_ALLOWED);
     }
 }

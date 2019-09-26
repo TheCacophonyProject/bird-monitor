@@ -16,8 +16,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:navigationIcon="@drawable/baseline_arrow_back_black_24"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         tools:targetApi="lollipop" />
 
 
@@ -35,13 +35,13 @@
 
         <androidx.viewpager.widget.PagerTabStrip
             android:id="@+id/pager_tab_strip"
-            android:textSize="24sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-
             android:paddingTop="5dp"
-            android:paddingBottom="5dp" />
+
+            android:paddingBottom="5dp"
+            android:textSize="24sp" />
 
 
     </androidx.viewpager.widget.ViewPager>

@@ -75,7 +75,7 @@ public class InstallService extends Service {
 
                 } catch (Exception e) {
                     Log.e(TAG, "RemoteException", e);
-                }finally {
+                } finally {
                     stopSelf();
                 }
             }

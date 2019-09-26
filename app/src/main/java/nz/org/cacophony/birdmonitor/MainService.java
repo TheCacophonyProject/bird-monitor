@@ -5,10 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
-
-import android.util.Log;
 
 import java.util.Date;
 
@@ -22,6 +21,21 @@ public class MainService extends IntentService {
 
     public MainService() {
         super("MainService");
+    }
+
+    private static boolean checkForUpdates(Context context) {
+        Prefs prefs = new Prefs(context);
+        if (prefs.getAutoUpdate()) {
+            long lastUpdate = prefs.getDateTimeLastUpdateCheck();
+            long now = new Date().getTime();
+            if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {
+                Util.disableFlightMode(context);
+                prefs.setDateTimeLastUpdateCheck(now);
+                prefs.setFlightModePending(prefs.getAeroplaneMode());
+                return UpdateUtil.updateIfAvailable(context);
+            }
+        }
+        return false;
     }
 
     @Override
@@ -55,20 +69,5 @@ public class MainService extends IntentService {
             }
             wakeLock.release();
         }
-    }
-
-    private static boolean checkForUpdates(Context context) {
-        Prefs prefs = new Prefs(context);
-        if (prefs.getAutoUpdate()) {
-            long lastUpdate = prefs.getDateTimeLastUpdateCheck();
-            long now = new Date().getTime();
-            if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {
-                Util.disableFlightMode(context);
-                prefs.setDateTimeLastUpdateCheck(now);
-                prefs.setFlightModePending(prefs.getAeroplaneMode());
-                return UpdateUtil.updateIfAvailable(context);
-            }
-        }
-        return false;
     }
 }

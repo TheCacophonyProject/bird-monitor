@@ -8,12 +8,6 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,40 +15,35 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
-import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import nz.org.cacophony.birdmonitor.PermissionsHelper;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
+
 public class GPSFragment extends Fragment {
 
-    public enum GpsMessageType {
-        GPS_UPDATE_SUCCESS,
-        GPS_UPDATE_FAILED
-    }
-
-    public enum RootMessageType {
-        ERROR_DO_NOT_HAVE_ROOT
-    }
-
     public static final Action GPS_ACTION = new Action("GPS");
-
     public static final Action ROOT_ACTION = new Action("ROOT");
-
     private static final String TAG = "GPSFragment";
-
+    private final BroadcastReceiver rootMessageHandler = MessageHelper.createReceiver(this::onRootMessage);
     private TextView tvMessages;
     private TextView tvSearching;
     private TextView latitudeDisplay;
     private TextView longitudeDisplay;
-
-    private PermissionsHelper permissionsHelper;
-
-    private final BroadcastReceiver rootMessageHandler = MessageHelper.createReceiver(this::onRootMessage);
     private final BroadcastReceiver gpsMessageHandler = MessageHelper.createReceiver(this::onGpsMessage);
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -247,6 +236,15 @@ public class GPSFragment extends Fragment {
         permissionsHelper = new PermissionsHelper();
         permissionsHelper.checkAndRequestPermissions(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    public enum GpsMessageType {
+        GPS_UPDATE_SUCCESS,
+        GPS_UPDATE_FAILED
+    }
+
+    public enum RootMessageType {
+        ERROR_DO_NOT_HAVE_ROOT
     }
 
 }

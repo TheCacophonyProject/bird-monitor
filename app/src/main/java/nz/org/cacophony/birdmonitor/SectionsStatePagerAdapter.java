@@ -12,10 +12,9 @@ import java.util.List;
  */
 public class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
 
-    private int numberOfPages = 1;
-
     private final List<Fragment> mfragmentList = new ArrayList<>();
     private final List<String> mfragmentTitleList = new ArrayList<>();
+    private int numberOfPages = 1;
 
     public SectionsStatePagerAdapter(FragmentManager fm) {
         super(fm);

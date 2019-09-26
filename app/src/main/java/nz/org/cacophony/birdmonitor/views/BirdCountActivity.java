@@ -7,17 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.material.textfield.TextInputEditText;
-
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,42 +15,50 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.PermissionsHelper;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.RecordAndUpload;
+import nz.org.cacophony.birdmonitor.RecordingsHelper;
+import nz.org.cacophony.birdmonitor.StartRecordingReceiver;
+import nz.org.cacophony.birdmonitor.Util;
+
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
 public class BirdCountActivity extends AppCompatActivity {
 
     private static final String TAG = BirdCountActivity.class.getName();
-
+    CountDownTimer countDownTimer = null;
     private Button btnRecordNow;
     private Button btnFinished;
     private Button btnAddNotes;
     private TextView tvMessages;
     private TextView tvTitle;
-
     private AppCompatRadioButton rbFiveMinute;
     private AppCompatRadioButton rbTenMinute;
     private AppCompatRadioButton rbFifteenMinute;
-
     private PermissionsHelper permissionsHelper;
-
     private boolean recording = false;
-
+    private final BroadcastReceiver messageHandler =
+            RecordingsHelper.createMessageHandler(TAG, message -> tvMessages.setText(message), this::onRecordingFinished);
     private String weatherNote;
     private String countedByNote;
     private String otherNote;
-
-    CountDownTimer countDownTimer = null;
-
-    private final BroadcastReceiver messageHandler =
-            RecordingsHelper.createMessageHandler(TAG, message -> tvMessages.setText(message), this::onRecordingFinished);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

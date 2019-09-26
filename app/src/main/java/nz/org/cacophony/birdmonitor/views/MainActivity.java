@@ -3,10 +3,6 @@ package nz.org.cacophony.birdmonitor.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,9 +10,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.crashlytics.android.Crashlytics;
 
-import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         Crashlytics.setUserEmail(prefs.getEmailAddress());
         Crashlytics.setUserName(prefs.getUsername());
-        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(),prefs.getDeviceName(), prefs.getDeviceId()));
+        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(), prefs.getDeviceName(), prefs.getDeviceId()));
         // Open the Setup wizard if the app does not yet have device name
         if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));

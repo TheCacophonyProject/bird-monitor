@@ -2,14 +2,13 @@ package nz.org.cacophony.birdmonitor;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.core.util.Consumer;
 
-import android.util.Log;
+import org.json.JSONObject;
 
 import nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment;
-
-import org.json.JSONObject;
 
 
 public class RecordingsHelper {

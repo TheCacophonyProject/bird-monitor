@@ -3,42 +3,35 @@ package nz.org.cacophony.birdmonitor.views;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import org.json.JSONObject;
 
 import nz.org.cacophony.birdmonitor.MessageHelper;
 import nz.org.cacophony.birdmonitor.MessageHelper.Action;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Util;
 
-import org.json.JSONObject;
-
 public class GroupsFragment extends Fragment {
 
-    public enum MessageType {
-        SUCCESSFULLY_RETRIEVED_GROUPS,
-        FAILED_TO_RETRIEVE_GROUPS,
-        SUCCESSFULLY_ADDED_GROUP,
-        FAILED_TO_ADD_GROUP
-    }
-
     public static final Action SERVER_GROUPS_ACTION = new Action("SERVER_GROUPS");
-
     private static final String TAG = "GroupsFragment";
-
     private EditText etNewGroupInput;
     private Button btnCreateGroup;
     private ListView lvGroups;
     private ArrayAdapter<String> adapter;
     private TextView tvMessages;
-
     private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
     @Override
@@ -167,6 +160,13 @@ public class GroupsFragment extends Fragment {
         } catch (Exception ex) {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
+    }
+
+    public enum MessageType {
+        SUCCESSFULLY_RETRIEVED_GROUPS,
+        FAILED_TO_RETRIEVE_GROUPS,
+        SUCCESSFULLY_ADDED_GROUP,
+        FAILED_TO_ADD_GROUP
     }
 
 }

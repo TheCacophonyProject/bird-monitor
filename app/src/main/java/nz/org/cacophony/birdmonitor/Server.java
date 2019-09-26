@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
-import okhttp3.*;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,17 +16,40 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.*;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.anyWebRequestResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.createAccountIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.getGroupsIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.registerPhoneIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.signInIdlingResource;
+import static nz.org.cacophony.birdmonitor.IdlingResourceForEspressoTesting.uploadFilesIdlingResource;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.FAILED_TO_CREATE_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.MessageType.SUCCESSFULLY_CREATED_USER;
 import static nz.org.cacophony.birdmonitor.views.CreateAccountFragment.SERVER_SIGNUP_ACTION;
-import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.FAILED_TO_ADD_GROUP;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.FAILED_TO_RETRIEVE_GROUPS;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.SUCCESSFULLY_ADDED_GROUP;
+import static nz.org.cacophony.birdmonitor.views.GroupsFragment.MessageType.SUCCESSFULLY_RETRIEVED_GROUPS;
 import static nz.org.cacophony.birdmonitor.views.GroupsFragment.SERVER_GROUPS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.CONNECTED_TO_SERVER;
-import static nz.org.cacophony.birdmonitor.views.RegisterFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.RegisterFragment.MessageType.REGISTER_ERROR_ALERT;
+import static nz.org.cacophony.birdmonitor.views.RegisterFragment.MessageType.REGISTER_FAIL;
+import static nz.org.cacophony.birdmonitor.views.RegisterFragment.MessageType.REGISTER_SUCCESS;
 import static nz.org.cacophony.birdmonitor.views.RegisterFragment.SERVER_REGISTER_ACTION;
-import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.INVALID_CREDENTIALS;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.NETWORK_ERROR;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.SUCCESSFULLY_SIGNED_IN;
+import static nz.org.cacophony.birdmonitor.views.SignInFragment.MessageType.UNABLE_TO_SIGNIN;
 import static nz.org.cacophony.birdmonitor.views.SignInFragment.SERVER_USER_LOGIN_ACTION;
 
 
@@ -270,7 +291,7 @@ public class Server {
                     deviceID = Util.getDeviceID(prefs.getToken());
                 }
 
-                Crashlytics.setUserIdentifier(String.format("%s-%s-%d", group,deviceName, deviceID));
+                Crashlytics.setUserIdentifier(String.format("%s-%s-%d", group, deviceName, deviceID));
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
                 prefs.setDeviceName(deviceName);
