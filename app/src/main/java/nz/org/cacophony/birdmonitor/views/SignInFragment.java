@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.fragment.app.Fragment;
@@ -282,8 +283,6 @@ public class SignInFragment extends Fragment {
             }
             prefs.setUserNameOrEmailAddress(usernameOrEmailAddress);
             prefs.setUsernamePassword(password);
-
-
             signInUser();
 
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
@@ -292,6 +294,7 @@ public class Prefs {
     }
 
     public void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
+        Crashlytics.setUserName(userNameOrEmailAddress);
         setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
     }
 
@@ -301,6 +304,7 @@ public class Prefs {
     }
 
     public void setEmailAddress(String emailAddress) {
+        Crashlytics.setUserEmail(emailAddress);
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
 
