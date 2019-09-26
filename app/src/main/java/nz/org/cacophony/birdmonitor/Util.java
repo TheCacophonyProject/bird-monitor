@@ -1208,6 +1208,7 @@ public class Util {
             prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
+            Crashlytics.setUserIdentifier(String.format("%s-%s-%d", null,null, 0));
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");
@@ -1219,6 +1220,8 @@ public class Util {
         try {
             Prefs prefs = new Prefs(context);
             prefs.setUserSignedIn(false);
+            Crashlytics.setUserName(null);
+            Crashlytics.setUserEmail(null);
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering user.");
         }

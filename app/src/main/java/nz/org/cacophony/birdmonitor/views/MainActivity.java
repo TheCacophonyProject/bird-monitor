@@ -116,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
         Util.createTheNextSingleStandardAlarm(getApplicationContext());
         Util.createFailSafeAlarm(getApplicationContext());
 
-
+        Crashlytics.setUserEmail(prefs.getEmailAddress());
+        Crashlytics.setUserName(prefs.getUsername());
+        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(),prefs.getDeviceName(), prefs.getDeviceId()));
         // Open the Setup wizard if the app does not yet have device name
         if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
