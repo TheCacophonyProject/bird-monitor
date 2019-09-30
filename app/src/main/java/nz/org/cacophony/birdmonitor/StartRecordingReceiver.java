@@ -9,7 +9,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
@@ -43,7 +42,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
 
         try {
-            String relativeTo =intent.getStringExtra(Prefs.RELATIVE);
+            String relativeTo = intent.getStringExtra(Prefs.RELATIVE);
             Util.createTheNextSingleStandardAlarm(context, relativeTo);
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
@@ -52,7 +51,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 Crashlytics.logException(new Throwable("Bundle is null"));
                 return;
             }
-            final String alarmIntentType = bundle.getString("type");
+            final String alarmIntentType = bundle.getString(Prefs.INTENT_TYPE);
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 Crashlytics.logException(new Throwable("No Intent Type"));
@@ -152,8 +151,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
             } else { // intent came from boot receiver or app (not test record, or bird count )
                 Intent mainServiceIntent = new Intent(context, MainService.class);
-                mainServiceIntent.putExtra("type", alarmIntentType);
-                mainServiceIntent.putExtra(Prefs.RELATIVE,relativeTo);
+                mainServiceIntent.putExtra(Prefs.INTENT_TYPE, alarmIntentType);
+                mainServiceIntent.putExtra(Prefs.RELATIVE, relativeTo);
                 context.startService(mainServiceIntent);
             }
 

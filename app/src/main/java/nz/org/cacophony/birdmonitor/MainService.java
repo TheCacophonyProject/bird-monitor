@@ -39,13 +39,13 @@ public class MainService extends IntentService {
         try {
             Bundle bundle = intent != null ? intent.getExtras() : null;
             if (bundle != null) {
-                String alarmIntentType = bundle.getString("type");
+                String alarmIntentType = bundle.getString(Prefs.INTENT_TYPE);
                 if (alarmIntentType == null) {
                     alarmIntentType = "unknown";
                     Log.w(TAG, "alarmIntentType = unknown");
                 }
                 String relativeTo = bundle.getString(Prefs.RELATIVE);
-                long recordTimeSeconds = Util.getRecordingDuration(getApplicationContext(), alarmIntentType);
+                long recordTimeSeconds = Util.getRecordingDuration(getApplicationContext(), alarmIntentType, relativeTo);
 
                 wakeLock.acquire(recordTimeSeconds * 1000L /*10 minutes*/);
 

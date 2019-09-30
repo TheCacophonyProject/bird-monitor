@@ -63,8 +63,7 @@ public class RecordAndUpload {
 
         Prefs prefs = new Prefs(context);
 
-        long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording);
-
+        long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording, offset);
 
         if (isRecording) {
             String messageToDisplay = "Can not record, as a recording is already in progress.";

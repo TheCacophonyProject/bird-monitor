@@ -3,10 +3,6 @@ package nz.org.cacophony.birdmonitor.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,9 +10,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import nz.org.cacophony.birdmonitor.*;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         boolean isFirstTime = prefs.getIsFirstTime();
 
         if (isFirstTime) {
-
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setVeryAdvancedSettingsEnabled(false);
-
+            prefs.setRecLength(1);
             prefs.setIsFirstTimeFalse();
         }
 

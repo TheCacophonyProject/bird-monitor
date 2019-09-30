@@ -107,7 +107,7 @@ public class TestRecordFragment extends Fragment {
         Intent myIntent = new Intent(getActivity(), StartRecordingReceiver.class);
         myIntent.putExtra("callingCode", "recordNowButtonClicked"); // for debugging
         try {
-            myIntent.putExtra("type", Prefs.RECORD_NOW_ALARM);
+            myIntent.putExtra(Prefs.INTENT_TYPE, Prefs.RECORD_NOW_ALARM);
             getActivity().sendBroadcast(myIntent);
 
         } catch (Exception ex) {

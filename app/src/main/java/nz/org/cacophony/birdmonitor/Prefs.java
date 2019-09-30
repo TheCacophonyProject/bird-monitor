@@ -19,6 +19,7 @@ public class Prefs {
     public static final int MAX_ALARM_OFFSET = 120;
     public static final String NORMAL_URI = "normal";
     public static final String RELATIVE = "relative";
+    public static final String INTENT_TYPE = "type";
 
     public static final String FAIL_SAFE_ALARM = "failSafe";
     public static final String REPEATING_ALARM = "repeating";
@@ -753,6 +754,12 @@ public class Prefs {
         } catch (NumberFormatException ex) {
             return min;
         }
+    }
+    public void setRecLength(int recLength) {
+        if (recLength < MIN_REC_LENGTH || recLength > MAX_REC_LENGTH) {
+            recLength = MIN_REC_LENGTH;
+        }
+        setInt(REC_LENGTH, recLength);
     }
 
     public void setRecLength(String recLength) {

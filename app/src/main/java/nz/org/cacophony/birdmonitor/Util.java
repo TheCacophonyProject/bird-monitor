@@ -824,7 +824,7 @@ public class Util {
     public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
-            myIntent.putExtra("type", Prefs.FAIL_SAFE_ALARM);
+            myIntent.putExtra(Prefs.INTENT_TYPE, Prefs.FAIL_SAFE_ALARM);
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse(Prefs.FAIL_SAFE_ALARM); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
@@ -913,7 +913,7 @@ public class Util {
 
     public static Intent getRepeatingAlarmIntent(Context context, String relativeTo) {
         Intent intent = new Intent(context, StartRecordingReceiver.class);
-        intent.putExtra("type", Prefs.REPEATING_ALARM);
+        intent.putExtra(Prefs.INTENT_TYPE, Prefs.REPEATING_ALARM);
         intent.setData(Uri.parse(Prefs.NORMAL_URI));
         if (relativeTo != null) {
             intent.putExtra(Prefs.RELATIVE, relativeTo);
@@ -930,7 +930,6 @@ public class Util {
      * @param context *
      */
     public static void createTheNextSingleStandardAlarm(Context context, String relativeTo) {
-        Log.d(TAG, "createTheNextSingleStandardAlarm cur relativeTo " + relativeTo);
         Prefs prefs = new Prefs(context);
         Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
         Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
@@ -943,8 +942,6 @@ public class Util {
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
-
-        Log.d("NextAlarm", "Type is " + nextAlarm.OffsetType + " Delay is " + nextAlarm.TimeMillis);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
 
@@ -1303,7 +1300,7 @@ public class Util {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
     }
 
-    public static long getRecordingDuration(Context context, String typeOfRecording) {
+    public static long getRecordingDuration(Context context, String typeOfRecording, String offsetType) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
@@ -1313,7 +1310,7 @@ public class Util {
             recordTimeSeconds = 60 * 10;
         } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
-        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
             recordTimeSeconds = prefs.getRecLength() * 60;
         }
 
@@ -1326,7 +1323,7 @@ public class Util {
                 recordTimeSeconds = recordTimeSeconds * 10;
             } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
-            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()) {
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
                 recordTimeSeconds = prefs.getRecLength();
             }
         }
