@@ -95,14 +95,13 @@ public class Util {
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
     private static final String RECORDING_FILE_EXTENSION = ".m4a";
+    // For airplane mode
+    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
     }
-
-    // For airplane mode
-    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
-    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     /**
      * Make sure user has given permission to record.

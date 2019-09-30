@@ -4,11 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.textfield.TextInputLayout;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,24 +13,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
-import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
 
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Server;
+import nz.org.cacophony.birdmonitor.Util;
+
 public class SignInFragment extends Fragment {
 
-    public enum MessageType {
-        SUCCESSFULLY_SIGNED_IN,
-        NETWORK_ERROR,
-        INVALID_CREDENTIALS,
-        UNABLE_TO_SIGNIN
-    }
-
     public static final Action SERVER_USER_LOGIN_ACTION = new Action("SERVER_USER_LOGIN");
-
     private static final String TAG = "SignInFragment";
-
     private Button btnSignIn;
     private Button btnSignOutUser;
     private TextView tvMessages;
@@ -44,7 +38,6 @@ public class SignInFragment extends Fragment {
     private TextInputLayout tilUserNameOrPassword;
     private TextInputLayout tilPassword;
     private TextView tvTitleMessage;
-
     private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
 
     @Override
@@ -161,7 +154,6 @@ public class SignInFragment extends Fragment {
         }
 
     }
-
 
     private void onMessage(Intent intent) {
         Prefs prefs = new Prefs(getActivity());
@@ -308,5 +300,12 @@ public class SignInFragment extends Fragment {
         btnSignOutUser.setVisibility(View.INVISIBLE);
 
         displayOrHideGUIObjects();
+    }
+
+    public enum MessageType {
+        SUCCESSFULLY_SIGNED_IN,
+        NETWORK_ERROR,
+        INVALID_CREDENTIALS,
+        UNABLE_TO_SIGNIN
     }
 }

@@ -4,8 +4,6 @@ package nz.org.cacophony.birdmonitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.PowerManager;
 import android.util.Log;
 

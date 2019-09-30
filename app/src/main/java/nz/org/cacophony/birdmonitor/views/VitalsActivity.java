@@ -5,19 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -26,6 +23,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import nz.org.cacophony.birdmonitor.BuildConfig;
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.PermissionsHelper;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Util;
 
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.RECORDING_FINISHED;
@@ -46,10 +50,8 @@ public class VitalsActivity extends AppCompatActivity {
     private static final String TAG = VitalsActivity.class.getName();
 
     private TextView tvMessages;
-
-    private PermissionsHelper permissionsHelper;
-
     private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
+    private PermissionsHelper permissionsHelper;
 
     @Override
     protected void onStart() {

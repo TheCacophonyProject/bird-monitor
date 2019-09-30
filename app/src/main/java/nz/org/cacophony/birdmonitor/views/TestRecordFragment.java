@@ -4,11 +4,6 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.core.text.util.LinkifyCompat;
-
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
+import androidx.annotation.NonNull;
+import androidx.core.text.util.LinkifyCompat;
+import androidx.fragment.app.Fragment;
+
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.PermissionsHelper;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.RecordAndUpload;
+import nz.org.cacophony.birdmonitor.RecordingsHelper;
+import nz.org.cacophony.birdmonitor.StartRecordingReceiver;
 
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 
@@ -29,11 +34,9 @@ public class TestRecordFragment extends Fragment {
     private TextView tvTitleMessage;
     private TextView tvMessages;
     private TextView tvServerLink;
-
-    private PermissionsHelper permissionsHelper;
-
     private final BroadcastReceiver messageHandler =
             RecordingsHelper.createMessageHandler(TAG, message -> tvMessages.setText(message), this::onRecordingFinished);
+    private PermissionsHelper permissionsHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

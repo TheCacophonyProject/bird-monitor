@@ -30,6 +30,28 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
     private static final String TAG = StartRecordingReceiver.class.getName();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
+        // The battery level required to continue depends on the type of alarm
+
+        if (alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
+            // record now button was pressed
+            return true;
+        }
+
+        if (prefs.getIgnoreLowBattery()) {
+            return true;
+        }
+
+        if (alarmType.equalsIgnoreCase(prefs.REPEATING_ALARM)) {
+
+            return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
+        } else { // must be a dawn or dusk alarm
+
+            return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
+        }
+    }
+
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
@@ -167,28 +189,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
         }
 
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
-        // The battery level required to continue depends on the type of alarm
-
-        if (alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
-            // record now button was pressed
-            return true;
-        }
-
-        if (prefs.getIgnoreLowBattery()) {
-            return true;
-        }
-
-        if (alarmType.equalsIgnoreCase(prefs.REPEATING_ALARM)) {
-
-            return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
-        } else { // must be a dawn or dusk alarm
-
-            return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
-        }
     }
 
 }

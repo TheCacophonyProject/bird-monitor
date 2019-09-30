@@ -4,10 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
-
-import android.util.Log;
 
 
 /**
@@ -32,7 +31,6 @@ public class MainService extends IntentService {
         }
 
 
-
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "Cacophonometer:MainServiceWakelockTag");
 
@@ -53,7 +51,7 @@ public class MainService extends IntentService {
             } else {
                 Log.e(TAG, "MainService bundle is null");
             }
-        }finally {
+        } finally {
             Util.enableFlightMode(getApplicationContext());
             if (wakeLock.isHeld()) {
                 wakeLock.release();

@@ -6,10 +6,14 @@ import org.junit.Test;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateLeft;
 import static nz.org.cacophony.birdmonitor.HelperCode.nowNavigateRight;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GuiControlsTest extends TestBaseStartingOnMainScreen {
 
