@@ -28,6 +28,8 @@ public class AdvancedWizardActivity extends AppCompatActivity {
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
         //https://www.youtube.com/watch?v=UqtsyhASW74
@@ -35,6 +37,12 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.container);
 
         setupViewPager(mViewPager);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override

@@ -290,6 +290,8 @@ public class Server {
                 } else {
                     deviceID = Util.getDeviceID(prefs.getToken());
                 }
+
+                Crashlytics.setUserIdentifier(String.format("%s-%s-%d", group, deviceName, deviceID));
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
                 prefs.setDeviceName(deviceName);

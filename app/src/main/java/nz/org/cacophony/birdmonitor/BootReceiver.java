@@ -32,8 +32,6 @@ public class BootReceiver extends BroadcastReceiver {
         }
 
         try {
-
-
             final Thread thread = new Thread() {
                 @Override
                 public void run() {
@@ -52,6 +50,14 @@ public class BootReceiver extends BroadcastReceiver {
                         Util.createTheNextSingleStandardAlarm(context, null);
                         Util.createFailSafeAlarm(context);
                         Util.enableFlightMode(context);
+                        if (intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+                            Prefs prefs = new Prefs(context);
+                            if (prefs.getRelaunchOnUpdate()) {
+                                prefs.setRelaunchOnUpdate(false);
+                                Util.relaunch(context);
+                            }
+                        }
+
                     } catch (Exception e) {
                         Log.e(TAG, "Error setting boot alarms");
                     } finally {

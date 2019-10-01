@@ -15,6 +15,15 @@ These recordings will be analysed to detect the volume of birdsong and how it ch
 This project is licensed under the Affero General Public License
 (https://www.gnu.org/licenses/agpl-3.0.en.html).
 
+## Autoupdates
+
+In order to allow bird monitor to auto update:
+* The APK must be installed from the github releases page (https://github.com/TheCacophonyProject/bird-monitor/releases)
+* Phone must be rooted
+* Bird Monitor Privileged Extension must be installed as a system app, via TWRP (or other recovery image).
+  https://github.com/TheCacophonyProject/Bird-Monitor-Privileged-Extension
+* Playstore Play protect must be disabled, otherwise a warning popup will block auto update
+
 ## Releases
 
 * Ensure all required changes have been merged into the master branch on Github.

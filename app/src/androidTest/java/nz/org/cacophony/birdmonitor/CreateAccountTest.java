@@ -25,7 +25,6 @@ public class CreateAccountTest extends TestBaseStartingOnSetupScreen {
     @Before
     public void setUpForCreateAccount() {
         uniqueId = TEST_USERNAME_PREFIX + UUID.randomUUID();
-
         nowNavigateRight();// takes you to Create Account screen
     }
 

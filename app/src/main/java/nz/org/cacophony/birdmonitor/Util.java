@@ -48,7 +48,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -66,6 +65,7 @@ import java.util.Random;
 import java.util.TimeZone;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -253,6 +253,9 @@ public class Util {
         }
     }
 
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
 
     /**
      * Returns the device id of this phone.  The device id has been allocated by the server when
@@ -555,6 +558,10 @@ public class Util {
     }
 
     public static void disableFlightMode(final Context context) {
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
+
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -594,16 +601,19 @@ public class Util {
         // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
     }
 
-    public static void checkSuperUserAccess() {
-        try {
-            Runtime.getRuntime().exec("su");
-        } catch (IOException ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
+    public static void relaunch(final Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        int mPendingIntentId = 1;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
 
     public static void enableFlightMode(final Context context) {
         Prefs prefs = new Prefs(context);
+        if (!new Prefs(context).getAeroplaneMode()) {
+            return;
+        }
 
         boolean onlineMode = prefs.getOnLineMode();
 
@@ -623,6 +633,13 @@ public class Util {
             }
         }
 
+        if (UpdateUtil.isDownloading(context)) {
+            Log.d(TAG, "Flight mode pending as am downloading update");
+            prefs.setFlightModePending(true);
+            return;
+        }
+
+        prefs.setFlightModePending(false);
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
@@ -843,6 +860,7 @@ public class Util {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
+
     // Get the next sunrise/noon/sunset alarm closest to the current time
     public static Alarm getClosestSunAlarm(Context context, Prefs prefs) {
         Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
@@ -980,7 +998,8 @@ public class Util {
         return convertUnixTimeToString(lastRecordingTime);
     }
 
-    public static void setTimeThatLastRecordingHappened(Context context, long timeLastRecordingHappened) {
+    public static void setTimeThatLastRecordingHappened(Context context,
+                                                        long timeLastRecordingHappened) {
         Prefs prefs = new Prefs(context);
         prefs.setTimeThatLastRecordingHappened(timeLastRecordingHappened);
     }
@@ -995,7 +1014,8 @@ public class Util {
         return fileFormat.format(date);
     }
 
-    public static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
+    public static void setUseVeryFrequentRecordings(Context context,
+                                                    boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
         createTheNextSingleStandardAlarm(context, null);
@@ -1218,7 +1238,8 @@ public class Util {
         }).start();
     }
 
-    public static void addGroupToServer(final Context context, final String groupName, final Runnable onSuccess) {
+    public static void addGroupToServer(final Context context, final String groupName,
+                                        final Runnable onSuccess) {
         new Thread(() -> {
             try {
                 if (Server.addGroupToServer(context, groupName)) {
@@ -1247,6 +1268,7 @@ public class Util {
             prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
+            Crashlytics.setUserIdentifier(String.format("%s-%s-%d", null, null, 0));
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");
@@ -1258,6 +1280,8 @@ public class Util {
         try {
             Prefs prefs = new Prefs(context);
             prefs.setUserSignedIn(false);
+            Crashlytics.setUserName(null);
+            Crashlytics.setUserEmail(null);
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering user.");
         }
@@ -1299,7 +1323,8 @@ public class Util {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
     }
 
-    public static long getRecordingDuration(Context context, String typeOfRecording, String offsetType) {
+    public static long getRecordingDuration(Context context, String typeOfRecording, String
+            offsetType) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
@@ -1334,7 +1359,8 @@ public class Util {
         return recordTimeSeconds;
     }
 
-    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote, String countedByNote, String otherNote) {
+    public static void saveRecordingNote(Context context, String
+            latestRecordingFileName, String weatherNote, String countedByNote, String otherNote) {
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
 
         JSONObject recordingNotes = new JSONObject();

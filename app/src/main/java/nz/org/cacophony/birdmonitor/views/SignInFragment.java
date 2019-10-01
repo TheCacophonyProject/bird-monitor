@@ -274,8 +274,6 @@ public class SignInFragment extends Fragment {
             }
             prefs.setUserNameOrEmailAddress(usernameOrEmailAddress);
             prefs.setUsernamePassword(password);
-
-
             signInUser();
 
 
