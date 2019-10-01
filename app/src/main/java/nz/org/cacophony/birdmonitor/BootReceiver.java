@@ -4,8 +4,6 @@ package nz.org.cacophony.birdmonitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -51,7 +49,7 @@ public class BootReceiver extends BroadcastReceiver {
                     long timeout = 1000 * 60 * 2;  // give the boot stuff two minutes to run - but the enable flight mode does not seem to be working (however long I wait).
                     wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creation
                     try {
-                        Util.createTheNextSingleStandardAlarm(context);
+                        Util.createTheNextSingleStandardAlarm(context, null);
                         Util.createFailSafeAlarm(context);
                         Util.enableFlightMode(context);
                     } catch (Exception e) {

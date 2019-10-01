@@ -20,6 +20,7 @@
     <string name="activity_or_fragment_title_warning_sound">Warning Sound</string>
     <string name="activity_or_fragment_title_activity_ignore_low_battery">Ignore Low Battery</string>
     <string name="activity_or_fragment_title_activity_frequency">Frequency</string>
+    <string name="activity_or_fragment_title_activity_sun_alarms">Sun Alarms</string>
     <string name="activity_or_fragment_title_settings_for_testing">Settings for Testing</string>
     <string name="activity_or_fragment_title_settings_for_audio_source">Audio Source</string>
     <string name="activity_or_fragment_title_turn_off_or_on">Turn Off or On</string>
@@ -48,7 +49,7 @@
     <string name="help_text_manage_recordings">Normally you will not need to \’Manage Recordings\’ as the app will automatically upload your recordings to the server.\n\nHowever, if you have been using the phone without an internet connection (perhaps you have been for a walk or have just re-established an internet connection after leaving your phone to make recordings in a location without out internet access) you can now use this screen to upload all the recordings on the phone.  \n\nBefore you press the upload button, the number of recordings currently on the phone is displayed and should change to zero if all the recordings are successfully uploaded.\n\nIf you prefer, you can delete all the recordings on the phone – perhaps you didn’t realize you had been making recordings! Careful with this option – you can’t get them back.</string>
     <string name="help_text_settings_for_audio_source">Take a look at: https://developer.android.com/reference/android/media/MediaRecorder.AudioSource</string>
     <string name="help_text_settings_for_bird_count">The Bird Count feature aims to replicate the typical senario of sitting at a location and manually counting birds.\n\nWhen you do a normal 5 minute bird count you can record it with this application and it will send it to our database with GPS and time stamp so it can archived for future analysis.\n\nChoose the most appropriate duration and press the Record button.\n\nYou can also press the \'ADD NOTES\' button to add extra information about the most recent recording (if it hasn\'t already been uploaded).\n\nFor best results use an external microphone - https://www.2040.co.nz/.  \n\nIf you don\'t want recordings to be automatically uploaded, enable Offline mode (see the Internet Connection screen under Advanced).</string>
-
+    <string name="help_text_settings_for_sun_alarms">Use scheduled alarms relative to sunrise, noon and sunset.\nWhen enabled the normal randomly distributed recordings will be disabled and recordings will be made relative to sunrise, noon and sunset offset by the given values.</string>
 
     <string name="help_text_vitals">The Vitals screen displays some useful information about the status of the app.  \n\nVersion ID is the version of this App. \n\nRequired Permission should have a tick to show that the app is able to do recording and access the internet. \n\nRegistered should have a tick to indicate that the app has successfully registerd.\n\nLogged on to Server should have a tick to show that connection to the server can be established. \n\nDevice name should show the name that you gave your phone. \n\nLatitude and Longitude display the GPS location of the phone for the last time the GPS was successfully updated. \n\nLast Recording gives the date and time of the last recording, and Next Recording indicates the time that the next recording is set to occur.  If the phone app is currently disabled it says Disabled. \n\nMessages displays any extra information.</string>
 
@@ -200,6 +201,14 @@
     <string name="very_advanced">Very Advanced</string>
 
     <string name="bird_count_notes_message">Use this screen to add your own notes about the latest recording.</string>
+
+    <string name="enable_sun_alarms">Use Sun Alarms</string>
+    <string name="rec_length">Recording Length (Mins)</string>
+    <string name="sunrise_offset">Sunrise Offset (Mins)</string>
+    <string name="sunset_offset">Sunset Offset (Mins)</string>
+    <string name="noon_offset">Noon Offset (Mins)</string>
+    <string name="update_alarms">Update Alarms</string>
+    <string name="sun_alarms_updated">Sun Alarms Updated</string>
 
 
 </resources>

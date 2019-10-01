@@ -4,12 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,41 +12,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import nz.org.cacophony.birdmonitor.*;
-import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
 
+import nz.org.cacophony.birdmonitor.MessageHelper;
+import nz.org.cacophony.birdmonitor.MessageHelper.Action;
+import nz.org.cacophony.birdmonitor.Prefs;
+import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.Server;
+import nz.org.cacophony.birdmonitor.Util;
+
 public class CreateAccountFragment extends Fragment {
 
-    public enum MessageType {
-        SUCCESSFULLY_CREATED_USER,
-        FAILED_TO_CREATE_USER
-    }
-
     public static final Action SERVER_SIGNUP_ACTION = new Action("SERVER_SIGNUP");
-
     private static final String TAG = "CreateAccountFragment";
-
     private TextView tvTitle;
-
     private TextInputLayout tilUsername;
     private TextInputEditText etUsername;
-
     private TextInputLayout tilEmail;
     private TextInputEditText etEmail;
-
     private TextInputLayout tilPassword1;
     private TextInputEditText etPassword1;
-
     private TextInputLayout tilPassword2;
     private TextInputEditText etPassword2;
-
     private Button btnSignUp;
     private TextView tvMessages;
-
     private final BroadcastReceiver messageHandler = MessageHelper.createReceiver(this::onMessage);
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,7 +75,6 @@ public class CreateAccountFragment extends Fragment {
 
     }
 
-
     @Override
     public void setUserVisibleHint(final boolean visible) {
         super.setUserVisibleHint(visible);
@@ -102,7 +90,6 @@ public class CreateAccountFragment extends Fragment {
         }
     }
 
-
     private void displayOrHideGUIObjects() {
 
         tvTitle.setVisibility(View.VISIBLE);
@@ -114,7 +101,6 @@ public class CreateAccountFragment extends Fragment {
         btnSignUp.setVisibility(View.VISIBLE);
         tvMessages.setText("");
     }
-
 
     private void createUserButtonPressed() {
 
@@ -247,5 +233,10 @@ public class CreateAccountFragment extends Fragment {
             tilPassword1.setVisibility(View.VISIBLE);
             tilPassword2.setVisibility(View.VISIBLE);
         }
+    }
+
+    public enum MessageType {
+        SUCCESSFULLY_CREATED_USER,
+        FAILED_TO_CREATE_USER
     }
 }

@@ -46,11 +46,11 @@
         android:layout_width="368dp"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@+id/swUseFrequentUploads"
-
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/swUseFrequentUploads"
         tools:layout_editor_absoluteX="8dp" />
 
     <TextView

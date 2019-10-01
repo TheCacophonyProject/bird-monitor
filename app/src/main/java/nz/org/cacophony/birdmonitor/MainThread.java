@@ -47,7 +47,7 @@ class MainThread implements Runnable {
         }
 
         try {
-            RecordAndUpload.doRecord(context, alarmIntentType);
+            RecordAndUpload.doRecord(context, alarmIntentType, null);
         } catch (Exception e) {
             Crashlytics.logException(e);
             Log.e(TAG, "Unknown error when recording", e);

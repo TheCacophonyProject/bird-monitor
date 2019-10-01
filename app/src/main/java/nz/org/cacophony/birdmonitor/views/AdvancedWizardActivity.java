@@ -1,14 +1,13 @@
 package nz.org.cacophony.birdmonitor.views;
 
 import android.os.Bundle;
-
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
@@ -73,13 +72,13 @@ public class AdvancedWizardActivity extends AppCompatActivity {
     }
 
     private void setNumberOfPagesForAdvanced() {
-        mSectionsStatePagerAdapter.setNumberOfPages(6);
+        mSectionsStatePagerAdapter.setNumberOfPages(7);
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
 
     private void setNumberOfPagesForVeryAdvanced() {
-        mSectionsStatePagerAdapter.setNumberOfPages(8);
+        mSectionsStatePagerAdapter.setNumberOfPages(mSectionsStatePagerAdapter.getCount());
         mSectionsStatePagerAdapter.notifyDataSetChanged();
     }
 
@@ -90,6 +89,7 @@ public class AdvancedWizardActivity extends AppCompatActivity {
         mSectionsStatePagerAdapter.addFragment(new SoundFragment(), getResources().getString(R.string.activity_or_fragment_title_warning_sound));
         mSectionsStatePagerAdapter.addFragment(new BatteryFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery));
         mSectionsStatePagerAdapter.addFragment(new FrequencyFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_frequency));
+        mSectionsStatePagerAdapter.addFragment(new SunriseAlarmFragment(), getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms));
         mSectionsStatePagerAdapter.addFragment(new RootedFragment(), getResources().getString(R.string.activity_or_fragment_title_rooted));
 
         // And for Very Advanced

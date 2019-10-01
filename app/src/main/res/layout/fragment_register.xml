@@ -76,13 +76,13 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/rect_text_edit"
         android:ems="10"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
         android:hint="Enter Device Name Here"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDeviceName"
-        android:inputType="text" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDeviceName" />
 
     <Button
         android:id="@+id/btnRegister"

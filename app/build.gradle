@@ -17,9 +17,9 @@ android {
         applicationId "nz.org.cacophony.birdmonitor"
         minSdkVersion project.ext.minimumSdkVersion
         targetSdkVersion 28
-        versionCode 150010605
+        versionCode 150010700
         //minimumSdkVersion * 10000000 + versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName "1.6.5"
+        versionName "1.7.0"
 
         archivesBaseName = "Bird Monitor-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

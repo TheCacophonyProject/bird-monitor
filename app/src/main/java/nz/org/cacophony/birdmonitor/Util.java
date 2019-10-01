@@ -16,16 +16,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.provider.Settings;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -36,10 +28,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
@@ -47,19 +41,47 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+import java.util.TimeZone;
 
-import static android.Manifest.permission.*;
+import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.Context.ALARM_SERVICE;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
 import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.*;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_STOPPED;
 
 
 /**
@@ -73,14 +95,13 @@ public class Util {
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
     private static final String RECORDING_FILE_EXTENSION = ".m4a";
+    // For airplane mode
+    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
+    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     static {
         BasicLogcatConfigurator.configureDefaultContext();
     }
-
-    // For airplane mode
-    private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
-    private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
 
     /**
      * Make sure user has given permission to record.
@@ -421,6 +442,15 @@ public class Util {
         Location location = getLocation(context);
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "Pacific/Auckland");
         return calculator.getOfficialSunriseCalendarForDate(todayOrTomorrow);
+    }
+
+    public static Calendar getNoon(Context context, Calendar todayOrTomorrow) {
+        Calendar sunrise = getSunrise(context, todayOrTomorrow);
+        Calendar sunset = getSunset(context, todayOrTomorrow);
+        long noonMillis = (sunrise.getTimeInMillis() + sunset.getTimeInMillis()) / 2;
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTimeInMillis(noonMillis);
+        return cal;
     }
 
     public static Calendar getDawn(Context context, Calendar todayOrTomorrow) {
@@ -776,24 +806,24 @@ public class Util {
         // https://developer.android.com/reference/android/app/AlarmManager.html
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // KitKat is 19
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
             return;
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
+            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
             return;
         }
 
         // Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, wakeUpTime, pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
     }
 
     public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
-            myIntent.putExtra("type", Prefs.FAIL_SAFE_ALARM);
+            myIntent.putExtra(Prefs.INTENT_TYPE, Prefs.FAIL_SAFE_ALARM);
             Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
             timeUri = Uri.parse(Prefs.FAIL_SAFE_ALARM); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
@@ -802,7 +832,7 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -813,19 +843,81 @@ public class Util {
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public static long getMilliSecondsBetweenRecordings(Prefs prefs) {
-        if (prefs.getUseVeryFrequentRecordings()) {
-            return (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds();
-        }
+    // Get the next sunrise/noon/sunset alarm closest to the current time
+    public static Alarm getClosestSunAlarm(Context context, Prefs prefs) {
+        Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
 
-        float chance = new Random().nextFloat();
-        float shortWindowChance = prefs.getshortRecordingWindowChance();
-        if (chance < shortWindowChance) {
-            chance = new Random().nextFloat();
-            return (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+        long wakeUpTime = System.currentTimeMillis();
+        long offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.SUNRISE_OFFSET);
         }
-        chance = new Random().nextFloat();
-        return (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
+        offset = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffsetMillis();
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.NOON_OFFSET);
+        }
+        offset = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
+        if (offset > wakeUpTime) {
+            return new Alarm(offset, Prefs.SUNSET_OFFSET);
+        }
+        calNow.add(Calendar.DAY_OF_YEAR, 1);
+        offset = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+        return new Alarm(offset, Prefs.SUNRISE_OFFSET);
+    }
+
+    public static Alarm getNextAlarm(Context context, Prefs prefs, String curOffset) {
+        long wakeUpTime;
+        if (prefs.getUseSunAlarms()) {
+            Calendar calNow = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Auckland"));
+            Alarm alarm;
+            if (curOffset == null || curOffset.equals(Prefs.FAIL_SAFE_ALARM)) {
+                alarm = getClosestSunAlarm(context, prefs);
+            } else {
+                switch (curOffset) {
+                    case Prefs.SUNRISE_OFFSET:
+                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+                        alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
+                    case Prefs.NOON_OFFSET:
+                        wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
+                        alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
+                    case Prefs.SUNSET_OFFSET:
+                        calNow.add(Calendar.DAY_OF_YEAR, 1);
+                        wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+                        alarm = new Alarm(wakeUpTime, Prefs.SUNRISE_OFFSET);
+                        break;
+                    default:
+                        alarm = getClosestSunAlarm(context, prefs);
+                        break;
+                }
+            }
+            return alarm;
+        } else {
+            wakeUpTime = System.currentTimeMillis();
+            if (prefs.getUseVeryFrequentRecordings()) {
+                new Alarm((long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+            }
+
+            float chance = new Random().nextFloat();
+            float shortWindowChance = prefs.getshortRecordingWindowChance();
+            if (chance < shortWindowChance) {
+                chance = new Random().nextFloat();
+                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            } else {
+                chance = new Random().nextFloat();
+                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
+            }
+        }
+        return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
+    }
+
+    public static Intent getRepeatingAlarmIntent(Context context, String relativeTo) {
+        Intent intent = new Intent(context, StartRecordingReceiver.class);
+        intent.putExtra(Prefs.INTENT_TYPE, Prefs.REPEATING_ALARM);
+        intent.setData(Uri.parse(Prefs.NORMAL_URI));
+        if (relativeTo != null) {
+            intent.putExtra(Prefs.RELATIVE, relativeTo);
+        }
+        return intent;
     }
 
     /**
@@ -836,19 +928,10 @@ public class Util {
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context) {
+    public static void createTheNextSingleStandardAlarm(Context context, String relativeTo) {
         Prefs prefs = new Prefs(context);
-        Intent myIntent = new Intent(context, StartRecordingReceiver.class);
-
-        try {
-            myIntent.putExtra("type", prefs.REPEATING_ALARM);
-            Uri timeUri; // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
-            timeUri = Uri.parse("normal");
-            myIntent.setData(timeUri);
-
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
+        Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
+        Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -856,15 +939,9 @@ public class Util {
             return;
         }
 
-        long delayMS = getMilliSecondsBetweenRecordings(prefs);
-        long wakeUpTime = SystemClock.elapsedRealtime() + delayMS;
-
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
-        setAlarmManagerWakeUp(alarmManager, wakeUpTime, pendingIntent);
-
-        long nextAlarmInUnixTime = new Date().getTime() + delayMS;
-        Log.d("NextAlarm", "Delay is " + delayMS);
-        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarmInUnixTime);
+        setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
 
     public static void updateGPSLocation(Context context) {
@@ -921,7 +998,7 @@ public class Util {
     public static void setUseVeryFrequentRecordings(Context context, boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
-        createTheNextSingleStandardAlarm(context);
+        createTheNextSingleStandardAlarm(context, null);
     }
 
     public static void setUseFrequentUploads(Context context, boolean useFrequentUploads) {
@@ -995,7 +1072,8 @@ public class Util {
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
         } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
-
+        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
+            dialogMessage = context.getString(R.string.help_text_settings_for_sun_alarms);
         } else {
             dialogMessage = "Still to fix in Util.displayHelp";
         }
@@ -1221,7 +1299,7 @@ public class Util {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
     }
 
-    public static long getRecordingDuration(Context context, String typeOfRecording) {
+    public static long getRecordingDuration(Context context, String typeOfRecording, String offsetType) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
@@ -1231,8 +1309,9 @@ public class Util {
             recordTimeSeconds = 60 * 10;
         } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
+            recordTimeSeconds = prefs.getRecLength() * 60;
         }
-
 
         if (prefs.getUseShortRecordings()) { // for testing
             recordTimeSeconds = 1;
@@ -1243,12 +1322,15 @@ public class Util {
                 recordTimeSeconds = recordTimeSeconds * 10;
             } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
+                recordTimeSeconds = prefs.getRecLength();
             }
         }
 
         if (typeOfRecording.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
             recordTimeSeconds += 1; // help to recognise recordNowButton recordings
         }
+        Log.d(TAG, "recording duration of " + typeOfRecording + "  is" + recordTimeSeconds);
         return recordTimeSeconds;
     }
 
@@ -1309,4 +1391,23 @@ public class Util {
         }
         return jsonNotes;
     }
+
+    public static void changeAlarmType(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent = getRepeatingAlarmIntent(context, null);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.cancel(pendingIntent);
+        createTheNextSingleStandardAlarm(context, null);
+    }
+
+    public static class Alarm {
+        public long TimeMillis;
+        public String OffsetType;
+
+        public Alarm(long timeMS, String offset) {
+            this.TimeMillis = timeMS;
+            this.OffsetType = offset;
+        }
+    }
+
 }

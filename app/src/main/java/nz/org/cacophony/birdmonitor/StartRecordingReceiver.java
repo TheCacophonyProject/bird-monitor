@@ -9,7 +9,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
@@ -31,6 +30,28 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
     private static final String TAG = StartRecordingReceiver.class.getName();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
+        // The battery level required to continue depends on the type of alarm
+
+        if (alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
+            // record now button was pressed
+            return true;
+        }
+
+        if (prefs.getIgnoreLowBattery()) {
+            return true;
+        }
+
+        if (alarmType.equalsIgnoreCase(prefs.REPEATING_ALARM)) {
+
+            return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
+        } else { // must be a dawn or dusk alarm
+
+            return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
+        }
+    }
+
     @Override
     public void onReceive(final Context context, Intent intent) {
         Prefs prefs = new Prefs(context);
@@ -43,7 +64,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
 
         try {
-            Util.createTheNextSingleStandardAlarm(context);
+            String relativeTo = intent.getStringExtra(Prefs.RELATIVE);
+            Util.createTheNextSingleStandardAlarm(context, relativeTo);
             // need to determine the source of the intent ie Main UI or boot receiver
             Bundle bundle = intent.getExtras();
             if (bundle == null) {
@@ -51,12 +73,12 @@ public class StartRecordingReceiver extends BroadcastReceiver {
                 Crashlytics.logException(new Throwable("Bundle is null"));
                 return;
             }
-            final String alarmIntentType = bundle.getString("type");
+            final String alarmIntentType = bundle.getString(Prefs.INTENT_TYPE);
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 Crashlytics.logException(new Throwable("No Intent Type"));
                 return;
-            } else if (alarmIntentType == Prefs.FAIL_SAFE_ALARM) {
+            } else if (alarmIntentType.equals(Prefs.FAIL_SAFE_ALARM)) {
                 return;
             }
 
@@ -81,6 +103,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             } else if (alarmIntentType.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
                 recordButtonWasPressed = true;
                 wakeLockDuration = 17 * 60 * 1000L; // 15 minutes for recording plus margin of error/uploading
+            } else if (alarmIntentType.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()) {
+                wakeLockDuration += prefs.getRecLength() * 60 * 1000;
             }
 
             wakeLock.acquire(wakeLockDuration);
@@ -149,7 +173,8 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
             } else { // intent came from boot receiver or app (not test record, or bird count )
                 Intent mainServiceIntent = new Intent(context, MainService.class);
-                mainServiceIntent.putExtra("type", alarmIntentType);
+                mainServiceIntent.putExtra(Prefs.INTENT_TYPE, alarmIntentType);
+                mainServiceIntent.putExtra(Prefs.RELATIVE, relativeTo);
                 context.startService(mainServiceIntent);
             }
 
@@ -164,28 +189,6 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
         }
 
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean enoughBatteryToContinue(double batteryPercent, String alarmType, Prefs prefs) {
-        // The battery level required to continue depends on the type of alarm
-
-        if (alarmType.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM)) {
-            // record now button was pressed
-            return true;
-        }
-
-        if (prefs.getIgnoreLowBattery()) {
-            return true;
-        }
-
-        if (alarmType.equalsIgnoreCase(prefs.REPEATING_ALARM)) {
-
-            return batteryPercent > prefs.getBatteryLevelCutoffRepeatingRecordings();
-        } else { // must be a dawn or dusk alarm
-
-            return batteryPercent > prefs.getBatteryLevelCutoffDawnDuskRecordings();
-        }
     }
 
 }
