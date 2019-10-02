@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         boolean isFirstTime = prefs.getIsFirstTime();
 
         if (isFirstTime) {
-
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.setAutomaticRecordingsDisabled(false);
             prefs.setIsDisableDawnDuskRecordings(false);
             prefs.setVeryAdvancedSettingsEnabled(false);
+            prefs.setRecLength(1);
             prefs.setIsFirstTimeFalse();
             prefs.setAutoUpdateAllowed();
         }
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Now create the alarms that will cause the recordings to happen
-        Util.createTheNextSingleStandardAlarm(getApplicationContext());
+        Util.createTheNextSingleStandardAlarm(getApplicationContext(), null);
         Util.createFailSafeAlarm(getApplicationContext());
 
         Crashlytics.setUserEmail(prefs.getEmailAddress());

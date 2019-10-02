@@ -55,7 +55,7 @@ public class RecordAndUpload {
 
     }
 
-    static void doRecord(Context context, String typeOfRecording) {
+    static void doRecord(Context context, String typeOfRecording, String offset) {
         if (typeOfRecording == null) {
             Log.e(TAG, "typeOfRecording is null");
             return;
@@ -63,15 +63,14 @@ public class RecordAndUpload {
 
         Prefs prefs = new Prefs(context);
 
-        long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording);
-
+        long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording, offset);
 
         if (isRecording) {
             String messageToDisplay = "Can not record, as a recording is already in progress.";
             MessageHelper.broadcastMessage(messageToDisplay, ALREADY_RECORDING, MANAGE_RECORDINGS_ACTION, context);
             return;
         } else {
-            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording);
+            makeRecording(context, recordTimeSeconds, prefs.getPlayWarningSound(), typeOfRecording, offset);
         }
 
 
@@ -103,7 +102,7 @@ public class RecordAndUpload {
         }
     }
 
-    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording) {
+    private static void makeRecording(Context context, long recordTimeSeconds, boolean playWarningBeeps, String typeOfRecording, String offset) {
         recordIdlingResource.increment();
         isRecording = true;
         String messageToDisplay = "Getting ready to record.";
@@ -162,6 +161,9 @@ public class RecordAndUpload {
             fileName += " " + latStr;
             fileName += " " + lonStr;
 
+            if (offset != null) {
+                fileName += " " + offset + " " + prefs.getInt(offset);
+            }
             locationForBirdCountMessage = latStr + " " + lonStr;
 
             if (Util.isBirdCountRecording(typeOfRecording)) {
@@ -354,7 +356,7 @@ public class RecordAndUpload {
             return false;
         }
 
-        File recordingFiles[] = recordingsFolder.listFiles();
+        File[] recordingFiles = recordingsFolder.listFiles();
         if (recordingFiles != null) {
 
             Util.disableFlightMode(context);
@@ -463,7 +465,7 @@ public class RecordAndUpload {
         String[] fileNameParts = fileName.split("[. ]");
         // this code breaks if old files exist, so delete them and move on
 
-        if (fileNameParts.length != 18) {
+        if (fileNameParts.length < 18) {
             if (aFile.delete()) {
                 return false;
             }
@@ -538,7 +540,9 @@ public class RecordAndUpload {
             additionalMetadata.put("Flight Mode", prefs.getAeroplaneMode());
             additionalMetadata.put("Phone manufacturer", Build.MANUFACTURER);
             additionalMetadata.put("Phone model", Build.MODEL);
-
+            if (fileNameParts.length == 20) {
+                additionalMetadata.put(fileNameParts[17], fileNameParts[18]);
+            }
             // Add the recording notes if they exist.
             String recordingFileExtension = Util.getRecordingFileExtension();
             String recordingFileWithOutExtension = fileName.split(recordingFileExtension)[0];

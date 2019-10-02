@@ -38,7 +38,6 @@ android {
         versionName "1.7.0"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Bird-Monitor-$versionName"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
