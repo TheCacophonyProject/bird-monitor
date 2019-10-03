@@ -957,7 +957,7 @@ public class Util {
             return;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
@@ -1421,7 +1421,7 @@ public class Util {
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = getRepeatingAlarmIntent(context, null);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         alarmManager.cancel(pendingIntent);
         createTheNextSingleStandardAlarm(context, null);
     }
