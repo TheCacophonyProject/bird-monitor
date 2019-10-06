@@ -872,8 +872,6 @@ public class Util {
             Alarm alarm;
             if (curOffset == null || curOffset.equals(Prefs.FAIL_SAFE_ALARM)) {
                 alarm = getClosestSunAlarm(context, prefs);
-                alarm.TimeMillis= System.currentTimeMillis() + 1000 * 60 * 1;
-
             } else {
                 switch (curOffset) {
                     case Prefs.SUNRISE_OFFSET:
@@ -893,8 +891,6 @@ public class Util {
                         alarm = getClosestSunAlarm(context, prefs);
                         break;
                 }
-
-                alarm.TimeMillis= System.currentTimeMillis() + 1000 * 60 * 1;
             }
             return alarm;
         } else {
