@@ -872,14 +872,18 @@ public class Util {
             Alarm alarm;
             if (curOffset == null || curOffset.equals(Prefs.FAIL_SAFE_ALARM)) {
                 alarm = getClosestSunAlarm(context, prefs);
+                alarm.TimeMillis= System.currentTimeMillis() + 1000 * 60 * 1;
+
             } else {
                 switch (curOffset) {
                     case Prefs.SUNRISE_OFFSET:
                         wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
+                        break;
                     case Prefs.NOON_OFFSET:
                         wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
+                        break;
                     case Prefs.SUNSET_OFFSET:
                         calNow.add(Calendar.DAY_OF_YEAR, 1);
                         wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
@@ -889,6 +893,8 @@ public class Util {
                         alarm = getClosestSunAlarm(context, prefs);
                         break;
                 }
+
+                alarm.TimeMillis= System.currentTimeMillis() + 1000 * 60 * 1;
             }
             return alarm;
         } else {
@@ -932,7 +938,6 @@ public class Util {
         Prefs prefs = new Prefs(context);
         Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
         Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
-
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
             Log.e(TAG, "alarmManager is null");
