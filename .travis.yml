@@ -30,13 +30,13 @@ before_install:
 - echo y | sdkmanager --channel=4 "emulator"
 - echo y | sdkmanager "extras;android;m2repository" >/dev/null
 script:
-- "./gradlew clean :app:bundleRelease"
+  - "./gradlew clean assembleRelease"
 deploy:
   provider: releases
   api_key:
     secure: YjspJC2zkYu+K3QGhUbaWrf2cpKtOaJcYXOAv5fZXcfjfAJDmg5Ziezr8Og797sje3pooarH7mAEI2nNQ/I5jbEdd/L9U3Q9ee7hCsLZWHOH5NJET22Ygp+ZOtT4psShDhA0pcvy5C+iI0N5ic6fM7sSUvidlOEC1Rq7rRa0wpJCSol4lK2vxqoF36yFkc5pv32XQgLK4g/pamLvcePo5r4bLgRfjZXGxRyKhc7vBqb8VQP0bx/TzSP3ecXfZk7QVmEDxEEGPMFKoDOcGYPlCsgbSNHH8QU6KtkEAMQ77jjHMzgmffjPNvZOk289vgwbSGgzJDZYDFvI8/0hZln1aB0lgf7C/zon5we1/yop5zdj3fQarx4bn0LTFByeRs+2kCh/LuW76956IFHWHOTcHO6wUBtb3B/XOLUsxXWOr+Dd6nBzvGL4YhgCYuU9fvyM3ugvfIbQLvK2bIavl8ljXLRmTcGf+x/fkjhrkPUssXoF/4QOgaqYfcY1kypFsYj+VcB/5l8ay2I3nrM5GvsCg2XmMLb/YdR0oYTF/Gw3Uu8HasllCtrJKYypIsDKKaN0g2W2kCQlh4/XEwhhu12czuS4OJkyTFmDcMMz8t0kRMOnG0ZLv7yKbWzjo7sD6dfAaxgOpYSCqqfuFGKju2Oa3LWcqaNvE0gftOSLdVOrwAg=
   file_glob: true
-  file: 'app/build/outputs/apk/release/*.apk'
+  file: app/build/outputs/apk/release/*.apk
   skip_cleanup: true
   on:
     repo: TheCacophonyProject/bird-monitor
