@@ -893,7 +893,7 @@ public class Util {
             } else {
                 switch (curOffset) {
                     case Prefs.SUNRISE_OFFSET:
-                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
                         break;
                     case Prefs.NOON_OFFSET:
