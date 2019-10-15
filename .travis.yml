@@ -1,35 +1,41 @@
 env:
   global:
-  - ADB_INSTALL_TIMEOUT=8
-  - EMU_FLAVOR=default
-  - ANDROID_HOME=/usr/local/android-sdk
-  - TOOLS=${ANDROID_HOME}/tools
-  - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
-  - API=28
-  - ABI=x86
-  - AUDIO=-no-audio
+    - ADB_INSTALL_TIMEOUT=8
+    - EMU_FLAVOR=default
+    - ANDROID_HOME=/usr/local/android-sdk
+    - TOOLS=${ANDROID_HOME}/tools
+    - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
+    - API=28
+    - ABI=x86
+    - AUDIO=-no-audio
 language: android
 dist: trusty
 android:
   components:
-  - tools
+    - tools
 licenses:
-- android-sdk-preview-license-.+
-- android-sdk-license-.+
-- google-gdk-license-.+
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
 before_install:
-- chmod +x gradlew
-- gem update --system
-- gem install bundler
-- bundle install
-- echo 'count=0' > /home/travis/.android/repositories.cfg
-- echo y | sdkmanager "platform-tools" >/dev/null
-- echo y | sdkmanager "tools" >/dev/null
-- echo y | sdkmanager "build-tools;28.0.3" >/dev/null
-- echo y | sdkmanager "platforms;android-$API" >/dev/null
-- echo y | sdkmanager --channel=4 "emulator"
-- echo y | sdkmanager "extras;android;m2repository" >/dev/null
+  - chmod +x gradlew
+  - gem update --system
+  - gem install bundler
+  - bundle install
+  - echo 'count=0' > /home/travis/.android/repositories.cfg
+  - echo y | sdkmanager "platform-tools" >/dev/null
+  - echo y | sdkmanager "tools" >/dev/null
+  - echo y | sdkmanager "build-tools;28.0.3" >/dev/null
+  - echo y | sdkmanager "platforms;android-$API" >/dev/null
+  - echo y | sdkmanager --channel=4 "emulator"
+  - echo y | sdkmanager "extras;android;m2repository" >/dev/null
 script:
+  - "./gradlew clean assembleDebug"
+before_deploy:>>>>>>> sun-alarms
+38
+
+  - openssl aes-256-cbc -K $encrypted_07c92ad84bea_key -iv $encrypted_07c92ad84bea_iv -in signing.tar.enc -out signing.tar -d
+  - tar xvf signing.tar
   - "./gradlew clean assembleRelease"
 deploy:
   provider: releases

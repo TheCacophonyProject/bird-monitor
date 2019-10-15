@@ -13,6 +13,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.crashlytics.android.Crashlytics;
+
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.Util;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.setVeryAdvancedSettingsEnabled(false);
             prefs.setRecLength(1);
             prefs.setIsFirstTimeFalse();
+            prefs.setAutoUpdateAllowed();
         }
 
         final Button advancedButton = findViewById(R.id.btnAdvanced);
@@ -114,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
         Util.createTheNextSingleStandardAlarm(getApplicationContext(), null);
         Util.createFailSafeAlarm(getApplicationContext());
 
-
+        Crashlytics.setUserEmail(prefs.getEmailAddress());
+        Crashlytics.setUserName(prefs.getUsername());
+        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(), prefs.getDeviceName(), prefs.getDeviceId()));
         // Open the Setup wizard if the app does not yet have device name
         if (prefs.getDeviceName() == null) {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));

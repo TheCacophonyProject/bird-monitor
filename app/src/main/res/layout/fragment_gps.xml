@@ -31,9 +31,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-
         android:text="Update GPS Location"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintEnd_toEndOf="parent"

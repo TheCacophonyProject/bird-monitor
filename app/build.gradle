@@ -10,9 +10,25 @@ repositories {
     jcenter()
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+def performSigning = keystorePropertiesFile.exists()
+if (performSigning) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
     compileSdkVersion 28
+    if (performSigning) {
+        signingConfigs {
+            config {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
     defaultConfig {
         applicationId "nz.org.cacophony.birdmonitor"
         minSdkVersion project.ext.minimumSdkVersion
@@ -20,19 +36,25 @@ android {
         versionCode 150010701
         //minimumSdkVersion * 10000000 + versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "1.7.1"
-
-        archivesBaseName = "Bird Monitor-$versionName"
+        vectorDrawables.useSupportLibrary = true
+        archivesBaseName = "Bird-Monitor-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
+
     buildTypes {
         release {
             debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (performSigning) {
+                signingConfig signingConfigs.config
+            }
         }
         debug {
             debuggable true
+            if (performSigning) {
+                signingConfig signingConfigs.config
+            }
         }
 
     }
@@ -49,6 +71,7 @@ android {
 }
 
 dependencies {
+
     implementation 'com.google.firebase:firebase-analytics:17.2.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:2.0.0'
@@ -74,6 +97,7 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestImplementation 'tools.fastlane:screengrab:1.0.0'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
     // Optional -- UI testing with UI Automator
     //  androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'

@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import java.util.Map;
 
 import nz.org.cacophony.birdmonitor.views.MainActivity;
+import tools.fastlane.screengrab.Screengrab;
+import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -50,6 +52,7 @@ public abstract class TestBaseStartingOnSetupScreen {
     @Before
     public final void baseInit() {
         initIdlingResources();
+        Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
 
         targetContext = getInstrumentation().getTargetContext();
         prefs = new Prefs(targetContext);
