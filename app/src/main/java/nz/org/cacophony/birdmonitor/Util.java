@@ -893,11 +893,13 @@ public class Util {
             } else {
                 switch (curOffset) {
                     case Prefs.SUNRISE_OFFSET:
-                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
+                        wakeUpTime = getNoon(context, calNow).getTimeInMillis() + prefs.getNoonOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.NOON_OFFSET);
+                        break;
                     case Prefs.NOON_OFFSET:
                         wakeUpTime = getSunset(context, calNow).getTimeInMillis() + prefs.getSunsetOffsetMillis();
                         alarm = new Alarm(wakeUpTime, Prefs.SUNSET_OFFSET);
+                        break;
                     case Prefs.SUNSET_OFFSET:
                         calNow.add(Calendar.DAY_OF_YEAR, 1);
                         wakeUpTime = getSunrise(context, calNow).getTimeInMillis() + prefs.getSunriseOffsetMillis();
@@ -950,14 +952,13 @@ public class Util {
         Prefs prefs = new Prefs(context);
         Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
         Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
-
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
             Log.e(TAG, "alarmManager is null");
             return;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
@@ -1421,7 +1422,7 @@ public class Util {
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = getRepeatingAlarmIntent(context, null);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         alarmManager.cancel(pendingIntent);
         createTheNextSingleStandardAlarm(context, null);
     }
