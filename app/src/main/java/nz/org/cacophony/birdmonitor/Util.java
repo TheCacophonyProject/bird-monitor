@@ -958,7 +958,7 @@ public class Util {
             return;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
         prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
     }
