@@ -216,6 +216,10 @@
     <string name="very_advanced">Very Advanced</string>
 
     <string name="bird_count_notes_message">Use this screen to add your own notes about the latest recording.</string>
+    <string name="upload_currently_recording">Bird Monitior is currently recording, please wait for recording to finish before uploading recordings</string>
+
+    <string name="press_record_now">Press the RECORD NOW button to check that your phone has been setup correctly.</string>
+    <string name="record_in_progress">Can not record, as a recording is already in progress</string>
 
     <string name="enable_sun_alarms">Use Sun Alarms</string>
     <string name="rec_length">Recording Length (Mins)</string>

@@ -56,10 +56,8 @@ public class RootedFragment extends Fragment {
         }
 
         if (prefs.getAutoUpdateAllowed() && rooted) {
-            prefs.setHasRootAccess(true);
             updateView.setVisibility(View.VISIBLE);
         } else {
-            prefs.setHasRootAccess(false);
             updateView.setVisibility(View.INVISIBLE);
         }
     }

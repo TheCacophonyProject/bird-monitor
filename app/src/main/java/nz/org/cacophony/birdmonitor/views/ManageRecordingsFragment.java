@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -74,7 +75,6 @@ public class ManageRecordingsFragment extends Fragment {
         displayOrHideGUIObjects();
 
         btnCancel.setEnabled(false);
-
         return view;
     }
 
@@ -118,9 +118,13 @@ public class ManageRecordingsFragment extends Fragment {
     }
 
     public void uploadRecordings() {
-
-
-        if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
+        if (RecordAndUpload.isRecording) {
+            Toast.makeText(this.getContext(), R.string.upload_currently_recording, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (Util.isAirplaneModeOn(getContext())) {
+            Util.disableFlightMode(getContext());
+        } else if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
@@ -130,7 +134,6 @@ public class ManageRecordingsFragment extends Fragment {
             tvMessages.setText("You need to register this phone before you can upload");
             return;
         }
-
 
         File recordingsFolder = Util.getRecordingsFolder(getActivity().getApplicationContext());
         File recordingFiles[] = recordingsFolder.listFiles();
@@ -192,7 +195,6 @@ public class ManageRecordingsFragment extends Fragment {
             textView.setTextSize(22);
         });
         dialog.show();
-
     }
 
     public void deleteAllRecordings() {
@@ -211,8 +213,6 @@ public class ManageRecordingsFragment extends Fragment {
                 JSONObject joMessage = new JSONObject(jsonStringMessage);
                 String messageTypeStr = joMessage.optString("messageType");
                 String messageToDisplay = joMessage.getString("messageToDisplay");
-
-                // Need to handle broadcasts
 
                 if (!messageTypeStr.isEmpty()) {
                     MessageType messageType = MessageType.valueOf(messageTypeStr);
