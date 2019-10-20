@@ -4,7 +4,6 @@ package nz.org.cacophony.birdmonitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -64,16 +63,11 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
 
         try {
+            final String alarmIntentType = intent.getStringExtra(Prefs.INTENT_TYPE);
             String relativeTo = intent.getStringExtra(Prefs.RELATIVE);
-            Util.createTheNextSingleStandardAlarm(context, relativeTo);
-            // need to determine the source of the intent ie Main UI or boot receiver
-            Bundle bundle = intent.getExtras();
-            if (bundle == null) {
-                Log.e(TAG, "bundle is null");
-                Crashlytics.logException(new Throwable("Bundle is null"));
-                return;
+            if (!Util.isUIRecording(alarmIntentType)) {
+                Util.createTheNextSingleStandardAlarm(context, relativeTo);
             }
-            final String alarmIntentType = bundle.getString(Prefs.INTENT_TYPE);
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
                 Crashlytics.logException(new Throwable("No Intent Type"));

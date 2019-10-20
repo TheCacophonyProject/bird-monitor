@@ -91,11 +91,11 @@ public class TestRecordFragment extends Fragment {
 
         if (RecordAndUpload.isRecording) {
             getView().findViewById(R.id.btnRecordNow).setEnabled(false);
-            tvTitleMessage.setText("Can not record, as a recording is already in progress");
+            tvTitleMessage.setText(getString(R.string.record_in_progress));
             btnRecordNow.setVisibility(View.GONE);
         } else {
             getView().findViewById(R.id.btnRecordNow).setEnabled(true);
-            tvTitleMessage.setText("Press the RECORD NOW button to check that your phone has been setup correctly.");
+            tvTitleMessage.setText(getString(R.string.press_record_now));
             btnRecordNow.setVisibility(View.VISIBLE);
         }
     }

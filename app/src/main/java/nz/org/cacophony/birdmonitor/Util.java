@@ -516,9 +516,8 @@ public class Util {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired) {
         int numberOfLoops = 0;
-
-        while (isNetworkConnected(context) != networkConnectionRequired) {
-
+        boolean connected = isNetworkConnected(context);
+        while (!connected && networkConnectionRequired) {
             try {
                 Thread.sleep(1000); // give time for airplane mode to turn off
             } catch (InterruptedException ex) {
@@ -530,12 +529,9 @@ public class Util {
                 Log.e(TAG, "Number of loops > 60");
                 break;
             }
+            connected = isNetworkConnected(context);
         }
-        //noinspection RedundantIfStatement
-        if (numberOfLoops > 60) {
-            return false;
-        }
-        return true;
+        return connected;
     }
 
 
@@ -561,7 +557,6 @@ public class Util {
         if (!new Prefs(context).getAeroplaneMode()) {
             return;
         }
-
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -1136,6 +1131,9 @@ public class Util {
     }
 
     public static void deleteAllRecordingsOnPhoneUsingDeleteButton(final Context context) {
+        if (RecordAndUpload.isRecording) {
+            new Prefs(context).setCancelRecording(true);
+        }
         new Thread(() -> {
             try {
                 File recordingsFolder = Util.getRecordingsFolder(context);

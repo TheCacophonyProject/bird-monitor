@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import io.fabric.sdk.android.services.common.CommonUtils;
+
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
@@ -514,11 +516,7 @@ public class Prefs {
     }
 
     public boolean getHasRootAccess() {
-        return getBoolean(HAS_ROOT_ACCESS_KEY);
-    }
-
-    public void setHasRootAccess(boolean hasRootAccess) {
-        setBoolean(HAS_ROOT_ACCESS_KEY, hasRootAccess);
+        return CommonUtils.isRooted(this.context);
     }
 
     public boolean getUseShortRecordings() {

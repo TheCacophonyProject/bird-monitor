@@ -62,7 +62,7 @@ public class RecordAndUpload {
         }
 
         Prefs prefs = new Prefs(context);
-
+        prefs.setCancelRecording(false);
         long recordTimeSeconds = Util.getRecordingDuration(context, typeOfRecording, offset);
 
         if (isRecording) {
@@ -270,17 +270,17 @@ public class RecordAndUpload {
             // Just in case this checking affects the actual time of a recording, I only used this
             // checking for the Bird Count recordings.
 
-            if (Util.isBirdCountRecording(typeOfRecording)) {
+            if (Util.isUIRecording(typeOfRecording)) {
                 // Sleep for duration of recording modified to check if that no request to stop has be given (say from Bird Count)
                 try {
                     long remainingRecordingTime = recordTimeSeconds * 1000;
-                    while (remainingRecordingTime > 0 && !prefs.getCancelRecording()) {
+                    while (remainingRecordingTime > 0) {
                         Thread.sleep(1000);
                         remainingRecordingTime -= 1000;
-                    }
-                    if (prefs.getCancelRecording()) {
-                        cancelRecording(mRecorder, context, file, prefs);
-                        return;
+                        if (prefs.getCancelRecording()) {
+                            cancelRecording(mRecorder, context, file, prefs);
+                            return;
+                        }
                     }
 
                 } catch (InterruptedException e) {
