@@ -11,7 +11,7 @@
     <string name="activity_or_fragment_title_advanced_setup">Advanced Setup</string>
     <string name="activity_or_fragment_title_main">Bird Monitor</string>
     <string name="activity_or_fragment_title_register_phone">Register Phone</string>
-    <string name="activity_or_fragment_title_rooted">Rooted?</string>
+    <string name="activity_or_fragment_title_rooted">Rooted Options</string>
     <string name="activity_or_fragment_title_gps">GPS Location</string>
     <string name="activity_or_fragment_title_walking">Walking?</string>
     <string name="activity_or_fragment_title_manage_recordings">Recordings</string>
@@ -63,6 +63,10 @@
     <string name="update_check">Check for update</string>
     <string name="version_title">Bird Monitor</string>
     <string name="aeroplane_mode">Use Aeroplane Mode</string>
+    <string name="bluetooth_mode">Don\'t disable bluetooth with aeroplane mode</string>
+    <string name="restart">Disabling/Enabling bluetooth in aeroplane mode requires a restart for changes to take effect.</string>
+
+
     <string name="auto_update">Auto update Bird Monitor</string>
     <string name="update_available">Bird Monitor %1$s is available</string>
     <string name="update_no_connection">Cannot connect to update server</string>

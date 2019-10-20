@@ -50,6 +50,7 @@ public class Prefs {
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
+    private static final String USE_BLUETOOTH_MODE = "useBluetoothMode";
     private static final String DATE_TIME_LAST_UPDATE_CHECK = "lastUpdateCheck";
     private static final String AUTO_UPDATE_ALLOWED = "autoUpdateAllowed";
     private static final String PRODUCTION_CACOPHONY_PROJECT_WEBSITE_BROWSE_RECORDINGS = "https://browse.cacophony.org.nz/";
@@ -753,6 +754,15 @@ public class Prefs {
     public void setAeroplaneMode(boolean aeroplaneMode) {
         setBoolean(USE_AEROPLANE_MODE, aeroplaneMode);
     }
+
+    public boolean getBluetoothMode() {
+        return getBoolean(USE_BLUETOOTH_MODE);
+    }
+
+    public void setBluetoothMode(boolean bluetoothMode) {
+        setBoolean(USE_BLUETOOTH_MODE, bluetoothMode);
+    }
+
 
     public long getDateTimeLastUpdateCheck() {
         return getLong(DATE_TIME_LAST_UPDATE_CHECK);

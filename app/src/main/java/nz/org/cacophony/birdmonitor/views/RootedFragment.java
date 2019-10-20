@@ -1,5 +1,6 @@
 package nz.org.cacophony.birdmonitor.views;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,9 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import org.fdroid.fdroid.privileged.IPrivilegedService;
@@ -32,7 +35,7 @@ import nz.org.cacophony.birdmonitor.Util;
 public class RootedFragment extends Fragment {
 
     private static final String TAG = "RootedFragment";
-    private Switch swAeroplane, swAutoUpdate;
+    private Switch swAeroplane, swAutoUpdate, swBluetooth;
     private Boolean hasInstallPermission = false;
     private Boolean updateAvailable = false;
     private Boolean isDownloading = false;
@@ -50,9 +53,14 @@ public class RootedFragment extends Fragment {
         if (rooted) {
             tvRooted.setText(getString(R.string.rooted));
             btnRootCheck.setVisibility(View.GONE);
+            swAeroplane.setVisibility(View.VISIBLE);
+            swBluetooth.setVisibility(View.VISIBLE);
+
         } else {
             tvRooted.setText(getString(R.string.not_rooted));
             btnRootCheck.setVisibility(View.VISIBLE);
+            swAeroplane.setVisibility(View.GONE);
+            swBluetooth.setVisibility(View.GONE);
         }
 
         if (prefs.getAutoUpdateAllowed() && rooted) {
@@ -140,6 +148,39 @@ public class RootedFragment extends Fragment {
         Prefs prefs = new Prefs(this.getContext());
         swAeroplane.setChecked(prefs.getAeroplaneMode());
         swAutoUpdate.setChecked(prefs.getAutoUpdate());
+        swBluetooth.setChecked(prefs.getBluetoothMode());
+    }
+
+    void rebootMessage() {
+        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Restart Now", (di, id) -> Util.rebootNow(getContext()))
+                .setNegativeButton("OK", null)
+                .setMessage(getString(R.string.restart))
+                .setTitle("Restart Required")
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnPositive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            btnPositive.setTextSize(24);
+            int btnPositiveColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnPositive.setTextColor(btnPositiveColor);
+
+            Button btnNegative = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            btnNegative.setTextSize(24);
+            int btnNegativeColor = ResourcesCompat.getColor(getActivity().getResources(), R.color.dialogButtonText, null);
+            btnNegative.setTextColor(btnNegativeColor);
+
+            TextView textView = dialog.findViewById(android.R.id.message);
+            textView.setTextSize(22);
+        });
+        dialog.show();
+    }
+
+    void setBluetoothMode(boolean checked) {
+        Prefs prefs = new Prefs(this.getContext());
+        prefs.setBluetoothMode(checked);
+        Util.setAeroplaneBluetooth(getContext(), checked);
+        rebootMessage();
     }
 
     void setAeroplaneMode(boolean checked) {
@@ -165,6 +206,7 @@ public class RootedFragment extends Fragment {
         btnUpdateCheck = view.findViewById(R.id.btnUpdateCheck);
         tvPrivStatus = view.findViewById(R.id.tvPrivStatus);
         swAeroplane = view.findViewById(R.id.swAeroplane);
+        swBluetooth = view.findViewById(R.id.swBluetooth);
         swAutoUpdate = view.findViewById(R.id.swAutoUpdate);
         tvVersion = view.findViewById(R.id.tvVersion);
         updateView = view.findViewById(R.id.updateOptions);
@@ -175,7 +217,7 @@ public class RootedFragment extends Fragment {
         checkUpdate();
         applySavedSettings();
         checkDownloadStatus();
-
+        swBluetooth.setOnCheckedChangeListener((buttonView, isChecked) -> setBluetoothMode(isChecked));
         swAeroplane.setOnCheckedChangeListener((buttonView, isChecked) -> setAeroplaneMode(isChecked));
         swAutoUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> setAutoUpdate(isChecked));
         btnRootCheck.setOnClickListener(v -> checkRootAccess());
