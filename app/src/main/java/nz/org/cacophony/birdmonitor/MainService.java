@@ -9,6 +9,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.Date;
 
 
@@ -41,6 +43,11 @@ public class MainService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
+        Prefs prefs = new Prefs(getApplicationContext());
+        Crashlytics.setUserEmail(prefs.getEmailAddress());
+        Crashlytics.setUserName(prefs.getUsername());
+        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(), prefs.getDeviceName(), prefs.getDeviceId()));
+
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");
@@ -71,14 +78,12 @@ public class MainService extends IntentService {
                 Log.e(TAG, "MainService bundle is null");
             }
         } finally {
-            Util.enableFlightMode(getApplicationContext());
-            if (wakeLock.isHeld()) {
-                wakeLock.release();
-            }
             if (updating == false) {
                 Util.enableFlightMode(getApplicationContext());
             }
-            wakeLock.release();
+            if (wakeLock.isHeld()) {
+                wakeLock.release();
+            }
         }
     }
 }
