@@ -95,6 +95,11 @@ public class Util {
     private static final String DEFAULT_RECORDINGS_FOLDER = "recordings";
     private static final String DEFAULT_RECORDING_NOTES_FOLDER = "notes";
     private static final String RECORDING_FILE_EXTENSION = ".m4a";
+
+    private static final String COMMAND_AEROPLANE_RADIOS_BLUETOOTH = "settings put global airplane_mode_radios cell,wifi,nfc,wimax";
+    private static final String COMMAND_AEROPLANE_RADIOS_DEFAULT = "settings put global airplane_mode_radios cell,wifi,nfc,wimax,bluetooth";
+
+
     // For airplane mode
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
     private final static String COMMAND_FLIGHT_MODE_2 = "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state";
@@ -553,6 +558,18 @@ public class Util {
         return isConnected;
     }
 
+    public static void setAeroplaneBluetooth(final Context context, boolean enable) {
+        if (enable) {
+            executeCommandTim(context, COMMAND_AEROPLANE_RADIOS_BLUETOOTH);
+        } else {
+            executeCommandTim(context, COMMAND_AEROPLANE_RADIOS_DEFAULT);
+        }
+    }
+
+    public static void rebootNow(final Context context) {
+        executeCommandTim(context, "reboot");
+    }
+
     public static void disableFlightMode(final Context context) {
         if (!new Prefs(context).getAeroplaneMode()) {
             return;
@@ -935,6 +952,10 @@ public class Util {
         return intent;
     }
 
+    public static boolean alarmExists(Context context) {
+        return PendingIntent.getBroadcast(context, 0, getRepeatingAlarmIntent(context, null), PendingIntent.FLAG_NO_CREATE) != null;
+    }
+
     /**
      * Creates Android OS alarms that when fired by the OS, create and send intents to the
      * StartRecordingReceiver class which in turn initiate a recording.
@@ -953,9 +974,16 @@ public class Util {
             return;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        boolean exists = alarmExists(context);
+        int flags = 0;
+        if (prefs.getUseSunAlarms()) {
+            flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
-        prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
+        if (exists == false || prefs.getUseSunAlarms()) {
+            prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
+        }
     }
 
     public static void updateGPSLocation(Context context) {
@@ -1419,9 +1447,12 @@ public class Util {
 
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent myIntent = getRepeatingAlarmIntent(context, null);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
-        alarmManager.cancel(pendingIntent);
+        Intent myIntent = getRepeatingAlarmIntent(context, Prefs.NOON_OFFSET);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        if (pendingIntent != null) {
+            pendingIntent.cancel();
+            alarmManager.cancel(pendingIntent);
+        }
         createTheNextSingleStandardAlarm(context, null);
     }
 
