@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Now create the alarms that will cause the recordings to happen
-        Util.createTheNextSingleStandardAlarm(getApplicationContext(), null, null);
+        Util.createTheNextSingleStandardAlarm(getApplicationContext(), null, Prefs.START_UP);
         Util.createFailSafeAlarm(getApplicationContext());
 
         Crashlytics.setUserEmail(prefs.getEmailAddress());

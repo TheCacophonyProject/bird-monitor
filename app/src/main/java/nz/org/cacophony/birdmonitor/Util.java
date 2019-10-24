@@ -1453,7 +1453,7 @@ public class Util {
             pendingIntent.cancel();
             alarmManager.cancel(pendingIntent);
         }
-        createTheNextSingleStandardAlarm(context, null, null);
+        createTheNextSingleStandardAlarm(context, null, Prefs.REPEATING_ALARM);
     }
 
     public static class Alarm {

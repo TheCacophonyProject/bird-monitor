@@ -47,7 +47,7 @@ public class BootReceiver extends BroadcastReceiver {
                     long timeout = 1000 * 60 * 2;  // give the boot stuff two minutes to run - but the enable flight mode does not seem to be working (however long I wait).
                     wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creation
                     try {
-                        Util.createTheNextSingleStandardAlarm(context, null, null);
+                        Util.createTheNextSingleStandardAlarm(context, null, intent.getAction());
                         Util.createFailSafeAlarm(context);
                         Util.enableFlightMode(context);
                         if (intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
