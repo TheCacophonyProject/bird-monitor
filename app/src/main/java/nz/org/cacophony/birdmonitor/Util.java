@@ -964,7 +964,7 @@ public class Util {
      *
      * @param context *
      */
-    public static void createTheNextSingleStandardAlarm(Context context, String relativeTo) {
+    public static void createTheNextSingleStandardAlarm(Context context, String relativeTo, String triggerType) {
         Prefs prefs = new Prefs(context);
         Alarm nextAlarm = getNextAlarm(context, prefs, relativeTo);
         Intent myIntent = getRepeatingAlarmIntent(context, nextAlarm.OffsetType);
@@ -974,14 +974,14 @@ public class Util {
             return;
         }
 
-        boolean exists = alarmExists(context);
+        boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM)) || !alarmExists(context);
         int flags = 0;
         if (prefs.getUseSunAlarms()) {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
-        if (exists == false || prefs.getUseSunAlarms()) {
+        if (updateTime || prefs.getUseSunAlarms()) {
             prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
         }
     }
@@ -1042,7 +1042,7 @@ public class Util {
                                                     boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
-        createTheNextSingleStandardAlarm(context, null);
+        changeAlarmType(context);
     }
 
     public static void setUseFrequentUploads(Context context, boolean useFrequentUploads) {
@@ -1453,7 +1453,7 @@ public class Util {
             pendingIntent.cancel();
             alarmManager.cancel(pendingIntent);
         }
-        createTheNextSingleStandardAlarm(context, null);
+        createTheNextSingleStandardAlarm(context, null, Prefs.REPEATING_ALARM);
     }
 
     public static class Alarm {

@@ -66,7 +66,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             final String alarmIntentType = intent.getStringExtra(Prefs.INTENT_TYPE);
             String relativeTo = intent.getStringExtra(Prefs.RELATIVE);
             if (!Util.isUIRecording(alarmIntentType)) {
-                Util.createTheNextSingleStandardAlarm(context, relativeTo);
+                Util.createTheNextSingleStandardAlarm(context, relativeTo, alarmIntentType);
             }
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
