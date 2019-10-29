@@ -48,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -1443,6 +1444,18 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage());
         }
         return jsonNotes;
+    }
+
+    public static boolean hasSuperUserAccess() {
+        return ExecuteAsRootBase.canRunRootCommands();
+    }
+
+    public static void requestSuperUser() {
+        try {
+            Runtime.getRuntime().exec("su");
+        } catch (IOException ex) {
+            Log.e(TAG, ex.getLocalizedMessage(), ex);
+        }
     }
 
     public static void changeAlarmType(Context context) {
