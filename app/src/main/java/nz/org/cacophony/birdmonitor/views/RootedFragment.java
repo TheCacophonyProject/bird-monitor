@@ -47,26 +47,43 @@ public class RootedFragment extends Fragment {
     private ConstraintLayout updateView;
     private UpdateUtil.LatestVersion latestVersion;
 
+
     void checkRootAccess() {
         Prefs prefs = new Prefs(this.getContext());
         boolean rooted = CommonUtils.isRooted(this.getContext());
+
+        tvRooted.setText(getString(R.string.not_rooted));
+        btnRootCheck.setVisibility(View.VISIBLE);
+        swAeroplane.setVisibility(View.GONE);
+        swBluetooth.setVisibility(View.GONE);
         if (rooted) {
-            tvRooted.setText(getString(R.string.rooted));
-            btnRootCheck.setVisibility(View.GONE);
-            swAeroplane.setVisibility(View.VISIBLE);
-            swBluetooth.setVisibility(View.VISIBLE);
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    boolean rooted = Util.hasSuperUserAccess();
+                    getActivity().runOnUiThread(() -> {
+                        if (rooted) {
+                            tvRooted.setText(getString(R.string.rooted));
+                            btnRootCheck.setVisibility(View.GONE);
+                            swAeroplane.setVisibility(View.VISIBLE);
+                            swBluetooth.setVisibility(View.VISIBLE);
 
-        } else {
-            tvRooted.setText(getString(R.string.not_rooted));
-            btnRootCheck.setVisibility(View.VISIBLE);
-            swAeroplane.setVisibility(View.GONE);
-            swBluetooth.setVisibility(View.GONE);
-        }
+                        } else {
+                            tvRooted.setText(getString(R.string.not_rooted));
+                            btnRootCheck.setVisibility(View.VISIBLE);
+                            swAeroplane.setVisibility(View.GONE);
+                            swBluetooth.setVisibility(View.GONE);
+                        }
 
-        if (prefs.getAutoUpdateAllowed() && rooted) {
-            updateView.setVisibility(View.VISIBLE);
-        } else {
-            updateView.setVisibility(View.INVISIBLE);
+                        if (prefs.getAutoUpdateAllowed() && rooted) {
+                            updateView.setVisibility(View.VISIBLE);
+                        } else {
+                            updateView.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            };
+            thread.start();
         }
     }
 
@@ -181,6 +198,7 @@ public class RootedFragment extends Fragment {
         prefs.setBluetoothMode(checked);
         Util.setAeroplaneBluetooth(getContext(), checked);
         rebootMessage();
+
     }
 
     void setAeroplaneMode(boolean checked) {
