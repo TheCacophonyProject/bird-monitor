@@ -83,16 +83,6 @@ public class VitalsActivity extends AppCompatActivity {
         checkPermissions();
     }
 
-    private void disableFlightMode() {
-        try {
-            //https://stackoverflow.com/questions/3875184/cant-create-handler-inside-thread-that-has-not-called-looper-prepare
-            new Thread(() -> runOnUiThread(() -> Util.disableFlightMode(getApplicationContext()))).start();
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-            tvMessages.setText("Error disabling flight mode");
-        }
-    }
-
     /**
      * Updated UI.
      */
@@ -117,8 +107,6 @@ public class VitalsActivity extends AppCompatActivity {
         versionNameText.setText(versionNameTextToDisplay);
 
         MessageHelper.registerMessageHandler(MANAGE_RECORDINGS_ACTION, messageHandler, this);
-
-        disableFlightMode();
     }
 
 

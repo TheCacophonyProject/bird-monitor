@@ -32,7 +32,9 @@ public class MainService extends IntentService {
                 Util.disableFlightMode(context);
                 prefs.setDateTimeLastUpdateCheck(now);
                 prefs.setFlightModePending(prefs.getAeroplaneMode());
-                return UpdateUtil.updateIfAvailable(context);
+                if (Util.waitForNetworkConnection(context, true)) {
+                    return UpdateUtil.updateIfAvailable(context);
+                }
             }
         }
         return false;
