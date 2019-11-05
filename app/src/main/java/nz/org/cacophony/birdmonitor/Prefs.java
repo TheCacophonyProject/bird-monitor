@@ -859,4 +859,10 @@ public class Prefs {
     public void setSunsetOffset(String offset) {
         setInt(SUNSET_OFFSET, parseMinMaxInt(offset, -MAX_ALARM_OFFSET, MAX_ALARM_OFFSET));
     }
+
+    public void setCrashlyticsUser() {
+        Crashlytics.setUserEmail(this.getEmailAddress());
+        Crashlytics.setUserName(this.getUsername());
+        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", this.getGroupName(), this.getDeviceName(), this.getDeviceId()));
+    }
 }
