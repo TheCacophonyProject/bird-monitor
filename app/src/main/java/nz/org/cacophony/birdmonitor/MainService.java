@@ -9,8 +9,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.Date;
 
 
@@ -46,10 +44,7 @@ public class MainService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         Prefs prefs = new Prefs(getApplicationContext());
-        Crashlytics.setUserEmail(prefs.getEmailAddress());
-        Crashlytics.setUserName(prefs.getUsername());
-        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", prefs.getGroupName(), prefs.getDeviceName(), prefs.getDeviceId()));
-
+        prefs.setCrashlyticsUser();
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");

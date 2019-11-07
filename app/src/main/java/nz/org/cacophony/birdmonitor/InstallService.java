@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.fdroid.fdroid.privileged.IPrivilegedCallback;
 import org.fdroid.fdroid.privileged.IPrivilegedService;
@@ -36,12 +39,29 @@ public class InstallService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Prefs prefs = new Prefs(getApplicationContext());
+        prefs.setCrashlyticsUser();
+
+        if (intent == null || intent.getExtras() == null) {
+            Log.e(TAG, "Update Service with empty uri");
+            Crashlytics.logException(new Throwable(TAG + " Update Service null intent"));
+
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         String updateURL = intent.getStringExtra(Prefs.UPDATE_URI);
         if (updateURL == null) {
             Log.e(TAG, "Update intent with empty uri");
+            Crashlytics.logException(new Throwable(TAG + " Update intent with empty uri"));
+
             stopSelf();
-            return START_STICKY;
+            return START_NOT_STICKY;
         }
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "Cacophonometer:MainServiceWakelockTag");
+        wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
 
         mServiceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -50,8 +70,12 @@ public class InstallService extends Service {
                 IPrivilegedCallback callback = new IPrivilegedCallback.Stub() {
                     @Override
                     public void handleResult(String packageName, int returnCode) throws RemoteException {
+                        if (wakeLock.isHeld()) {
+                            wakeLock.release();
+                        }
                         //this will only happen on error as if app replaced successfull service is stopped by update
                         Log.e(TAG, "handleResult for " + packageName + " result " + returnCode);
+                        Crashlytics.logException(new Throwable(TAG + " handleResult for " + packageName + " result " + returnCode));
                         unbindService(mServiceConnection);
                         stopSelf();
                     }
@@ -72,11 +96,15 @@ public class InstallService extends Service {
 
                 } catch (RemoteException e) {
                     Log.e(TAG, "RemoteException", e);
-
+                    Crashlytics.logException(e);
                 } catch (Exception e) {
                     Log.e(TAG, "RemoteException", e);
+                    Crashlytics.logException(e);
                 } finally {
                     stopSelf();
+                    if (wakeLock.isHeld()) {
+                        wakeLock.release();
+                    }
                 }
             }
 
