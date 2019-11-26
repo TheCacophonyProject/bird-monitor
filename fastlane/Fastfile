@@ -39,6 +39,7 @@ platform :android do
       use_tests_in_classes:(['nz.org.cacophony.birdmonitor.ScreenshotGen']),
       test_instrumentation_runner: 'androidx.test.runner.AndroidJUnitRunner'
     )
+    sh("python3 ./renamescreens.py")
   end
 
   desc "Submit a new Beta Build to Playstore"
