@@ -1,2 +1,2 @@
-json_key_file("~/Cacophony/playstore-api.json")
+json_key_file("./api.json")
 package_name("nz.org.cacophony.birdmonitor") 

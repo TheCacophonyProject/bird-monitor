@@ -24,6 +24,10 @@ In order to allow bird monitor to auto update:
   https://github.com/TheCacophonyProject/Bird-Monitor-Privileged-Extension
 * Playstore Play protect must be disabled, otherwise a warning popup will block auto update
 
+## Screenshots
+* To update screen shot files you must have an android phone connected via adb and then run `fastlane take_screenshots`
+* To update play store screen shots run `fastlane update_meta`
+
 ## Releases
 
 * Ensure all required changes have been merged into the master branch on Github.
