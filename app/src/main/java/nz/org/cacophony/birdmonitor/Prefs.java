@@ -48,7 +48,10 @@ public class Prefs {
     static final String UPDATE_URI = "URI";
     static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
     private static final String TAG = Prefs.class.getName();
-    private static final String FLIGHT_MODE_PENDING_UPDATE = "flightModePendingUpdate";
+    public static final int FLIGHT_MODE_PENDING_UPDATE =0x1;
+    public static final int FLIGHT_MODE_PENDING_UPLOAD = 0x2;
+
+    private static final String FLIGHT_MODE_PENDING =  "FLIGHT_MODE_PENDING";
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
@@ -774,13 +777,51 @@ public class Prefs {
         setLong(DATE_TIME_LAST_UPDATE_CHECK, dateTimeLastUpload);
     }
 
-    public boolean getFlightModePending() {
-        return getBoolean(FLIGHT_MODE_PENDING_UPDATE);
+    public int getFlightModePending() {
+        return getInt(FLIGHT_MODE_PENDING);
     }
 
-    public void setFlightModePending(boolean pendingUpdate) {
-        setBoolean(FLIGHT_MODE_PENDING_UPDATE, pendingUpdate);
+
+    public boolean canActiveFlightMode(int finishedFlags) {
+        int flightPending = getFlightModePending();
+        if ((flightPending & finishedFlags) >0){
+            flightPending = setInternetRequired(false, finishedFlags);
+            return flightPending == 0;
+        }
+        return false;
     }
+
+    public int setInternetRequired(boolean required, int flags) {
+        int flightPending = getFlightModePending();
+        if(required) {
+            flightPending |=  flags;
+        }else{
+            flightPending &= ~flags;
+        }
+        setInt(FLIGHT_MODE_PENDING,flightPending);
+        return flightPending;
+    }
+//
+//    public void setFlightModeUpdatePending(boolean pendingUpdate) {
+//        int flightPending = getFlightModePending();
+//        if(pendingUpdate) {
+//            flightPending |=  FLIGHT_MODE_PENDING_UPDATE;
+//        }else{
+//            flightPending &= ~FLIGHT_MODE_PENDING_UPDATE;
+//        }
+//        setInt(FLIGHT_MODE_PENDING,flightPending);
+//        return flightPending;
+//    }
+//
+//    public void setFlightModeUploadPending(boolean pendingUpdate) {
+//        int flightPending = getFlightModePending();
+//        if(pendingUpdate) {
+//            flightPending |=  FLIGHT_MODE_PENDING_UPLOAD;
+//        }else{
+//            flightPending &= ~FLIGHT_MODE_PENDING_UPLOAD;
+//        }
+//        setInt(FLIGHT_MODE_PENDING,flightPending);
+//    }
 
     public boolean getRelaunchOnUpdate() {
         return getBoolean(RELAUNCH_ON_UPDATE);

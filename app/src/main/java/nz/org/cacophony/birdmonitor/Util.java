@@ -572,15 +572,22 @@ public class Util {
     }
 
     public static void disableFlightMode(final Context context) {
-        if (!new Prefs(context).getAeroplaneMode()) {
+        disableFlightMode(context, 0);
+    }
+    
+    public static void disableFlightMode(final Context context, int flags) {
+        Prefs prefs = new Prefs(context);
+        if (!prefs.getAeroplaneMode()) {
             return;
+        }
+        if(flags > 0) {
+            prefs.setInternetRequired(true, flags);
         }
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                     // API 17 onwards.
                     // Must be a rooted device
-                    Prefs prefs = new Prefs(context);
                     if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
                         return;
                     }
@@ -648,11 +655,13 @@ public class Util {
 
         if (UpdateUtil.isDownloading(context)) {
             Log.d(TAG, "Flight mode pending as am downloading update");
-            prefs.setFlightModePending(true);
+            prefs.setInternetRequired(true, Prefs.FLIGHT_MODE_PENDING_UPDATE);
             return;
         }
-
-        prefs.setFlightModePending(false);
+        if (prefs.getFlightModePending() > 0){
+            Log.d(TAG, "Flight mode pending status: " + prefs.getFlightModePending());
+            return;
+        }
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1

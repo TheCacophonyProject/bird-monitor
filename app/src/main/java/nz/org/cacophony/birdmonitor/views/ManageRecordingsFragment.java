@@ -122,14 +122,15 @@ public class ManageRecordingsFragment extends Fragment {
             Toast.makeText(this.getContext(), R.string.upload_currently_recording, Toast.LENGTH_SHORT).show();
             return;
         }
+        Prefs prefs = new Prefs(getContext());
+
         if (Util.isAirplaneModeOn(getContext())) {
-            Util.disableFlightMode(getContext());
+            Util.disableFlightMode(getContext(), Prefs.FLIGHT_MODE_PENDING_UPLOAD);
         } else if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
-        Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
             tvMessages.setText("You need to register this phone before you can upload");
             return;

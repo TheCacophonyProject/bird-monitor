@@ -355,11 +355,12 @@ public class RecordAndUpload {
             Log.e(TAG, "Error getting recordings folder.");
             return false;
         }
+        Prefs prefs = new Prefs(context);
 
         File[] recordingFiles = recordingsFolder.listFiles();
         if (recordingFiles != null) {
 
-            Util.disableFlightMode(context);
+            Util.disableFlightMode(context, Prefs.FLIGHT_MODE_PENDING_UPLOAD);
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
@@ -370,7 +371,6 @@ public class RecordAndUpload {
             // Check here to see if can connect to server and abort (for all files) if can't
             // Check that there is a JWT (JSON Web Token)
 
-            Prefs prefs = new Prefs(context);
 
             // check to see if webToken needs updating
             boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
@@ -438,6 +438,7 @@ public class RecordAndUpload {
                     if (!isCancelUploadingRecordings()) {
                         Log.e(TAG, "Failed to upload file to server");
                     }
+                    prefs.setInternetRequired(false,Prefs.FLIGHT_MODE_PENDING_UPLOAD);
                     return false;
                 }
             }
@@ -446,6 +447,7 @@ public class RecordAndUpload {
             messageToDisplay = "Recordings have been successfully uploaded to the server.";
             MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
         }
+        prefs.setInternetRequired(false,Prefs.FLIGHT_MODE_PENDING_UPLOAD);
         return returnValue;
 
     }
