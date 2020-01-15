@@ -796,7 +796,7 @@ public class Prefs {
     }
 
     /*
-      setInternetRequired saves  what part of the app, specified by flags
+      setInternetRequired saves what part of the app, specified by flags
       is requiring internet ( keeps flight mode from being enabled by the app)
     */
     public int setInternetRequired(boolean required, int flags) {
