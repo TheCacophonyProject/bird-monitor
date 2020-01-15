@@ -81,6 +81,10 @@ public class ManageRecordingsFragment extends Fragment {
         return view;
     }
 
+    /*
+        toggleButtonStatus checks if we are currently uploading or recording and sets appropriate
+        buttons to be enabled/disabled
+    */
     public void toggleButtonStatus() {
         if (RecordAndUpload.isUploading) {
             btnCancel.setEnabled(true);
@@ -139,8 +143,8 @@ public class ManageRecordingsFragment extends Fragment {
             Toast.makeText(this.getContext(), R.string.upload_currently_recording, Toast.LENGTH_SHORT).show();
             return;
         }
-        Prefs prefs = new Prefs(getContext());
 
+        Prefs prefs = new Prefs(getContext());
         if (Util.isAirplaneModeOn(getContext())) {
             Util.disableFlightMode(getContext(), Prefs.FLIGHT_MODE_PENDING_UPLOAD);
         } else if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {

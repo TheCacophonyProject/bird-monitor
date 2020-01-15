@@ -981,7 +981,6 @@ public class Util {
             return;
         }
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM)) || !alarmExists(context);
-
         int flags = 0;
         if (prefs.getUseSunAlarms()) {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
