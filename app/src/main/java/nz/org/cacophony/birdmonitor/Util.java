@@ -635,11 +635,8 @@ public class Util {
             return;
         }
 
-        boolean onlineMode = prefs.getOnlineMode();
-
-
-        if (onlineMode) {
-            return; // don't try to enable airplane mode
+        if (prefs.getOnlineMode() || Util.isAirplaneModeOn(context)) {
+            return;
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
