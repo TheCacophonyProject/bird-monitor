@@ -101,7 +101,7 @@ public class InstallService extends Service {
                     Log.e(TAG, "RemoteException", e);
                     Crashlytics.logException(e);
                 } finally {
-                    if (Util.isAirplaneModeOn(getApplicationContext())) {
+                    if (prefs.getAeroplaneMode() && !Util.isAirplaneModeOn(getApplicationContext())) {
                         if (prefs.canActiveFlightMode(Prefs.FLIGHT_MODE_PENDING_UPDATE)) {
                             Util.enableFlightMode(getApplicationContext());
                         }

@@ -782,6 +782,10 @@ public class Prefs {
     }
 
 
+    /*
+    canActivateFlightMode removes the provided flags from preventing flight mode activation
+    and then returns weather or not we can activate flight mode (nothing is requiring connection)
+    */
     public boolean canActiveFlightMode(int finishedFlags) {
         int flightPending = getFlightModePending();
         if ((flightPending & finishedFlags) > 0) {
@@ -791,6 +795,10 @@ public class Prefs {
         return false;
     }
 
+    /*
+      setInternetRequired saves  what part of the app, specified by flags
+      is requiring internet ( keeps flight mode from being enabled by the app)
+    */
     public int setInternetRequired(boolean required, int flags) {
         int flightPending = getFlightModePending();
         if (required) {
@@ -801,27 +809,6 @@ public class Prefs {
         setInt(FLIGHT_MODE_PENDING, flightPending);
         return flightPending;
     }
-//
-//    public void setFlightModeUpdatePending(boolean pendingUpdate) {
-//        int flightPending = getFlightModePending();
-//        if(pendingUpdate) {
-//            flightPending |=  FLIGHT_MODE_PENDING_UPDATE;
-//        }else{
-//            flightPending &= ~FLIGHT_MODE_PENDING_UPDATE;
-//        }
-//        setInt(FLIGHT_MODE_PENDING,flightPending);
-//        return flightPending;
-//    }
-//
-//    public void setFlightModeUploadPending(boolean pendingUpdate) {
-//        int flightPending = getFlightModePending();
-//        if(pendingUpdate) {
-//            flightPending |=  FLIGHT_MODE_PENDING_UPLOAD;
-//        }else{
-//            flightPending &= ~FLIGHT_MODE_PENDING_UPLOAD;
-//        }
-//        setInt(FLIGHT_MODE_PENDING,flightPending);
-//    }
 
     public boolean getRelaunchOnUpdate() {
         return getBoolean(RELAUNCH_ON_UPDATE);
