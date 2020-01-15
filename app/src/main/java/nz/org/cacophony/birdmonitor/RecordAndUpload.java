@@ -47,9 +47,12 @@ import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.Messag
  */
 
 public class RecordAndUpload {
+    public static boolean isUploading = false;
+
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
     private static boolean cancelUploadingRecordings = false;
+    private static Object uploadLock = new Object();
 
     private RecordAndUpload() {
 
@@ -87,6 +90,7 @@ public class RecordAndUpload {
             if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || Util.isUIRecording(typeOfRecording)) { // don't upload if not enough time has passed
 
                 if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
+
                     boolean uploadedFilesSuccessfully = uploadFiles(context);
                     if (uploadedFilesSuccessfully) {
                         prefs.setDateTimeLastUpload(now);
@@ -347,6 +351,21 @@ public class RecordAndUpload {
     }
 
     public static boolean uploadFiles(Context context) {
+        synchronized (uploadLock) {
+            if (isUploading) {
+                return true;
+            }
+            isUploading = true;
+        }
+        boolean success = upload(context);
+        isUploading = false;
+        Prefs prefs = new Prefs(context);
+        prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPLOAD);
+        return success;
+    }
+
+    private static boolean upload(Context context) {
+
         String messageToDisplay = "Preparing to upload.";
         MessageHelper.broadcastMessage(messageToDisplay, PREPARING_TO_UPLOAD, MANAGE_RECORDINGS_ACTION, context);
         boolean returnValue = true;
@@ -438,7 +457,6 @@ public class RecordAndUpload {
                     if (!isCancelUploadingRecordings()) {
                         Log.e(TAG, "Failed to upload file to server");
                     }
-                    prefs.setInternetRequired(false,Prefs.FLIGHT_MODE_PENDING_UPLOAD);
                     return false;
                 }
             }
@@ -447,9 +465,7 @@ public class RecordAndUpload {
             messageToDisplay = "Recordings have been successfully uploaded to the server.";
             MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
         }
-        prefs.setInternetRequired(false,Prefs.FLIGHT_MODE_PENDING_UPLOAD);
         return returnValue;
-
     }
 
     @SuppressLint("HardwareIds")

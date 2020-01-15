@@ -48,10 +48,10 @@ public class Prefs {
     static final String UPDATE_URI = "URI";
     static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
     private static final String TAG = Prefs.class.getName();
-    public static final int FLIGHT_MODE_PENDING_UPDATE =0x1;
+    public static final int FLIGHT_MODE_PENDING_UPDATE = 0x1;
     public static final int FLIGHT_MODE_PENDING_UPLOAD = 0x2;
 
-    private static final String FLIGHT_MODE_PENDING =  "FLIGHT_MODE_PENDING";
+    private static final String FLIGHT_MODE_PENDING = "FLIGHT_MODE_PENDING";
     private static final String RELAUNCH_ON_UPDATE = "relaunchOnUpdate";
     private static final String AUTO_UPDATE = "autoUpdate";
     private static final String USE_AEROPLANE_MODE = "useAeroplaneMode";
@@ -83,7 +83,7 @@ public class Prefs {
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
     private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
-    private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 120;  //120 is two minutes, use for testing
+    private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 240;  //240 is 4 minutes (with 2 minute leniency), use for testing
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
     private static final int shortRecordingPause = 2;
@@ -576,7 +576,7 @@ public class Prefs {
         setBoolean(IGNORE_LOW_BATTERY_KEY, ignoreLowBattery);
     }
 
-    public boolean getOnLineMode() {
+    public boolean getOnlineMode() {
         return getBoolean(ONLINE_MODE_KEY);
     }
 
@@ -784,7 +784,7 @@ public class Prefs {
 
     public boolean canActiveFlightMode(int finishedFlags) {
         int flightPending = getFlightModePending();
-        if ((flightPending & finishedFlags) >0){
+        if ((flightPending & finishedFlags) > 0) {
             flightPending = setInternetRequired(false, finishedFlags);
             return flightPending == 0;
         }
@@ -793,12 +793,12 @@ public class Prefs {
 
     public int setInternetRequired(boolean required, int flags) {
         int flightPending = getFlightModePending();
-        if(required) {
-            flightPending |=  flags;
-        }else{
+        if (required) {
+            flightPending |= flags;
+        } else {
             flightPending &= ~flags;
         }
-        setInt(FLIGHT_MODE_PENDING,flightPending);
+        setInt(FLIGHT_MODE_PENDING, flightPending);
         return flightPending;
     }
 //

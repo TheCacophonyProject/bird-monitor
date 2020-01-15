@@ -574,13 +574,13 @@ public class Util {
     public static void disableFlightMode(final Context context) {
         disableFlightMode(context, 0);
     }
-    
+
     public static void disableFlightMode(final Context context, int flags) {
         Prefs prefs = new Prefs(context);
         if (!prefs.getAeroplaneMode()) {
             return;
         }
-        if(flags > 0) {
+        if (flags > 0) {
             prefs.setInternetRequired(true, flags);
         }
         new Thread(() -> {
@@ -635,7 +635,7 @@ public class Util {
             return;
         }
 
-        boolean onlineMode = prefs.getOnLineMode();
+        boolean onlineMode = prefs.getOnlineMode();
 
 
         if (onlineMode) {
@@ -658,7 +658,7 @@ public class Util {
             prefs.setInternetRequired(true, Prefs.FLIGHT_MODE_PENDING_UPDATE);
             return;
         }
-        if (prefs.getFlightModePending() > 0){
+        if (prefs.getFlightModePending() > 0) {
             Log.d(TAG, "Flight mode pending status: " + prefs.getFlightModePending());
             return;
         }
@@ -936,7 +936,7 @@ public class Util {
         } else {
             wakeUpTime = System.currentTimeMillis();
             if (prefs.getUseVeryFrequentRecordings()) {
-                new Alarm((long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+                return new Alarm(wakeUpTime + 1000 * (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
             }
 
             float chance = new Random().nextFloat();
@@ -983,8 +983,8 @@ public class Util {
             Log.e(TAG, "alarmManager is null");
             return;
         }
-
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM)) || !alarmExists(context);
+
         int flags = 0;
         if (prefs.getUseSunAlarms()) {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;

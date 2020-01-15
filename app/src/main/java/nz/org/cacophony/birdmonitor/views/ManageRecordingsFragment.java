@@ -75,7 +75,24 @@ public class ManageRecordingsFragment extends Fragment {
         displayOrHideGUIObjects();
 
         btnCancel.setEnabled(false);
+        if (tvMessages.getText() == "" && RecordAndUpload.isUploading) {
+            tvMessages.setText("Uploading recordings");
+        }
         return view;
+    }
+
+    public void toggleButtonStatus() {
+        if (RecordAndUpload.isUploading) {
+            btnCancel.setEnabled(true);
+            btnUploadFiles.setEnabled(false);
+        } else if (RecordAndUpload.isRecording) {
+            tvMessages.setText("Recording in Progress");
+            btnCancel.setEnabled(false);
+            btnUploadFiles.setEnabled(false);
+        } else {
+            btnCancel.setEnabled(false);
+            btnUploadFiles.setEnabled(true);
+        }
     }
 
     @Override
@@ -112,7 +129,7 @@ public class ManageRecordingsFragment extends Fragment {
             btnUploadFiles.setEnabled(false);
             btnDeleteAllRecordings.setEnabled(false);
         } else {
-            btnUploadFiles.setEnabled(true);
+            toggleButtonStatus();
             btnDeleteAllRecordings.setEnabled(true);
         }
     }
@@ -235,7 +252,14 @@ public class ManageRecordingsFragment extends Fragment {
                             tvMessages.setText(messageToDisplay);
                             break;
                         case RECORDING_DELETED:
+                        case RECORDING_STARTED:
                             displayOrHideGUIObjects();
+                            break;
+                        case RECORDING_FINISHED:
+                            displayOrHideGUIObjects();
+                            if (!RecordAndUpload.isUploading) {
+                                tvMessages.setText("");
+                            }
                             break;
                     }
                     displayOrHideGUIObjects();

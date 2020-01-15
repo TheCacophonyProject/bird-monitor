@@ -102,10 +102,10 @@ public class InstallService extends Service {
                     Crashlytics.logException(e);
                 } finally {
                     if (Util.isAirplaneModeOn(getApplicationContext())) {
-                        if ( prefs.canActiveFlightMode(Prefs.FLIGHT_MODE_PENDING_UPDATE)){
+                        if (prefs.canActiveFlightMode(Prefs.FLIGHT_MODE_PENDING_UPDATE)) {
                             Util.enableFlightMode(getApplicationContext());
                         }
-                    }else{
+                    } else {
                         prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPDATE);
                     }
                     stopSelf();
