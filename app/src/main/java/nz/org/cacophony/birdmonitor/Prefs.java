@@ -793,8 +793,7 @@ public class Prefs {
     public boolean canActiveFlightMode(int finishedFlags) {
         int flightPending = getFlightModePending();
         if ((flightPending & finishedFlags) > 0) {
-            flightPending = setInternetRequired(false, finishedFlags);
-            return flightPending == 0;
+            return setInternetRequired(false, finishedFlags)  == 0;
         }
         return false;
     }
