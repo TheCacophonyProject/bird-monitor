@@ -716,6 +716,10 @@ public class Prefs {
         setBoolean(USER_SIGNED_IN_KEY, userSignedIn);
     }
 
+    public boolean getDeviceRegistered() {
+        return getUserSignedIn() && getDeviceName() != null;
+    }
+
     public void setLastDeviceNameUsedForTesting(String lastDeviceNameUsedForTesting) {
         setString(LAST_DEVICE_NAME_USED_FOR_TESTING_KEY, lastDeviceNameUsedForTesting);
     }

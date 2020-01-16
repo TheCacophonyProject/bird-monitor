@@ -78,7 +78,7 @@ public class RecordAndUpload {
 
 
         // Checked that it has a webToken before trying to upload
-        if (prefs.getToken() == null) {
+        if (!prefs.getDeviceRegistered()) {
             String messageToDisplay = "The Phone is NOT registered - could not upload the files.";
             MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FAILED_NOT_REGISTERED, MANAGE_RECORDINGS_ACTION, context);
         } else {
@@ -395,7 +395,6 @@ public class RecordAndUpload {
             boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
             if ((prefs.getToken() == null) || !tokenIsCurrent) {
-
                 if (!Server.login(context)) {
                     Log.w(TAG, "sendFile: no JWT. Aborting upload");
                     return false; // Can't upload without JWT, login/register device to get JWT.
