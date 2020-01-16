@@ -785,19 +785,6 @@ public class Prefs {
         return getInt(FLIGHT_MODE_PENDING);
     }
 
-
-    /*
-    canActivateFlightMode removes the provided flags from preventing flight mode activation
-    and then returns weather or not we can activate flight mode (nothing is requiring connection)
-    */
-    public boolean canActiveFlightMode(int finishedFlags) {
-        int flightPending = getFlightModePending();
-        if ((flightPending & finishedFlags) > 0) {
-            return setInternetRequired(false, finishedFlags)  == 0;
-        }
-        return false;
-    }
-
     /*
       setInternetRequired saves what part of the app, specified by flags
       is requiring internet ( keeps flight mode from being enabled by the app)
