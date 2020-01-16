@@ -75,7 +75,28 @@ public class ManageRecordingsFragment extends Fragment {
         displayOrHideGUIObjects();
 
         btnCancel.setEnabled(false);
+        if (tvMessages.getText() == "" && RecordAndUpload.isUploading) {
+            tvMessages.setText("Uploading recordings");
+        }
         return view;
+    }
+
+    /*
+        toggleButtonStatus checks if we are currently uploading or recording and sets appropriate
+        buttons to be enabled/disabled
+    */
+    public void toggleButtonStatus() {
+        if (RecordAndUpload.isUploading) {
+            btnCancel.setEnabled(true);
+            btnUploadFiles.setEnabled(false);
+        } else if (RecordAndUpload.isRecording) {
+            tvMessages.setText("Recording in Progress");
+            btnCancel.setEnabled(false);
+            btnUploadFiles.setEnabled(false);
+        } else {
+            btnCancel.setEnabled(false);
+            btnUploadFiles.setEnabled(true);
+        }
     }
 
     @Override
@@ -112,7 +133,7 @@ public class ManageRecordingsFragment extends Fragment {
             btnUploadFiles.setEnabled(false);
             btnDeleteAllRecordings.setEnabled(false);
         } else {
-            btnUploadFiles.setEnabled(true);
+            toggleButtonStatus();
             btnDeleteAllRecordings.setEnabled(true);
         }
     }
@@ -122,14 +143,15 @@ public class ManageRecordingsFragment extends Fragment {
             Toast.makeText(this.getContext(), R.string.upload_currently_recording, Toast.LENGTH_SHORT).show();
             return;
         }
+
+        Prefs prefs = new Prefs(getContext());
         if (Util.isAirplaneModeOn(getContext())) {
-            Util.disableFlightMode(getContext());
+            Util.disableFlightMode(getContext(), Prefs.FLIGHT_MODE_PENDING_UPLOAD);
         } else if (!Util.isNetworkConnected(getActivity().getApplicationContext())) {
             tvMessages.setText("The phone is not currently connected to the internet - please fix and try again");
             return;
         }
 
-        Prefs prefs = new Prefs(getActivity().getApplicationContext());
         if (prefs.getGroupName() == null) {
             tvMessages.setText("You need to register this phone before you can upload");
             return;
@@ -234,7 +256,14 @@ public class ManageRecordingsFragment extends Fragment {
                             tvMessages.setText(messageToDisplay);
                             break;
                         case RECORDING_DELETED:
+                        case RECORDING_STARTED:
                             displayOrHideGUIObjects();
+                            break;
+                        case RECORDING_FINISHED:
+                            displayOrHideGUIObjects();
+                            if (!RecordAndUpload.isUploading) {
+                                tvMessages.setText("");
+                            }
                             break;
                     }
                     displayOrHideGUIObjects();

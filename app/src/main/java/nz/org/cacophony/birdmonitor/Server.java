@@ -73,25 +73,6 @@ public class Server {
     private static boolean uploading = false;
     private static boolean uploadSuccess = false;
 
-
-    static void updateServerConnectionStatus(Context context) {
-
-        try {
-            Util.disableFlightMode(context);
-
-            // Now wait for network connection as setFlightMode takes a while
-            if (!Util.waitForNetworkConnection(context, true)) {
-                Log.e(TAG, "Failed to get internet connection");
-                return;
-            }
-
-            login(context);
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage(), ex);
-        }
-    }
-
-
     public static boolean login(Context context) {
         final Prefs prefs = new Prefs(context);
         try {

@@ -15,6 +15,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
+import nz.org.cacophony.birdmonitor.RecordAndUpload;
+import nz.org.cacophony.birdmonitor.UpdateUtil;
 import nz.org.cacophony.birdmonitor.Util;
 
 
@@ -71,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
             prefs.setIsFirstTimeFalse();
             prefs.setAutoUpdateAllowed();
         }
-
         final Button advancedButton = findViewById(R.id.btnAdvanced);
+        clearFlightModeFlags(prefs);
 
         if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));
@@ -121,6 +123,21 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, SetupWizardActivity.class));
         }
 
+    }
+
+    //  clears old internet requirement flags, if the app has crashed or something has gone wrong
+    private void clearFlightModeFlags(Prefs prefs) {
+        int flags = 0;
+        if (!RecordAndUpload.isUploading) {
+            flags &= Prefs.FLIGHT_MODE_PENDING_UPLOAD;
+            prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPLOAD);
+        }
+        if (!UpdateUtil.isDownloading(this.getApplicationContext())) {
+            flags &= Prefs.FLIGHT_MODE_PENDING_UPDATE;
+        }
+        if (flags > 0) {
+            prefs.setInternetRequired(false, flags);
+        }
     }
 
     @Override

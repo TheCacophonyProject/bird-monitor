@@ -47,9 +47,12 @@ import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.Messag
  */
 
 public class RecordAndUpload {
+    public static boolean isUploading = false;
+
     private static final String TAG = RecordAndUpload.class.getName();
     public static boolean isRecording = false;
     private static boolean cancelUploadingRecordings = false;
+    private static Object uploadLock = new Object();
 
     private RecordAndUpload() {
 
@@ -75,7 +78,7 @@ public class RecordAndUpload {
 
 
         // Checked that it has a webToken before trying to upload
-        if (prefs.getToken() == null) {
+        if (!prefs.getDeviceRegistered()) {
             String messageToDisplay = "The Phone is NOT registered - could not upload the files.";
             MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FAILED_NOT_REGISTERED, MANAGE_RECORDINGS_ACTION, context);
         } else {
@@ -87,6 +90,7 @@ public class RecordAndUpload {
             if ((now - dateTimeLastUpload) > timeIntervalBetweenUploads || Util.isUIRecording(typeOfRecording)) { // don't upload if not enough time has passed
 
                 if (!prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // don't upload if in offline mode
+
                     boolean uploadedFilesSuccessfully = uploadFiles(context);
                     if (uploadedFilesSuccessfully) {
                         prefs.setDateTimeLastUpload(now);
@@ -347,6 +351,21 @@ public class RecordAndUpload {
     }
 
     public static boolean uploadFiles(Context context) {
+        synchronized (uploadLock) {
+            if (isUploading) {
+                return true;
+            }
+            isUploading = true;
+        }
+        boolean success = upload(context);
+        isUploading = false;
+        Prefs prefs = new Prefs(context);
+        prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPLOAD);
+        return success;
+    }
+
+    private static boolean upload(Context context) {
+
         String messageToDisplay = "Preparing to upload.";
         MessageHelper.broadcastMessage(messageToDisplay, PREPARING_TO_UPLOAD, MANAGE_RECORDINGS_ACTION, context);
         boolean returnValue = true;
@@ -355,11 +374,12 @@ public class RecordAndUpload {
             Log.e(TAG, "Error getting recordings folder.");
             return false;
         }
+        Prefs prefs = new Prefs(context);
 
         File[] recordingFiles = recordingsFolder.listFiles();
         if (recordingFiles != null) {
 
-            Util.disableFlightMode(context);
+            Util.disableFlightMode(context, Prefs.FLIGHT_MODE_PENDING_UPLOAD);
 
             // Now wait for network connection as setFlightMode takes a while
             if (!Util.waitForNetworkConnection(context, true)) {
@@ -370,13 +390,11 @@ public class RecordAndUpload {
             // Check here to see if can connect to server and abort (for all files) if can't
             // Check that there is a JWT (JSON Web Token)
 
-            Prefs prefs = new Prefs(context);
 
             // check to see if webToken needs updating
             boolean tokenIsCurrent = Util.isWebTokenCurrent(prefs);
 
             if ((prefs.getToken() == null) || !tokenIsCurrent) {
-
                 if (!Server.login(context)) {
                     Log.w(TAG, "sendFile: no JWT. Aborting upload");
                     return false; // Can't upload without JWT, login/register device to get JWT.
@@ -447,7 +465,6 @@ public class RecordAndUpload {
             MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_FINISHED, MANAGE_RECORDINGS_ACTION, context);
         }
         return returnValue;
-
     }
 
     @SuppressLint("HardwareIds")

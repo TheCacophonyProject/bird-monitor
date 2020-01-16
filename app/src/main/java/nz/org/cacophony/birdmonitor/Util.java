@@ -572,15 +572,22 @@ public class Util {
     }
 
     public static void disableFlightMode(final Context context) {
-        if (!new Prefs(context).getAeroplaneMode()) {
+        disableFlightMode(context, 0);
+    }
+
+    public static void disableFlightMode(final Context context, int flags) {
+        Prefs prefs = new Prefs(context);
+        if (!prefs.getAeroplaneMode()) {
             return;
+        }
+        if (flags > 0) {
+            prefs.setInternetRequired(true, flags);
         }
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                     // API 17 onwards.
                     // Must be a rooted device
-                    Prefs prefs = new Prefs(context);
                     if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
                         return;
                     }
@@ -628,11 +635,8 @@ public class Util {
             return;
         }
 
-        boolean onlineMode = prefs.getOnLineMode();
-
-
-        if (onlineMode) {
-            return; // don't try to enable airplane mode
+        if (prefs.getOnlineMode() || Util.isAirplaneModeOn(context)) {
+            return;
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
@@ -648,11 +652,13 @@ public class Util {
 
         if (UpdateUtil.isDownloading(context)) {
             Log.d(TAG, "Flight mode pending as am downloading update");
-            prefs.setFlightModePending(true);
+            prefs.setInternetRequired(true, Prefs.FLIGHT_MODE_PENDING_UPDATE);
             return;
         }
-
-        prefs.setFlightModePending(false);
+        if (prefs.getFlightModePending() > 0) {
+            Log.d(TAG, "Flight mode pending status: " + prefs.getFlightModePending());
+            return;
+        }
         new Thread(() -> {
             try {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) { // Jelly bean is 4.1
@@ -927,7 +933,7 @@ public class Util {
         } else {
             wakeUpTime = System.currentTimeMillis();
             if (prefs.getUseVeryFrequentRecordings()) {
-                new Alarm((long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+                return new Alarm(wakeUpTime + 1000 * (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
             }
 
             float chance = new Random().nextFloat();
@@ -974,7 +980,6 @@ public class Util {
             Log.e(TAG, "alarmManager is null");
             return;
         }
-
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM)) || !alarmExists(context);
         int flags = 0;
         if (prefs.getUseSunAlarms()) {

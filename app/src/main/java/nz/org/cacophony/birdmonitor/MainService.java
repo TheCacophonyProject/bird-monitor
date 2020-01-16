@@ -29,9 +29,8 @@ public class MainService extends IntentService {
             long lastUpdate = prefs.getDateTimeLastUpdateCheck();
             long now = new Date().getTime();
             if ((now - lastUpdate) > Prefs.TIME_BETEWEEN_UPDATES_MS) {
-                Util.disableFlightMode(context);
+                Util.disableFlightMode(context, Prefs.FLIGHT_MODE_PENDING_UPDATE);
                 prefs.setDateTimeLastUpdateCheck(now);
-                prefs.setFlightModePending(prefs.getAeroplaneMode());
                 if (Util.waitForNetworkConnection(context, true)) {
                     return UpdateUtil.updateIfAvailable(context);
                 }
@@ -68,14 +67,14 @@ public class MainService extends IntentService {
                 String relativeTo = bundle.getString(Prefs.RELATIVE);
                 long recordTimeSeconds = Util.getRecordingDuration(getApplicationContext(), alarmIntentType, relativeTo);
                 wakeLock.acquire(recordTimeSeconds * 1000L /*10 minutes*/);
-
                 RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType, relativeTo);
                 updating = checkForUpdates(getApplicationContext());
             } else {
                 Log.e(TAG, "MainService bundle is null");
             }
         } finally {
-            if (updating == false) {
+            if (!updating && !UpdateUtil.isDownloading(getApplicationContext())) {
+                prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPDATE);
                 Util.enableFlightMode(getApplicationContext());
             }
             if (wakeLock.isHeld()) {
