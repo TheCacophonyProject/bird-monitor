@@ -88,9 +88,9 @@ public class InstallService extends Service {
                     }
 
                     Prefs prefs = new Prefs(getApplicationContext());
-                    if (prefs.canActiveFlightMode(Prefs.FLIGHT_MODE_PENDING_UPDATE)) {
-                        Util.enableFlightMode(getApplicationContext());
-                    }
+                    prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPDATE);
+                    Util.enableFlightMode(getApplicationContext());
+
                     privService.installPackage(Uri.parse(updateURL), Prefs.ACTION_INSTALL_REPLACE_EXISTING,
                             null, callback);
 
@@ -101,9 +101,8 @@ public class InstallService extends Service {
                     Log.e(TAG, "RemoteException", e);
                     Crashlytics.logException(e);
                 } finally {
-                    if (prefs.canActiveFlightMode(Prefs.FLIGHT_MODE_PENDING_UPDATE)) {
-                        Util.enableFlightMode(getApplicationContext());
-                    }
+                    prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPDATE);
+                    Util.enableFlightMode(getApplicationContext());
                     stopSelf();
                     if (wakeLock.isHeld()) {
                         wakeLock.release();
