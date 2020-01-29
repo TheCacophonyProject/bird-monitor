@@ -405,7 +405,7 @@ public class Server {
     public static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
         int uploadStatus = uploadAudioRec(audioFile, data, context);
         if (uploadStatus == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            Log.e(TAG, "Upload un authorized requesting a new token and retring");
+            Log.e(TAG, "Upload unauthorized, requesting a new token and retrying");
             if (login(context)) {
                 uploadStatus = uploadAudioRec(audioFile, data, context);
             }
