@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +64,7 @@ public class Server {
 
     private static final int HTTP_422_UNPROCESSABLE_ENTITY = 422;
 
-    private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
+    private static final String     UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
@@ -71,7 +72,6 @@ public class Server {
     private static final String GROUPS_URL = "/api/v1/groups";
     private static final OkHttpClient client = new OkHttpClient();
     private static boolean uploading = false;
-    private static boolean uploadSuccess = false;
 
     public static boolean login(Context context) {
         final Prefs prefs = new Prefs(context);
@@ -130,9 +130,9 @@ public class Server {
         return prefs.getToken() != null;
     }
 
-    public static void loginUser(Context context) {
+    public static boolean loginUser(Context context) {
         signInIdlingResource.increment();
-
+        boolean success = false;
         final Prefs prefs = new Prefs(context);
 
         try {
@@ -144,7 +144,7 @@ public class Server {
                 JSONObject extraInfo = new JSONObject().put("responseCode", -1);
                 String messageToDisplay = "Unable to get an internet connection";
                 MessageHelper.broadcastMessage(messageToDisplay, extraInfo, NETWORK_ERROR, SERVER_USER_LOGIN_ACTION, context);
-                return;
+                return success;
             }
 
             String userName = prefs.getUsername();
@@ -163,7 +163,7 @@ public class Server {
                 String messageToDisplay = "Error: Username/email address or password can not be missing";
                 MessageHelper.broadcastMessage(messageToDisplay, extraInfo, INVALID_CREDENTIALS, SERVER_USER_LOGIN_ACTION, context);
 
-                return;
+                return success;
             }
 
 
@@ -189,7 +189,7 @@ public class Server {
 
                 String messageToDisplay = "You have successfully signed in as ";
                 MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_SIGNED_IN, SERVER_USER_LOGIN_ACTION, context);
-
+                success = true;
             } else if (response.code() == HTTP_422_UNPROCESSABLE_ENTITY) {
                 prefs.setUserToken(null);
                 String message = "Sorry could not sign in.";
@@ -222,6 +222,7 @@ public class Server {
         } finally {
             signInIdlingResource.decrement();
         }
+        return success;
     }
 
     /**
@@ -400,12 +401,24 @@ public class Server {
                         RequestBody.create(MediaType.parse(mediaType), audioFile)
                 ).build();
     }
-
     public static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
+        int uploadStatus = uploadAudioRec(audioFile,data,context);
+        if(uploadStatus == HttpURLConnection.HTTP_UNAUTHORIZED){
+            Log.e(TAG, "Upload un authorized requesting a new token and retring");
+            if(loginUser(context)) {
+                return uploadAudioRec(audioFile, data, context) == 1;
+            }
+        }
+
+        return false;
+    }
+    private static int uploadAudioRec(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
+        int uploadStatus = 0;
+
         if (uploading) {
             Log.i(TAG, "Already uploading. Wait until last upload is finished.");
-            return false;
+            return uploadStatus;
         }
         uploading = true;
         uploadFilesIdlingResource.increment();
@@ -417,7 +430,7 @@ public class Server {
 
             if (RecordAndUpload.isCancelUploadingRecordings()) {
                 Log.w(TAG, "User cancelled uploading of recordings.");
-                return false;
+                return uploadStatus;
             }
 
             WebResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
@@ -426,7 +439,6 @@ public class Server {
 
             MessageHelper.broadcastMessage("Connected to Server", CONNECTED_TO_SERVER, MANAGE_RECORDINGS_ACTION, context);
             Log.i(TAG, "SERVER REPLIED:");
-            uploadSuccess = false;
             long recordingId = responseJson.getLong("recordingId");
 
             prefs.setLastRecordIdReturnedFromServer(recordingId);
@@ -436,7 +448,11 @@ public class Server {
             }
 
             if (response.isSuccessful()) {
-                uploadSuccess = true;
+                uploadStatus = 1;
+            }else if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                uploadStatus =HttpURLConnection.HTTP_UNAUTHORIZED;
+            }else{
+                uploadStatus= response.code();
             }
 
         } catch (IOException | JSONException ex) {
@@ -446,7 +462,7 @@ public class Server {
             uploadFilesIdlingResource.decrement();
         }
 
-        return uploadSuccess;
+        return uploadStatus;
     }
 
     public static ArrayList<String> getGroups(Context context) {
