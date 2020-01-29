@@ -452,8 +452,6 @@ public class Server {
                     Log.e(TAG, "Error with recording id");
                 }
                 uploadStatus = 1;
-            } else if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                uploadStatus = HttpURLConnection.HTTP_UNAUTHORIZED;
             } else {
                 uploadStatus = response.code();
             }
