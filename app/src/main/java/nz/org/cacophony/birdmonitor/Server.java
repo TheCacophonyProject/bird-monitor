@@ -407,11 +407,11 @@ public class Server {
         if (uploadStatus == HttpURLConnection.HTTP_UNAUTHORIZED) {
             Log.e(TAG, "Upload un authorized requesting a new token and retring");
             if (login(context)) {
-                return uploadAudioRec(audioFile, data, context) == 1;
+                uploadStatus = uploadAudioRec(audioFile, data, context);
             }
         }
 
-        return false;
+        return uploadStatus == 1;
     }
 
     private static int uploadAudioRec(File audioFile, JSONObject data, Context context) {
