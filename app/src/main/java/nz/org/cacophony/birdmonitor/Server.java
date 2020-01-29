@@ -64,7 +64,7 @@ public class Server {
 
     private static final int HTTP_422_UNPROCESSABLE_ENTITY = 422;
 
-    private static final String     UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
+    private static final String UPLOAD_AUDIO_API_URL = "/api/v1/recordings";
     private static final String LOGIN_URL = "/authenticate_device";
     private static final String LOGIN_USER_URL = "/authenticate_user";
     private static final String REGISTER_URL = "/api/v1/devices";
@@ -401,17 +401,19 @@ public class Server {
                         RequestBody.create(MediaType.parse(mediaType), audioFile)
                 ).build();
     }
+
     public static boolean uploadAudioRecording(File audioFile, JSONObject data, Context context) {
-        int uploadStatus = uploadAudioRec(audioFile,data,context);
-        if(uploadStatus == HttpURLConnection.HTTP_UNAUTHORIZED){
+        int uploadStatus = uploadAudioRec(audioFile, data, context);
+        if (uploadStatus == HttpURLConnection.HTTP_UNAUTHORIZED) {
             Log.e(TAG, "Upload un authorized requesting a new token and retring");
-            if(loginUser(context)) {
+            if (login(context)) {
                 return uploadAudioRec(audioFile, data, context) == 1;
             }
         }
 
         return false;
     }
+
     private static int uploadAudioRec(File audioFile, JSONObject data, Context context) {
         // http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically
         int uploadStatus = 0;
@@ -435,24 +437,25 @@ public class Server {
 
             WebResponse postResponse = makePost(uploadUrl, requestBody, prefs.getToken());
             Response response = postResponse.response;
-            JSONObject responseJson = postResponse.responseJson;
 
-            MessageHelper.broadcastMessage("Connected to Server", CONNECTED_TO_SERVER, MANAGE_RECORDINGS_ACTION, context);
-            Log.i(TAG, "SERVER REPLIED:");
-            long recordingId = responseJson.getLong("recordingId");
-
-            prefs.setLastRecordIdReturnedFromServer(recordingId);
-            long check = prefs.getLastRecordIdReturnedFromServer();
-            if (recordingId != check) {
-                Log.e(TAG, "Error with recording id");
-            }
 
             if (response.isSuccessful()) {
+                JSONObject responseJson = postResponse.responseJson;
+
+                MessageHelper.broadcastMessage("Connected to Server", CONNECTED_TO_SERVER, MANAGE_RECORDINGS_ACTION, context);
+                Log.i(TAG, "SERVER REPLIED:");
+                long recordingId = responseJson.getLong("recordingId");
+
+                prefs.setLastRecordIdReturnedFromServer(recordingId);
+                long check = prefs.getLastRecordIdReturnedFromServer();
+                if (recordingId != check) {
+                    Log.e(TAG, "Error with recording id");
+                }
                 uploadStatus = 1;
-            }else if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
-                uploadStatus =HttpURLConnection.HTTP_UNAUTHORIZED;
-            }else{
-                uploadStatus= response.code();
+            } else if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                uploadStatus = HttpURLConnection.HTTP_UNAUTHORIZED;
+            } else {
+                uploadStatus = response.code();
             }
 
         } catch (IOException | JSONException ex) {
@@ -461,7 +464,6 @@ public class Server {
             uploading = false;
             uploadFilesIdlingResource.decrement();
         }
-
         return uploadStatus;
     }
 
