@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.services.common.CommonUtils;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
 /**
  * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
@@ -316,7 +315,6 @@ public class Prefs {
     }
 
     public void setEmailAddress(String emailAddress) {
-        Crashlytics.setUserEmail(emailAddress);
         setString(EMAIL_ADDRESS_KEY, emailAddress);
     }
 
@@ -325,7 +323,6 @@ public class Prefs {
     }
 
     public void setUserNameOrEmailAddress(String userNameOrEmailAddress) {
-        Crashlytics.setUserName(userNameOrEmailAddress);
         setString(USERNAME_OR_EMAIL_ADDRESS_KEY, userNameOrEmailAddress);
     }
 
@@ -881,8 +878,6 @@ public class Prefs {
     }
 
     public void setCrashlyticsUser() {
-        Crashlytics.setUserEmail(this.getEmailAddress());
-        Crashlytics.setUserName(this.getUsername());
-        Crashlytics.setUserIdentifier(String.format("%s-%s-%d", this.getGroupName(), this.getDeviceName(), this.getDeviceId()));
+        FirebaseCrashlytics.getInstance().setUserId(String.format("%s-%s-%d", this.getGroupName(), this.getDeviceName(), this.getDeviceId()));
     }
 }

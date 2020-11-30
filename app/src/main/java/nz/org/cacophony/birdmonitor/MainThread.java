@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
 import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.NO_PERMISSION_TO_RECORD;
@@ -49,7 +49,7 @@ class MainThread implements Runnable {
         try {
             RecordAndUpload.doRecord(context, alarmIntentType, null);
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
             Log.e(TAG, "Unknown error when recording", e);
             String messageToDisplay = "Unknown error: " + e.getLocalizedMessage();
             MessageHelper.broadcastMessage(messageToDisplay, RECORD_AND_UPLOAD_FAILED, MANAGE_RECORDINGS_ACTION, context);

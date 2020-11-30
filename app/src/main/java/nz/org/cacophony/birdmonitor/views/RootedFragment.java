@@ -24,9 +24,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.crashlytics.internal.common.CommonUtils;
+
 import org.fdroid.fdroid.privileged.IPrivilegedService;
 
-import io.fabric.sdk.android.services.common.CommonUtils;
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.UpdateUtil;

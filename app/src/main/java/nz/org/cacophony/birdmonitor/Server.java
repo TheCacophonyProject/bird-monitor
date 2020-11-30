@@ -3,7 +3,7 @@ package nz.org.cacophony.birdmonitor;
 import android.content.Context;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONArray;
@@ -125,7 +125,6 @@ public class Server {
 
         } catch (Exception e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
-            Crashlytics.logException(e);
         }
         return prefs.getToken() != null;
     }
@@ -273,7 +272,7 @@ public class Server {
                     deviceID = Util.getDeviceID(prefs.getToken());
                 }
 
-                Crashlytics.setUserIdentifier(String.format("%s-%s-%d", group, deviceName, deviceID));
+                FirebaseCrashlytics.getInstance().setUserId(String.format("%s-%s-%d", group, deviceName, deviceID));
                 prefs.setDeviceToken(responseJson.getString("token"));
                 prefs.setTokenLastRefreshed(new Date().getTime());
                 prefs.setDeviceName(deviceName);

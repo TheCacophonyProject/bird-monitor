@@ -33,7 +33,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.luckycatlabs.SunriseSunsetCalculator;
 import com.luckycatlabs.dto.Location;
 
@@ -613,7 +613,7 @@ public class Util {
                 }
 
             } catch (Exception ex) {
-                Crashlytics.logException(ex);
+                FirebaseCrashlytics.getInstance().recordException(ex);
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
             }
 
@@ -1301,7 +1301,7 @@ public class Util {
             prefs.setDevicePassword(null);
             prefs.setDeviceName(null);
             prefs.setDeviceToken(null);
-            Crashlytics.setUserIdentifier(String.format("%s-%s-%d", null, null, 0));
+            FirebaseCrashlytics.getInstance().setUserId(String.format("%s-%s-%d", null, null, 0));
 
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering device.");
@@ -1313,8 +1313,6 @@ public class Util {
         try {
             Prefs prefs = new Prefs(context);
             prefs.setUserSignedIn(false);
-            Crashlytics.setUserName(null);
-            Crashlytics.setUserEmail(null);
         } catch (Exception ex) {
             Log.e(TAG, "Error Un-registering user.");
         }
