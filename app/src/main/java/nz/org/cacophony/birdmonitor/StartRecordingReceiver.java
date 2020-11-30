@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import static android.content.Context.POWER_SERVICE;
 import static nz.org.cacophony.birdmonitor.Util.getBatteryLevelByIntent;
@@ -57,7 +57,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
         PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
         if (powerManager == null) {
             Log.e(TAG, "PowerManger is null");
-            Crashlytics.logException(new Throwable("PowerManger is null"));
+            FirebaseCrashlytics.getInstance().recordException(new Throwable("PowerManger is null"));
             return;
         }
         PowerManager.WakeLock wakeLock = null;
@@ -70,7 +70,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
             if (alarmIntentType == null) {
                 Log.e(TAG, "Intent does not have a type");
-                Crashlytics.logException(new Throwable("No Intent Type"));
+                FirebaseCrashlytics.getInstance().recordException(new Throwable("No Intent Type"));
                 return;
             } else if (alarmIntentType.equals(Prefs.FAIL_SAFE_ALARM)) {
                 return;
@@ -112,7 +112,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
 
             if (!Util.checkPermissionsForRecording(context)) {
                 Log.e(TAG, "Don't have proper permissions to record");
-                Crashlytics.logException(new Throwable("Inccorect Permissions"));
+                FirebaseCrashlytics.getInstance().recordException(new Throwable("Inccorect Permissions"));
 
                 // Need to enable record button
                 String messageToDisplay = "No permission to record";
@@ -173,7 +173,7 @@ public class StartRecordingReceiver extends BroadcastReceiver {
             }
 
         } catch (Exception ex) {
-            Crashlytics.logException(ex);
+            FirebaseCrashlytics.getInstance().recordException(ex);
             Log.e(TAG, ex.getLocalizedMessage(), ex);
 
         } finally {

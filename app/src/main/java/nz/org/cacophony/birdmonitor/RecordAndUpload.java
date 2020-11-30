@@ -10,7 +10,7 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -238,9 +238,9 @@ public class RecordAndUpload {
                 mRecorder.prepare();
 
             } catch (IllegalStateException | IOException ex) {
-                Crashlytics.log(Log.ERROR, TAG, "Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
+                FirebaseCrashlytics.getInstance().log("E/"+TAG+" Setup recording failed. Could be due to lack of sdcard. Could be due to phone connected to pc as usb storage");
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
-                Crashlytics.logException(ex);
+                FirebaseCrashlytics.getInstance().recordException(ex);
                 return;
             }
 
@@ -260,7 +260,7 @@ public class RecordAndUpload {
                 messageToDisplay = "Recording has started";
                 MessageHelper.broadcastMessage(messageToDisplay, RECORDING_STARTED, MANAGE_RECORDINGS_ACTION, context);
             } catch (IllegalStateException e) {
-                Crashlytics.logException(e);
+                FirebaseCrashlytics.getInstance().recordException(e);
                 Log.e(TAG, "mRecorder.start " + e.getLocalizedMessage());
                 return;
             }
@@ -442,7 +442,7 @@ public class RecordAndUpload {
 
                     } catch (Exception ex) {
                         Log.e(TAG, ex.getLocalizedMessage(), ex);
-                        Crashlytics.logException(ex);
+                        FirebaseCrashlytics.getInstance().recordException(ex);
                     }
                     if (!fileSuccessfullyDeleted) {
                         // for some reason file did not delete so exit for loop

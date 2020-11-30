@@ -11,7 +11,7 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.fdroid.fdroid.privileged.IPrivilegedCallback;
 import org.fdroid.fdroid.privileged.IPrivilegedService;
@@ -44,7 +44,7 @@ public class InstallService extends Service {
 
         if (intent == null || intent.getExtras() == null) {
             Log.e(TAG, "Update Service with empty uri");
-            Crashlytics.logException(new Throwable(TAG + " Update Service null intent"));
+            FirebaseCrashlytics.getInstance().recordException(new Throwable(TAG + " Update Service null intent"));
 
             stopSelf();
             return START_NOT_STICKY;
@@ -52,7 +52,7 @@ public class InstallService extends Service {
         String updateURL = intent.getStringExtra(Prefs.UPDATE_URI);
         if (updateURL == null) {
             Log.e(TAG, "Update intent with empty uri");
-            Crashlytics.logException(new Throwable(TAG + " Update intent with empty uri"));
+            FirebaseCrashlytics.getInstance().recordException(new Throwable(TAG + " Update intent with empty uri"));
 
             stopSelf();
             return START_NOT_STICKY;
@@ -75,7 +75,7 @@ public class InstallService extends Service {
                         }
                         //this will only happen on error as if app replaced successfull service is stopped by update
                         Log.e(TAG, "handleResult for " + packageName + " result " + returnCode);
-                        Crashlytics.logException(new Throwable(TAG + " handleResult for " + packageName + " result " + returnCode));
+                        FirebaseCrashlytics.getInstance().recordException(new Throwable(TAG + " handleResult for " + packageName + " result " + returnCode));
                         unbindService(mServiceConnection);
                         stopSelf();
                     }
@@ -96,10 +96,10 @@ public class InstallService extends Service {
 
                 } catch (RemoteException e) {
                     Log.e(TAG, "RemoteException", e);
-                    Crashlytics.logException(e);
+                    FirebaseCrashlytics.getInstance().recordException(e);
                 } catch (Exception e) {
                     Log.e(TAG, "RemoteException", e);
-                    Crashlytics.logException(e);
+                    FirebaseCrashlytics.getInstance().recordException(e);
                 } finally {
                     prefs.setInternetRequired(false, Prefs.FLIGHT_MODE_PENDING_UPDATE);
                     Util.enableFlightMode(getApplicationContext());
