@@ -5,6 +5,11 @@ apply plugin: 'com.google.firebase.crashlytics'
 // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
 // Increated to 16 for firebase
 ext.minimumSdkVersion = 16
+ext.versionMajor = 1
+ext.versionMinor = 9
+ext.versionPatch = 1
+ext.versionClassifier = null
+ext.isSnapshot = false
 
 repositories {
     //  mavenCentral()
@@ -34,9 +39,8 @@ android {
         applicationId "nz.org.cacophony.birdmonitor"
         minSdkVersion project.ext.minimumSdkVersion
         targetSdkVersion 28
-        versionCode 150010708
-        //minimumSdkVersion * 10000000 + versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName "1.7.8"
+        versionCode generateVersionCode()
+        versionName generateVersionName()
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Bird-Monitor-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -69,6 +73,22 @@ android {
         animationsDisabled = true
     }
     buildToolsVersion '28.0.3'
+}
+
+private Integer generateVersionCode() {
+    return ext.minimumSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
+}
+
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    if (ext.versionClassifier == null && ext.isSnapshot) {
+        ext.versionClassifier = "SNAPSHOT"
+    }
+
+    if (ext.versionClassifier != null) {
+        versionName += "-" + ext.versionClassifier
+    }
+    return versionName;
 }
 
 dependencies {
