@@ -8,7 +8,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
 /**
- * This class helps static classes that don't have an application Context to get and save Shared Preferences (Server.java..)
+ * This class helps static classes that don't have an application Context to get
+ * and save Shared Preferences (Server.java..)
  * Expanded to keep all settings in one place
  */
 
@@ -27,11 +28,11 @@ public class Prefs {
     public static final String PRIVILEGED_EXTENSION_PACKAGE = "nz.org.cacophony.privileged";
     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "nz.org.cacophony.privileged.IPrivilegedService";
     public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
-    //F-Droid Bird Monitor
+    // F-Droid Bird Monitor
     public static final String FDROID_BIRD = "91f0ada061b91fc4ae2e45640a7452b38a93d8c864307872f2432f86ea6617e3";
-    //Debug key
+    // Debug key
     public static final String DEBUG_BIRD = "700b2c3585a3ae0344294413e943b9650a14cefdf5fec40f17185f08f40ea97f";
-    public static final String[] ALLOWED_UPDATES = new String[]{GITHUB_BIRD, DEBUG_BIRD};
+    public static final String[] ALLOWED_UPDATES = new String[] { GITHUB_BIRD, DEBUG_BIRD };
     public static final String RECORD_NOW_ALARM = "recordNowButton";
     public static final String BIRD_COUNT_5_ALARM = "birdCountButton5";
     public static final String BIRD_COUNT_10_ALARM = "birdCountButton10";
@@ -45,7 +46,7 @@ public class Prefs {
     static final int ACTION_INSTALL_REPLACE_EXISTING = 2;
     static final String UPDATE_CHECK_URL = "https://api.github.com/repos/TheCacophonyProject/bird-monitor/releases/latest";
     static final String UPDATE_URI = "URI";
-    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; //1 day
+    static final double TIME_BETEWEEN_UPDATES_MS = 1000 * 60 * 60 * 24; // 1 day
     private static final String TAG = Prefs.class.getName();
     public static final int FLIGHT_MODE_PENDING_UPDATE = 0x1;
     public static final int FLIGHT_MODE_PENDING_UPLOAD = 0x2;
@@ -80,9 +81,10 @@ public class Prefs {
     private static final String RECORDING_DURATION_SECONDS_KEY = "RECORDING_DURATION_SECONDS";
     private static final double RECORDING_DURATION_SECONDS = 60;
     private static final String TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS";
-    private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900;  //900 is 15 minutes
+    private static final double TIME_BETWEEN_FREQUENT_RECORDINGS_SECONDS = 900; // 900 is 15 minutes
     private static final String TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS_KEY = "TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS";
-    private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 240;  //240 is 4 minutes (with 2 minute leniency), use for testing
+    private static final double TIME_BETWEEN_VERY_FREQUENT_RECORDINGS_SECONDS = 240; // 240 is 4 minutes (with 2 minute
+                                                                                     // leniency), use for testing
     private static final String TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS_KEY = "TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS";
     private static final double TIME_BETWEEN_GPS_LOCATION_UPDATES_SECONDS = 300; // 300 is 5 minutes
     private static final int shortRecordingPause = 2;
@@ -90,6 +92,8 @@ public class Prefs {
     private static final int longRecordingWindowMinutes = 20;
     private static final int shortRecordingWindowMinutes = 5;
     private static final float shortRecordingWindowChance = 0.25f;
+    private static final long recordingChanceSeed = 100;
+    private static final String RANDOM_SEED_KEY = "0";
     private static final String BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
     private static final double BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS = 30;
     private static final String IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_REPEATING_RECORDINGS";
@@ -97,15 +101,17 @@ public class Prefs {
     private static final double BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS = 50;
     private static final String IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS_KEY = "IGNORE_BATTERY_LEVEL_CUTOFF_DAWN_DUSK_RECORDINGS";
     private static final String TIME_BETWEEN_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_UPLOADS";
-    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600;  //21600 is six hours!
+    private static final double TIME_BETWEEN_UPLOADS_SECONDS = 21600; // 21600 is six hours!
     private static final String TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS_KEY = "TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS";
-    private static final double TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS = 1;  // So happens with every recording
+    private static final double TIME_BETWEEN_FREQUENT_UPLOADS_SECONDS = 1; // So happens with every recording
     private static final String DAWN_DUSK_OFFSET_MINUTES_KEY = "DAWN_DUSK_OFFSET_MINUTES";
     private static final double DAWN_DUSK_OFFSET_MINUTES = 60;
     private static final String DAWN_DUSK_INCREMENT_MINUTES_KEY = "DAWN_DUSK_INCREMENT_MINUTES";
     private static final double DAWN_DUSK_INCREMENT_MINUTES = 10;
-    private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and sunrise, or sunset and dusk
-    private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes http://www.gaisma.com/en/location/nelson.html
+    private static final String LENGTH_OF_TWILIGHT_KEY = "LENGTH_OF_TWILIGHT"; // Twilight is the time between dawn and
+                                                                               // sunrise, or sunset and dusk
+    private static final double LENGTH_OF_TWILIGHT_SECONDS = 29 * 60; // 29 minutes
+                                                                      // http://www.gaisma.com/en/location/nelson.html
     private static final String HAS_ROOT_ACCESS_KEY = "HAS_ROOT_ACCESS";
     private static final String CANCEL_RECORDING_ACCESS_KEY = "CANCEL_RECORDING_ACCESS";
     private static final String USE_VERY_FREQUENT_RECORDINGS_KEY = "USE_VERY_FREQUENT_RECORDINGS";
@@ -145,7 +151,6 @@ public class Prefs {
     public static long getDeviceTokenTimeoutSeconds() {
         return DEVICE_TOKEN_TIMEOUT_SECONDS;
     }
-
 
     private String getString(String key) {
         if (context == null) {
@@ -202,7 +207,6 @@ public class Prefs {
         preferences.edit().putLong(key, Double.doubleToRawLongBits(val)).apply();
     }
 
-
     private void setInt(String key, int val) {
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
@@ -230,7 +234,7 @@ public class Prefs {
         return preferences.getBoolean(key, false);
     }
 
-    private boolean getBooleanDefaultTrue() {  // used to determine first time app runs after install
+    private boolean getBooleanDefaultTrue() { // used to determine first time app runs after install
         if (context == null) {
             Log.e(TAG, "Context was null when trying to get preferences.");
             return false;
@@ -238,7 +242,6 @@ public class Prefs {
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return preferences.getBoolean(Prefs.FIRST_TIME_KEY, true);
     }
-
 
     private void setBoolean(String key, boolean val) {
         if (context == null) {
@@ -280,7 +283,6 @@ public class Prefs {
     public String getDevicePassword() {
         return getString(DEVICE_PASSWORD_KEY);
     }
-
 
     public void setDevicePassword(String devicePassword) {
         setString(DEVICE_PASSWORD_KEY, devicePassword);
@@ -410,6 +412,14 @@ public class Prefs {
         setLong(DEVICE_ID, deviceID);
     }
 
+    public long getRandomSeed() {
+        return getLong(RANDOM_SEED_KEY);
+    }
+
+    public void setRandomSeed(long randomSeed) {
+        setLong(RANDOM_SEED_KEY, randomSeed);
+    }
+
     public double getRecordingDuration() {
         return getDouble(RECORDING_DURATION_SECONDS_KEY);
     }
@@ -452,6 +462,10 @@ public class Prefs {
 
     public float getshortRecordingWindowChance() {
         return shortRecordingWindowChance;
+    }
+
+    public long getRecordingChanceSeed() {
+        return recordingChanceSeed;
     }
 
     public double getTimeBetweenUploadsSeconds() {
@@ -769,7 +783,6 @@ public class Prefs {
         setBoolean(USE_BLUETOOTH_MODE, bluetoothMode);
     }
 
-
     public long getDateTimeLastUpdateCheck() {
         return getLong(DATE_TIME_LAST_UPDATE_CHECK);
     }
@@ -783,9 +796,9 @@ public class Prefs {
     }
 
     /*
-      setInternetRequired saves what part of the app, specified by flags
-      is requiring internet ( keeps flight mode from being enabled by the app)
-    */
+     * setInternetRequired saves what part of the app, specified by flags
+     * is requiring internet ( keeps flight mode from being enabled by the app)
+     */
     public int setInternetRequired(boolean required, int flags) {
         int flightPending = getFlightModePending();
         if (required) {
@@ -878,6 +891,7 @@ public class Prefs {
     }
 
     public void setCrashlyticsUser() {
-        FirebaseCrashlytics.getInstance().setUserId(String.format("%s-%s-%d", this.getGroupName(), this.getDeviceName(), this.getDeviceId()));
+        FirebaseCrashlytics.getInstance()
+                .setUserId(String.format("%s-%s-%d", this.getGroupName(), this.getDeviceName(), this.getDeviceId()));
     }
 }

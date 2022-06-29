@@ -62,10 +62,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.TimeZone;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import kotlin.random.Random;
+import kotlin.random.RandomKt;
 import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -936,15 +937,16 @@ public class Util {
                 return new Alarm(wakeUpTime + 1000 * (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
             }
 
-            float chance = new Random().nextFloat();
-            float shortWindowChance = prefs.getshortRecordingWindowChance();
-            if (chance < shortWindowChance) {
-                chance = new Random().nextFloat();
-                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
-            } else {
-                chance = new Random().nextFloat();
-                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
-            }
+            long wakeUpTimeMinutes = (wakeUpTime / 1000 / 60);
+            long roundedDownMinutes = (wakeUpTimeMinutes / 5) * 5;
+            int seed = (int) (roundedDownMinutes + prefs.getRandomSeed());
+            Random chance = RandomKt.Random(seed);
+            float toWakeUp = chance.nextFloat();
+            float randomTime = chance.nextFloat();
+            float inXMinutes = (toWakeUp < prefs.getshortRecordingWindowChance()) ?
+                (prefs.getShortRecordingPause() + randomTime * prefs.getShortRecordingWindowMinutes())
+            : (prefs.getLongRecordingPause() + randomTime * prefs.getLongRecordingWindowMinutes());
+            wakeUpTime += (1000 * 60 * inXMinutes);
         }
         return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
     }

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
@@ -24,7 +25,7 @@ if (performSigning) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 32
     if (performSigning) {
         signingConfigs {
             config {
@@ -38,12 +39,13 @@ android {
     defaultConfig {
         applicationId "nz.org.cacophony.birdmonitor"
         minSdkVersion project.ext.minimumSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 32
         versionCode generateVersionCode()
         versionName generateVersionName()
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Bird-Monitor-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -72,7 +74,6 @@ android {
     testOptions {
         animationsDisabled = true
     }
-    buildToolsVersion '28.0.3'
 }
 
 private Integer generateVersionCode() {
@@ -104,7 +105,7 @@ dependencies {
     implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0'
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
     implementation 'info.guardianproject.netcipher:netcipher:1.2'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'com.squareup.okio:okio:2.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -130,6 +131,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
