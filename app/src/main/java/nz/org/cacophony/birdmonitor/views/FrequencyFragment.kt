@@ -45,7 +45,7 @@ class FrequencyFragment : Fragment() {
         randomText.text = randomSeed
         // add a listener to the button
         randomButton.setOnClickListener {
-            val newSeed = Random.nextLong(9999999)
+            val newSeed = Random.nextLong(9999)
             randomText.text = newSeed.toString()
             prefs.randomSeed = newSeed
             val alarm = Util.getNextAlarm(requireActivity().applicationContext, prefs, null)
