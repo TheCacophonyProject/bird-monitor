@@ -5,10 +5,10 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 // Increased to 15 ie Android 4.03 Icecream sandwich  to allow debugging with instant run https://developer.android.com/studio/run/
 // Increated to 16 for firebase
-ext.minimumSdkVersion = 16
+ext.minimumSdkVersion = 19
 ext.versionMajor = 1
-ext.versionMinor = 9
-ext.versionPatch = 1
+ext.versionMinor = 10
+ext.versionPatch = 0
 ext.versionClassifier = null
 ext.isSnapshot = false
 
@@ -68,13 +68,12 @@ android {
     productFlavors {
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     testOptions {
         animationsDisabled = true
     }
-    buildToolsVersion '31.0.0'
 }
 
 private Integer generateVersionCode() {
@@ -95,44 +94,44 @@ private String generateVersionName() {
 
 dependencies {
 
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.google.firebase:firebase-analytics:21.1.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:2.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     //    implementation 'com.android.support:appcompat-v7:25.3.1'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'org.apache.commons:commons-lang3:3.5'
-    implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.loopj.android:android-async-http:1.4.11'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.4.0'
     // https://stackoverflow.com/questions/26633349/disable-ssl-as-a-protocol-in-httpsurlconnection
     implementation 'info.guardianproject.netcipher:netcipher:1.2'
     implementation 'com.google.android.material:material:1.6.1'
-    implementation 'com.squareup.okio:okio:2.1.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okio:okio:3.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
     // Optional -- Hamcrest library
-    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:2.2'
     // Optional -- UI testing with Espresso
     //https://stackoverflow.com/questions/45541666/espresso-test-failing-no-interface-method-trackusage-in-usagetracker-java
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestImplementation 'tools.fastlane:screengrab:1.0.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
+    androidTestImplementation 'tools.fastlane:screengrab:2.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
     // Optional -- UI testing with UI Automator
     //  androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
-    implementation 'androidx.navigation:navigation-fragment:2.2.0-alpha01'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:4.6.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.0'
 
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
-    implementation 'com.google.firebase:firebase-analytics:18.0.0'
-    implementation "androidx.core:core-ktx:+"
+    implementation 'com.google.firebase:firebase-core:21.1.0'
+    implementation 'com.google.firebase:firebase-analytics:21.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.11'
+    implementation 'com.google.firebase:firebase-analytics:21.1.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }

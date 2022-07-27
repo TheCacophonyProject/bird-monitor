@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         final Button advancedButton = findViewById(R.id.btnAdvanced);
         clearFlightModeFlags(prefs);
 
+        Util.Alarm currAlarm = Util.getNextAlarm(this, prefs, null);
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(currAlarm.TimeMillis);
+
         if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));
         }
