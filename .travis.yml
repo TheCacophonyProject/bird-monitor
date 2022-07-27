@@ -26,12 +26,12 @@ before_install:
   - gem update --system
   - gem install bundler
   - bundle install
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platform-tools" >/dev/null
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "tools" >/dev/null
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "build-tools;32.0.0" >/dev/null
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platforms;android-$API" >/dev/null
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --channel=4 "emulator"
-  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "extras;android;m2repository" >/dev/null
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platform-tools" --sdk_root=$ANDROID_HOME >/dev/null
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "tools" --sdk_root=$ANDROID_HOME >/dev/null
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "build-tools;32.0.0" --sdk_root=$ANDROID_HOME >/dev/null
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platforms;android-$API" --sdk_root=$ANDROID_HOME >/dev/null
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --channel=4 "emulator" --sdk_root=$ANDROID_HOME
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "extras;android;m2repository" --sdk_root=$ANDROID_HOME >/dev/null
 before_script:
   - chmod +x gradlew
 script:
