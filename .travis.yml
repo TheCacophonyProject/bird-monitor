@@ -10,6 +10,8 @@ env:
     - AUDIO=-no-audio
 language: android
 dist: trusty
+jdk:
+  - openjdk11
 android:
   components:
     - tools
