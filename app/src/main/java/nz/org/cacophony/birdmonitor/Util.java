@@ -1,5 +1,20 @@
 package nz.org.cacophony.birdmonitor;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.Context.ALARM_SERVICE;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
+import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON;
+import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_STOPPED;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -53,8 +68,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,31 +79,17 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.TimeZone;
 
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
+import kotlin.random.Random;
+import kotlin.random.RandomKt;
+import kotlin.ranges.IntRange;
 import nz.org.cacophony.birdmonitor.views.MainActivity;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.content.Context.ALARM_SERVICE;
-import static nz.org.cacophony.birdmonitor.views.GPSFragment.GPS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.GPSFragment.GpsMessageType.GPS_UPDATE_FAILED;
-import static nz.org.cacophony.birdmonitor.views.GPSFragment.ROOT_ACTION;
-import static nz.org.cacophony.birdmonitor.views.GPSFragment.RootMessageType.ERROR_DO_NOT_HAVE_ROOT;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MANAGE_RECORDINGS_ACTION;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_DELETED;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_DELETED_RECORDINGS;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON;
-import static nz.org.cacophony.birdmonitor.views.ManageRecordingsFragment.MessageType.UPLOADING_STOPPED;
-
-
 /**
- * A rather large set of helper methods that are placed here to simplify other classes/methods.
+ * A rather large set of helper methods that are placed here to simplify other
+ * classes/methods.
  *
  * @author Tim Hunt
  */
@@ -99,7 +102,6 @@ public class Util {
 
     private static final String COMMAND_AEROPLANE_RADIOS_BLUETOOTH = "settings put global airplane_mode_radios cell,wifi,nfc,wimax";
     private static final String COMMAND_AEROPLANE_RADIOS_DEFAULT = "settings put global airplane_mode_radios cell,wifi,nfc,wimax,bluetooth";
-
 
     // For airplane mode
     private final static String COMMAND_FLIGHT_MODE_1 = "settings put global airplane_mode_on";
@@ -137,9 +139,12 @@ public class Util {
     }
 
     /**
-     * Retrieve the location of where data is stored on the phone. Will automatically use the sdcard
-     * if it is present.  This means for phones that do not have a internet connection, you just
-     * have to insert an sdcard and all recordings will be on the card, making it possible to
+     * Retrieve the location of where data is stored on the phone. Will
+     * automatically use the sdcard
+     * if it is present. This means for phones that do not have a internet
+     * connection, you just
+     * have to insert an sdcard and all recordings will be on the card, making it
+     * possible to
      * retrieve the recordings by swapping out the card..
      *
      * @param context
@@ -147,10 +152,13 @@ public class Util {
      */
     private static File getAppDataFolder(Context context) {
 
-        // 15/8/16 Tim Hunt - Going to change file storage location to always use internal phone storage rather than rely on sdcard
+        // 15/8/16 Tim Hunt - Going to change file storage location to always use
+        // internal phone storage rather than rely on sdcard
         // This is because if sdcard is 'dodgy' can get inconsistent results.
-        // Need context to get internal storage location, so need to pass this around the code.
-        // If I could be sure the homeFile was set before any of the other directories are needed then I
+        // Need context to get internal storage location, so need to pass this around
+        // the code.
+        // If I could be sure the homeFile was set before any of the other directories
+        // are needed then I
         // wouldn't need to pass context around to the other methods :-(
 
         File appDataFolder = null;
@@ -166,7 +174,8 @@ public class Util {
             canCreateFile = canCreateFile(sDCardAvailable);
         }
 
-        //https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String, int)
+        // https://developer.android.com/reference/android/content/Context.html#getDir(java.lang.String,
+        // int)
 
         try {
             String appName = context.getResources().getString(R.string.activity_or_fragment_title_main);
@@ -245,7 +254,6 @@ public class Util {
 
             // now check it is there
 
-
             if (localFolderFile == null) {
                 Log.e(TAG, "There is a problem writing to the memory - please fix");
                 getToast(context).show();
@@ -264,8 +272,10 @@ public class Util {
     }
 
     /**
-     * Returns the device id of this phone.  The device id has been allocated by the server when
-     * the phone registers with the server, and is stored locally in a 'webtoken' string in the shared
+     * Returns the device id of this phone. The device id has been allocated by the
+     * server when
+     * the phone registers with the server, and is stored locally in a 'webtoken'
+     * string in the shared
      * preferences on this phone.
      *
      * @param webToken
@@ -351,7 +361,8 @@ public class Util {
 
     public static double getBatteryLevelByIntent(Context context) {
 
-        //Will use the method of checking battery level that may only give an update if phone charging status changes
+        // Will use the method of checking battery level that may only give an update if
+        // phone charging status changes
         // this will return a percentage
         try {
             double batteryLevel;
@@ -370,7 +381,7 @@ public class Util {
         FileInputStream fin = new FileInputStream(fl);
         String ret = convertStreamToString(fin);
 
-        //Make sure you close all streams.
+        // Make sure you close all streams.
         fin.close();
         return ret;
     }
@@ -439,7 +450,6 @@ public class Util {
         }
     }
 
-
     /**
      * Returns the sunrise time for the current device location
      *
@@ -506,7 +516,8 @@ public class Util {
         String lon;
 
         if (prefs.getLatitude() == 0.0 && prefs.getLongitude() == 0.0) {
-            // gps not yet set, so to avoid errors/too complex code to check, just use coordinates for Hamilton NZ
+            // gps not yet set, so to avoid errors/too complex code to check, just use
+            // coordinates for Hamilton NZ
             lat = Double.toString(-37.805294);
             lon = Double.toString(175.306775);
 
@@ -517,7 +528,6 @@ public class Util {
 
         return new Location(lat, lon);
     }
-
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean waitForNetworkConnection(Context context, boolean networkConnectionRequired) {
@@ -540,22 +550,21 @@ public class Util {
         return connected;
     }
 
-
     public static boolean isNetworkConnected(Context context) {
 
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) {
             Log.e(TAG, "cm is null");
             return false; // false may not be correct
         }
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        @SuppressWarnings("UnnecessaryLocalVariable") boolean isConnected = activeNetwork != null &&
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-//        if (!rootedIdlingResource.isIdleNow()){
-//            rootedIdlingResource.decrement();
-//        }
+        // if (!rootedIdlingResource.isIdleNow()){
+        // rootedIdlingResource.decrement();
+        // }
         return isConnected;
     }
 
@@ -588,11 +597,12 @@ public class Util {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                     // API 17 onwards.
                     // Must be a rooted device
-                    if (!prefs.getHasRootAccess()) {  // don't try to disable flight mode if phone has been rooted.
+                    if (!prefs.getHasRootAccess()) { // don't try to disable flight mode if phone has been rooted.
                         return;
                     }
 
-                    if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) {  // Don't try to turn on aerial if set to be offline
+                    if (prefs.getInternetConnectionMode().equalsIgnoreCase("offline")) { // Don't try to turn on aerial
+                        // if set to be offline
                         return;
                     }
 
@@ -605,7 +615,7 @@ public class Util {
                 } else {
                     // API 16 and earlier.
 
-                    //noinspection deprecation
+                    // noinspection deprecation
                     Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
                     Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
                     intent.putExtra("state", false);
@@ -618,13 +628,15 @@ public class Util {
             }
 
         }).start();
-        // rootedIdlingResource.increment(); // and decrement in isNetworkConnected method
+        // rootedIdlingResource.increment(); // and decrement in isNetworkConnected
+        // method
     }
 
     public static void relaunch(final Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         int mPendingIntentId = 1;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
@@ -668,11 +680,11 @@ public class Util {
                     executeCommandTim(context, command);
                     command = COMMAND_FLIGHT_MODE_2 + " " + "true";
                     executeCommandTim(context, command);
-                    //     rootedIdlingResource.decrement();
+                    // rootedIdlingResource.decrement();
 
                 } else {
 
-                    //noinspection deprecation
+                    // noinspection deprecation
                     Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 1);
                     Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
                     intent.putExtra("state", true);
@@ -685,7 +697,6 @@ public class Util {
 
         }).start();
     }
-
 
     private static void executeCommandTim(Context context, String command) {
         try {
@@ -747,14 +758,15 @@ public class Util {
         return simStateStr;
     }
 
-
     public static Toast getToast(Context context) {
-        @SuppressLint("ShowToast") Toast toast = Toast.makeText(context, "There is a problem writing to the memory - please fix", Toast.LENGTH_LONG);
+        @SuppressLint("ShowToast")
+        Toast toast = Toast.makeText(context, "There is a problem writing to the memory - please fix",
+                Toast.LENGTH_LONG);
         toast.getView().setBackgroundColor(context.getResources().getColor(R.color.alert));
         return toast;
     }
 
-    //https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
+    // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location/29107397#29107397
     private static String isRemovableSDCardAvailable(Context context) {
         final String FLAG = "mnt";
         final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
@@ -763,22 +775,23 @@ public class Util {
         final String EXTERNAL_SD_STORAGE = System.getenv("EXTERNAL_SD_STORAGE");
         final String EXTERNAL_STORAGE = System.getenv("EXTERNAL_STORAGE");
 
-        @SuppressLint("UseSparseArrays") Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<>();
+        @SuppressLint("UseSparseArrays")
+        Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory = new HashMap<>();
         listEnvironmentVariableStoreSDCardRootDirectory.put(0, SECONDARY_STORAGE);
         listEnvironmentVariableStoreSDCardRootDirectory.put(1, EXTERNAL_STORAGE_DOCOMO);
         listEnvironmentVariableStoreSDCardRootDirectory.put(2, EXTERNAL_SDCARD_STORAGE);
         listEnvironmentVariableStoreSDCardRootDirectory.put(3, EXTERNAL_SD_STORAGE);
         listEnvironmentVariableStoreSDCardRootDirectory.put(4, EXTERNAL_STORAGE);
 
-        File externalStorageList[] = null;
+        File[] externalStorageList = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             externalStorageList = context.getExternalFilesDirs(null);
         }
         String directory;
         int size = listEnvironmentVariableStoreSDCardRootDirectory.size();
         for (int i = 0; i < size; i++) {
-            if (externalStorageList != null && externalStorageList.length > 1 && externalStorageList[1] != null)
-                directory = externalStorageList[1].getAbsolutePath();
+            if (externalStorageList != null && externalStorageList.length >= 1 && externalStorageList[0] != null)
+                directory = externalStorageList[0].getAbsolutePath();
             else
                 directory = listEnvironmentVariableStoreSDCardRootDirectory.get(i);
 
@@ -798,7 +811,6 @@ public class Util {
         return null;
     }
 
-
     private static String canCreateFile(String directory) {
         // https://stackoverflow.com/questions/5694933/find-an-external-sd-card-location
         final String FILE_DIR = directory + File.separator + "hoang.txt";
@@ -814,7 +826,7 @@ public class Util {
             return null;
         } finally {
             if (tempFile != null && tempFile.exists() && tempFile.isFile()) {
-                //noinspection UnusedAssignment
+                // noinspection UnusedAssignment
                 tempFile = null;
             }
         }
@@ -846,21 +858,26 @@ public class Util {
             return;
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { //m is Marshmallow 23
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { // m is Marshmallow 23
             int windowSize = 1000 * 60 * 2;
             alarmManager.setWindow(AlarmManager.RTC_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
             return;
         }
 
-        // Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow wakeup https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+        // Marshmallow will go into Doze mode, so use setExactAndAllowWhileIdle to allow
+        // wakeup
+        // https://developer.android.com/reference/android/app/AlarmManager#setExactAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
     }
 
-    public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail safe to get them going again (it doesn't rely on a previous alarm)
+    public static void createFailSafeAlarm(Context context) { // Each alarm creates the next one, need to have this fail
+        // safe to get them going again (it doesn't rely on a
+        // previous alarm)
         Intent myIntent = new Intent(context, StartRecordingReceiver.class);
         try {
             myIntent.putExtra(Prefs.INTENT_TYPE, Prefs.FAIL_SAFE_ALARM);
-            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one with new time it will replace this one
+            Uri timeUri; // // this will hopefully allow matching of intents so when adding a new one
+            // with new time it will replace this one
             timeUri = Uri.parse(Prefs.FAIL_SAFE_ALARM); // cf dawn dusk offsets created in DawnDuskAlarms
             myIntent.setData(timeUri);
 
@@ -876,9 +893,9 @@ public class Util {
             return;
         }
 
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES, AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                AlarmManager.INTERVAL_DAY, pendingIntent);
     }
-
 
     // Get the next sunrise/noon/sunset alarm closest to the current time
     public static Alarm getClosestSunAlarm(Context context, Prefs prefs) {
@@ -933,19 +950,36 @@ public class Util {
         } else {
             wakeUpTime = System.currentTimeMillis();
             if (prefs.getUseVeryFrequentRecordings()) {
-                return new Alarm(wakeUpTime + 1000 * (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(), Prefs.NORMAL_URI);
+                return new Alarm(wakeUpTime + 1000 * (long) prefs.getTimeBetweenVeryFrequentRecordingsSeconds(),
+                        Prefs.NORMAL_URI);
             }
+            if (prefs.getRandomSeed() > 9999) {
+                int seed = Random.Default.nextInt(9999);
+                prefs.setRandomSeed(seed);
+            }
+            String seed = String.valueOf(prefs.getRandomSeed());
 
-            float chance = new Random().nextFloat();
-            float shortWindowChance = prefs.getshortRecordingWindowChance();
-            if (chance < shortWindowChance) {
-                chance = new Random().nextFloat();
-                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getShortRecordingPause() + chance * prefs.getShortRecordingWindowMinutes()));
+            long currentDayInMillis = wakeUpTime / (1000 * 60 * 60 * 24) * (1000 * 60 * 60 * 24);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                seed += LocalDate.now().getDayOfMonth();
+                seed += LocalDate.now().getMonth().getValue();
             } else {
-                chance = new Random().nextFloat();
-                wakeUpTime = wakeUpTime + (long) (1000 * 60 * (prefs.getLongRecordingPause() + chance * prefs.getLongRecordingWindowMinutes()));
+                seed += (int) (currentDayInMillis);
             }
+            Integer randomSeed = Integer.valueOf(seed);
+            Random chance = RandomKt.Random(randomSeed);
+            while (currentDayInMillis < wakeUpTime) {
+                float toWakeUp = chance.nextFloat();
+                float randomTime = chance.nextFloat();
+                float inXMinutes = (toWakeUp < prefs.getshortRecordingWindowChance())
+                        ? (prefs.getShortRecordingPause() + randomTime * prefs.getShortRecordingWindowMinutes())
+                        : (prefs.getLongRecordingPause() + randomTime * prefs.getLongRecordingWindowMinutes());
+                currentDayInMillis += (long) (1000 * 60 * inXMinutes);
+            }
+            wakeUpTime = currentDayInMillis;
         }
+        // log the time of the next alarm
+        Log.i(TAG, "Next alarm is at " + new Date(wakeUpTime));
         return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
     }
 
@@ -960,14 +994,17 @@ public class Util {
     }
 
     public static boolean alarmExists(Context context) {
-        return PendingIntent.getBroadcast(context, 0, getRepeatingAlarmIntent(context, null), PendingIntent.FLAG_NO_CREATE) != null;
+        return PendingIntent.getBroadcast(context, 0, getRepeatingAlarmIntent(context, null),
+                PendingIntent.FLAG_NO_CREATE) != null;
     }
 
     /**
-     * Creates Android OS alarms that when fired by the OS, create and send intents to the
+     * Creates Android OS alarms that when fired by the OS, create and send intents
+     * to the
      * StartRecordingReceiver class which in turn initiate a recording.
      * <p>
-     * There is also a method called createCreateAlarms that kick starts this method.
+     * There is also a method called createCreateAlarms that kick starts this
+     * method.
      *
      * @param context *
      */
@@ -980,7 +1017,9 @@ public class Util {
             Log.e(TAG, "alarmManager is null");
             return;
         }
-        boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM)) || !alarmExists(context);
+
+        boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM))
+                || !alarmExists(context);
         int flags = 0;
         if (prefs.getUseSunAlarms()) {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
@@ -999,7 +1038,7 @@ public class Util {
             return;
         }
 
-        //https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
+        // https://stackoverflow.com/questions/36123431/gps-service-check-to-check-if-the-gps-is-enabled-or-disabled-on-device
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             String messageToDisplay = "Sorry, GPS is not enabled.  Please enable location/gps in the phone settings and try again.";
             MessageHelper.broadcastMessage(messageToDisplay, GPS_UPDATE_FAILED, GPS_ACTION, context);
@@ -1008,7 +1047,8 @@ public class Util {
 
         GPSLocationListener gpsLocationListener = new GPSLocationListener(context);
         try {
-            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener, context.getMainLooper());
+            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsLocationListener,
+                    context.getMainLooper());
 
         } catch (SecurityException e) {
             Log.e(TAG, "Unable to get GPS location. Don't have required permissions.");
@@ -1063,14 +1103,17 @@ public class Util {
                 boolean uploadedSuccessfully = RecordAndUpload.uploadFiles(context);
                 if (RecordAndUpload.isCancelUploadingRecordings()) {
                     String messageToDisplay = "Uploading of recordings has been stopped";
-                    MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_STOPPED, MANAGE_RECORDINGS_ACTION, context);
+                    MessageHelper.broadcastMessage(messageToDisplay, UPLOADING_STOPPED, MANAGE_RECORDINGS_ACTION,
+                            context);
                 } else if (uploadedSuccessfully) {
                     Log.i(TAG, "Upload complete");
                     String messageToDisplay = "Recordings have been uploaded to the server.";
-                    MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON, MANAGE_RECORDINGS_ACTION, context);
+                    MessageHelper.broadcastMessage(messageToDisplay,
+                            SUCCESSFULLY_UPLOADED_RECORDINGS_USING_UPLOAD_BUTTON, MANAGE_RECORDINGS_ACTION, context);
                 } else {
                     String messageToDisplay = "There was a problem. The recordings were NOT uploaded.";
-                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON, MANAGE_RECORDINGS_ACTION, context);
+                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_UPLOADED_USING_UPLOAD_BUTTON,
+                            MANAGE_RECORDINGS_ACTION, context);
                 }
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
@@ -1084,58 +1127,80 @@ public class Util {
 
         if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.app_icon_name))) {
             dialogMessage = context.getString(R.string.help_text_welcome);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_welcome))) {
             dialogMessage = context.getString(R.string.help_text_welcome);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_account))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_create_account))) {
             dialogMessage = context.getString(R.string.help_text_create_account);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_sign_in))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_sign_in))) {
             dialogMessage = context.getString(R.string.help_text_sign_in);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_create_or_choose_group))) {
             dialogMessage = context.getString(R.string.help_text_create_or_choose_group);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_register_phone))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_register_phone))) {
             dialogMessage = context.getString(R.string.help_text_register_phone);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_gps_location))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_gps_location))) {
             dialogMessage = context.getString(R.string.help_text_gps_location);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_test_record))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_test_record))) {
             dialogMessage = context.getString(R.string.help_text_test_record);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_vitals))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_vitals))) {
             dialogMessage = context.getString(R.string.help_text_vitals);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_walking))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_walking))) {
             dialogMessage = context.getString(R.string.help_text_walking);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_activity_ignore_low_battery))) {
             dialogMessage = context.getString(R.string.help_text_battery);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_warning_sound))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_warning_sound))) {
             dialogMessage = context.getString(R.string.help_text_warning_sound);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_manage_recordings))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_manage_recordings))) {
             dialogMessage = context.getString(R.string.help_text_manage_recordings);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_internet_connection))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_internet_connection))) {
             dialogMessage = context.getString(R.string.help_text_internet_connection);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_frequency))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_activity_frequency))) {
             dialogMessage = context.getString(R.string.help_text_frequency);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_rooted))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_rooted))) {
             dialogMessage = context.getString(R.string.help_text_rooted);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_testing))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_settings_for_testing))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_testing);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_turn_off_or_on))) {
             dialogMessage = context.getString(R.string.help_text_turn_off_or_on);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_settings_for_audio_source))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_audio_source);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))) {
+        } else if (activityOrFragmentName
+                .equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_bird_count))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_bird_count);
-        } else if (activityOrFragmentName.equalsIgnoreCase(context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
+        } else if (activityOrFragmentName.equalsIgnoreCase(
+                context.getResources().getString(R.string.activity_or_fragment_title_activity_sun_alarms))) {
             dialogMessage = context.getString(R.string.help_text_settings_for_sun_alarms);
         } else {
             dialogMessage = "Still to fix in Util.displayHelp";
         }
 
         // Make any urls 'clickable'
-        //https://stackoverflow.com/questions/9204303/android-is-it-possible-to-add-a-clickable-link-into-a-string-resource
+        // https://stackoverflow.com/questions/9204303/android-is-it-possible-to-add-a-clickable-link-into-a-string-resource
         final SpannableString s = new SpannableString(dialogMessage);
 
         Linkify.addLinks(s, Linkify.ALL);
 
         final AlertDialog dialog = new AlertDialog.Builder(context)
-                .setPositiveButton("OK", (di, id) -> { /*Exit the dialog*/ })
+                .setPositiveButton("OK", (di, id) -> {
+                    /* Exit the dialog */
+                })
                 .setMessage(s)
                 .setTitle(activityOrFragmentName)
                 .create();
@@ -1147,8 +1212,8 @@ public class Util {
             int oKButtonColor = ResourcesCompat.getColor(context.getResources(), R.color.dialogButtonText, null);
             btnPositive.setTextColor(oKButtonColor);
 
-            //https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
-            //https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
+            // https://stackoverflow.com/questions/6562924/changing-font-size-into-an-alertdialog
+            // https://stackoverflow.com/questions/13520193/android-linkify-how-to-set-custom-link-color
             TextView textView = dialog.findViewById(android.R.id.message);
             int linkColorInt = ResourcesCompat.getColor(context.getResources(), R.color.linkToServerInHelp, null);
             textView.setLinkTextColor(linkColorInt);
@@ -1160,7 +1225,8 @@ public class Util {
 
         dialog.show();
 
-        // Make the textview clickable. Must be called after show(). Need for URL to work
+        // Make the textview clickable. Must be called after show(). Need for URL to
+        // work
         ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -1178,7 +1244,8 @@ public class Util {
 
                 if (getNumberOfRecordings(context) == 0) {
                     String messageToDisplay = "All recordings on the phone have been deleted.";
-                    MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_DELETED_RECORDINGS, MANAGE_RECORDINGS_ACTION, context);
+                    MessageHelper.broadcastMessage(messageToDisplay, SUCCESSFULLY_DELETED_RECORDINGS,
+                            MANAGE_RECORDINGS_ACTION, context);
 
                     // Delete any recording notes files
                     File recordingNotesFolder = Util.getRecordingNotesFolder(context);
@@ -1192,7 +1259,8 @@ public class Util {
 
                 } else {
                     String messageToDisplay = "There was a problem. The recordings were NOT deleted.";
-                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_DELETED, MANAGE_RECORDINGS_ACTION, context);
+                    MessageHelper.broadcastMessage(messageToDisplay, FAILED_RECORDINGS_NOT_DELETED,
+                            MANAGE_RECORDINGS_ACTION, context);
                 }
             } catch (Exception ex) {
                 Log.e(TAG, ex.getLocalizedMessage(), ex);
@@ -1202,11 +1270,11 @@ public class Util {
 
     public static int getNumberOfRecordings(Context context) {
         File recordingsFolder = Util.getRecordingsFolder(context);
-        File recordingFiles[] = recordingsFolder.listFiles();
+        File[] recordingFiles = recordingsFolder.listFiles();
         return recordingFiles.length;
     }
 
-    //https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
+    // https://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
     public static boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
@@ -1325,14 +1393,14 @@ public class Util {
         return groupNameFromPrefs != null && deviceNameFromPrefs != null;
     }
 
-    public static boolean haveAllPermissions(Context context, String permissions[]) {
+    public static boolean haveAllPermissions(Context context, String[] permissions) {
 
-        //String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION};
+        // String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        // Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION};
 
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(context,
-                    permission)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    permission) != PackageManager.PERMISSION_GRANTED) {
 
                 return false;
 
@@ -1347,38 +1415,40 @@ public class Util {
     }
 
     public static boolean isBirdCountRecording(String type) {
-        return type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
+        return type.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM) || type.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)
+                || type.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM);
     }
 
     public static boolean isUIRecording(String type) {
         return type.equalsIgnoreCase(Prefs.RECORD_NOW_ALARM) || isBirdCountRecording(type);
     }
 
-    public static long getRecordingDuration(Context context, String typeOfRecording, String
-            offsetType) {
+    public static long getRecordingDuration(Context context, String typeOfRecording, String offsetType) {
         Prefs prefs = new Prefs(context);
         long recordTimeSeconds = (long) prefs.getRecordingDuration();
 
-        if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_5_ALARM)) {
+        if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM)) {
             recordTimeSeconds = 60 * 5;
-        } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_10_ALARM)) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)) {
             recordTimeSeconds = 60 * 10;
-        } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
             recordTimeSeconds = 60 * 15;
-        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
+        } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()
+                && !offsetType.equals(Prefs.NORMAL_URI)) {
             recordTimeSeconds = prefs.getRecLength() * 60;
         }
 
         if (prefs.getUseShortRecordings()) { // for testing
             recordTimeSeconds = 1;
 
-            if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_5_ALARM)) {
+            if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_5_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 5;
-            } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_10_ALARM)) {
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_10_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 10;
-            } else if (typeOfRecording.equalsIgnoreCase(prefs.BIRD_COUNT_15_ALARM)) {
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.BIRD_COUNT_15_ALARM)) {
                 recordTimeSeconds = recordTimeSeconds * 15;
-            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms() && !offsetType.equals(Prefs.NORMAL_URI)) {
+            } else if (typeOfRecording.equalsIgnoreCase(Prefs.REPEATING_ALARM) && prefs.getUseSunAlarms()
+                    && !offsetType.equals(Prefs.NORMAL_URI)) {
                 recordTimeSeconds = prefs.getRecLength();
             }
         }
@@ -1390,8 +1460,8 @@ public class Util {
         return recordTimeSeconds;
     }
 
-    public static void saveRecordingNote(Context context, String
-            latestRecordingFileName, String weatherNote, String countedByNote, String otherNote) {
+    public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote,
+                                         String countedByNote, String otherNote) {
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
 
         JSONObject recordingNotes = new JSONObject();
@@ -1409,7 +1479,6 @@ public class Util {
         }
     }
 
-
     public static String getRecordingFileExtension() {
         return RECORDING_FILE_EXTENSION;
     }
@@ -1420,7 +1489,8 @@ public class Util {
         if (latestRecordingFileNameWithOutExtension == null) {
             return null;
         } else {
-            String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension + ".json";
+            String notesFilePathName = getRecordingNotesFolder(context) + "/" + latestRecordingFileNameWithOutExtension
+                    + ".json";
             return new File(notesFilePathName);
         }
     }

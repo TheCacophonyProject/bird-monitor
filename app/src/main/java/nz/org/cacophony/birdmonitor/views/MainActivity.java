@@ -9,21 +9,24 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import kotlin.random.Random;
 import nz.org.cacophony.birdmonitor.Prefs;
 import nz.org.cacophony.birdmonitor.R;
 import nz.org.cacophony.birdmonitor.RecordAndUpload;
 import nz.org.cacophony.birdmonitor.UpdateUtil;
 import nz.org.cacophony.birdmonitor.Util;
 
-
 public class MainActivity extends AppCompatActivity {
     // Register with idling counter
     // https://developer.android.com/training/testing/espresso/idling-resource.html
-    // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities // this gave me idea to use an interface for app under test activities e.g MainActivity
+    // stackoverflow.com/questions/25470210/using-espresso-idling-resource-with-multiple-activities
+    // // this gave me idea to use an interface for app under test activities e.g
+    // MainActivity
     // https://www.youtube.com/watch?v=uCtzH0Rz5XU
 
     private static final String TAG = MainActivity.class.getName();
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        //https://developer.android.com/training/appbar/setting-up#java
+        // https://developer.android.com/training/appbar/setting-up#java
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -60,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         prefs.setBatteryLevelCutoffDawnDuskRecordings();
 
         boolean isFirstTime = prefs.getIsFirstTime();
+        long currentSeed = prefs.getRandomSeed();
+        if (currentSeed == 0) {
+            prefs.setRandomSeed(Random.Default.nextLong(9999));
+        }
 
         if (isFirstTime) {
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
@@ -75,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         }
         final Button advancedButton = findViewById(R.id.btnAdvanced);
         clearFlightModeFlags(prefs);
+
+        Util.Alarm currAlarm = Util.getNextAlarm(this, prefs, null);
+        prefs.setTheNextSingleStandardAlarmUsingUnixTime(currAlarm.TimeMillis);
 
         if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));
@@ -103,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // Add or Remove Settings for Test Server fragment
 
-
                     } else {
                         startActivity(new Intent(MainActivity.this, AdvancedWizardActivity.class));
                     }
@@ -125,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //  clears old internet requirement flags, if the app has crashed or something has gone wrong
+    // clears old internet requirement flags, if the app has crashed or something
+    // has gone wrong
     private void clearFlightModeFlags(Prefs prefs) {
         int flags = 0;
         if (!RecordAndUpload.isUploading) {
@@ -144,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Prefs prefs = new Prefs(this.getApplicationContext());
-
 
         if (prefs.getAutomaticRecordingsDisabled()) {
             ((Button) findViewById(R.id.btnDisable)).setText(getResources().getString(R.string.enable_recording));
@@ -184,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void launchBirdCountActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
             Intent intent = new Intent(this, BirdCountActivity.class);
@@ -211,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
     }
-
 
     public void launchDisableActivity(@SuppressWarnings("UnusedParameters") View v) {
         try {
