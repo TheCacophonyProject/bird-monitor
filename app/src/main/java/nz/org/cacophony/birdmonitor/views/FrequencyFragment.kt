@@ -47,9 +47,6 @@ class FrequencyFragment : Fragment() {
         randomButton.setOnClickListener {
             val newSeed = Random.nextLong(9999)
             randomText.text = newSeed.toString()
-            prefs.randomSeed = newSeed
-            val alarm = Util.getNextAlarm(requireActivity().applicationContext, prefs, null)
-            prefs.setTheNextSingleStandardAlarmUsingUnixTime(alarm.TimeMillis)
         }
         
         randomText.doAfterTextChanged { text ->
@@ -60,6 +57,7 @@ class FrequencyFragment : Fragment() {
             prefs.randomSeed = newSeed
             val alarm = Util.getNextAlarm(requireActivity().applicationContext, prefs, null)
             prefs.setTheNextSingleStandardAlarmUsingUnixTime(alarm.TimeMillis)
+            Util.createTheNextSingleStandardAlarm(requireActivity().applicationContext, Prefs.RELATIVE, Prefs.INTENT_TYPE)
         }
 
         return view

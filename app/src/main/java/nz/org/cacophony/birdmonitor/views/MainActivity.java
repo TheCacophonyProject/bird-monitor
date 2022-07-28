@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         boolean isFirstTime = prefs.getIsFirstTime();
         long currentSeed = prefs.getRandomSeed();
         if (currentSeed == 0) {
-            prefs.setRandomSeed(Random.Default.nextLong(99999));
+            prefs.setRandomSeed(Random.Default.nextLong(9999));
         }
 
         if (isFirstTime) {

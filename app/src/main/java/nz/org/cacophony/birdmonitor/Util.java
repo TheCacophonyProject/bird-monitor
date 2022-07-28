@@ -84,6 +84,7 @@ import java.util.TimeZone;
 import ch.qos.logback.classic.android.BasicLogcatConfigurator;
 import kotlin.random.Random;
 import kotlin.random.RandomKt;
+import kotlin.ranges.IntRange;
 import nz.org.cacophony.birdmonitor.views.MainActivity;
 
 /**
@@ -953,7 +954,8 @@ public class Util {
                         Prefs.NORMAL_URI);
             }
             if (prefs.getRandomSeed() > 9999) {
-                prefs.setRandomSeed(1);
+                int seed = Random.Default.nextInt(9999);
+                prefs.setRandomSeed(seed);
             }
             String seed = String.valueOf(prefs.getRandomSeed());
 
@@ -976,6 +978,8 @@ public class Util {
             }
             wakeUpTime = currentDayInMillis;
         }
+        // log the time of the next alarm
+        Log.i(TAG, "Next alarm is at " + new Date(wakeUpTime));
         return new Alarm(wakeUpTime, Prefs.NORMAL_URI);
     }
 
@@ -1013,6 +1017,7 @@ public class Util {
             Log.e(TAG, "alarmManager is null");
             return;
         }
+
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM))
                 || !alarmExists(context);
         int flags = 0;
