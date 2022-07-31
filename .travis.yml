@@ -22,7 +22,7 @@ licenses:
 before_install:
   - echo 'count=0' > /home/travis/.android/repositories.cfg
   - wget "https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip" -O commandlinetools.zip
-  # - unzip commandlinetools.zip -d $ANDROID_HOME/
+  - unzip -o commandlinetools.zip -d $ANDROID_HOME/
   - gem update --system
   - gem install bundler
   - bundle install
