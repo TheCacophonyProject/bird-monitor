@@ -960,12 +960,9 @@ public class Util {
             String seed = String.valueOf(prefs.getRandomSeed());
 
             long currentDayInMillis = wakeUpTime / (1000 * 60 * 60 * 24) * (1000 * 60 * 60 * 24);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                seed += LocalDate.now().getDayOfMonth();
-                seed += LocalDate.now().getMonth().getValue();
-            } else {
-                seed += (int) (currentDayInMillis);
-            }
+            Calendar date = Calendar.getInstance(TimeZone.getTimeZone("Pacific/Auckland"));
+            seed += date.get(date.DAY_OF_MONTH);
+            seed += date.get(date.MONTH) + 1;
             Integer randomSeed = Integer.valueOf(seed);
             Random chance = RandomKt.Random(randomSeed);
             while (currentDayInMillis < wakeUpTime) {
