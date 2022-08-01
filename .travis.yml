@@ -37,9 +37,11 @@ before_script:
 script:
   - "./gradlew clean assembleDebug"
 before_deploy:
+
   - openssl aes-256-cbc -K $encrypted_07c92ad84bea_key -iv $encrypted_07c92ad84bea_iv -in signing.tar.enc -out signing.tar -d
   - tar xvf signing.tar
   - "./gradlew clean assembleRelease"
+  -  openssl aes-256-cbc -K $encrypted_1006d87fddf4_key -iv $encrypted_1006d87fddf4_iv -in api.json.enc -out api.json -d
   - "fastlane release"
 deploy:
   provider: releases

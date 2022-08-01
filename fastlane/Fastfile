@@ -68,7 +68,8 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
       skip_upload_apk: false,
-      apk: File.absolute_path(apk_path)
+      apk: File.absolute_path(apk_path),
+      track: 'beta'
     )
     end
 end
