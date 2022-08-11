@@ -67,8 +67,8 @@ public class MainService extends IntentService {
                 String relativeTo = bundle.getString(Prefs.RELATIVE);
                 long recordTimeSeconds = Util.getRecordingDuration(getApplicationContext(), alarmIntentType, relativeTo);
                 wakeLock.acquire(recordTimeSeconds * 1000L /*10 minutes*/);
-                RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType, relativeTo);
                 updating = checkForUpdates(getApplicationContext());
+                RecordAndUpload.doRecord(getApplicationContext(), alarmIntentType, relativeTo);
             } else {
                 Log.e(TAG, "MainService bundle is null");
             }

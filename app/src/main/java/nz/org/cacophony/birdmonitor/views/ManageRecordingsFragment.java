@@ -1,17 +1,21 @@
 package nz.org.cacophony.birdmonitor.views;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +82,35 @@ public class ManageRecordingsFragment extends Fragment {
         if (tvMessages.getText() == "" && RecordAndUpload.isUploading) {
             tvMessages.setText("Uploading recordings");
         }
+        Prefs prefs = new Prefs(getActivity());
+        EditText recordingDuration = view.findViewById(R.id.recDurationText);
+        recordingDuration.clearFocus();
+        double recDuration = prefs.getRecordingDuration();
+        recordingDuration.setText(String.format("%.0f", recDuration));
+
+        recordingDuration.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String text = recordingDuration.getText().toString();
+                if (text.isEmpty() || (Double.parseDouble(text) < 10)) {
+                    double currRecDuration = prefs.getRecordingDuration();
+                    recordingDuration.setText(String.format("%.0f", currRecDuration));
+                    recordingDuration.setError("Please enter a duration (minimum 10 seconds)");
+                    return;
+                }
+                recordingDuration.setError(null);
+                double newRecDuration = Double.parseDouble(text);
+                prefs.setRecordingDuration(newRecDuration);
+            }
+        });
+        // remove focus if the user closes the keyboard
+        recordingDuration.setOnEditorActionListener((v, actionId, event) -> {
+            recordingDuration.clearFocus();
+            // hide the keyboard
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(recordingDuration.getWindowToken(), 0);
+            return true;
+        });
+
         return view;
     }
 

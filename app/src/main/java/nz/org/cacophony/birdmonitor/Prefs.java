@@ -25,6 +25,7 @@ public class Prefs {
     public static final String INTENT_TYPE = "type";
     public static final String FAIL_SAFE_ALARM = "failSafe";
     public static final String REPEATING_ALARM = "repeating";
+    public static final String ALARM_OVERWRITE = "overwrite";
     public static final String PRIVILEGED_EXTENSION_PACKAGE = "nz.org.cacophony.privileged";
     public static final String PRIVILEGED_EXTENSION_SERVICE_INTENT = "nz.org.cacophony.privileged.IPrivilegedService";
     public static final String GITHUB_BIRD = "13c580e2d6f19d636be2785d82d3a12c0dc43d15185b8a54197e618d8188b2e5";
@@ -426,6 +427,10 @@ public class Prefs {
 
     public void setRecordingDurationSeconds() {
         setDouble(RECORDING_DURATION_SECONDS_KEY, RECORDING_DURATION_SECONDS);
+    }
+
+    public void setRecordingDuration(double seconds) {
+        setDouble(RECORDING_DURATION_SECONDS_KEY, seconds);
     }
 
     public void setTimeBetweenVeryFrequentRecordingsSeconds() {

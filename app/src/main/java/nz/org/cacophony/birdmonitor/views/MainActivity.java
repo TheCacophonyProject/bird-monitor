@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final Prefs prefs = new Prefs(this.getApplicationContext());
-        prefs.setRecordingDurationSeconds();
         prefs.setTimeBetweenFrequentRecordingsSeconds();
         prefs.setTimeBetweenVeryFrequentRecordingsSeconds();
         prefs.setTimeBetweenGPSLocationUpdatesSeconds();
@@ -69,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (isFirstTime) {
+            prefs.setRecordingDurationSeconds();
             prefs.setDateTimeLastRepeatingAlarmFiredToZero();
             prefs.setDateTimeLastUpload(0);
             prefs.setInternetConnectionMode("normal");
@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
         }
         final Button advancedButton = findViewById(R.id.btnAdvanced);
         clearFlightModeFlags(prefs);
-
-        Util.Alarm currAlarm = Util.getNextAlarm(this, prefs, null);
-        prefs.setTheNextSingleStandardAlarmUsingUnixTime(currAlarm.TimeMillis);
 
         if (prefs.getVeryAdvancedSettingsEnabled()) {
             advancedButton.setText(getResources().getString(R.string.very_advanced));

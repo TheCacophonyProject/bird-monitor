@@ -48,7 +48,6 @@ public class BootReceiver extends BroadcastReceiver {
                     wakeLock.acquire(timeout); // finally never seems to run which is why I used a timeout on the wakelock creation
                     try {
                         Util.createTheNextSingleStandardAlarm(context, null, intent.getAction());
-                        Util.createFailSafeAlarm(context);
                         Util.enableFlightMode(context);
                         if (intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
                             Prefs prefs = new Prefs(context);

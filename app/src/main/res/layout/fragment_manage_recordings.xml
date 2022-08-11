@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="nz.org.cacophony.birdmonitor.views.WelcomeFragment"
     tools:layout_editor_absoluteY="25dp">
 
@@ -12,16 +14,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="@string/upload_or_delete_recordings"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    tools:ignore="UnknownIdInLayout" />
+    />
 
     <Button
         android:id="@+id/btnUploadFiles"
@@ -40,12 +41,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="Number of recordings on phone:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Button
         android:id="@+id/btnDeleteAllRecordings"
@@ -68,14 +68,61 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnDeleteAllRecordings" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="80dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:text="Seconds"
+        android:textColor="@android:color/secondary_text_light"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/recDurationText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintStart_toEndOf="@+id/recDurationText"
+        app:layout_constraintTop_toTopOf="@+id/recDurationText"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="162dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:text="Recording Duration:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.035"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/recDurationText"
+        android:layout_width="58dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="3"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.071"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -92,5 +139,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="textView8,recDurationText,textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

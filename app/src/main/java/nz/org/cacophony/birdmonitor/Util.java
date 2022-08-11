@@ -43,6 +43,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -128,7 +129,7 @@ public class Util {
             return true;
         } else {
             Log.w(TAG, String.format("Missing permission for recording." +
-                            "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
+                    "writeExternalStorage: %s, recordAudio: %s, accessFineLocation: %s, readPhoneState: %s",
                     canWriteExternalStorage, canRecordAudio, canAccessFineLocation, canReadPhoneState));
             return false;
         }
@@ -859,8 +860,7 @@ public class Util {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { // m is Marshmallow 23
-            int windowSize = 1000 * 60 * 2;
-            alarmManager.setWindow(AlarmManager.RTC_WAKEUP, wakeUpTime - windowSize, windowSize * 2, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent);
             return;
         }
 
@@ -959,21 +959,22 @@ public class Util {
             }
             String seed = String.valueOf(prefs.getRandomSeed());
 
-            long currentDayInMillis = wakeUpTime / (1000 * 60 * 60 * 24) * (1000 * 60 * 60 * 24);
-            Calendar date = Calendar.getInstance(TimeZone.getTimeZone("Pacific/Auckland"));
+            long dayInMillis = 1000 * 60 * 60 * 24;
+            long nextAlarmTime = wakeUpTime / dayInMillis * dayInMillis; // Current day
+            Log.i(TAG, "Current Day" + new Date(nextAlarmTime));
+
+            Calendar date = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             seed += date.get(date.DAY_OF_MONTH);
             seed += date.get(date.MONTH) + 1;
+
             Integer randomSeed = Integer.valueOf(seed);
             Random chance = RandomKt.Random(randomSeed);
-            while (currentDayInMillis < wakeUpTime) {
-                float toWakeUp = chance.nextFloat();
+            while (nextAlarmTime <= wakeUpTime) {
                 float randomTime = chance.nextFloat();
-                float inXMinutes = (toWakeUp < prefs.getshortRecordingWindowChance())
-                        ? (prefs.getShortRecordingPause() + randomTime * prefs.getShortRecordingWindowMinutes())
-                        : (prefs.getLongRecordingPause() + randomTime * prefs.getLongRecordingWindowMinutes());
-                currentDayInMillis += (long) (1000 * 60 * inXMinutes);
+                float inXMinutes = (prefs.getLongRecordingPause() + randomTime * prefs.getLongRecordingWindowMinutes());
+                nextAlarmTime += 1000 * 60 * inXMinutes;
             }
-            wakeUpTime = currentDayInMillis;
+            wakeUpTime = nextAlarmTime;
         }
         // log the time of the next alarm
         Log.i(TAG, "Next alarm is at " + new Date(wakeUpTime));
@@ -1015,15 +1016,20 @@ public class Util {
             return;
         }
 
+        boolean alarmExists = alarmExists(context);
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM))
-                || !alarmExists(context);
+                || !alarmExists;
         int flags = 0;
         if (prefs.getUseSunAlarms()) {
             flags = PendingIntent.FLAG_UPDATE_CURRENT;
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
+        boolean overwrite = triggerType.equals(Prefs.ALARM_OVERWRITE) || triggerType.equals(Prefs.START_UP);
+        if (overwrite) {
+            alarmManager.cancel(pendingIntent);
+        }
         setAlarmManagerWakeUp(alarmManager, nextAlarm.TimeMillis, pendingIntent);
-        if (updateTime || prefs.getUseSunAlarms()) {
+        if (updateTime || prefs.getUseSunAlarms() || overwrite) {
             prefs.setTheNextSingleStandardAlarmUsingUnixTime(nextAlarm.TimeMillis);
         }
     }
@@ -1066,7 +1072,7 @@ public class Util {
     }
 
     public static void setTimeThatLastRecordingHappened(Context context,
-                                                        long timeLastRecordingHappened) {
+            long timeLastRecordingHappened) {
         Prefs prefs = new Prefs(context);
         prefs.setTimeThatLastRecordingHappened(timeLastRecordingHappened);
     }
@@ -1082,7 +1088,7 @@ public class Util {
     }
 
     public static void setUseVeryFrequentRecordings(Context context,
-                                                    boolean useVeryFrequentRecordings) {
+            boolean useVeryFrequentRecordings) {
         Prefs prefs = new Prefs(context);
         prefs.setUseVeryFrequentRecordings(useVeryFrequentRecordings);
         changeAlarmType(context);
@@ -1337,7 +1343,7 @@ public class Util {
     }
 
     public static void addGroupToServer(final Context context, final String groupName,
-                                        final Runnable onSuccess) {
+            final Runnable onSuccess) {
         new Thread(() -> {
             try {
                 if (Server.addGroupToServer(context, groupName)) {
@@ -1458,7 +1464,7 @@ public class Util {
     }
 
     public static void saveRecordingNote(Context context, String latestRecordingFileName, String weatherNote,
-                                         String countedByNote, String otherNote) {
+            String countedByNote, String otherNote) {
         File file = new File(Util.getRecordingNotesFolder(context), latestRecordingFileName + ".json");
 
         JSONObject recordingNotes = new JSONObject();

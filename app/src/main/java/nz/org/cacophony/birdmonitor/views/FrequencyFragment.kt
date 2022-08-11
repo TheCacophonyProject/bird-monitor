@@ -51,13 +51,13 @@ class FrequencyFragment : Fragment() {
         
         randomText.doAfterTextChanged { text ->
             if (text.isNullOrEmpty()) {
+                randomText.error = "Please enter a number"
+                randomButton.text = prefs.randomSeed.toString()
                 return@doAfterTextChanged
             }
             val newSeed = text.toString().toLong()
             prefs.randomSeed = newSeed
-            val alarm = Util.getNextAlarm(requireActivity().applicationContext, prefs, null)
-            prefs.setTheNextSingleStandardAlarmUsingUnixTime(alarm.TimeMillis)
-            Util.createTheNextSingleStandardAlarm(requireActivity().applicationContext, Prefs.RELATIVE, Prefs.INTENT_TYPE)
+            Util.createTheNextSingleStandardAlarm(requireActivity().applicationContext, null, Prefs.ALARM_OVERWRITE)
         }
 
         return view
