@@ -61,12 +61,15 @@ platform :android do
 
   desc "Deploy without building release"
   lane :release do
+    apk_path = Dir.glob("../**/*-release.apk").first
+
     upload_to_play_store(
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
-      skip_upload_apk: true,
-      apk: "bird-monitor-signed.apk"
+      skip_upload_apk: false,
+      apk: File.absolute_path(apk_path),
+      track: 'beta'
     )
     end
 end
