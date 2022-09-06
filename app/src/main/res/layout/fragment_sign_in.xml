@@ -18,7 +18,7 @@
         android:layout_marginRight="8dp"
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true"
-        android:text="Enter your Cacophony Username and password"
+        android:text="Enter your Cacophony Email and password"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/rect_text_edit"
-            android:hint="Enter Username or Email"
+            android:hint="Enter Email"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse" />
 

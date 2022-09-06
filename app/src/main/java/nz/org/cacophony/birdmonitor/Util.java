@@ -636,8 +636,11 @@ public class Util {
     public static void relaunch(final Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         int mPendingIntentId = 1;
+        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                PendingIntent.FLAG_MUTABLE :
+                PendingIntent.FLAG_CANCEL_CURRENT;
         PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
+                flags);
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
@@ -885,7 +888,11 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                PendingIntent.FLAG_MUTABLE :
+                0;
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -992,8 +999,11 @@ public class Util {
     }
 
     public static boolean alarmExists(Context context) {
+       int flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                PendingIntent.FLAG_IMMUTABLE :
+                PendingIntent.FLAG_NO_CREATE;
         return PendingIntent.getBroadcast(context, 0, getRepeatingAlarmIntent(context, null),
-                PendingIntent.FLAG_NO_CREATE) != null;
+                flag) != null;
     }
 
     /**
@@ -1019,9 +1029,14 @@ public class Util {
         boolean alarmExists = alarmExists(context);
         boolean updateTime = (triggerType != null && triggerType.equals(Prefs.REPEATING_ALARM))
                 || !alarmExists;
-        int flags = 0;
+        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                PendingIntent.FLAG_MUTABLE :
+                0;
+;
         if (prefs.getUseSunAlarms()) {
-            flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                    PendingIntent.FLAG_MUTABLE :
+                    PendingIntent.FLAG_UPDATE_CURRENT;
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
         boolean overwrite = triggerType.equals(Prefs.ALARM_OVERWRITE) || triggerType.equals(Prefs.START_UP);
@@ -1537,7 +1552,11 @@ public class Util {
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = getRepeatingAlarmIntent(context, Prefs.NOON_OFFSET);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+
+        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                PendingIntent.FLAG_IMMUTABLE :
+                PendingIntent.FLAG_NO_CREATE;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, flags);
         if (pendingIntent != null) {
             pendingIntent.cancel();
             alarmManager.cancel(pendingIntent);

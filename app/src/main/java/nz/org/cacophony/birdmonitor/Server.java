@@ -247,7 +247,7 @@ public class Server {
             final String password = RandomStringUtils.random(20, true, true);
 
             RequestBody requestBody = new FormBody.Builder()
-                    .add("devicename", deviceName)
+                    .add("deviceName", deviceName)
                     .add("password", password)
                     .add("group", group)
                     .build();
