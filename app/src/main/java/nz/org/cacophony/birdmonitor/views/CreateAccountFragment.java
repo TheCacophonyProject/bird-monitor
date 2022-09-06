@@ -199,7 +199,7 @@ public class CreateAccountFragment extends Fragment {
 
                     Util.signOutUser(getActivity().getApplicationContext());
                     prefs.setUsername(etUsername.getText().toString());
-                    prefs.setUserNameOrEmailAddress(etUsername.getText().toString());
+                    prefs.setUserNameOrEmailAddress(etEmail.getText().toString());
 
                     tvTitle.setVisibility(View.GONE);
 

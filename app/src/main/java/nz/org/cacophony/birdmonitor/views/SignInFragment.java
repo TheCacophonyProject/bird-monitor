@@ -138,7 +138,7 @@ public class SignInFragment extends Fragment {
             btnSignOutUser.setEnabled(true);
             btnSignOutUser.requestFocus();
         } else {
-            tvTitleMessage.setText("Enter your Cacophony Username and password");
+            tvTitleMessage.setText("Enter your Cacophony Email and password");
             tilUserNameOrPassword.setVisibility(View.VISIBLE);
             tilPassword.setVisibility(View.VISIBLE);
 
