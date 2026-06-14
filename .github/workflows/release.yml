@@ -1,11 +1,13 @@
 name: Android CI
 
-on:
-  push:
-    # branches: [master]
-    tags: ["*"]
-  pull_request:
-    branches: [master]
+# on:
+on: [push]
+
+  # push:
+  #   # branches: [master]
+  #   tags: ["*"]
+  # pull_request:
+  #   branches: [master]
 
 env:
   API: 32
