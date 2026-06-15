@@ -135,4 +135,3 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
-apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
