@@ -26,6 +26,10 @@ if (performSigning) {
 android {
     namespace "nz.org.cacophony.birdmonitor"
     compileSdkVersion 35
+    buildFeatures {
+        buildConfig true
+        aidl true
+    }
     if (performSigning) {
         signingConfigs {
             config {

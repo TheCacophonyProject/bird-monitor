@@ -124,16 +124,11 @@ public class GPSActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.button_help:
-                Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_gps_location));
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.button_help) {
+            Util.displayHelp(this, getResources().getString(R.string.activity_or_fragment_title_gps_location));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

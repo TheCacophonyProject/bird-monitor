@@ -172,16 +172,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.button_help:
-                Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.button_help) {
+            Util.displayHelp(this, getResources().getString(R.string.app_icon_name));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public void launchSetupActivity(@SuppressWarnings("UnusedParameters") View v) {

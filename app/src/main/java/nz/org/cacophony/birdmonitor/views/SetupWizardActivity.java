@@ -61,18 +61,13 @@ public class SetupWizardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.button_help:
-                int currentItem = mViewPager.getCurrentItem();
-                String fragmentTitle = mSectionsStatePagerAdapter.getPageTitle(currentItem).toString();
-                Util.displayHelp(this, fragmentTitle);
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.button_help) {
+            int currentItem = mViewPager.getCurrentItem();
+            String fragmentTitle = mSectionsStatePagerAdapter.getPageTitle(currentItem).toString();
+            Util.displayHelp(this, fragmentTitle);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public void nextPageView() {
