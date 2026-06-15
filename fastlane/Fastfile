@@ -45,7 +45,15 @@ platform :android do
   desc "Submit a new Beta Build to Playstore"
   lane :beta do
     gradle(task: 'assemble', build_type: 'Release')
-    upload_to_play_store(track: 'beta')
+      upload_to_play_store(
+        track: 'beta',
+        skip_upload_metadata: true,
+        skip_upload_images: false,
+        skip_upload_screenshots: false,
+        skip_upload_apk: false,
+        apk:Pathname.new("app/build/outputs/apk/release/").glob("*.apk").first
+      )
+    # upload_to_play_store(track: 'beta', apk: Dir.glob("app/build/outputs/apk/release/*.apk").first)
   end
 
   desc "Update meta data on playstore"
@@ -66,7 +74,8 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
       skip_upload_apk: false,
-      apk: Dir.glob("app/build/outputs/apk/release/*.apk").first
+      # i dont think this works as expected
+      apk:Pathname.new("app/build/outputs/apk/release/").glob("*.apk").first
     )
   end
 end
