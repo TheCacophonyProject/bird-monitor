@@ -23,6 +23,12 @@ jobs:
           distribution: temurin
           cache: gradle
 
+      - name: Install Android SDK components
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" >/dev/null
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" >/dev/null
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" >/dev/null
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 

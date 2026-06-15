@@ -636,7 +636,7 @@ public class Util {
         Intent intent = new Intent(context, MainActivity.class);
         int mPendingIntentId = 1;
         PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
     }
@@ -885,7 +885,7 @@ public class Util {
             Log.e(TAG, ex.getLocalizedMessage(), ex);
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager == null) {
@@ -995,7 +995,7 @@ public class Util {
 
     public static boolean alarmExists(Context context) {
         return PendingIntent.getBroadcast(context, 0, getRepeatingAlarmIntent(context, null),
-                PendingIntent.FLAG_NO_CREATE) != null;
+                PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
     }
 
     /**
@@ -1534,7 +1534,7 @@ public class Util {
     public static void changeAlarmType(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = getRepeatingAlarmIntent(context, Prefs.NOON_OFFSET);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
         if (pendingIntent != null) {
             pendingIntent.cancel();
             alarmManager.cancel(pendingIntent);
