@@ -13,8 +13,7 @@ ext.versionClassifier = null
 ext.isSnapshot = false
 
 repositories {
-    //  mavenCentral()
-    jcenter()
+    mavenCentral()
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
