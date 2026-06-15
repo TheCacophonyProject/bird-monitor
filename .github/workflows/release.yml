@@ -57,10 +57,8 @@ jobs:
           bundler-cache: true
 
       - name: Build release APK
-        run: |
-          ./gradlew clean assembleRelease
-          ls -la app/build/outputs/apk/release/
-          bundle exec fastlane release
+        run: 
+          bundle exec fastlane beta
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
