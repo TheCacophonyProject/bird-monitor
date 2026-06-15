@@ -49,6 +49,11 @@ jobs:
           echo "${{ secrets.SIGNING_TAR_BASE64 }}" | base64 -d > signing.tar
           tar xvf signing.tar
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Install Fastlane
         run: bundle install
 
