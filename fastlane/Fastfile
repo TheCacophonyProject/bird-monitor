@@ -66,7 +66,7 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
       skip_upload_apk: true,
-      apk: "app-release.apk"
+      apk: "app/build/outputs/apk/release/app-release.apk"
     )
     end
 end

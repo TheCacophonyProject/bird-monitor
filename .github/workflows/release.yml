@@ -59,6 +59,7 @@ jobs:
       - name: Build release APK
         run: |
           ./gradlew clean assembleRelease
+          ls -la app/build/outputs/apk/release/
           bundle exec fastlane release
 
       - name: Create GitHub Release
